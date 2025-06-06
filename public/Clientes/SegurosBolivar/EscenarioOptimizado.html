@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escenario Final - Optimización de Arquitectura CienCuadras</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Euclid+Circular+A:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Euclid Circular A', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #001E2B 0%, #00684A 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+        
+        .mongodb-logo {
+            display: inline-block;
+            background: #00ED64;
+            padding: 12px 24px;
+            border-radius: 50px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: #001E2B;
+            font-size: 18px;
+        }
+        
+        .main-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00ED64, #13AA52);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+        
+        .section {
+            margin-bottom: 60px;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(90deg, #00ED64, #13AA52);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .architecture-diagram {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 12px 48px rgba(0, 237, 100, 0.15);
+        }
+        
+        .arch-component {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid #00ED64;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        .arch-component h3 {
+            color: #001E2B;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .arch-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00ED64, #13AA52);
+            border-radius: 8px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .arch-specs {
+            background: #001E2B;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .m50-highlight {
+            background: linear-gradient(135deg, #001E2B, #00684A);
+            color: white;
+            border: 3px solid #00ED64;
+        }
+        
+        .m50-highlight h3 {
+            color: #00ED64;
+        }
+        
+        .flow-diagram {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .flow-step {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #00ED64;
+            transition: transform 0.3s ease;
+        }
+        
+        .flow-step:hover {
+            transform: translateY(-5px);
+        }
+        
+        .flow-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #00ED64, #13AA52);
+            color: #001E2B;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .flow-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #001E2B;
+            margin-bottom: 10px;
+        }
+        
+        .cost-comparison {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 12px 48px rgba(0, 237, 100, 0.15);
+        }
+        
+        .cost-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .cost-table th,
+        .cost-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .cost-table th {
+            background: linear-gradient(135deg, #001E2B, #00684A);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .cost-table td {
+            font-size: 0.95rem;
+        }
+        
+        .cost-highlight {
+            background: linear-gradient(135deg, #00ED64, #13AA52);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+        
+        .cost-savings {
+            background: linear-gradient(135deg, #00ED64, #13AA52);
+            color: #001E2B;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+        
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        
+        .requirement-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 2px solid #00ED64;
+        }
+        
+        .requirement-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #001E2B;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .req-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .req-table th,
+        .req-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+        }
+        
+        .req-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #001E2B;
+        }
+        
+        .status-icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .arrow {
+            text-align: center;
+            font-size: 2rem;
+            color: #00ED64;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem;
+            }
+            
+            .flow-diagram {
+                grid-template-columns: 1fr;
+            }
+            
+            .requirements-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cost-table,
+            .req-table {
+                font-size: 0.8rem;
+            }
+        }
+/* Estilos para las tarjetas de comparación de costos */
+.cost-summary-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.cost-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border: 2px solid #e9ecef;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cost-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.cost-card-header {
+    background: linear-gradient(135deg, #13AA52 0%, #00ED64 100%);
+    padding: 15px 20px;
+    color: white;
+}
+
+.cost-card-header h4 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.cost-card-content {
+    padding: 20px;
+}
+
+.cost-amounts {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.cost-mongo, .cost-client {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.cost-mongo {
+    background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%);
+    border-left: 4px solid #13AA52;
+    color: #155724;
+}
+
+.cost-client {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-left: 4px solid #6c757d;
+    color: #495057;
+}
+
+.cost-difference {
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* Estilos para AHORRO (números negativos = mejor) */
+.difference-savings {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 2px solid #28a745;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+}
+
+.difference-savings .difference-label,
+.difference-savings .difference-amount,
+.difference-savings .difference-percent {
+    color: #155724;
+}
+
+.difference-savings .difference-label {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.difference-savings .difference-amount {
+    display: block;
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 2px;
+}
+
+.difference-savings .difference-percent {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Estilos para COSTO SIMILAR */
+.difference-neutral {
+    background: linear-gradient(135deg, #e2e3e5 0%, #d6d8db 100%);
+    border: 2px solid #6c757d;
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.2);
+}
+
+.difference-neutral .difference-label,
+.difference-neutral .difference-amount,
+.difference-neutral .difference-percent {
+    color: #495057;
+}
+
+.difference-neutral .difference-label {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.difference-neutral .difference-amount {
+    display: block;
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 2px;
+}
+
+.difference-neutral .difference-percent {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Highlight del ahorro principal */
+.savings-highlight {
+    margin: 30px 0;
+}
+
+.savings-box {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 3px solid #28a745;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(40, 167, 69, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.savings-box::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #28a745, #20c997, #28a745);
+    border-radius: 22px;
+    z-index: -1;
+}
+
+.savings-box h3 {
+    color: #155724;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.savings-amount {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.savings-number {
+    font-size: 42px;
+    font-weight: 900;
+    color: #28a745;
+    display: block;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 5px;
+}
+
+.savings-description {
+    font-size: 16px;
+    color: #155724;
+    font-weight: 500;
+}
+
+.savings-note {
+    color: #155724;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 20px 0 0 0;
+    font-weight: 500;
+}
+
+/* Sección de valor agregado mejorada */
+.value-proposition-enhanced {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    border: 1px solid #e9ecef;
+    margin-top: 30px;
+}
+
+.value-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.value-header h3 {
+    color: #13AA52;
+    font-size: 26px;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.value-subtitle {
+    color: #6c757d;
+    font-size: 16px;
+    margin: 0;
+    font-weight: 500;
+}
+
+.value-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.value-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid #f1f3f4;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.value-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.value-icon {
+    font-size: 28px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #00ED64 0%, #13AA52 100%);
+    border-radius: 12px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(0, 237, 100, 0.3);
+}
+
+.value-content {
+    flex: 1;
+}
+
+.value-content h5 {
+    margin: 0 0 8px 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: #212529;
+}
+
+.value-content p {
+    margin: 0;
+    font-size: 14px;
+    color: #6c757d;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cost-summary-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .value-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .savings-number {
+        font-size: 36px;
+    }
+    
+    .value-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .value-item {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cost-card-content {
+        padding: 15px;
+    }
+    
+    .savings-box {
+        padding: 20px;
+    }
+    
+    .savings-number {
+        font-size: 32px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="mongodb-logo">MongoDB Atlas</div>
+            <h1 class="main-title">Optimización de Arquitectura Ciencuadras</h1>
+            <h4 class="subtitle">Escenario Final</h4>
+        </div>
+        
+        <!-- ARQUITECTURA MONGODB ATLAS -->
+        <div class="section">
+            <h3 class="section-title">🏗️ Arquitectura MongoDB Atlas - Escenario 3 nodos transaccionales M40 + 1 Nodo Analitico + 2 nodos de Search</h3>
+            
+      <!-- Diagrama con título -->
+<div class="architecture-diagram" style="margin-bottom: 40px;">
+    <div style="background: white; border: 2px solid #00ED64; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
+        <div style="background: linear-gradient(135deg, #00ED64, #13AA52); color: white; padding: 15px; text-align: center;">
+            <h3 style="margin: 0; font-size: 1.3rem;">🏗️ Arquitectura MongoDB Atlas M40 - Ciencuadras</h3>
+        </div>
+        <div style="padding: 20px;">
+            <img src="CiencuadrasFinal.svg" alt="Arquitectura MongoDB Atlas M40 - Ciencuadras" style="width: 100%; height: auto;">
+        </div>
+    </div>
+</div>
+            
+            <div class="architecture-diagram">
+                <div class="arch-component m50-highlight">
+                    <h3><div class="arch-icon">⚡</div>M40 Primary Node (Cluster Transaccional)</h3>
+                    <p><strong>Descripción:</strong> Nodo principal que maneja operaciones de lectura y escritura del core del negocio.</p>
+                    <div class="arch-specs">
+                        <strong>Especificaciones:</strong><br>
+                        • <span style="color: #00ED64;">4 vCPUs, 16 GB RAM, y 300 GB SSD</span><br>
+                        • Optimizado para transacciones del negocio<br>
+                        • Alta disponibilidad garantizada
+                    </div>
+                </div>
+                
+                <div class="arch-component">
+                    <h3><div class="arch-icon">🔄</div>2 Replica Set Nodes (M40 secundarios)</h3>
+                    <p>Réplicas completas del nodo primario para alta disponibilidad y recuperación ante fallos (automático). Cada nodo tiene su propia instancia M40.</p>
+                </div>
+
+                <div class="arch-component">
+                    <h3><div class="arch-icon">📊</div>1 Nodo Analítico M30</h3>
+                    <p>Servidor dedicado para <strong>Analytics</strong> con 2 vCPUs, 8 GB RAM y 500 GB de almacenamiento. Optimizado para reportes, BI y agregaciones sin impacto en el cluster transaccional.</p>
+                </div>
+                
+                <div class="arch-component">
+                    <h3><div class="arch-icon">🔍</div>2 Nodos de búsqueda S40</h3>
+                    <p>Servidores dedicados solo para <strong>Atlas Search</strong>. Cada uno tiene 2 vCPUs, 16 GB RAM y 421 GB de almacenamiento NVMe para rendimiento óptimo de búsquedas tipo full-text, autocompletar, etc.</p>
+                </div>
+                
+                <div class="arch-component">
+                    <h3><div class="arch-icon">💾</div>Continuous Backup (Cloud Snapshots)</h3>
+                    <p>Backups incrementales y automáticos sin impacto operativo.</p>
+                </div>
+                
+                <div class="arch-component">
+                    <h3><div class="arch-icon">🌐</div>Networking (Egress/Ingress)</h3>
+                    <p>Incluye costos por transferencia de datos entre aplicaciones y la base de datos.</p>
+                </div>
+                
+                <div class="arch-component">
+                    <h3><div class="arch-icon">🛡️</div>Soporte Pro</h3>
+                    <p>Incluye SLAs, soporte 24x7, alertas, VPC Peering, control avanzado de acceso, y más.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FLUJO DE DATOS -->
+        <div class="section">
+            <h2 class="section-title">🔄 Flujo de Datos - Arquitectura MongoDB Atlas</h2>
+            
+            <div class="flow-diagram">
+                <div class="flow-step">
+                    <div class="flow-number">1</div>
+                    <div class="flow-title">Ingreso del usuario final</div>
+                    <p>Usuarios interactúan desde apps web/móviles. El tráfico entra por <strong>WAF</strong> y pasa por <strong>API Gateway</strong> que gestiona autenticación con <strong>Cognito</strong>.</p>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="flow-number">2</div>
+                    <div class="flow-title">Microservicios de integración</div>
+                    <p>Publicación masiva de inmuebles y proyectos. APIs para aliados y constructoras. Envían eventos a través de <strong>SQS</strong> para dosificación.</p>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="flow-number">3</div>
+                    <div class="flow-title">Persistencia transaccional</div>
+                    <p>Toda la lógica del negocio vive en colecciones dentro del <strong>clúster MongoDB Atlas M40</strong>. CRUD en tiempo real con Replica Set para alta disponibilidad.</p>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="flow-number">4</div>
+                    <div class="flow-title">Procesamiento diferido</div>
+                    <p>En MongoDB Atlas, se reemplaza por <strong>Atlas Search</strong> con nodos dedicados (S40), sin necesidad de sincronización externa como Logstash.</p>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="flow-number">5</div>
+                    <div class="flow-title">Consultas de búsqueda</div>
+                    <p><strong>Atlas Search Nodes (S40):</strong> Autocompletado, filtros, ranking y resultados. Procesamiento distribuido con agregaciones geográficas.</p>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="flow-number">6</div>
+                    <div class="flow-title">Retención de contexto</div>
+                    <p>Replicar patrón Redis usando <strong>TTL Indexes</strong>, colecciones separadas para sesiones y documentos embebidos para contexto conversacional.</p>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="flow-number">7</div>
+                    <div class="flow-title">Backups y Seguridad</div>
+                    <p>Backups continuos automáticos, integración con VPC, autenticación y control de acceso granular con roles y certificados.</p>
+                </div>
+            </div>
+        </div>
+        
+<!-- Sección TCO -->
+<div style="background: white; border-radius: 25px; padding: 40px; margin: 40px 0; border: 2px solid #e9ecef;">
+    <h2 style="text-align: center; color: #001E2B; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+      💰 TCO (Total Cost of Ownership) - MongoDB Atlas M40 vs AWS Actual
+    </h2>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+      <!-- AWS Actual -->
+      <div style="background: linear-gradient(135deg, #ff6b6b, #ee5a24); padding: 25px; border-radius: 15px; color: white;">
+        <h3 style="margin-bottom: 20px; text-align: center;">🔴 Infraestructura AWS Actual</h3>
+        
+        <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span><strong>RDS + ElastiCache:</strong></span>
+            <span><strong>$2,023.86/mes</strong></span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span><strong>Elastic Search:</strong></span>
+            <span><strong>$326.14/mes</strong></span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>MCP Server:</span>
+            <span>Por definir</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Pinecone:</span>
+            <span>Por definir</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>RDS para Analítica:</span>
+            <span>Por definir</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Logstash + EC2:</span>
+            <span>Por definir</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Redis:</span>
+            <span>Por definir</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Backups:</span>
+            <span>Por definir</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Egreso/Ingreso Red:</span>
+            <span>Por definir</span>
+          </div>
+        </div>
+        
+        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+          <div style="font-size: 24px; font-weight: bold;">$28,200</div>
+          <div style="opacity: 0.9;">Total Anual</div>
+        </div>
+      </div>
+      
+      <!-- MongoDB Atlas -->
+      <div style="background: linear-gradient(135deg, #00ED64, #13AA52); padding: 25px; border-radius: 15px; color: white;">
+        <h3 style="margin-bottom: 20px; text-align: center;">🟢 MongoDB Atlas M40 Propuesto</h3>
+        
+        <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span><strong>MongoDB Atlas (3 Nodos):</strong></span>
+            <span><strong>$1,625/mes</strong></span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span><strong>Atlas Search (2 Nodos HA):</strong></span>
+            <span><strong>Incluido</strong></span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Atlas MCP Server:</span>
+            <span>Incluido</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Atlas Vector Search:</span>
+            <span>Incluido</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Nodo Analítico (1 Nodo):</span>
+            <span>Incluido</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Logstash:</span>
+            <span>No necesario</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>EC2 Logstash:</span>
+            <span>No necesario</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Redis:</span>
+            <span>No necesario</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Backup Continuo:</span>
+            <span>Incluido</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Egreso/Ingreso Red:</span>
+            <span>Incluido</span>
+          </div>
+        </div>
+        
+        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+          <div style="font-size: 24px; font-weight: bold;">$19,500</div>
+          <div style="opacity: 0.9;">Total Anual</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Resultado de Ahorro -->
+    <div style="background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; padding: 30px; border-radius: 20px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
+      <h3 style="margin-bottom: 20px; font-size: 24px;">🎯 Resultado: Ahorro Significativo</h3>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px;">
+          <div style="font-size: 28px; font-weight: bold; margin-bottom: 5px;">$8,700</div>
+          <div style="opacity: 0.9;">Ahorro Anual</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px;">
+          <div style="font-size: 28px; font-weight: bold; margin-bottom: 5px;">30.9%</div>
+          <div style="opacity: 0.9;">Reducción de Costos</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px;">
+          <div style="font-size: 28px; font-weight: bold; margin-bottom: 5px;">$725</div>
+          <div style="opacity: 0.9;">Ahorro Mensual</div>
+        </div>
+      </div>
+      
+      <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; margin-top: 20px;">
+        <p style="margin: 0; font-size: 16px; font-weight: 500;">
+          🚀 <strong>Beneficio Adicional:</strong> También es posible reemplazar Firebase (pendiente revisar caso de uso específico)
+        </p>
+      </div>
+    </div>
+    
+    <!-- Nota importante -->
+    <div style="background: #f8f9fa; border-left: 4px solid #00ED64; padding: 20px; margin-top: 30px; border-radius: 0 10px 10px 0;">
+      <h4 style="color: #001E2B; margin-bottom: 15px;">📋 Notas Importantes del TCO:</h4>
+      <ul style="color: #495057; margin: 0; padding-left: 20px;">
+        <li><strong>Consolidación de servicios:</strong> MongoDB Atlas reemplaza múltiples servicios AWS</li>
+        <li><strong>Costos conocidos:</strong> Algunos servicios AWS actuales tienen costos por definir</li>
+        <li><strong>Servicios incluidos:</strong> Search, Analytics, Vector Search y Backups sin costo adicional</li>
+        <li><strong>Simplificación operativa:</strong> Menos servicios = menos complejidad y mantenimiento</li>
+        <li><strong>Escalabilidad:</strong> Crecimiento predictivo de costos con la demanda</li>
+      </ul>
+    </div>
+  </div>
+   <!-- BENEFICIOS ATLAS PARA INMOBILIARIAS -->
+   <div style="background: white; border-radius: 25px; padding: 40px; margin: 40px 0; border: 2px solid #e9ecef;">
+    <h3 style="color: #13AA52; font-size: 28px; margin-bottom: 35px; font-weight: 700; text-align: center;">
+        <span style="font-size: 32px; margin-right: 12px;">🏗️</span>
+        Beneficios operativos para Ciencuadras
+    </h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px;">
+        <!-- VENTAJAS OPERATIVAS -->
+        <div style="background: rgba(255,255,255,0.8); border-radius: 15px; padding: 25px; border-left: 5px solid #00ED64;">
+            <h4 style="color: #13AA52; font-size: 18px; font-weight: 700; margin-bottom: 15px;">⚡ Ventajas Operativas</h4>
+            <ul style="color: #495057; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
+                <li><strong>Gestión unificada:</strong> Una sola consola para toda la infraestructura</li>
+                <li><strong>Soporte 24/7:</strong> Expertos MongoDB disponibles siempre</li>
+                <li><strong>Monitoreo proactivo:</strong> Alertas automáticas y métricas avanzadas</li>
+                <li><strong>Backups automáticos:</strong> Point-in-time recovery incluido</li>
+            </ul>
+        </div>
+
+        <!-- SIMPLIFICACIÓN TÉCNICA -->
+        <div style="background: rgba(255,255,255,0.8); border-radius: 15px; padding: 25px; border-left: 5px solid #9c27b0;">
+            <h4 style="color: #7b1fa2; font-size: 18px; font-weight: 700; margin-bottom: 15px;">🔧 Simplificación Técnica</h4>
+            <ul style="color: #495057; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
+                <li><strong>Menos trabajo manual:</strong> Actualizaciones automáticas de seguridad</li>
+                <li><strong>Escalabilidad instantanea:</strong> Crece con tu demanda automáticamente</li>
+                <li><strong>Replicas en multiples AZs:</strong> Disaster recovery incluido</li>
+                <li><strong>Configuración optimizada:</strong> Monitoreo Automatico e Incluido</li>
+            </ul>
+        </div>
+
+        <!-- ESPECÍFICO PARA INMOBILIARIAS -->
+        <div style="background: rgba(255,255,255,0.8); border-radius: 15px; padding: 25px; border-left: 5px solid #ff9800;">
+            <h4 style="color: #f57c00; font-size: 18px; font-weight: 700; margin-bottom: 15px;">🏠 Específico Inmobiliario</h4>
+            <ul style="color: #495057; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
+                <li><strong>Búsquedas geoespaciales:</strong> Filtros por ubicación nativos</li>
+                <li><strong>Documentos flexibles:</strong> Propiedades con atributos variables</li>
+                <li><strong>Imágenes y documentos:</strong> GridFS para archivos grandes</li>
+                <li><strong>Real-time updates:</strong> Actualizaciones de precios en vivo</li>
+            </ul>
+        </div>
+
+        <!-- REDUCCIÓN DE RIESGOS -->
+        <div style="background: rgba(255,255,255,0.8); border-radius: 15px; padding: 25px; border-left: 5px solid #dc2626;">
+            <h4 style="color: #b91c1c; font-size: 18px; font-weight: 700; margin-bottom: 15px;">🛡️ Reducción de Riesgos</h4>
+            <ul style="color: #495057; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
+                <li><strong>Menos vendors:</strong> Una relación comercial vs múltiples</li>
+                <li><strong>SLA unificado:</strong> 99.995% uptime garantizado</li>
+                <li><strong>Compliance automático:</strong> SOC2, GDPR, HIPAA incluidos</li>
+                <li><strong>Menos complejidad:</strong> Reduce superficie de ataque</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- RESUMEN FINAL -->
+    <div style="background: linear-gradient(135deg, #001E2B, #13AA52); border-radius: 20px; padding: 30px; text-align: center; color: white;">
+        <div style="font-size: 48px; margin-bottom: 15px;">💡</div>
+        <h4 style="color: #00ED64; font-size: 24px; margin-bottom: 15px; font-weight: 700;">Resultado: Infraestructura Simplificada</h4>
+        <p style="font-size: 16px; opacity: 0.9; line-height: 1.6; margin-bottom: 20px;">
+            <strong>5 servicios separados</strong> → <strong>1 plataforma unificada</strong><br>
+            Menos complejidad, mayor confiabilidad, mejor soporte
+        </p>
+        <div style="background: rgba(0,237,100,0.2); border-radius: 10px; padding: 15px; display: inline-block;">
+            <span style="font-size: 18px; font-weight: 600;">+ Ahorro de $886 anuales con soporte incluido</span>
+        </div>
+    </div>
+</div>
+
+    <!-- VALOR AGREGADO M40 -->
+    <div class="value-proposition-enhanced">
+        <div class="value-header">
+            <h3>✨ <strong>Valor Agregado MongoDB Atlas M40</strong></h3>
+            <p class="value-subtitle">Lo que obtienes al cambiar a MongoDB Atlas</p>
+        </div>
+        
+        <div class="value-grid">
+            <div class="value-item">
+                <div class="value-icon">💰</div>
+                <div class="value-content">
+                    <h5>Ahorro Comprobado</h5>
+                    <p>$4,786 menos anuales que la configuración actual</p>
+                </div>
+            </div>
+            
+            <div class="value-item">
+                <div class="value-icon">🏗️</div>
+                <div class="value-content">
+                    <h5>Arquitectura Completa</h5>
+                    <p>Transaccional + Search + Analytics en una plataforma</p>
+                </div>
+            </div>
+            
+            <div class="value-item">
+                <div class="value-icon">🔧</div>
+                <div class="value-content">
+                    <h5>Gestión Automática</h5>
+                    <p>Sin administración manual de infraestructura</p>
+                </div>
+            </div>
+            
+            <div class="value-item">
+                <div class="value-icon">💾</div>
+                <div class="value-content">
+                    <h5>Backups Incluidos</h5>
+                    <p>Protección automática de datos sin costo extra</p>
+                </div>
+            </div>
+            
+            <div class="value-item">
+                <div class="value-icon">⚡</div>
+                <div class="value-content">
+                    <h5>Search Nativo</h5>
+                    <p>Atlas Search optimizado vs ElasticSearch separado</p>
+                </div>
+            </div>
+            
+            <div class="value-item">
+                <div class="value-icon">📊</div>
+                <div class="value-content">
+                    <h5>Analytics Integrado</h5>
+                    <p>Nodo dedicado para análisis sin impacto transaccional</p>
+                </div>
+            </div>
+            
+            <div class="value-item">
+                <div class="value-icon">🧠</div>
+                <div class="value-content">
+                    <h5>Vector Search</h5>
+                    <p>Búsquedas semánticas y AI nativas sin infraestructura adicional</p>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+
+<!-- BENEFICIOS DETALLADOS POR COMPONENTE -->
+<div class="section">
+    <h2 class="section-title">🎯 Beneficios Detallados por Componente</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px; margin-bottom: 40px;">
+        
+        <!-- SEARCH NODES -->
+        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 2px solid #00ED64;">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div style="display: inline-block; width: 60px; height: 60px; background: linear-gradient(135deg, #00ED64, #13AA52); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 15px;">🔍</div>
+                <h3 style="color: #13AA52; font-size: 22px; margin: 0; font-weight: 700;">Search Nodes Dedicados</h3>
+                <p style="color: #6c757d; margin: 5px 0 0 0; font-size: 14px;">Atlas Search S40 - Búsquedas Especializadas</p>
+            </div>
+            
+            <div style="space-y: 15px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #28a745; font-size: 18px;">✅</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Full-Text Search Nativo</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Búsquedas por texto completo sin ElasticSearch externo</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #28a745; font-size: 18px;">✅</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Autocompletar Inteligente</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Sugerencias automáticas para inmuebles y proyectos</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #28a745; font-size: 18px;">✅</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Búsquedas Geográficas</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Filtros por ubicación, distancia y mapas nativos</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #28a745; font-size: 18px;">✅</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Sin Sincronización</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Datos siempre actualizados, sin latencia de sync</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <span style="color: #28a745; font-size: 18px;">✅</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Escalabilidad Automática</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Capacidad que crece con tu demanda</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NODO ANALÍTICO -->
+        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 2px solid #9c27b0;">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div style="display: inline-block; width: 60px; height: 60px; background: linear-gradient(135deg, #9c27b0, #7b1fa2); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 15px;">📊</div>
+                <h3 style="color: #7b1fa2; font-size: 22px; margin: 0; font-weight: 700;">Nodo Analítico M30</h3>
+                <p style="color: #6c757d; margin: 5px 0 0 0; font-size: 14px;">Analytics & BI Dedicado</p>
+            </div>
+            
+            <div style="space-y: 15px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #7b1fa2; font-size: 18px;">📈</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Reportes en Tiempo Real</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Dashboards y métricas sin impacto transaccional</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #7b1fa2; font-size: 18px;">🔄</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Agregaciones Complejas</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Análisis de datos masivos sin afectar operaciones</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #7b1fa2; font-size: 18px;">💼</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Business Intelligence</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Integración directa con herramientas de BI</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #7b1fa2; font-size: 18px;">⚡</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Procesamiento Paralelo</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Recursos dedicados para análisis intensivos</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <span style="color: #7b1fa2; font-size: 18px;">🎯</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Aislamiento de Cargas</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Analytics separado del cluster transaccional</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REEMPLAZO FIREBASE -->
+        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 2px solid #ff9800;">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div style="display: inline-block; width: 60px; height: 60px; background: linear-gradient(135deg, #ff9800, #f57c00); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 15px;">🔥</div>
+                <h3 style="color: #f57c00; font-size: 22px; margin: 0; font-weight: 700;">Es posible reemplazar Firebase</h3>
+                <p style="color: #6c757d; margin: 5px 0 0 0; font-size: 14px;">Backend as a Service Nativo</p>
+                <p style="color: #6c757d; margin: 5px 0 0 0; font-size: 14px;">(Caso de uso x revisar)</p>
+                
+            </div>
+            
+            <div style="space-y: 15px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #f57c00; font-size: 18px;">🔐</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Autenticación Integrada</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Sistema de usuarios y roles sin servicios externos</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #f57c00; font-size: 18px;">⚡</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Real-time Updates</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Change Streams para actualizaciones en tiempo real</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #f57c00; font-size: 18px;">💾</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Storage Unificado</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">GridFS para archivos y documentos grandes</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #f57c00; font-size: 18px;">🔄</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Funciones Serverless</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Atlas Functions para lógica backend automática</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <span style="color: #f57c00; font-size: 18px;">💰</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Sin Costos Adicionales</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Incluido en tu cluster, sin servicios separados</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VECTOR SEARCH (PINECONE) -->
+        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 2px solid #6366f1;">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div style="display: inline-block; width: 60px; height: 60px; background: linear-gradient(135deg, #6366f1, #4f46e5); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 15px;">🧠</div>
+                <h3 style="color: #4f46e5; font-size: 22px; margin: 0; font-weight: 700;">Vector Search</h3>
+                <p style="color: #6c757d; margin: 5px 0 0 0; font-size: 14px;">Es posible reemplazar Pinecone - AI Nativo</p>
+                <p style="color: #6c757d; margin: 5px 0 0 0; font-size: 14px;">(Caso de uso x revisar)</p>
+            </div>
+            
+            <div style="space-y: 15px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #4f46e5; font-size: 18px;">🤖</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Búsquedas Semánticas</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">IA que entiende el contexto, no solo palabras clave</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #4f46e5; font-size: 18px;">🎯</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Recomendaciones Inteligentes</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Propiedades similares basadas en preferencias</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #4f46e5; font-size: 18px;">⚡</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Embeddings Nativos</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Vectores almacenados junto con tus datos</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #4f46e5; font-size: 18px;">🔗</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Integración Perfecta</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Sin APIs externas ni sincronización</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <span style="color: #4f46e5; font-size: 18px;">💸</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Ahorro vs Pinecone</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Sin licencias adicionales de servicios de vectores</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REEMPLAZO REDIS -->
+        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 2px solid #dc2626;">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div style="display: inline-block; width: 60px; height: 60px; background: linear-gradient(135deg, #dc2626, #b91c1c); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 15px;">⚡</div>
+                <h3 style="color: #b91c1c; font-size: 22px; margin: 0; font-weight: 700;">Es posible remplazar Redis</h3>
+                <p style="color: #6c757d; margin: 5px 0 0 0; font-size: 14px;">Cache & Sessions Nativas</p>
+                <p style="color: #6c757d; margin: 5px 0 0 0; font-size: 14px;">(Caso de uso x revisar)</p>
+            </div>
+            
+            <div style="space-y: 15px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #b91c1c; font-size: 18px;">⏰</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">TTL Indexes</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Expiración automática de documentos como Redis</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #b91c1c; font-size: 18px;">🗂️</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Colecciones de Sesión</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Gestión de sesiones de usuario nativa</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #b91c1c; font-size: 18px;">🔍</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Cache de Consultas</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Resultados frecuentes en memoria para acceso rápido</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px;">
+                    <span style="color: #b91c1c; font-size: 18px;">📝</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Contexto Conversacional</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Documentos embebidos para historial de chat</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <span style="color: #b91c1c; font-size: 18px;">🔧</span>
+                    <div>
+                        <strong style="color: #212529; font-size: 15px;">Sin Infraestructura Extra</strong>
+                        <p style="color: #6c757d; margin: 3px 0 0 0; font-size: 13px;">Todo dentro de MongoDB, sin servicios separados</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- RESUMEN FINAL ACTUALIZADO -->
+    <div style="background: linear-gradient(135deg, #001E2B 0%, #00684A 100%); border-radius: 25px; padding: 40px; text-align: center; color: white; margin-top: 40px;">
+        <h3 style="color: #00ED64; font-size: 28px; margin-bottom: 20px; font-weight: 700;">🎉 MongoDB Atlas: Todo en Una Plataforma</h3>
+        <p style="font-size: 18px; margin-bottom: 30px; opacity: 0.9;">
+            Reemplaza <strong>ElasticSearch + Firebase + Pinecone + Redis</strong> con una sola solución integrada
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-top: 30px;">
+            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,237,100,0.3);">
+                <div style="font-size: 32px; margin-bottom: 10px;">🔍</div>
+                <div style="color: #00ED64; font-weight: 600;">Search Nativo</div>
+                <div style="font-size: 14px; opacity: 0.8;">vs ElasticSearch</div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; border: 1px solid rgba(156,39,176,0.3);">
+                <div style="font-size: 32px; margin-bottom: 10px;">📊</div>
+                <div style="color: #e1bee7; font-weight: 600;">Analytics Dedicado</div>
+                <div style="font-size: 14px; opacity: 0.8;">Nodo M30</div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; border: 1px solid rgba(255,152,0,0.3);">
+                <div style="font-size: 32px; margin-bottom: 10px;">🔥</div>
+                <div style="color: #ffcc80; font-weight: 600;">Backend Service</div>
+                <div style="font-size: 14px; opacity: 0.8;">vs Firebase</div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; border: 1px solid rgba(99,102,241,0.3);">
+                <div style="font-size: 32px; margin-bottom: 10px;">🧠</div>
+                <div style="color: #c5cae9; font-weight: 600;">Vector Search</div>
+                <div style="font-size: 14px; opacity: 0.8;">vs Pinecone</div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; border: 1px solid rgba(220,38,38,0.3);">
+                <div style="font-size: 32px; margin-bottom: 10px;">⚡</div>
+                <div style="color: #fca5a5; font-weight: 600;">Cache & Sessions</div>
+                <div style="font-size: 14px; opacity: 0.8;">vs Redis</div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+        
+       
+
+   
+
+           
+        </div>
+    </div>
+</body>
+</html>

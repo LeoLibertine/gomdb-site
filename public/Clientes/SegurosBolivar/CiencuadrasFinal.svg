@@ -1,0 +1,264 @@
+<svg viewBox="0 0 1000 900" xmlns="http://www.w3.org/2000/svg">
+  <!-- Definiciones y estilos -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e9ecef;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="mongo-green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ED64;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#13AA52;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="mongo-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#001E2B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00684A;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="primary-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ED64;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#13AA52;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="secondary-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#13AA52;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0F7A3C;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="analytics-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9c27b0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#673ab7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="search-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#001E2B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00684A;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="backup-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6c757d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#495057;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="3" stdDeviation="5" flood-opacity="0.3"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#00ED64"/>
+    </marker>
+    <marker id="backup-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#6c757d"/>
+    </marker>
+  </defs>
+  
+  <!-- Fondo y título -->
+  <rect width="1000" height="900" fill="url(#bg-gradient)" rx="10" ry="10"/>
+  
+  <text x="500" y="40" font-family="Arial, sans-serif" font-size="26" font-weight="bold" text-anchor="middle" fill="url(#mongo-blue)">
+    MongoDB Atlas M40 - Arquitectura Optimizada Ciencuadras
+  </text>
+  
+  <!-- Región única container -->
+  <rect x="50" y="70" width="900" height="520" rx="20" ry="20" fill="#ffffff" stroke="url(#mongo-green)" stroke-width="3" stroke-dasharray="10,5" opacity="0.1"/>
+  
+  <!-- Label de región -->
+  <text x="500" y="100" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="url(#mongo-green)">
+    Single Region Deployment - High Availability Cluster + Analytics + Search
+  </text>
+  
+  <!-- CAPA SUPERIOR: Atlas M40 Nodes + Analytics Node -->
+  <!-- M40 Primary Node -->
+  <g transform="translate(80, 120)">
+    <rect width="140" height="180" rx="10" ry="10" fill="url(#primary-gradient)" stroke="#0F7A3C" stroke-width="2" filter="url(#shadow)"/>
+    <text x="70" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">M40 Primary Node</text>
+    <text x="70" y="40" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="white">(Cluster Transaccional)</text>
+    
+    <rect x="10" y="50" width="120" height="100" rx="8" ry="8" fill="url(#mongo-blue)" opacity="0.9"/>
+    <text x="70" y="70" font-family="Arial, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#00ED64">Especificaciones:</text>
+    <text x="20" y="85" font-family="Arial, sans-serif" font-size="10" text-anchor="start" fill="white">• 4 vCPUs</text>
+    <text x="20" y="98" font-family="Arial, sans-serif" font-size="10" text-anchor="start" fill="white">• 16 GB RAM</text>
+    <text x="20" y="111" font-family="Arial, sans-serif" font-size="10" text-anchor="start" fill="white">• 500 GB SSD</text>
+    <text x="20" y="130" font-family="Arial, sans-serif" font-size="9" text-anchor="start" fill="#00ED64">Core del negocio</text>
+    <text x="20" y="142" font-family="Arial, sans-serif" font-size="9" text-anchor="start" fill="#00ED64">Operaciones R/W</text>
+    
+    <circle cx="70" cy="165" r="8" fill="#2ecc71"/>
+    <text x="70" y="169" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="white">PRIMARY</text>
+  </g>
+  
+  <!-- M40 Replica 1 -->
+  <g transform="translate(240, 120)">
+    <rect width="140" height="180" rx="10" ry="10" fill="url(#secondary-gradient)" stroke="#0A5D2C" stroke-width="2" filter="url(#shadow)"/>
+    <text x="70" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">M40 Replica 1</text>
+    <text x="70" y="40" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="white">(Secundario)</text>
+    
+    <rect x="10" y="50" width="120" height="100" rx="8" ry="8" fill="rgba(255,255,255,0.1)" opacity="0.9"/>
+    <text x="20" y="70" font-family="Arial, sans-serif" font-size="10" text-anchor="start" fill="white">Alta disponibilidad</text>
+    <text x="20" y="83" font-family="Arial, sans-serif" font-size="10" text-anchor="start" fill="white">Failover automático</text>
+    <text x="20" y="96" font-family="Arial, sans-serif" font-size="10" text-anchor="start" fill="white">Copia completa</text>
+    <text x="20" y="115" font-family="Arial, sans-serif" font-size="9" font-weight="bold" text-anchor="start" fill="#00ED64">M40: 4 vCPUs</text>
+    <text x="20" y="128" font-family="Arial, sans-serif" font-size="9" text-anchor="start" fill="white">16GB RAM, 500GB</text>
+    
+    <circle cx="70" cy="165" r="8" fill="#3498db"/>
+    <text x="70" y="169" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="white">SECONDARY</text>
+  </g>
+  
+  <!-- M40 Replica 2 -->
+  <g transform="translate(400, 120)">
+    <rect width="140" height="180" rx="10" ry="10" fill="url(#secondary-gradient)" stroke="#0A5D2C" stroke-width="2" filter="url(#shadow)"/>
+    <text x="70" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">M40 Replica 2</text>
+    <text x="70" y="40" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="white">(Secundario)</text>
+    
+    <rect x="10" y="50" width="120" height="100" rx="8" ry="8" fill="rgba(255,255,255,0.1)" opacity="0.9"/>
+    <text x="20" y="70" font-family="Arial, sans-serif" font-size="10" text-anchor="start" fill="white">Alta disponibilidad</text>
+    <text x="20" y="83" font-family="Arial, sans-serif" font-size="10" text-anchor="start" fill="white">Failover automático</text>
+    <text x="20" y="96" font-family="Arial, sans-serif" font-size="10" text-anchor="start" fill="white">Copia completa</text>
+    <text x="20" y="115" font-family="Arial, sans-serif" font-size="9" font-weight="bold" text-anchor="start" fill="#00ED64">M40: 4 vCPUs</text>
+    <text x="20" y="128" font-family="Arial, sans-serif" font-size="9" text-anchor="start" fill="white">16GB RAM, 500GB</text>
+    
+    <circle cx="70" cy="165" r="8" fill="#3498db"/>
+    <text x="70" y="169" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="white">SECONDARY</text>
+  </g>
+  
+  <!-- Conexiones Atlas a Search -->
+  <path d="M 540 180 C 600 180 650 180 720 180" stroke="#00ED64" stroke-width="4" fill="none"/>
+  <path d="M 540 220 C 600 220 650 220 720 220" stroke="#00ED64" stroke-width="3" fill="none"/>
+
+  <!-- Analytics Node M40 -->
+  <g transform="translate(560, 120)">
+    <rect width="140" height="180" rx="10" ry="10" fill="url(#analytics-gradient)" stroke="#4a148c" stroke-width="2" filter="url(#shadow)"/>
+    <text x="70" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">M30 Analytics</text>
+    <text x="70" y="40" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="white">(Nodo Analítico)</text>
+    
+    <rect x="10" y="50" width="120" height="100" rx="8" ry="8" fill="rgba(255,255,255,0.2)" opacity="0.9"/>
+    <text x="70" y="70" font-family="Arial, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#e1bee7">Especificaciones:</text>
+    <text x="20" y="85" font-family="Arial, sans-serif" font-size="10" text-anchor="start" fill="white">• 2 vCPUs</text>
+    <text x="20" y="98" font-family="Arial, sans-serif" font-size="10" text-anchor="start" fill="white">• 8 GB RAM</text>
+    <text x="20" y="111" font-family="Arial, sans-serif" font-size="10" text-anchor="start" fill="white">• 500 GB SSD</text>
+    <text x="20" y="130" font-family="Arial, sans-serif" font-size="9" text-anchor="start" fill="#e1bee7">Reportes, BI</text>
+    <text x="20" y="142" font-family="Arial, sans-serif" font-size="9" text-anchor="start" fill="#e1bee7">Agregaciones</text>
+    
+    <circle cx="70" cy="165" r="8" fill="#ab47bc"/>
+    <text x="70" y="169" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="white">ANALYTICS</text>
+  </g>
+  
+  <!-- CAPA MEDIA: Atlas Search Cluster -->
+  <g transform="translate(720, 120)">
+    <rect width="200" height="180" rx="15" ry="15" fill="url(#search-gradient)" stroke="#001E2B" stroke-width="3" filter="url(#shadow)"/>
+    <text x="100" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#00ED64">2 Nodos Atlas Search</text>
+    <text x="100" y="40" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="white">Servidores dedicados S40</text>
+    
+    <!-- Search Node 1 -->
+    <rect x="15" y="50" width="170" height="50" rx="8" ry="8" fill="rgba(0,237,100,0.1)" stroke="#00ED64" stroke-width="1"/>
+    <text x="100" y="70" font-family="Arial, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#00ED64">Search Node 1 (S40)</text>
+    <text x="100" y="83" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="white">2 vCPUs, 16 GB RAM, 421 GB NVMe</text>
+    <text x="100" y="93" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#00ED64">Full-text, Autocompletar</text>
+    
+    <!-- Search Node 2 -->
+    <rect x="15" y="110" width="170" height="50" rx="8" ry="8" fill="rgba(0,237,100,0.1)" stroke="#00ED64" stroke-width="1"/>
+    <text x="100" y="130" font-family="Arial, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="#00ED64">Search Node 2 (S40)</text>
+    <text x="100" y="143" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="white">2 vCPUs, 16 GB RAM, 421 GB NVMe</text>
+    <text x="100" y="153" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#00ED64">Geo, Distributed Search</text>
+  </g>
+  
+  <!-- Líneas de conexión entre nodos M40 -->
+  <path d="M 220 210 Q 230 190 240 210" stroke="#00ED64" stroke-width="3" stroke-dasharray="5,3" fill="none"/>
+  <path d="M 380 210 Q 390 190 400 210" stroke="#00ED64" stroke-width="3" stroke-dasharray="5,3" fill="none"/>
+  
+  <!-- Conexión Atlas to Analytics -->
+  <path d="M 540 200 Q 550 180 560 200" stroke="#9c27b0" stroke-width="3" stroke-dasharray="5,3" fill="none"/>
+  
+
+  
+  <!-- CAPA INFERIOR: Servicios Adicionales -->
+  <g transform="translate(150, 350)">
+    <!-- Continuous Backup -->
+    <rect x="0" y="0" width="180" height="80" rx="10" ry="10" fill="url(#backup-gradient)" stroke="#495057" stroke-width="2" filter="url(#shadow)"/>
+    <text x="90" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Continuous Backup</text>
+    <text x="90" y="40" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#e9ecef">(Cloud Snapshots)</text>
+    <text x="90" y="58" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="white">Backups incrementales</text>
+    <text x="90" y="70" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="white">Sin impacto operativo</text>
+    
+    <!-- Networking -->
+    <rect x="200" y="0" width="180" height="80" rx="10" ry="10" fill="url(#backup-gradient)" stroke="#495057" stroke-width="2" filter="url(#shadow)"/>
+    <text x="290" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Networking</text>
+    <text x="290" y="40" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#e9ecef">(Egress/Ingress)</text>
+    <text x="290" y="58" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="white">Transferencia de datos</text>
+    <text x="290" y="70" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="white">App ↔ Base de datos</text>
+    
+    <!-- Soporte Pro -->
+    <rect x="400" y="0" width="180" height="80" rx="10" ry="10" fill="url(#backup-gradient)" stroke="#495057" stroke-width="2" filter="url(#shadow)"/>
+    <text x="490" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Soporte Pro</text>
+    <text x="490" y="58" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="white">SLAs, 24x7, VPC Peering</text>
+    <text x="490" y="70" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="white">Control avanzado acceso</text>
+  </g>
+  
+  <!-- Líneas conectoras a servicios -->
+  <path d="M 150 300 C 150 320 240 340 240 350" stroke="#6c757d" stroke-width="2" stroke-dasharray="5,3" fill="none"/>
+  <path d="M 310 300 C 310 320 380 340 380 350" stroke="#6c757d" stroke-width="2" stroke-dasharray="5,3" fill="none"/>
+  <path d="M 470 300 C 470 320 530 340 530 350" stroke="#6c757d" stroke-width="2" stroke-dasharray="5,3" fill="none"/>
+  <path d="M 630 300 C 630 320 670 340 670 350" stroke="#6c757d" stroke-width="2" stroke-dasharray="5,3" fill="none"/>
+  
+  <!-- Atlas Cluster Container -->
+  <rect x="100" y="460" width="800" height="100" rx="15" ry="15" fill="#f5f5f5" stroke="url(#mongo-green)" stroke-width="3" filter="url(#shadow)"/>
+  
+  <!-- Atlas Title -->
+  <text x="500" y="490" font-family="Arial, sans-serif" font-size="22" font-weight="bold" text-anchor="middle" fill="url(#mongo-green)">
+    MongoDB Atlas M40 - Ciencuadras Optimizado
+  </text>
+  <text x="500" y="510" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">
+    3 Nodos M40 Transaccional + 1 Nodo M40 Analytics + 2 Nodos S40 Search
+  </text>
+  <text x="500" y="530" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#888">
+    Implementado: Arquitectura Escalable + Analytics + Search Nativo 2025
+  </text>
+  <text x="500" y="545" font-family="Arial, sans-serif" font-size="11" font-weight="bold" text-anchor="middle" fill="url(#mongo-green)">
+    Total: 1.04 TB Storage • 18 vCPUs • 80 GB RAM
+  </text>
+  
+  <!-- CAPA INFERIOR: Información y Beneficios (centrados) -->
+  <g transform="translate(100, 655)">
+    <!-- Leyenda -->
+    <rect x="0" y="0" width="200" height="160" rx="5" ry="5" fill="white" stroke="#ccc" stroke-width="1" opacity="0.9"/>
+    <text x="100" y="20" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Leyenda</text>
+    
+    <circle cx="20" cy="40" r="6" fill="#2ecc71"/>
+    <text x="35" y="44" font-family="Arial, sans-serif" font-size="11" text-anchor="start" fill="#333">Nodo Primario</text>
+    
+    <circle cx="20" cy="60" r="6" fill="#3498db"/>
+    <text x="35" y="64" font-family="Arial, sans-serif" font-size="11" text-anchor="start" fill="#333">Nodo Secundario</text>
+    
+    <circle cx="20" cy="80" r="6" fill="#ab47bc"/>
+    <text x="35" y="84" font-family="Arial, sans-serif" font-size="11" text-anchor="start" fill="#333">Nodo Analytics</text>
+    
+    <rect x="17" y="95" width="6" height="6" fill="url(#primary-gradient)"/>
+    <text x="35" y="100" font-family="Arial, sans-serif" font-size="11" text-anchor="start" fill="#333">M40 Transaccional</text>
+    
+    <rect x="17" y="115" width="6" height="6" fill="url(#search-gradient)"/>
+    <text x="35" y="120" font-family="Arial, sans-serif" font-size="11" text-anchor="start" fill="#333">S40 Atlas Search</text>
+  </g>
+  
+  <!-- Especificaciones del clúster -->
+  <g transform="translate(320, 655)">
+    <rect x="0" y="0" width="240" height="160" rx="5" ry="5" fill="white" stroke="#ccc" stroke-width="1" opacity="0.9"/>
+    <text x="120" y="20" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Especificaciones</text>
+    
+    <text x="10" y="40" font-family="Arial, sans-serif" font-size="11" fill="#333">Cluster Transaccional:</text>
+    <text x="15" y="53" font-family="Arial, sans-serif" font-size="10" fill="#666">• 3 nodos M40 (1 Primary + 2 Secondary)</text>
+    <text x="15" y="66" font-family="Arial, sans-serif" font-size="10" fill="#666">• 4 vCPUs, 16 GB RAM, 300 GB SSD c/u</text>
+    
+    <text x="10" y="83" font-family="Arial, sans-serif" font-size="11" fill="#333">Analytics + Search:</text>
+    <text x="15" y="96" font-family="Arial, sans-serif" font-size="10" fill="#666">• 1 nodo M30 Analytics (2 vCPUs, 8GB)</text>
+    <text x="15" y="109" font-family="Arial, sans-serif" font-size="10" fill="#666">• 2 nodos S40 Search (2 vCPUs, 16GB c/u)</text>
+    <text x="15" y="122" font-family="Arial, sans-serif" font-size="10" fill="#666">• Total: 18 vCPUs, 80GB RAM, 1.04TB</text>
+  </g>
+  
+  <!-- Beneficios Optimización -->
+  <g transform="translate(580, 655)">
+    <rect x="0" y="0" width="300" height="160" rx="5" ry="5" fill="white" stroke="#ccc" stroke-width="1" opacity="0.9"/>
+    <text x="150" y="20" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Beneficios Optimización</text>
+    
+    <text x="10" y="35" font-family="Arial, sans-serif" font-size="10" fill="#333">• Reemplazo directo de ElasticSearch</text>
+    <text x="10" y="47" font-family="Arial, sans-serif" font-size="10" fill="#333">• Nodo dedicado para Analytics/BI</text>
+    <text x="10" y="59" font-family="Arial, sans-serif" font-size="10" fill="#333">• Búsquedas especializadas (S40)</text>
+    <text x="10" y="71" font-family="Arial, sans-serif" font-size="10" fill="#333">• Sin sincronización externa</text>
+    <text x="10" y="83" font-family="Arial, sans-serif" font-size="10" fill="#333">• Autocompletar inmuebles/proyectos</text>
+    <text x="10" y="95" font-family="Arial, sans-serif" font-size="10" fill="#333">• Búsquedas geográficas nativas</text>
+    <text x="10" y="107" font-family="Arial, sans-serif" font-size="10" fill="#333">• Costo optimizado vs AWS actual</text>
+    <text x="10" y="119" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#13AA52">• Es posible reemplazar Pinecone con vector Search</text>
+     <text x="15" y="131" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#13AA52">   utilizando los nodos de Search sin costo adicional</text>
+    <text x="10" y="143" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#13AA52">• Es posible reemplazar Firebase (entendido el caso de uso)</text>
+  </g>
+</svg>
