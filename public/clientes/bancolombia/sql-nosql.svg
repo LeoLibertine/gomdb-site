@@ -1,0 +1,283 @@
+<svg viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradientes -->
+    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00684A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#004D40;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="darkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#001E2B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00131A;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Glow effect -->
+    <filter id="greenGlow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Sombras -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="0" dy="4" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.3"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Marcador de flecha -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#00684A" />
+    </marker>
+    
+    <marker id="arrowheadWhite" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666" />
+    </marker>
+  </defs>
+
+  <!-- Fondo claro -->
+  <rect width="1400" height="900" fill="#f8f9fa"/>
+
+  <!-- Título -->
+  <text x="700" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="700" fill="#001E2B">
+     SQL vs NoSQL
+  </text>
+
+  <!-- Headers de columnas -->
+  <text x="950" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#666">
+    Factores de Decisión
+  </text>
+
+  <!-- Nodo inicial -->
+  <g transform="translate(50, 160)">
+    <rect x="0" y="0" width="180" height="60" rx="8" fill="white" stroke="#e9ecef" stroke-width="2" filter="url(#shadow)"/>
+    <text x="90" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#666">Para cada</text>
+    <text x="90" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#666">aplicación</text>
+  </g>
+
+  <!-- Flecha inicial -->
+  <line x1="140" y1="220" x2="140" y2="290" stroke="#00684A" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Estilo de Aplicación -->
+  <g transform="translate(50, 290)">
+    <rect x="0" y="0" width="180" height="60" rx="8" fill="url(#greenGradient)" filter="url(#shadow)"/>
+    <text x="90" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="600" fill="white">Estilo de Aplicación</text>
+  </g>
+
+  <!-- Flechas desde Estilo de Aplicación -->
+  <line x1="230" y1="320" x2="280" y2="190" stroke="#666" stroke-width="2" marker-end="url(#arrowheadWhite)"/>
+  <line x1="230" y1="320" x2="280" y2="380" stroke="#666" stroke-width="2" marker-end="url(#arrowheadWhite)"/>
+  <line x1="230" y1="320" x2="280" y2="570" stroke="#666" stroke-width="2" marker-end="url(#arrowheadWhite)"/>
+
+  <!-- Tipos de aplicación -->
+  <!-- Batch/SQL Reporting -->
+  <g transform="translate(280, 150)">
+    <rect x="0" y="0" width="200" height="80" rx="8" fill="white" stroke="#e9ecef" stroke-width="2" filter="url(#shadow)"/>
+    <text x="100" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#001E2B">Generar Informes y</text>
+    <text x="100" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#001E2B">Análisis Historicos</text>
+    <text x="100" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#001E2B">Batch/Reporting</text>
+  </g>
+
+  <!-- Transactional/OLTP -->
+  <g transform="translate(280, 340)">
+    <rect x="0" y="0" width="200" height="80" rx="8" fill="white" stroke="#e9ecef" stroke-width="2" filter="url(#shadow)"/>
+    <text x="100" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#001E2B">Operaciones Diarias y</text>
+    <text x="100" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#001E2B">Transacciones</text>
+    <text x="100" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#001E2B">Transaccional / OLTP</text>
+  </g>
+
+  <!-- Low-Latency Analytics -->
+  <g transform="translate(280, 530)">
+    <rect x="0" y="0" width="200" height="80" rx="8" fill="white" stroke="#e9ecef" stroke-width="2" filter="url(#shadow)"/>
+    <text x="100" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#001E2B">Análisis Muy Rápido</text>
+    <text x="100" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#001E2B">y Datos en Tiempo Real</text>
+    <text x="100" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#001E2B">Streaming</text>
+  </g>
+
+  <!-- Flechas a decisiones -->
+  <line x1="480" y1="190" x2="580" y2="170" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  <line x1="480" y1="190" x2="580" y2="260" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  
+  <line x1="480" y1="380" x2="580" y2="350" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  <line x1="480" y1="380" x2="580" y2="440" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  <line x1="480" y1="380" x2="580" y2="530" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  
+  <line x1="480" y1="570" x2="580" y2="620" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+
+  <!-- Decisiones -->
+  <!-- Small/Limited Scope -->
+  <g transform="translate(580, 140)">
+    <rect x="0" y="0" width="200" height="60" rx="8" fill="white" stroke="#4285F4" stroke-width="2" filter="url(#shadow)"/>
+    <text x="100" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#001E2B">Pocos datos o Proyecto</text>
+     <text x="100" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#001E2B">pequeño/mediano (Pocos GBs)</text>
+  </g>
+
+  <!-- Large DW -->
+  <g transform="translate(580, 230)">
+    <rect x="0" y="0" width="200" height="60" rx="8" fill="white" stroke="#4285F4" stroke-width="2" filter="url(#shadow)"/>
+    <text x="100" y="15" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">Muchos datos, gran almacén</text>
+    <text x="100" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">de información (Data Warehouse)</text>
+    <text x="100" y="55" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">(Múltiples Terabytes)</text>
+  </g>
+
+  <!-- Tactical -->
+  <g transform="translate(580, 320)">
+    <rect x="0" y="0" width="200" height="60" rx="8" fill="white" stroke="#4285F4" stroke-width="2" filter="url(#shadow)"/>
+    <text x="100" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#001E2B">Necesidades "Tácticas"</text>
+    <text x="100" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#001E2B">Poca complejidad</text>
+  </g>
+
+  <!-- Unsure -->
+  <g transform="translate(580, 410)">
+    <rect x="0" y="0" width="200" height="60" rx="8" fill="white" stroke="#FF9800" stroke-width="2" stroke-dasharray="5,5" filter="url(#shadow)"/>
+    <text x="100" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#FF9800">Estoy "Indeciso" o</text>
+     <text x="100" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#FF9800">tengo necesidades mixtas:</text>
+  </g>
+
+  <!-- Strategic -->
+  <g transform="translate(580, 500)">
+    <rect x="0" y="0" width="200" height="60" rx="8" fill="white" stroke="#00684A"  stroke-width="2" filter="url(#shadow)"/>
+    <text x="100" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#001E2B">Tengo Necesidades Estratégicas</text>
+    <text x="100" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#001E2B">o avanzadas para el Banco:</text>
+  </g>
+
+  <!-- Complex Multi-Component -->
+  <g transform="translate(580, 590)">
+    <rect x="0" y="0" width="200" height="70" rx="8" fill="white" stroke="#00684A"  stroke-width="2" filter="url(#shadow)"/>
+    <text x="100" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#001E2B">Arquitectura compleja con</text>
+    <text x="100" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#001E2B">muchas partes interactuando:</text>
+  </g>
+
+  <!-- Factores de decisión -->
+  <!-- Para Small/Limited -->
+  <g transform="translate(820, 130)">
+    <rect x="0" y="0" width="280" height="80" rx="8" fill="#f8f9fa" stroke="#4285F4" stroke-width="2" filter="url(#shadow)"/>
+    <text x="10" y="15" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• SQL suele ser más económico en proyectos</text>
+     <text x="10" y="35" font-family="Arial, sans-serif" font-size="12" fill="#001E2B"> pequeños especialmente con open source</text>
+     <text x="10" y="55" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Ideal para modelos normalizados </text>
+     <text x="10" y="75" font-family="Arial, sans-serif" font-size="12" fill="#001E2B"> y consultas precisas</text>
+     
+  </g>
+
+  <!-- Para Large DW -->
+  <g transform="translate(820, 220)">
+    <rect x="0" y="0" width="280" height="80" rx="8" fill="#f8f9fa" stroke="#4285F4" stroke-width="2" filter="url(#shadow)"/>
+    <text x="10" y="15" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Soporte para Múltiples Usuarios Activos</text>
+    <text x="10" y="35" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Escalabilidad para Consultas </text>
+    <text x="10" y="55" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">  Analíticas Concurrentes</text>
+    <text x="10" y="75" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Cómputo y Almacenamiento Separados</text>
+  </g>
+
+  <!-- Para Tactical -->
+  <g transform="translate(820, 310)">
+    <rect x="0" y="0" width="280" height="100" rx="8" fill="#f8f9fa" stroke="#4285F4" stroke-width="2" filter="url(#shadow)"/>
+    <text x="10" y="25" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Datos que cambian poco.</text>
+    <text x="10" y="45" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Alcance Limitado, Reglas de negocio claras</text>
+    <text x="10" y="65" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Formas nornales Requeridas / Integridad Ref.</text>
+    <text x="10" y="85" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Datos bien estructurados</text>
+  </g>
+
+  <!-- Para Unsure -->
+  <g transform="translate(820, 420)">
+    <rect x="0" y="0" width="280" height="80" rx="8" fill="#f8f9fa" stroke="#FF9800" stroke-width="2" filter="url(#shadow)"/>
+    <text x="10" y="12" font-family="Arial, sans-serif" font-size="11" fill="#001E2B">• Datos muy cambiantes, escalabilidad masiva</text>
+    <text x="10" y="32" font-family="Arial, sans-serif" font-size="11" fill="#001E2B">  (horizontal), alta disponibilidad crítica: <tspan font-weight="bold" fill="#00684A"> NoSQL </tspan></text>
+    <text x="10" y="52" font-family="Arial, sans-serif" font-size="11" fill="#001E2B">• Datos estables, escalabilidad moderada (vertical)</text>
+    <text x="10" y="72" font-family="Arial, sans-serif" font-size="11" fill="#001E2B">  disponibilidad estándar aceptable: <tspan font-weight="bold" fill="#4285F4">SQL </tspan></text>
+  </g>
+
+  <!-- Para Strategic -->
+  <g transform="translate(820, 510)">
+    <rect x="0" y="0" width="280" height="120" rx="8" fill="#f8f9fa" stroke="#00684A" stroke-width="2" filter="url(#shadow)"/>
+    <text x="10" y="25" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Esquemas flexibles (cambios rápidos).</text>
+    <text x="10" y="45" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Datos no estructurados o variables.</text>
+    <text x="10" y="65" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Crecimiento horizontal y global sin límites</text>
+    <text x="10" y="85" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Multi-Región / Sharding / Replicación.</text>
+    <text x="10" y="105" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Toleracia a fallos nativa</text>
+  </g>
+
+  <!-- Para Complex -->
+  <g transform="translate(820, 640)">
+    <rect x="0" y="0" width="280" height="100" rx="8" fill="#f8f9fa" stroke="#00684A" stroke-width="2" filter="url(#shadow)"/>
+    <text x="10" y="25" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Distribución global con baja latencia</text>
+    <text x="10" y="45" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Seguridad robusta para datos sensibles</text>
+    <text x="10" y="65" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Alta eficiencia en lecturas/escrituras simultáneas</text>
+    <text x="10" y="85" font-family="Arial, sans-serif" font-size="12" fill="#001E2B">• Buena integración con streaming y Big Data</text>
+  </g>
+
+  <!-- Opciones de plataforma -->
+  <!-- SQL Options -->
+  <g transform="translate(1120, 130)">
+    <rect x="0" y="0" width="250" height="80" rx="8" fill="#4285F4" stroke="#4285F4" stroke-width="2" filter="url(#shadow)"/>
+    <text x="10" y="25" font-family="Arial, sans-serif" font-size="12" fill="white">• Postgres / MySQL / etc...</text>
+    <text x="10" y="45" font-family="Arial, sans-serif" font-size="12" fill="white">• SQL Server</text>
+  </g>
+
+  <g transform="translate(1120, 220)">
+    <rect x="0" y="0" width="250" height="80" rx="8" fill="#4285F4" stroke="#4285F4" stroke-width="2" filter="url(#shadow)"/>
+    <text x="10" y="25" font-family="Arial, sans-serif" font-size="12" fill="white">• Snowflake / DataBricks</text>
+    <text x="10" y="45" font-family="Arial, sans-serif" font-size="12" fill="white">• DW Nativo de Cloud</text>
+  </g>
+
+  <g transform="translate(1120, 310)">
+    <rect x="0" y="0" width="250" height="80" rx="8" fill="#4285F4" stroke="#4285F4" stroke-width="2" filter="url(#shadow)"/>
+    <text x="10" y="25" font-family="Arial, sans-serif" font-size="12" fill="white">• Permanecer en RDBMS</text>
+    <text x="10" y="45" font-family="Arial, sans-serif" font-size="12" fill="white">• Migrar a plataforma de bajo costo</text>
+  </g>
+
+  <!-- NoSQL Options -->
+  <g transform="translate(1120, 420)">
+    <rect x="0" y="0" width="250" height="60" rx="8" fill="#FF9800" stroke="#FF9800" stroke-width="2" filter="url(#shadow)"/>
+    <text x="125" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="600" fill="white">• Posible Caso de Uso NoSQL</text>
+  </g>
+
+  <g transform="translate(1120, 510)">
+    <rect x="0" y="0" width="250" height="60" rx="8" fill="#00684A" stroke="#00684A" stroke-width="2" filter="url(#shadow)"/>
+    <text x="125" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="600" fill="white">• Caso de Uso NoSQL Fuerte</text>
+  </g>
+
+  <g transform="translate(1120, 640)">
+    <rect x="0" y="0" width="250" height="60" rx="8" fill="url(#greenGradient)" filter="url(#shadow)"/>
+    <text x="125" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="600" fill="white">• Típicamente Ideal para NoSQL</text>
+  </g>
+
+  <!-- Conectores -->
+  <line x1="780" y1="170" x2="820" y2="170" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  <line x1="780" y1="260" x2="820" y2="260" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  <line x1="780" y1="350" x2="820" y2="350" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  <line x1="780" y1="460" x2="820" y2="460" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  <line x1="780" y1="555" x2="820" y2="555" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  <line x1="780" y1="650" x2="820" y2="650" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+
+  <line x1="1100" y1="170" x2="1120" y2="170" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  <line x1="1100" y1="260" x2="1120" y2="260" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  <line x1="1100" y1="360" x2="1120" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  <line x1="1100" y1="450" x2="1120" y2="450" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  <line x1="1100" y1="540" x2="1120" y2="540" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+  <line x1="1100" y1="670" x2="1120" y2="670" stroke="#666" stroke-width="1.5" marker-end="url(#arrowheadWhite)"/>
+
+  <!-- Leyenda -->
+  <g transform="translate(50, 750)">
+    <rect x="0" y="0" width="30" height="20" rx="4" fill="white" stroke="#4285F4" stroke-width="2"/>
+    <text x="40" y="15" font-family="Arial, sans-serif" font-size="14" fill="#666">SQL / Relacional</text>
+    
+    <rect x="200" y="0" width="30" height="20" rx="4" fill="white" stroke="#00684A" stroke-width="2"/>
+    <text x="240" y="15" font-family="Arial, sans-serif" font-size="14" fill="#666">NoSQL</text>
+    
+    <rect x="340" y="0" width="30" height="20" rx="4" fill="white" stroke="#FF9800" stroke-width="2" stroke-dasharray="3,3"/>
+    <text x="380" y="15" font-family="Arial, sans-serif" font-size="14" fill="#666">Mixto / Evaluar caso por caso</text>
+  </g>
+
+  <!-- Nota al pie -->
+  <text x="700" y="850" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">
+    Este árbol de decisión es una guía general. Cada proyecto debe evaluarse individualmente según sus requisitos específicos.
+  </text>
+
+</svg>
