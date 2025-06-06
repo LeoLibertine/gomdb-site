@@ -1,0 +1,186 @@
+<svg viewBox="0 0 1600 1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradientes -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0f4f8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="mongoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4db33d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3d8b2f;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="dynamoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff9900;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ec7211;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9b59b6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8e44ad;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Sombras -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="0" dy="4" result="offsetblur"/>
+      <feFlood flood-color="#000000" flood-opacity="0.1"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Fondo con gradiente -->
+  <rect width="1600" height="1000" fill="url(#bgGradient)"/>
+  
+  <!-- Título Principal -->
+  <text x="800" y="80" font-family="Arial, sans-serif" font-size="56" font-weight="bold" text-anchor="middle" fill="#1a202c">
+    MongoDB | DynamoDB
+  </text>
+  <text x="800" y="150" font-family="Arial, sans-serif" font-size="48" font-weight="300" text-anchor="middle" fill="#2d3748">
+    Decision Tree
+  </text>
+  
+  <!-- Línea decorativa -->
+  <line x1="200" y1="160" x2="1400" y2="160" stroke="#cbd5e0" stroke-width="2"/>
+  
+  <!-- Inicio del flujo -->
+  <g transform="translate(100, 350)">
+    <!-- Application Style -->
+    <rect x="0" y="60" width="220" height="80" fill="#2d3748" rx="40" filter="url(#shadow)"/>
+    <text x="110" y="110" font-family="Arial, sans-serif" font-size="20" font-weight="500" text-anchor="middle" fill="white">
+      Application Style
+    </text>
+    
+    <!-- Flecha principal -->
+    <path d="M 220 100 L 380 100" stroke="#4a5568" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  </g>
+  
+  <!-- Marker para flechas -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#4a5568"/>
+    </marker>
+  </defs>
+  
+  <!-- Transactional / OLTP -->
+  <g transform="translate(480, 200)">
+    <rect x="-70" y="60" width="240" height="80" fill="url(#purpleGradient)" rx="20" filter="url(#shadow)"/>
+    <text x="50" y="110" font-family="Arial, sans-serif" font-size="22" font-weight="500" text-anchor="middle" fill="white">
+      Transactional / OLTP
+    </text>
+    
+    <!-- Conexión a Strategic -->
+    <path d="M 170 100 Q 320 90 320 180 L 320 230" stroke="#4a5568" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  </g>
+  
+  <!-- Analytical / OLAP -->
+  <g transform="translate(480, 350)">
+    <rect x="-70" y="60" width="240" height="80" fill="#e2e8f0" rx="20" filter="url(#shadow)"/>
+    <text x="50" y="110" font-family="Arial, sans-serif" font-size="22" font-weight="500" text-anchor="middle" fill="#2d3748">
+      Analytical / OLAP
+    </text>
+    
+    <!-- Conexión a Strategic -->
+    <path d="M 170 100 Q 320 100 320 80 L 320 100" stroke="#4a5568" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  </g>
+  
+  <!-- Real-time / Streaming -->
+  <g transform="translate(480, 500)">
+    <rect x="-70" y="60" width="240" height="80" fill="#fed7d7" rx="20" filter="url(#shadow)"/>
+    <text x="50" y="110" font-family="Arial, sans-serif" font-size="22" font-weight="500" text-anchor="middle" fill="#742a2a">
+      Real-time / Streaming
+    </text>
+    
+    <!-- Conexión a Strategic -->
+    <path d="M 170 100 Q 320 120 320 -40 L 300 -60" stroke="#4a5568" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  </g>
+  
+  <!-- Strategic Box Central -->
+  <g transform="translate(800, 350)">
+    <rect x="-100" y="40" width="200" height="120" fill="#48bb78" rx="20" filter="url(#shadow)"/>
+    <text x="0" y="90" font-family="Arial, sans-serif" font-size="28" font-weight="600" text-anchor="middle" fill="white">
+      Strategic
+    </text>
+    <text x="0" y="120" font-family="Arial, sans-serif" font-size="18" font-weight="400" text-anchor="middle" fill="white" opacity="0.9">
+      Decision Point
+    </text>
+  </g>
+  
+  <!-- Factores de Decisión -->
+  <g transform="translate(1050, 180)">
+    <text x="120" y="20" font-family="Arial, sans-serif" font-size="24" font-weight="600" fill="#2d3748">
+      Decision Factors
+    </text>
+    
+    <!-- DynamoDB Factors -->
+    <g transform="translate(0, 40)">
+      <rect x="0" y="0" width="450" height="140" fill="white" rx="16" filter="url(#shadow)"/>
+      <rect x="0" y="0" width="450" height="40" fill="url(#dynamoGradient)" rx="16 16 0 0"/>
+      <text x="225" y="26" font-family="Arial, sans-serif" font-size="20" font-weight="600" text-anchor="middle" fill="white">
+        ⚡ Ideal for DynamoDB
+      </text>
+      <text x="20" y="70" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• Instant Elastic Scale</text>
+      <text x="20" y="95" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• Rapid / Ease of Development</text>
+      <text x="20" y="120" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• Serverless Architecture</text>
+    </g>
+    
+    <!-- Either Platform Factors -->
+    <g transform="translate(0, 200)">
+      <rect x="0" y="0" width="450" height="140" fill="white" rx="16" filter="url(#shadow)"/>
+      <rect x="0" y="0" width="450" height="40" fill="#718096" rx="16 16 0 0"/>
+      <text x="225" y="26" font-family="Arial, sans-serif" font-size="20" font-weight="600" text-anchor="middle" fill="white">
+        ⚖️ Ideal for Either
+      </text>
+      <text x="20" y="70" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• Simple K/V Lookups</text>
+      <text x="20" y="95" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• Small Document Sizes</text>
+      <text x="20" y="120" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• Single Region / Multi AZ</text>
+    </g>
+    
+    <!-- MongoDB Factors -->
+    <g transform="translate(0, 360)">
+      <rect x="0" y="0" width="450" height="320" fill="white" rx="16" filter="url(#shadow)"/>
+      <rect x="0" y="0" width="450" height="40" fill="url(#mongoGradient)" rx="16 16 0 0"/>
+      <text x="225" y="26" font-family="Arial, sans-serif" font-size="20" font-weight="600" text-anchor="middle" fill="white">
+        🍃 Ideal for MongoDB
+      </text>
+      <text x="20" y="70" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• Rich Queries</text>
+      <text x="20" y="95" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• Complex Aggregations</text>
+      <text x="20" y="120" font-family="Arial, sans-serif" font-size="17" fill="#4a5568" font-style="italic">• Larger Documents *</text>
+      <text x="20" y="145" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• Large Number of Ops</text>
+      <text x="20" y="170" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• ACID &amp; Strong Consistency *</text>
+      <text x="20" y="195" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• Robust Secondary Indexes</text>
+      <text x="20" y="220" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• Multi-Collection Data Model</text>
+      <text x="20" y="245" font-family="Arial, sans-serif" font-size="17" fill="#4a5568" font-style="italic">• Integrated Data Services *</text>
+      <text x="20" y="270" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• Workload Isolation</text>
+      <text x="20" y="295" font-family="Arial, sans-serif" font-size="17" fill="#4a5568">• Schema Governance</text>
+    </g>
+  </g>
+  
+  <!-- Conexiones desde Strategic a Decision Factors -->
+  <g>
+    <path d="M 900 440 Q 975 300 1050 300" stroke="#4a5568" stroke-width="3" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+    <path d="M 900 440 Q 975 450 1050 450" stroke="#4a5568" stroke-width="3" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+    <path d="M 900 440 Q 975 615 1050 620" stroke="#4a5568" stroke-width="3" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+  </g>
+  
+
+  
+  <!-- Decorative elements -->
+  <circle cx="100" cy="100" r="3" fill="#4db33d" opacity="0.3"/>
+  <circle cx="120" cy="120" r="5" fill="#ff9900" opacity="0.3"/>
+  <circle cx="1500" cy="100" r="4" fill="#9b59b6" opacity="0.3"/>
+  <circle cx="1480" cy="130" r="3" fill="#48bb78" opacity="0.3"/>
+</svg>
