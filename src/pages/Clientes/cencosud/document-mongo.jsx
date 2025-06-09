@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/gomdb-global.css';  // Importa tu archivo CSS aquí
+import '../../../styles/gomdb-global.css';
 import { 
   Database, 
   CheckCircle, 
@@ -614,6 +614,17 @@ const CencosudDecisionMatrix = () => {
               Puntuación General
             </h2>
             
+            <p className="text-center mb-8" style={{ 
+              color: '#B8C4CE', 
+              fontSize: '1.125rem',
+              maxWidth: '800px',
+              margin: '0 auto 48px'
+            }}>
+              Esta puntuación representa cuántos criterios favorecen a cada tecnología basándose en las 
+              necesidades más comunes de arquitectura empresarial. Un mayor puntaje indica más ventajas 
+              en escenarios típicos de uso.
+            </p>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {/* MongoDB Score */}
               <div className="text-center">
@@ -642,6 +653,7 @@ const CencosudDecisionMatrix = () => {
                     <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#00ED64' }}>
                       {animatedScore.mongodb}
                     </span>
+                    <span style={{ fontSize: '0.75rem', color: '#B8C4CE' }}>de 8</span>
                   </div>
                 </div>
                 <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '8px' }}>MongoDB</h3>
@@ -674,6 +686,7 @@ const CencosudDecisionMatrix = () => {
                     <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#FF9900' }}>
                       {animatedScore.documentdb}
                     </span>
+                    <span style={{ fontSize: '0.75rem', color: '#B8C4CE' }}>de 8</span>
                   </div>
                 </div>
                 <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '8px' }}>DocumentDB</h3>
