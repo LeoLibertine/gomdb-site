@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proceso de Despliegue de MongoDB en Bancolombia</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a252f;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .chart-container {
+            max-width: 90%;
+            width: 900px;
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        canvas {
+            max-height: 300px;
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.3em;
+            }
+            .chart-container {
+                width: 100%;
+                padding: 15px;
+            }
+            canvas {
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Proceso Actual de Despliegue de MongoDB en Bancolombia</h1>
+    <div class="chart-container">
+        <canvas id="deployProcessChart"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script>
+        // Verificar si Chart.js se cargó correctamente
+        if (typeof Chart === 'undefined') {
+            console.error('Error: Chart.js no se cargó correctamente. Verifica la conexión al CDN o incluye una versión local.');
+            document.getElementById('deployProcessChart').style.display = 'none';
+            const errorMessage = document.createElement('p');
+            errorMessage.style.color = 'red';
+            errorMessage.textContent = 'Error al cargar el gráfico. Por favor, verifica tu conexión a internet.';
+            document.querySelector('.chart-container').appendChild(errorMessage);
+        } else {
+            const ctx = document.getElementById('deployProcessChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [
+                        'Lineamientos DB',
+                        'Creación Templates',
+                        'Despliegue CI/CD',
+                        'Config. Manuales',
+                        'Nuevas Herramientas'
+                    ],
+                    datasets: [{
+                        label: 'Flujo de Despliegue',
+                        data: [1, 1, 1, 1, 1], // Línea recta
+                        borderColor: '#007bff',
+                        backgroundColor: [
+                            '#28a745', // Verde para Lineamientos
+                            '#28a745', // Verde para Templates
+                            '#28a745', // Verde para CI/CD
+                            '#fd7e14', // Naranja para Manuales
+                            '#007bff'  // Azul para Nuevas Herramientas
+                        ],
+                        pointBackgroundColor: [
+                            '#28a745',
+                            '#28a745',
+                            '#28a745',
+                            '#fd7e14',
+                            '#007bff'
+                        ],
+                        pointRadius: 12,
+                        pointHoverRadius: 15,
+                        borderWidth: 4,
+                        fill: false,
+                        tension: 0 // Línea recta
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#1a252f',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            callbacks: {
+                                label: function(context) {
+                                    const labels = [
+                                        'Equipo de DB define clústeres, nombramiento y encriptación.',
+                                        'Templates en CloudFormation para IaC.',
+                                        'Despliegue automatizado vía Azure Pipelines.',
+                                        'Configuraciones manuales en consola Atlas/CLI debido a limitaciones.',
+                                        'Exploración de OpenTofu, Plexo, Backstage para mayor automatización.'
+                                    ];
+                                    return labels[context.dataIndex];
+                                }
+                            }
+                        },
+                        // Añadir etiquetas visibles directamente en el gráfico
+                        datalabels: {
+                            display: true,
+                            color: '#1a252f',
+                            font: {
+                                weight: 'bold',
+                                size: 12
+                            },
+                            align: 'top',
+                            offset: 10,
+                            formatter: (value, context) => context.chart.data.labels[context.dataIndex]
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Etapas del Proceso',
+                                color: '#1a252f',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            ticks: {
+                                color: '#1a252f',
+                                font: {
+                                    size: 12
+                                },
+                                maxRotation: 45,
+                                minRotation: 45
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            display: false // Ocultamos el eje Y
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
+                    }
+                },
+                plugins: [{
+                    id: 'customArrows',
+                    afterDraw: (chart) => {
+                        const ctx = chart.ctx;
+                        const xAxis = chart.scales.x;
+                        const points = chart.getDatasetMeta(0).data;
+
+                        points.forEach((point, index) => {
+                            if (index < points.length - 1) {
+                                const x1 = point.x;
+                                const x2 = points[index + 1].x;
+                                const y = point.y;
+
+                                ctx.save();
+                                ctx.strokeStyle = '#007bff';
+                                ctx.lineWidth = 4;
+                                ctx.beginPath();
+                                ctx.moveTo(x1 + 15, y);
+                                ctx.lineTo(x2 - 15, y);
+                                ctx.stroke();
+
+                                // Dibujar flecha
+                                ctx.fillStyle = '#007bff';
+                                ctx.beginPath();
+                                ctx.moveTo(x2 - 15, y - 5);
+                                ctx.lineTo(x2 - 5, y);
+                                ctx.lineTo(x2 - 15, y + 5);
+                                ctx.closePath();
+                                ctx.fill();
+                                ctx.restore();
+                            }
+                        });
+                    }
+                }]
+            });
+        }
+    </script>
+</body>
+</html>
