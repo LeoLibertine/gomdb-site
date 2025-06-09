@@ -1,8 +1,9 @@
 {
-    "rewrites": [
+    "routes": [
+      { "handle": "filesystem" },
       {
-        "source": "/clientes/cencosud/document-mongo/:path*",
-        "destination": "/clientes/cencosud/document-mongo/index.html"
+        "src": "/clientes/cencosud/document-mongo(?:/.*)?$",
+        "dest": "/index.html"
       }
     ]
   }
