@@ -1,17 +1,8 @@
 {
-    "version": 2,
-    "builds": [
+    "rewrites": [
       {
-        "src": "package.json",
-        "use": "@vercel/static-build",
-        "config": { "distDir": "dist" }
-      }
-    ],
-    "routes": [
-      { "handle": "filesystem" },
-      {
-        "src": "/clientes/cencosud/document-mongo(?:/.*)?",
-        "dest": "/index.html"
+        "source": "/clientes/cencosud/document-mongo/:path*",
+        "destination": "/clientes/cencosud/document-mongo/index.html"
       }
     ]
   }
