@@ -28,6 +28,24 @@ const CencosudDecisionMatrix = () => {
   const [selectedCriteria, setSelectedCriteria] = useState(null);
   const [animatedScore, setAnimatedScore] = useState({ mongodb: 0, documentdb: 0 });
   
+  // Datos para el diagrama de radar
+  const radarData = [
+    { label: 'Compatibilidad', mongodb: 5, documentdb: 2 },
+    { label: 'Agregaciones', mongodb: 5, documentdb: 2 },
+    { label: 'Transacciones', mongodb: 5, documentdb: 1 },
+    { label: 'Rendimiento', mongodb: 5, documentdb: 3 },
+    { label: 'Gestión', mongodb: 2, documentdb: 5 },
+    { label: 'Costos', mongodb: 3, documentdb: 4 },
+    { label: 'Integración AWS', mongodb: 2, documentdb: 5 },
+    { label: 'Escalabilidad', mongodb: 3, documentdb: 5 }
+  ];
+  
+  // Calcular puntuación promedio
+  const calculateAverageScore = (db) => {
+    const sum = radarData.reduce((acc, item) => acc + item[db], 0);
+    return sum / radarData.length;
+  };
+  
   // Datos de comparación estructurados
   const comparisonData = [
     {
@@ -158,12 +176,6 @@ const CencosudDecisionMatrix = () => {
       case 'media': return '#00ED64';
       default: return '#00ED64';
     }
-  };
-
-  const getRecommendationStyle = (recommendation) => {
-    return recommendation === 'MongoDB' 
-      ? { background: 'linear-gradient(135deg, #00ED64, #00D757)', color: '#001E2B' }
-      : { background: 'linear-gradient(135deg, #FF9900, #FF6600)', color: '#FFFFFF' };
   };
 
   // Componente del Cuestionario
@@ -602,7 +614,7 @@ const CencosudDecisionMatrix = () => {
         </div>
       </section>
 
-      {/* Puntuación General */}
+      {/* Diagrama de Radar - Comparación Visual */}
       <section className="section" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
         <div className="container">
           <div className="card card-gradient" style={{
@@ -611,7 +623,7 @@ const CencosudDecisionMatrix = () => {
             marginBottom: '48px'
           }}>
             <h2 className="text-center mb-6" style={{ fontSize: '2rem', fontWeight: '700' }}>
-              Puntuación General
+              Análisis Comparativo Multidimensional
             </h2>
             
             <p className="text-center mb-8" style={{ 
@@ -620,77 +632,197 @@ const CencosudDecisionMatrix = () => {
               maxWidth: '800px',
               margin: '0 auto 48px'
             }}>
-              Esta puntuación representa cuántos criterios favorecen a cada tecnología basándose en las 
-              necesidades más comunes de arquitectura empresarial. Un mayor puntaje indica más ventajas 
-              en escenarios típicos de uso.
+              Este diagrama de radar muestra las fortalezas y debilidades de cada tecnología en 8 dimensiones clave.
+              Un área más grande indica mejor desempeño general en los criterios evaluados.
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* MongoDB Score */}
-              <div className="text-center">
-                <div style={{
-                  width: '160px',
-                  height: '160px',
-                  margin: '0 auto 24px',
-                  background: 'conic-gradient(#00ED64 0deg, #00ED64 ' + (animatedScore.mongodb / 8 * 360) + 'deg, #0D2A3D ' + (animatedScore.mongodb / 8 * 360) + 'deg)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  position: 'relative'
-                }}>
-                  <div style={{
-                    width: '140px',
-                    height: '140px',
-                    background: '#001E2B',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <Database size={40} color="#00ED64" />
-                    <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#00ED64' }}>
-                      {animatedScore.mongodb}
-                    </span>
-                    <span style={{ fontSize: '0.75rem', color: '#B8C4CE' }}>de 8</span>
-                  </div>
+            {/* Contenedor del Radar */}
+            <div style={{ 
+              position: 'relative', 
+              maxWidth: '600px', 
+              height: '600px',
+              margin: '0 auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              {/* SVG del Radar */}
+              <svg viewBox="0 0 500 500" style={{ width: '100%', height: '100%' }}>
+                {/* Definir gradientes */}
+                <defs>
+                  <radialGradient id="mongoGradient">
+                    <stop offset="0%" stopColor="#00ED64" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#00ED64" stopOpacity="0.2" />
+                  </radialGradient>
+                  <radialGradient id="docdbGradient">
+                    <stop offset="0%" stopColor="#FF9900" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#FF9900" stopOpacity="0.2" />
+                  </radialGradient>
+                </defs>
+                
+                {/* Círculos de fondo */}
+                {[1, 2, 3, 4, 5].map((level) => (
+                  <circle
+                    key={level}
+                    cx="250"
+                    cy="250"
+                    r={level * 40}
+                    fill="none"
+                    stroke="#2A4E5C"
+                    strokeWidth="1"
+                    opacity="0.3"
+                  />
+                ))}
+                
+                {/* Líneas radiales */}
+                {radarData.map((_, index) => {
+                  const angle = (index * 2 * Math.PI) / radarData.length - Math.PI / 2;
+                  const x = 250 + 200 * Math.cos(angle);
+                  const y = 250 + 200 * Math.sin(angle);
+                  return (
+                    <line
+                      key={index}
+                      x1="250"
+                      y1="250"
+                      x2={x}
+                      y2={y}
+                      stroke="#2A4E5C"
+                      strokeWidth="1"
+                      opacity="0.3"
+                    />
+                  );
+                })}
+                
+                {/* Polígono DocumentDB */}
+                <polygon
+                  points={radarData.map((item, index) => {
+                    const angle = (index * 2 * Math.PI) / radarData.length - Math.PI / 2;
+                    const radius = (item.documentdb / 5) * 200;
+                    const x = 250 + radius * Math.cos(angle);
+                    const y = 250 + radius * Math.sin(angle);
+                    return `${x},${y}`;
+                  }).join(' ')}
+                  fill="url(#docdbGradient)"
+                  stroke="#FF9900"
+                  strokeWidth="2"
+                  opacity="0.7"
+                />
+                
+                {/* Polígono MongoDB */}
+                <polygon
+                  points={radarData.map((item, index) => {
+                    const angle = (index * 2 * Math.PI) / radarData.length - Math.PI / 2;
+                    const radius = (item.mongodb / 5) * 200;
+                    const x = 250 + radius * Math.cos(angle);
+                    const y = 250 + radius * Math.sin(angle);
+                    return `${x},${y}`;
+                  }).join(' ')}
+                  fill="url(#mongoGradient)"
+                  stroke="#00ED64"
+                  strokeWidth="2"
+                  opacity="0.7"
+                />
+                
+                {/* Etiquetas */}
+                {radarData.map((item, index) => {
+                  const angle = (index * 2 * Math.PI) / radarData.length - Math.PI / 2;
+                  const x = 250 + 230 * Math.cos(angle);
+                  const y = 250 + 230 * Math.sin(angle);
+                  return (
+                    <text
+                      key={index}
+                      x={x}
+                      y={y}
+                      fill="#B8C4CE"
+                      fontSize="12"
+                      fontWeight="500"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                    >
+                      {item.label}
+                    </text>
+                  );
+                })}
+                
+                {/* Puntos de datos */}
+                {radarData.map((item, index) => {
+                  const angle = (index * 2 * Math.PI) / radarData.length - Math.PI / 2;
+                  const mongoRadius = (item.mongodb / 5) * 200;
+                  const docdbRadius = (item.documentdb / 5) * 200;
+                  const mongoX = 250 + mongoRadius * Math.cos(angle);
+                  const mongoY = 250 + mongoRadius * Math.sin(angle);
+                  const docdbX = 250 + docdbRadius * Math.cos(angle);
+                  const docdbY = 250 + docdbRadius * Math.sin(angle);
+                  
+                  return (
+                    <g key={index}>
+                      <circle cx={mongoX} cy={mongoY} r="4" fill="#00ED64" />
+                      <circle cx={docdbX} cy={docdbY} r="4" fill="#FF9900" />
+                    </g>
+                  );
+                })}
+              </svg>
+              
+              {/* Leyenda */}
+              <div style={{
+                position: 'absolute',
+                bottom: '20px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                gap: '24px',
+                background: 'rgba(0, 30, 43, 0.9)',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '20px', height: '3px', background: '#00ED64' }}></div>
+                  <span style={{ fontSize: '0.875rem', color: '#FFFFFF' }}>MongoDB</span>
                 </div>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '8px' }}>MongoDB</h3>
-                <p style={{ color: '#B8C4CE' }}>Mejor para proyectos complejos</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '20px', height: '3px', background: '#FF9900' }}></div>
+                  <span style={{ fontSize: '0.875rem', color: '#FFFFFF' }}>DocumentDB</span>
+                </div>
               </div>
-
-              {/* DocumentDB Score */}
-              <div className="text-center">
-                <div style={{
-                  width: '160px',
-                  height: '160px',
-                  margin: '0 auto 24px',
-                  background: 'conic-gradient(#FF9900 0deg, #FF9900 ' + (animatedScore.documentdb / 8 * 360) + 'deg, #0D2A3D ' + (animatedScore.documentdb / 8 * 360) + 'deg)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <div style={{
-                    width: '140px',
-                    height: '140px',
-                    background: '#001E2B',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <Cloud size={40} color="#FF9900" />
-                    <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#FF9900' }}>
-                      {animatedScore.documentdb}
-                    </span>
-                    <span style={{ fontSize: '0.75rem', color: '#B8C4CE' }}>de 8</span>
-                  </div>
-                </div>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '8px' }}>DocumentDB</h3>
-                <p style={{ color: '#B8C4CE' }}>Ideal para gestión simplificada</p>
+            </div>
+            
+            {/* Métricas debajo del radar */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+              <div style={{
+                background: 'rgba(0,237,100,0.1)',
+                border: '1px solid rgba(0,237,100,0.3)',
+                borderRadius: '12px',
+                padding: '20px',
+                textAlign: 'center'
+              }}>
+                <h4 style={{ color: '#00ED64', fontSize: '1.25rem', fontWeight: '600', marginBottom: '8px' }}>
+                  MongoDB
+                </h4>
+                <p style={{ color: '#FFFFFF', fontSize: '2rem', fontWeight: '700' }}>
+                  {calculateAverageScore('mongodb').toFixed(1)}/5.0
+                </p>
+                <p style={{ color: '#B8C4CE', fontSize: '0.875rem' }}>
+                  Puntuación promedio
+                </p>
+              </div>
+              
+              <div style={{
+                background: 'rgba(255,153,0,0.1)',
+                border: '1px solid rgba(255,153,0,0.3)',
+                borderRadius: '12px',
+                padding: '20px',
+                textAlign: 'center'
+              }}>
+                <h4 style={{ color: '#FF9900', fontSize: '1.25rem', fontWeight: '600', marginBottom: '8px' }}>
+                  DocumentDB
+                </h4>
+                <p style={{ color: '#FFFFFF', fontSize: '2rem', fontWeight: '700' }}>
+                  {calculateAverageScore('documentdb').toFixed(1)}/5.0
+                </p>
+                <p style={{ color: '#B8C4CE', fontSize: '0.875rem' }}>
+                  Puntuación promedio
+                </p>
               </div>
             </div>
           </div>
