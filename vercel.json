@@ -1,9 +1,17 @@
 {
-    "routes": [
-      { "handle": "filesystem" },
-      {
-        "src": "/clientes/cencosud/document-mongo(?:/.*)?$",
-        "dest": "/index.html"
-      }
-    ]
-  }
+  "routes": [
+    { "handle": "filesystem" },
+    {
+      "src": "/clientes/kushki/mf(?:/.*)?$",
+      "dest": "/clientes/kushki/mf.html"
+    },
+    {
+      "src": "/clientes/cencosud/document-mongo(?:/.*)?$",
+      "dest": "/clientes/cencosud/document-mongo/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
