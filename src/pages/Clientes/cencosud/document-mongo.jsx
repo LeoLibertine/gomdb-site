@@ -46,14 +46,20 @@ const CencosudDecisionMatrix = () => {
   
   // Datos para el diagrama de radar
   const radarData = [
-    { label: 'Compatibilidad', mongodb: 5, documentdb: 2 },
-    { label: 'Agregaciones', mongodb: 5, documentdb: 2 },
-    { label: 'Transacciones', mongodb: 5, documentdb: 1 },
-    { label: 'Rendimiento', mongodb: 5, documentdb: 3 },
-    { label: 'Gestión', mongodb: 2, documentdb: 5 },
-    { label: 'Costos', mongodb: 3, documentdb: 4 },
-    { label: 'Integración AWS', mongodb: 2, documentdb: 5 },
-    { label: 'Escalabilidad', mongodb: 3, documentdb: 5 }
+    { label: 'Compatibilidad',      mongodb: 5, documentdb: 3 },
+    { label: 'Rendimiento',         mongodb: 5, documentdb: 3 },
+    { label: 'Transacciones',       mongodb: 5, documentdb: 2 },
+    { label: 'Escalabilidad',       mongodb: 4, documentdb: 3},
+    { label: 'Alta Disponibilidad', mongodb: 5, documentdb: 2 },
+    { label: 'Gobernanza',          mongodb: 4, documentdb: 2 },
+    { label: 'Índices',             mongodb: 5, documentdb: 2 },
+    { label: 'Búsqueda',            mongodb: 5, documentdb: 3 },
+    { label: 'Herramientas',        mongodb: 5, documentdb: 3 },
+    { label: 'Drivers',             mongodb: 5, documentdb: 3 },
+    { label: 'Seguridad',           mongodb: 5, documentdb: 4 },
+    { label: 'Ciclo de Vida',       mongodb: 4, documentdb: 2 },
+    { label: 'Portabilidad',        mongodb: 5, documentdb: 3 },
+    { label: 'Costos y TCO',        mongodb: 4, documentdb: 4 }
   ];
   
   // Calcular puntuación promedio
