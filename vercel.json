@@ -7,7 +7,7 @@
     },
     {
       "src": "/clientes/cencosud/document-mongo(?:/.*)?$",
-      "dest": "/clientes/cencosud/document-mongo/index.html"
+      "dest": "/index.html"
     },
     {
       "src": "/(.*)",
