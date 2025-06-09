@@ -1,33 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import '../../../styles/gomdb-global.css';
-import { 
-  Database, 
-  CheckCircle, 
-  XCircle, 
-  AlertCircle,
-  ChevronRight,
-  Filter,
-  BarChart3,
-  Zap,
-  Shield,
-  DollarSign,
-  Users,
-  Cloud,
-  Settings,
-  TrendingUp,
-  Award,
-  ArrowRight,
-  Sparkles,
-  HelpCircle,
-  RefreshCw,
-  Star,
-  Search,
-  Tool,
-  Code,
-  Clock,
-  GitBranch,
-  
-} from 'lucide-react';
+import {
+    Database,
+    CheckCircle,
+    XCircle,
+    AlertCircle,
+    ChevronRight,
+    Filter,
+    BarChart3,
+    Zap,
+    Shield,
+    DollarSign,
+    Users,
+    Cloud,
+    Settings,
+    TrendingUp,
+    Award,
+    ArrowRight,
+    Sparkles,
+    HelpCircle,
+    RefreshCw,
+    Star,
+    Search,     // ← nuevo
+    Tool,       // ← nuevo
+    Code,       // ← nuevo
+    Clock,      // ← nuevo
+    GitBranch   // ← nuevo
+  } from 'lucide-react';
 
 // Helper para estilizar la recomendación según MongoDB vs DocumentDB
 const getRecommendationStyle = (recommendation) => {
@@ -63,18 +62,14 @@ const CencosudDecisionMatrix = () => {
     return sum / radarData.length;
   };
   
-  
-  
-  // ------------------
-  // 2. Sustituye tu `comparisonData` por este:
-  // ------------------
+  // Datos de comparación estructurados
   const comparisonData = [
     {
       id: 1,
       category: 'compatibility',
-      question: '¿Tu aplicación requiere compatibilidad total con la API de MongoDB 8.0 y futuras versiones?',
-      documentdb: 'Compatibilidad parcial hasta v3.6/4.0/5.0; nuevas features tardan en llegar.',
-      mongodb: 'Compatibilidad completa con API actual y roadmap garantizado.',
+      question: '¿Tu aplicación necesita compatibilidad total con versiones modernas de MongoDB?',
+      documentdb: 'Parcial, solo hasta v3.6/4.0/5.0',
+      mongodb: 'Total, versiones recientes (hasta 8.0)',
       recommendation: 'MongoDB',
       importance: 'alta',
       icon: Database
@@ -82,9 +77,9 @@ const CencosudDecisionMatrix = () => {
     {
       id: 2,
       category: 'performance',
-      question: '¿Necesitas pipelines de agregación complejos ($lookup, $merge, stages personalizadas)?',
-      documentdb: 'Soporte limitado a etapas básicas; no soporta $merge ni JS en el pipeline.',
-      mongodb: 'Soporte completo de pipelines avanzados, stages personalizados y optimizaciones automáticas.',
+      question: '¿Requieres ejecutar agregaciones complejas como $lookup, $merge o lógica agregada como JavaScript?',
+      documentdb: 'Soporte limitado',
+      mongodb: 'Soporte completo ($lookup, $merge, etc.)',
       recommendation: 'MongoDB',
       importance: 'alta',
       icon: BarChart3
@@ -92,9 +87,9 @@ const CencosudDecisionMatrix = () => {
     {
       id: 3,
       category: 'transactions',
-      question: '¿Son críticas las transacciones ACID multi-documento?',
-      documentdb: 'No soporta transacciones ACID fuera de una sola partición.',
-      mongodb: 'Transacciones completas ACID entre múltiples documentos y colecciones desde v4.0.',
+      question: '¿Necesitas soporte para transacciones ACID entre múltiples documentos?',
+      documentdb: 'No soportadas',
+      mongodb: 'Soportadas (ACID desde v4.0)',
       recommendation: 'MongoDB',
       importance: 'crítica',
       icon: Shield
@@ -102,142 +97,65 @@ const CencosudDecisionMatrix = () => {
     {
       id: 4,
       category: 'performance',
-      question: '¿Buscas un motor de ejecución nativo y optimizado (C++ con cache interno)?',
-      documentdb: 'Backend emulado, sin optimizaciones nativas.',
-      mongodb: 'Motor nativo en C++ con caching, locking fino y optimización de I/O.',
+      question: '¿Te importa que el motor de base de datos sea nativo y optimizado para rendimiento?',
+      documentdb: 'Backend no nativo, emula MongoDB',
+      mongodb: 'Motor nativo optimizado',
       recommendation: 'MongoDB',
       importance: 'media',
       icon: Zap
     },
     {
       id: 5,
-      category: 'scalability',
-      question: '¿Requieres sharding horizontal transparente para escalar a petabytes?',
-      documentdb: 'Escalado vertical únicamente; no hay sharding distribuido.',
-      mongodb: 'Sharding automático nativo con balanceo de carga y auto-healing.',
-      recommendation: 'MongoDB',
-      importance: 'alta',
-      icon: TrendingUp
-    },
-    {
-      id: 6,
-      category: 'availability',
-      question: '¿Necesitas replicación y failover multirregional con baja latencia?',
-      documentdb: 'Réplicas de lectura solo dentro de una misma región (AZs).',
-      mongodb: 'Clusters globales Atlas con lectura/escritura en múltiples regiones.',
-      recommendation: 'MongoDB',
+      category: 'management',
+      question: '¿Prefieres una solución completamente administrada sin preocuparte por la infraestructura?',
+      documentdb: 'Totalmente administrado por AWS',
+      mongodb: 'Requiere administración (o usar Atlas)',
+      recommendation: 'DocumentDB',
       importance: 'alta',
       icon: Cloud
     },
     {
-      id: 7,
-      category: 'governance',
-      question: '¿Tu proyecto requiere validación de esquema y controles de cambios?',
-      documentdb: 'No soporta validadores avanzados.',
-      mongodb: 'Validación con JSON Schema, versionado de esquemas y auditoría.',
-      recommendation: 'MongoDB',
+      id: 6,
+      category: 'cost',
+      question: '¿Buscas un modelo de precios predecible basado en instancias?',
+      documentdb: 'Precio por instancia (on-demand/reservada)',
+      mongodb: 'Variable según implementación',
+      recommendation: 'DocumentDB',
       importance: 'media',
+      icon: DollarSign
+    },
+    {
+      id: 7,
+      category: 'integration',
+      question: '¿Tu infraestructura ya está en AWS y necesitas integración nativa?',
+      documentdb: 'Integración nativa con servicios AWS',
+      mongodb: 'Requiere configuración adicional',
+      recommendation: 'DocumentDB',
+      importance: 'alta',
       icon: Settings
     },
     {
       id: 8,
-      category: 'indexes',
-      question: '¿Necesitas índices de texto, geoespaciales, wildcard y TTL?',
-      documentdb: 'Solo índices de campo y compuesto básicos.',
-      mongodb: 'Índices de texto completo, geo-, wildcard, TTL y compuestos múltiples.',
-      recommendation: 'MongoDB',
-      importance: 'alta',
-      icon: BarChart3
-    },
-    {
-      id: 9,
-      category: 'search',
-      question: '¿Requieres búsqueda de texto completo con scoring, facetas y sugerencias?',
-      documentdb: 'Sin motor de búsqueda integrado.',
-      mongodb: 'Atlas Search (Lucene): relevancia, facetas, autocomplete y más.',
-      recommendation: 'MongoDB',
-      importance: 'alta',
-      icon: Search
-    },
-    {
-      id: 10,
-      category: 'tools',
-      question: '¿Valoras herramientas gráficas y SDKs robustos para tu equipo?',
-      documentdb: 'Herramientas limitadas y sin UI especializada.',
-      mongodb: 'Compass, Charts, mongosh, Realm SDKs, Integraciones CI/CD.',
-      recommendation: 'MongoDB',
+      category: 'scalability',
+      question: '¿Necesitas auto-escalado sin intervención manual?',
+      documentdb: 'Auto-escalado administrado',
+      mongodb: 'Escalado manual (automático en Atlas)',
+      recommendation: 'DocumentDB',
       importance: 'media',
-      icon: Tool
-    },
-    {
-      id: 11,
-      category: 'drivers',
-      question: '¿Necesitas drivers oficiales actualizados para múltiples lenguajes?',
-      documentdb: 'Drivers MongoDB con restrictions y delays.',
-      mongodb: 'Drivers nativos, actualizaciones regulares y certificación de compatibilidad.',
-      recommendation: 'MongoDB',
-      importance: 'alta',
-      icon: Code
-    },
-    {
-      id: 12,
-      category: 'security',
-      question: '¿Requieres cifrado en reposo, TLS y encriptación a nivel de campo?',
-      documentdb: 'Cifrado KMS y TLS; no hay cifrado de campo ni DLS avanzado.',
-      mongodb: 'AES-256 en reposo, TLS, Queryable Encryption y RBAC granular.',
-      recommendation: 'MongoDB',
-      importance: 'crítica',
-      icon: Shield
-    },
-    {
-      id: 13,
-      category: 'lifecycle',
-      question: '¿Necesitas políticas automáticas de TTL, archivado y retención?',
-      documentdb: 'TTL limitado; archivado manual bajo demanda.',
-      mongodb: 'TTL, Online Archive, Atlas Data Lake y políticas de retención basadas en etiquetas.',
-      recommendation: 'MongoDB',
-      importance: 'media',
-      icon: Clock
-    },
-    {
-      id: 14,
-      category: 'portability',
-      question: '¿Importa que sea open source y portable on-premise o multi-cloud?',
-      documentdb: 'Vendor lock-in dentro de AWS.',
-      mongodb: 'Open source, ejecutable on-premise, multi-cloud y edge.',
-      recommendation: 'MongoDB',
-      importance: 'media',
-      icon: GitBranch
-    },
-    {
-      id: 15,
-      category: 'cost',
-      question: '¿Buscas optimizar costos y TCO con modelos flexibles?',
-      documentdb: 'Costos elevados por instancias y almacenamiento provisionado.',
-      mongodb: 'Modele consumo en Atlas, instancias reservadas y optimización de I/O.',
-      recommendation: 'MongoDB',
-      importance: 'alta',
-      icon: DollarSign
+      icon: TrendingUp
     }
   ];
 
   const categories = [
-  { id: 'all',            name: 'Todos',               color: '#00ED64' },
-  { id: 'compatibility',  name: 'Compatibilidad',      color: '#5644D4' },
-  { id: 'performance',    name: 'Rendimiento',         color: '#F59E0B' },
-  { id: 'transactions',   name: 'Transacciones',       color: '#EF4444' },
-  { id: 'scalability',    name: 'Escalabilidad',       color: '#8B5CF6' },
-  { id: 'availability',   name: 'Alta Disponibilidad', color: '#3B82F6' },
-  { id: 'governance',     name: 'Gobernanza',          color: '#10B981' },
-  { id: 'indexes',        name: 'Índices',             color: '#EF4444' },
-  { id: 'search',         name: 'Búsqueda',            color: '#EAB308' },
-  { id: 'tools',          name: 'Herramientas',        color: '#6366F1' },
-  { id: 'drivers',        name: 'Drivers',             color: '#1D4ED8' },
-  { id: 'security',       name: 'Seguridad',           color: '#EF4444' },
-  { id: 'lifecycle',      name: 'Ciclo de Vida',       color: '#10B981' },
-  { id: 'portability',    name: 'Portabilidad',        color: '#8B5CF6' },
-  { id: 'cost',           name: 'Costos y TCO',        color: '#EC4899' }
-];
+    { id: 'all', name: 'Todos', color: '#00ED64' },
+    { id: 'compatibility', name: 'Compatibilidad', color: '#5644D4' },
+    { id: 'performance', name: 'Rendimiento', color: '#F59E0B' },
+    { id: 'transactions', name: 'Transacciones', color: '#EF4444' },
+    { id: 'management', name: 'Gestión', color: '#10B981' },
+    { id: 'cost', name: 'Costos', color: '#EC4899' },
+    { id: 'integration', name: 'Integración', color: '#3B82F6' },
+    { id: 'scalability', name: 'Escalabilidad', color: '#8B5CF6' }
+  ];
 
   const filteredData = activeFilter === 'all' 
     ? comparisonData 
