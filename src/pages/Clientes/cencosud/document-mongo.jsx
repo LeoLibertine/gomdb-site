@@ -45,28 +45,15 @@ const CencosudDecisionMatrix = () => {
   const [animatedScore, setAnimatedScore] = useState({ mongodb: 0, documentdb: 0 });
   
   // Datos para el diagrama de radar
-// Antes:
-// const radarData = [
-//   { label: 'Compatibilidad', mongodb: 5, documentdb: 2 },
-//   …
-// ];
-
-// Después:
-const radarData = [
-    { label: 'Compatibilidad',      mongodb: 5, documentdb: 3 },
-    { label: 'Rendimiento',         mongodb: 5, documentdb: 3 },
-    { label: 'Transacciones',       mongodb: 5, documentdb: 1 },
-    { label: 'Escalabilidad',       mongodb: 4, documentdb: 3 },
-    { label: 'Alta Disponibilidad', mongodb: 5, documentdb: 3 },
-    { label: 'Gobernanza',          mongodb: 4, documentdb: 2 },
-    { label: 'Índices',             mongodb: 5, documentdb: 2 },
-    { label: 'Búsqueda',            mongodb: 4, documentdb: 2 },
-    { label: 'Herramientas',        mongodb: 5, documentdb: 3 },
-    { label: 'Drivers',             mongodb: 5, documentdb: 3 },
-    { label: 'Seguridad',           mongodb: 5, documentdb: 3 },
-    { label: 'Ciclo de Vida',       mongodb: 4, documentdb: 3 },
-    { label: 'Portabilidad',        mongodb: 5, documentdb: 3 },
-    { label: 'Costos y TCO',        mongodb: 4, documentdb: 3 }
+  const radarData = [
+    { label: 'Compatibilidad', mongodb: 5, documentdb: 2 },
+    { label: 'Agregaciones', mongodb: 5, documentdb: 2 },
+    { label: 'Transacciones', mongodb: 5, documentdb: 1 },
+    { label: 'Rendimiento', mongodb: 5, documentdb: 3 },
+    { label: 'Gestión', mongodb: 2, documentdb: 5 },
+    { label: 'Costos', mongodb: 3, documentdb: 4 },
+    { label: 'Integración AWS', mongodb: 2, documentdb: 5 },
+    { label: 'Escalabilidad', mongodb: 3, documentdb: 5 }
   ];
   
   // Calcular puntuación promedio
@@ -869,29 +856,29 @@ const radarData = [
                 })}
               </svg>
               
+              {/* Leyenda */}
               <div style={{
-    position: 'absolute',
-    top: '100%',          // justo después del 100% de la altura del contenedor
-    left: '50%',
-    transform: 'translateX(-50%)',
-    marginTop: '16px',    // separador entre el SVG y la leyenda
-    display: 'flex',
-    gap: '24px',
-    background: 'rgba(0,30,43,0.9)',
-    padding: '12px 24px',
-    borderRadius: '8px',
-    border: '1px solid rgba(255,255,255,0.1)'
-  }}>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <div style={{ width: '20px', height: '3px', background: '#00ED64' }} />
-      <span style={{ fontSize: '0.875rem', color: '#FFF' }}>MongoDB</span>
-    </div>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <div style={{ width: '20px', height: '3px', background: '#FF9900' }} />
-      <span style={{ fontSize: '0.875rem', color: '#FFF' }}>DocumentDB</span>
-    </div>
-  </div>
-</div>
+                position: 'absolute',
+                bottom: '20px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                gap: '24px',
+                background: 'rgba(0, 30, 43, 0.9)',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '20px', height: '3px', background: '#00ED64' }}></div>
+                  <span style={{ fontSize: '0.875rem', color: '#FFFFFF' }}>MongoDB</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '20px', height: '3px', background: '#FF9900' }}></div>
+                  <span style={{ fontSize: '0.875rem', color: '#FFFFFF' }}>DocumentDB</span>
+                </div>
+              </div>
+            </div>
             
             {/* Métricas debajo del radar */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
