@@ -1,11 +1,13 @@
 {
     "rewrites": [
-    
       {
-        "source": "/landingzone/:path*",
-        "destination": "/landingzone/:path*"
+        "source": "/landingzone/lzone.html",
+        "destination": "/landingzone/lzone.html"
       },
-      
+      {
+        "source": "/clientes/cencosud/document-mongo",
+        "destination": "/index.html"
+      },
       {
         "source": "/clientes/cencosud/document-mongo/:path*",
         "destination": "/index.html"
