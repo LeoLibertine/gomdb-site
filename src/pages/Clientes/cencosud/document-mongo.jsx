@@ -1,0 +1,961 @@
+import React, { useState, useEffect } from 'react';
+import '../styles/gomdb-global.css';  // Importa tu archivo CSS aquí
+import { 
+  Database, 
+  CheckCircle, 
+  XCircle, 
+  AlertCircle,
+  ChevronRight,
+  Filter,
+  BarChart3,
+  Zap,
+  Shield,
+  DollarSign,
+  Users,
+  Cloud,
+  Settings,
+  TrendingUp,
+  Award,
+  ArrowRight,
+  Sparkles,
+  HelpCircle,
+  RefreshCw,
+  Star
+} from 'lucide-react';
+
+const CencosudDecisionMatrix = () => {
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [selectedCriteria, setSelectedCriteria] = useState(null);
+  const [animatedScore, setAnimatedScore] = useState({ mongodb: 0, documentdb: 0 });
+  
+  // Datos de comparación estructurados
+  const comparisonData = [
+    {
+      id: 1,
+      category: 'compatibility',
+      question: '¿Tu aplicación necesita compatibilidad total con versiones modernas de MongoDB?',
+      documentdb: 'Parcial, solo hasta v3.6/4.0/5.0',
+      mongodb: 'Total, versiones recientes (hasta 8.0)',
+      recommendation: 'MongoDB',
+      importance: 'alta',
+      icon: Database
+    },
+    {
+      id: 2,
+      category: 'performance',
+      question: '¿Requieres ejecutar agregaciones complejas como $lookup, $merge o lógica agregada como JavaScript?',
+      documentdb: 'Soporte limitado',
+      mongodb: 'Soporte completo ($lookup, $merge, etc.)',
+      recommendation: 'MongoDB',
+      importance: 'alta',
+      icon: BarChart3
+    },
+    {
+      id: 3,
+      category: 'transactions',
+      question: '¿Necesitas soporte para transacciones ACID entre múltiples documentos?',
+      documentdb: 'No soportadas',
+      mongodb: 'Soportadas (ACID desde v4.0)',
+      recommendation: 'MongoDB',
+      importance: 'crítica',
+      icon: Shield
+    },
+    {
+      id: 4,
+      category: 'performance',
+      question: '¿Te importa que el motor de base de datos sea nativo y optimizado para rendimiento?',
+      documentdb: 'Backend no nativo, emula MongoDB',
+      mongodb: 'Motor nativo optimizado',
+      recommendation: 'MongoDB',
+      importance: 'media',
+      icon: Zap
+    },
+    {
+      id: 5,
+      category: 'management',
+      question: '¿Prefieres una solución completamente administrada sin preocuparte por la infraestructura?',
+      documentdb: 'Totalmente administrado por AWS',
+      mongodb: 'Requiere administración (o usar Atlas)',
+      recommendation: 'DocumentDB',
+      importance: 'alta',
+      icon: Cloud
+    },
+    {
+      id: 6,
+      category: 'cost',
+      question: '¿Buscas un modelo de precios predecible basado en instancias?',
+      documentdb: 'Precio por instancia (on-demand/reservada)',
+      mongodb: 'Variable según implementación',
+      recommendation: 'DocumentDB',
+      importance: 'media',
+      icon: DollarSign
+    },
+    {
+      id: 7,
+      category: 'integration',
+      question: '¿Tu infraestructura ya está en AWS y necesitas integración nativa?',
+      documentdb: 'Integración nativa con servicios AWS',
+      mongodb: 'Requiere configuración adicional',
+      recommendation: 'DocumentDB',
+      importance: 'alta',
+      icon: Settings
+    },
+    {
+      id: 8,
+      category: 'scalability',
+      question: '¿Necesitas auto-escalado sin intervención manual?',
+      documentdb: 'Auto-escalado administrado',
+      mongodb: 'Escalado manual (automático en Atlas)',
+      recommendation: 'DocumentDB',
+      importance: 'media',
+      icon: TrendingUp
+    }
+  ];
+
+  const categories = [
+    { id: 'all', name: 'Todos', color: '#00ED64' },
+    { id: 'compatibility', name: 'Compatibilidad', color: '#5644D4' },
+    { id: 'performance', name: 'Rendimiento', color: '#F59E0B' },
+    { id: 'transactions', name: 'Transacciones', color: '#EF4444' },
+    { id: 'management', name: 'Gestión', color: '#10B981' },
+    { id: 'cost', name: 'Costos', color: '#EC4899' },
+    { id: 'integration', name: 'Integración', color: '#3B82F6' },
+    { id: 'scalability', name: 'Escalabilidad', color: '#8B5CF6' }
+  ];
+
+  const filteredData = activeFilter === 'all' 
+    ? comparisonData 
+    : comparisonData.filter(item => item.category === activeFilter);
+
+  // Calcular puntuaciones
+  useEffect(() => {
+    const mongoScore = comparisonData.filter(item => item.recommendation === 'MongoDB').length;
+    const docScore = comparisonData.filter(item => item.recommendation === 'DocumentDB').length;
+    
+    // Animación de puntuaciones
+    const animateScores = () => {
+      let currentMongo = 0;
+      let currentDoc = 0;
+      const interval = setInterval(() => {
+        if (currentMongo < mongoScore) currentMongo++;
+        if (currentDoc < docScore) currentDoc++;
+        
+        setAnimatedScore({ mongodb: currentMongo, documentdb: currentDoc });
+        
+        if (currentMongo >= mongoScore && currentDoc >= docScore) {
+          clearInterval(interval);
+        }
+      }, 200);
+    };
+    
+    animateScores();
+  }, []);
+
+  const getImportanceColor = (importance) => {
+    switch(importance) {
+      case 'crítica': return '#EF4444';
+      case 'alta': return '#F59E0B';
+      case 'media': return '#00ED64';
+      default: return '#00ED64';
+    }
+  };
+
+  const getRecommendationStyle = (recommendation) => {
+    return recommendation === 'MongoDB' 
+      ? { background: 'linear-gradient(135deg, #00ED64, #00D757)', color: '#001E2B' }
+      : { background: 'linear-gradient(135deg, #FF9900, #FF6600)', color: '#FFFFFF' };
+  };
+
+  // Componente del Cuestionario
+  const QuizSection = () => {
+    const [currentQuestion, setCurrentQuestion] = useState(0);
+    const [answers, setAnswers] = useState({});
+    const [showResults, setShowResults] = useState(false);
+    const [quizStarted, setQuizStarted] = useState(false);
+
+    const questions = [
+      {
+        id: 'q1',
+        question: '¿Cuál es el tamaño estimado de tu base de datos?',
+        icon: Database,
+        options: [
+          { id: 'a', text: 'Menos de 100 GB', points: { mongodb: 1, documentdb: 1 } },
+          { id: 'b', text: '100 GB - 1 TB', points: { mongodb: 2, documentdb: 2 } },
+          { id: 'c', text: 'Más de 1 TB', points: { mongodb: 3, documentdb: 1 } }
+        ]
+      },
+      {
+        id: 'q2',
+        question: '¿Qué tan críticas son las transacciones ACID multi-documento para tu aplicación?',
+        icon: Shield,
+        options: [
+          { id: 'a', text: 'No las necesito', points: { mongodb: 0, documentdb: 3 } },
+          { id: 'b', text: 'Sería útil tenerlas', points: { mongodb: 2, documentdb: 1 } },
+          { id: 'c', text: 'Son absolutamente críticas', points: { mongodb: 3, documentdb: 0 } }
+        ]
+      },
+      {
+        id: 'q3',
+        question: '¿Tu equipo tiene experiencia administrando bases de datos?',
+        icon: Users,
+        options: [
+          { id: 'a', text: 'Sí, tenemos DBAs especializados', points: { mongodb: 3, documentdb: 1 } },
+          { id: 'b', text: 'Experiencia básica/media', points: { mongodb: 2, documentdb: 2 } },
+          { id: 'c', text: 'Preferimos no administrar infraestructura', points: { mongodb: 0, documentdb: 3 } }
+        ]
+      },
+      {
+        id: 'q4',
+        question: '¿Dónde está alojada tu infraestructura actual?',
+        icon: Cloud,
+        options: [
+          { id: 'a', text: '100% en AWS', points: { mongodb: 1, documentdb: 3 } },
+          { id: 'b', text: 'Multi-cloud o híbrida', points: { mongodb: 3, documentdb: 1 } },
+          { id: 'c', text: 'On-premise o otro proveedor', points: { mongodb: 2, documentdb: 0 } }
+        ]
+      },
+      {
+        id: 'q5',
+        question: '¿Qué tipo de consultas realizarás principalmente?',
+        icon: BarChart3,
+        options: [
+          { id: 'a', text: 'Consultas simples (CRUD básico)', points: { mongodb: 1, documentdb: 3 } },
+          { id: 'b', text: 'Agregaciones moderadas', points: { mongodb: 2, documentdb: 2 } },
+          { id: 'c', text: 'Agregaciones complejas con $lookup, $merge', points: { mongodb: 3, documentdb: 0 } }
+        ]
+      },
+      {
+        id: 'q6',
+        question: '¿Cuál es tu prioridad principal?',
+        icon: Star,
+        options: [
+          { id: 'a', text: 'Facilidad de gestión y operación', points: { mongodb: 0, documentdb: 3 } },
+          { id: 'b', text: 'Máximo rendimiento y control', points: { mongodb: 3, documentdb: 0 } },
+          { id: 'c', text: 'Balance entre ambos', points: { mongodb: 2, documentdb: 2 } }
+        ]
+      },
+      {
+        id: 'q7',
+        question: '¿Qué modelo de costos prefieres?',
+        icon: DollarSign,
+        options: [
+          { id: 'a', text: 'Pago por uso (instancias)', points: { mongodb: 1, documentdb: 3 } },
+          { id: 'b', text: 'Licencias + infraestructura propia', points: { mongodb: 3, documentdb: 0 } },
+          { id: 'c', text: 'Servicio administrado con precio predecible', points: { mongodb: 2, documentdb: 3 } }
+        ]
+      },
+      {
+        id: 'q8',
+        question: '¿Necesitas compatibilidad con versiones recientes de MongoDB (6.0+)?',
+        icon: Settings,
+        options: [
+          { id: 'a', text: 'Sí, es fundamental', points: { mongodb: 3, documentdb: 0 } },
+          { id: 'b', text: 'No es crítico', points: { mongodb: 1, documentdb: 2 } },
+          { id: 'c', text: 'Usamos características básicas', points: { mongodb: 1, documentdb: 3 } }
+        ]
+      }
+    ];
+
+    const handleAnswer = (questionId, option) => {
+      setAnswers({ ...answers, [questionId]: option });
+      
+      if (currentQuestion < questions.length - 1) {
+        setTimeout(() => {
+          setCurrentQuestion(currentQuestion + 1);
+        }, 300);
+      } else {
+        setTimeout(() => {
+          setShowResults(true);
+        }, 500);
+      }
+    };
+
+    const calculateResults = () => {
+      let mongoScore = 0;
+      let docdbScore = 0;
+
+      Object.entries(answers).forEach(([questionId, option]) => {
+        mongoScore += option.points.mongodb;
+        docdbScore += option.points.documentdb;
+      });
+
+      const total = mongoScore + docdbScore;
+      const mongoPercentage = Math.round((mongoScore / total) * 100);
+      const docdbPercentage = Math.round((docdbScore / total) * 100);
+
+      return {
+        mongoScore,
+        docdbScore,
+        mongoPercentage,
+        docdbPercentage,
+        recommendation: mongoScore > docdbScore ? 'MongoDB' : 'DocumentDB'
+      };
+    };
+
+    const resetQuiz = () => {
+      setCurrentQuestion(0);
+      setAnswers({});
+      setShowResults(false);
+      setQuizStarted(false);
+    };
+
+    if (!quizStarted) {
+      return (
+        <section className="section">
+          <div className="container">
+            <div className="card card-gradient" style={{
+              background: 'linear-gradient(135deg, #0D2A3D, rgba(13,42,61,0.5))',
+              textAlign: 'center',
+              padding: '80px 40px',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <div style={{
+                position: 'absolute',
+                top: '-50%',
+                right: '-20%',
+                width: '400px',
+                height: '400px',
+                background: '#00ED64',
+                opacity: 0.1,
+                borderRadius: '50%',
+                filter: 'blur(100px)'
+              }}></div>
+              
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <HelpCircle size={64} color="#00ED64" style={{ margin: '0 auto 24px' }} />
+                <h2 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '16px' }}>
+                  Cuestionario de Decisión Personalizado
+                </h2>
+                <p style={{ 
+                  fontSize: '1.25rem', 
+                  color: '#B8C4CE',
+                  maxWidth: '600px',
+                  margin: '0 auto 32px'
+                }}>
+                  Responde 8 preguntas rápidas y te ayudaremos a elegir entre MongoDB y DocumentDB
+                  basándonos en tus necesidades específicas.
+                </p>
+                <button 
+                  className="btn btn-primary btn-lg"
+                  onClick={() => setQuizStarted(true)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  Comenzar Cuestionario
+                  <ArrowRight size={20} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    if (showResults) {
+      const results = calculateResults();
+      const recommendationColor = results.recommendation === 'MongoDB' ? '#00ED64' : '#FF9900';
+      
+      return (
+        <section className="section">
+          <div className="container">
+            <div className="card card-gradient animate-fadeIn" style={{
+              background: 'linear-gradient(135deg, #0D2A3D, rgba(13,42,61,0.5))',
+              padding: '48px',
+              textAlign: 'center'
+            }}>
+              <h2 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '32px' }}>
+                Resultados de tu Evaluación
+              </h2>
+              
+              {/* Barras de progreso */}
+              <div style={{ maxWidth: '600px', margin: '0 auto 48px' }}>
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-2">
+                    <span style={{ fontWeight: '600', color: '#00ED64' }}>MongoDB</span>
+                    <span style={{ fontWeight: '700', fontSize: '1.5rem', color: '#00ED64' }}>
+                      {results.mongoPercentage}%
+                    </span>
+                  </div>
+                  <div style={{
+                    height: '24px',
+                    background: '#0D2A3D',
+                    borderRadius: '12px',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{
+                      width: `${results.mongoPercentage}%`,
+                      height: '100%',
+                      background: 'linear-gradient(90deg, #00ED64, #00D757)',
+                      borderRadius: '12px',
+                      transition: 'width 1s ease-out'
+                    }}></div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <span style={{ fontWeight: '600', color: '#FF9900' }}>DocumentDB</span>
+                    <span style={{ fontWeight: '700', fontSize: '1.5rem', color: '#FF9900' }}>
+                      {results.docdbPercentage}%
+                    </span>
+                  </div>
+                  <div style={{
+                    height: '24px',
+                    background: '#0D2A3D',
+                    borderRadius: '12px',
+                    overflow: 'hidden'
+                  }}>
+                    <div style={{
+                      width: `${results.docdbPercentage}%`,
+                      height: '100%',
+                      background: 'linear-gradient(90deg, #FF9900, #FF6600)',
+                      borderRadius: '12px',
+                      transition: 'width 1s ease-out'
+                    }}></div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Recomendación */}
+              <div style={{
+                background: `linear-gradient(135deg, ${recommendationColor}20, ${recommendationColor}10)`,
+                border: `2px solid ${recommendationColor}`,
+                borderRadius: '16px',
+                padding: '32px',
+                marginBottom: '32px'
+              }}>
+                <Award size={48} color={recommendationColor} style={{ margin: '0 auto 16px' }} />
+                <h3 style={{ 
+                  fontSize: '1.75rem', 
+                  fontWeight: '700',
+                  color: recommendationColor,
+                  marginBottom: '16px'
+                }}>
+                  Recomendamos: {results.recommendation}
+                </h3>
+                <p style={{ color: '#B8C4CE', fontSize: '1.125rem' }}>
+                  Basándonos en tus respuestas, {results.recommendation} se alinea mejor con 
+                  tus necesidades y prioridades actuales.
+                </p>
+              </div>
+              
+              {/* Acciones */}
+              <div className="flex flex-wrap gap-4 justify-center">
+                <button 
+                  className="btn btn-primary"
+                  onClick={resetQuiz}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <RefreshCw size={20} />
+                  Realizar de nuevo
+                </button>
+                <button className="btn btn-secondary">
+                  Descargar informe
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // Pregunta actual
+    const question = questions[currentQuestion];
+    const Icon = question.icon;
+    const progress = ((currentQuestion + 1) / questions.length) * 100;
+
+    return (
+      <section className="section">
+        <div className="container">
+          <div className="card card-gradient" style={{
+            background: 'linear-gradient(135deg, #0D2A3D, rgba(13,42,61,0.5))',
+            padding: '48px',
+            maxWidth: '800px',
+            margin: '0 auto'
+          }}>
+            {/* Barra de progreso */}
+            <div style={{ marginBottom: '48px' }}>
+              <div className="flex justify-between items-center mb-2">
+                <span style={{ color: '#B8C4CE', fontSize: '0.875rem' }}>
+                  Pregunta {currentQuestion + 1} de {questions.length}
+                </span>
+                <span style={{ color: '#00ED64', fontWeight: '600' }}>
+                  {Math.round(progress)}%
+                </span>
+              </div>
+              <div style={{
+                height: '8px',
+                background: '#001E2B',
+                borderRadius: '4px',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  width: `${progress}%`,
+                  height: '100%',
+                  background: 'linear-gradient(90deg, #00ED64, #00D757)',
+                  borderRadius: '4px',
+                  transition: 'width 0.3s ease'
+                }}></div>
+              </div>
+            </div>
+
+            {/* Pregunta */}
+            <div className="text-center mb-8">
+              <Icon size={48} color="#00ED64" style={{ margin: '0 auto 24px' }} />
+              <h3 style={{ fontSize: '1.75rem', fontWeight: '600', marginBottom: '16px' }}>
+                {question.question}
+              </h3>
+            </div>
+
+            {/* Opciones */}
+            <div className="grid gap-4">
+              {question.options.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => handleAnswer(question.id, option)}
+                  className="card-hover"
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '24px',
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '2px solid rgba(255,255,255,0.1)',
+                    borderRadius: '12px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#00ED64';
+                    e.currentTarget.style.background = 'rgba(0,237,100,0.1)';
+                    e.currentTarget.style.transform = 'translateX(8px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                    e.currentTarget.style.transform = 'translateX(0)';
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <span style={{ fontSize: '1.125rem', color: '#FFFFFF' }}>
+                      {option.text}
+                    </span>
+                    <ChevronRight size={20} color="#00ED64" />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  };
+
+  return (
+    <div style={{ 
+      minHeight: '100vh', 
+      background: '#001E2B', 
+      color: '#FFFFFF',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    }}>
+      {/* Hero Section */}
+      <section className="hero" style={{ paddingTop: '80px', paddingBottom: '60px' }}>
+        <div className="hero-background"></div>
+        <div className="hero-blur hero-blur-primary" style={{ top: '10%', left: '5%' }}></div>
+        <div className="hero-blur hero-blur-accent" style={{ bottom: '10%', right: '10%' }}></div>
+        
+        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
+          <div className="text-center animate-fadeIn">
+            <div className="badge badge-primary mb-4" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <Sparkles size={16} />
+              <span>Herramienta de Decisión para Cencosud</span>
+            </div>
+            
+            <h1 className="mb-4" style={{ 
+              fontSize: 'clamp(2.5rem, 8vw, 4rem)', 
+              fontWeight: '800',
+              lineHeight: 1.1
+            }}>
+              MongoDB vs DocumentDB
+              <br />
+              <span className="gradient-text">Matriz de Decisión Inteligente</span>
+            </h1>
+            
+            <p className="mb-6" style={{ 
+              fontSize: '1.25rem', 
+              color: '#B8C4CE',
+              maxWidth: '800px',
+              margin: '0 auto 48px'
+            }}>
+              Analiza criterios clave para elegir la base de datos ideal para tu proyecto.
+              Basado en necesidades reales de arquitectura empresarial.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Puntuación General */}
+      <section className="section" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
+        <div className="container">
+          <div className="card card-gradient" style={{
+            background: 'linear-gradient(135deg, #0D2A3D, rgba(13,42,61,0.5))',
+            padding: '48px',
+            marginBottom: '48px'
+          }}>
+            <h2 className="text-center mb-6" style={{ fontSize: '2rem', fontWeight: '700' }}>
+              Puntuación General
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* MongoDB Score */}
+              <div className="text-center">
+                <div style={{
+                  width: '160px',
+                  height: '160px',
+                  margin: '0 auto 24px',
+                  background: 'conic-gradient(#00ED64 0deg, #00ED64 ' + (animatedScore.mongodb / 8 * 360) + 'deg, #0D2A3D ' + (animatedScore.mongodb / 8 * 360) + 'deg)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative'
+                }}>
+                  <div style={{
+                    width: '140px',
+                    height: '140px',
+                    background: '#001E2B',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Database size={40} color="#00ED64" />
+                    <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#00ED64' }}>
+                      {animatedScore.mongodb}
+                    </span>
+                  </div>
+                </div>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '8px' }}>MongoDB</h3>
+                <p style={{ color: '#B8C4CE' }}>Mejor para proyectos complejos</p>
+              </div>
+
+              {/* DocumentDB Score */}
+              <div className="text-center">
+                <div style={{
+                  width: '160px',
+                  height: '160px',
+                  margin: '0 auto 24px',
+                  background: 'conic-gradient(#FF9900 0deg, #FF9900 ' + (animatedScore.documentdb / 8 * 360) + 'deg, #0D2A3D ' + (animatedScore.documentdb / 8 * 360) + 'deg)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <div style={{
+                    width: '140px',
+                    height: '140px',
+                    background: '#001E2B',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Cloud size={40} color="#FF9900" />
+                    <span style={{ fontSize: '2.5rem', fontWeight: '700', color: '#FF9900' }}>
+                      {animatedScore.documentdb}
+                    </span>
+                  </div>
+                </div>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '8px' }}>DocumentDB</h3>
+                <p style={{ color: '#B8C4CE' }}>Ideal para gestión simplificada</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Filtros de Categoría */}
+      <section className="section" style={{ paddingTop: '20px', paddingBottom: '20px' }}>
+        <div className="container">
+          <div className="flex items-center gap-3 mb-6" style={{ overflowX: 'auto', paddingBottom: '8px' }}>
+            <Filter size={20} color="#B8C4CE" />
+            <div className="flex gap-3">
+              {categories.map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveFilter(cat.id)}
+                  className={`btn ${activeFilter === cat.id ? 'btn-primary' : 'btn-ghost'} btn-sm`}
+                  style={{
+                    backgroundColor: activeFilter === cat.id ? cat.color : 'transparent',
+                    borderColor: cat.color,
+                    color: activeFilter === cat.id ? '#001E2B' : cat.color,
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Matriz de Comparación */}
+      <section className="section" style={{ paddingTop: '20px' }}>
+        <div className="container">
+          <div className="grid gap-4">
+            {filteredData.map((item, index) => {
+              const Icon = item.icon;
+              const isSelected = selectedCriteria === item.id;
+              
+              return (
+                <div
+                  key={item.id}
+                  className="card card-bordered card-hover"
+                  style={{
+                    background: isSelected ? 'rgba(0,237,100,0.1)' : 'rgba(13,42,61,0.3)',
+                    border: isSelected ? '2px solid #00ED64' : '1px solid rgba(255,255,255,0.1)',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    animationDelay: `${index * 100}ms`
+                  }}
+                  onClick={() => setSelectedCriteria(isSelected ? null : item.id)}
+                >
+                  {/* Header con pregunta */}
+                  <div className="flex items-start gap-4 mb-4">
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      background: `linear-gradient(135deg, ${categories.find(c => c.id === item.category)?.color}20, ${categories.find(c => c.id === item.category)?.color}40)`,
+                      borderRadius: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <Icon size={24} color={categories.find(c => c.id === item.category)?.color} />
+                    </div>
+                    
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '8px' }}>
+                        {item.question}
+                      </h3>
+                      <span style={{
+                        display: 'inline-block',
+                        padding: '4px 12px',
+                        fontSize: '0.75rem',
+                        borderRadius: '6px',
+                        background: `${getImportanceColor(item.importance)}20`,
+                        color: getImportanceColor(item.importance),
+                        fontWeight: '500'
+                      }}>
+                        Importancia {item.importance}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Comparación expandible */}
+                  <div style={{
+                    maxHeight: isSelected ? '400px' : '0',
+                    overflow: 'hidden',
+                    transition: 'max-height 0.3s ease'
+                  }}>
+                    <div className="grid md:grid-cols-2 gap-4 mb-4">
+                      {/* DocumentDB */}
+                      <div style={{
+                        padding: '20px',
+                        background: 'rgba(255,153,0,0.1)',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(255,153,0,0.3)'
+                      }}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <Cloud size={20} color="#FF9900" />
+                          <h4 style={{ fontWeight: '600', color: '#FF9900' }}>DocumentDB</h4>
+                        </div>
+                        <p style={{ color: '#B8C4CE', fontSize: '0.95rem' }}>{item.documentdb}</p>
+                      </div>
+
+                      {/* MongoDB */}
+                      <div style={{
+                        padding: '20px',
+                        background: 'rgba(0,237,100,0.1)',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(0,237,100,0.3)'
+                      }}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <Database size={20} color="#00ED64" />
+                          <h4 style={{ fontWeight: '600', color: '#00ED64' }}>MongoDB</h4>
+                        </div>
+                        <p style={{ color: '#B8C4CE', fontSize: '0.95rem' }}>{item.mongodb}</p>
+                      </div>
+                    </div>
+
+                    {/* Recomendación */}
+                    <div style={{
+                      padding: '16px',
+                      borderRadius: '12px',
+                      ...getRecommendationStyle(item.recommendation),
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
+                    }}>
+                      <div className="flex items-center gap-3">
+                        <Award size={24} />
+                        <div>
+                          <p style={{ fontWeight: '600', marginBottom: '2px' }}>
+                            Recomendación: {item.recommendation}
+                          </p>
+                          <p style={{ fontSize: '0.875rem', opacity: 0.9 }}>
+                            Basado en este criterio específico
+                          </p>
+                        </div>
+                      </div>
+                      <ChevronRight size={20} />
+                    </div>
+                  </div>
+
+                  {/* Indicador de expansión */}
+                  {!isSelected && (
+                    <div className="text-center mt-3" style={{ color: '#B8C4CE', fontSize: '0.875rem' }}>
+                      Click para ver detalles
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Resumen y Recomendaciones */}
+      <section className="section">
+        <div className="container">
+          <div className="grid md:grid-cols-2 gap-5">
+            {/* Cuándo elegir MongoDB */}
+            <div className="card card-gradient" style={{
+              background: 'linear-gradient(135deg, rgba(0,237,100,0.1), rgba(0,237,100,0.05))',
+              border: '1px solid rgba(0,237,100,0.3)'
+            }}>
+              <div className="flex items-center gap-3 mb-4">
+                <Database size={32} color="#00ED64" />
+                <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#00ED64' }}>
+                  Elige MongoDB cuando:
+                </h3>
+              </div>
+              
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                {[
+                  'Necesitas compatibilidad total con la última versión',
+                  'Requieres operaciones de agregación complejas',
+                  'Las transacciones ACID son críticas',
+                  'Buscas máximo rendimiento y control',
+                  'Tienes equipo con experiencia en administración'
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-3 mb-3">
+                    <CheckCircle size={20} color="#00ED64" style={{ marginTop: '2px', flexShrink: 0 }} />
+                    <span style={{ color: '#B8C4CE' }}>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Cuándo elegir DocumentDB */}
+            <div className="card card-gradient" style={{
+              background: 'linear-gradient(135deg, rgba(255,153,0,0.1), rgba(255,153,0,0.05))',
+              border: '1px solid rgba(255,153,0,0.3)'
+            }}>
+              <div className="flex items-center gap-3 mb-4">
+                <Cloud size={32} color="#FF9900" />
+                <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#FF9900' }}>
+                  Elige DocumentDB cuando:
+                </h3>
+              </div>
+              
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                {[
+                  'Prefieres una solución totalmente administrada',
+                  'Tu infraestructura ya está en AWS',
+                  'Buscas reducir la carga operativa',
+                  'Necesitas escalado automático sin configuración',
+                  'El modelo de precios por instancia te conviene'
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-3 mb-3">
+                    <CheckCircle size={20} color="#FF9900" style={{ marginTop: '2px', flexShrink: 0 }} />
+                    <span style={{ color: '#B8C4CE' }}>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Cuestionario Interactivo */}
+      <QuizSection />
+
+      {/* CTA Final */}
+      <section className="section">
+        <div className="container">
+          <div className="card" style={{
+            background: 'linear-gradient(135deg, #00ED64, #00D757)',
+            textAlign: 'center',
+            padding: '48px'
+          }}>
+            <h2 style={{ 
+              fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', 
+              fontWeight: '700',
+              color: '#001E2B',
+              marginBottom: '16px'
+            }}>
+              ¿Necesitas una evaluación personalizada?
+            </h2>
+            <p style={{ 
+              fontSize: '1.125rem', 
+              color: '#001E2B',
+              marginBottom: '32px',
+              opacity: 0.9
+            }}>
+              Nuestro equipo de arquitectos puede ayudarte a tomar la mejor decisión para Cencosud
+            </p>
+            <button className="btn btn-lg" style={{
+              background: '#001E2B',
+              color: '#00ED64',
+              border: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              Solicitar Consultoría
+              <ArrowRight size={20} />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{
+        borderTop: '1px solid rgba(255,255,255,0.1)',
+        padding: '32px 0',
+        marginTop: '80px'
+      }}>
+        <div className="container text-center">
+          <p style={{ color: '#718096', fontSize: '0.875rem' }}>
+            © 2024 Cencosud - Matriz de Decisión MongoDB vs DocumentDB | Powered by gomDB
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default CencosudDecisionMatrix;
