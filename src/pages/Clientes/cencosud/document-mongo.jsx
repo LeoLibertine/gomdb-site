@@ -21,11 +21,11 @@ import {
     HelpCircle,
     RefreshCw,
     Star,
-    Search,     // ← nuevo
-    Tool,       // ← nuevo
+    Search,    // ← nuevo
     Code,       // ← nuevo
     Clock,      // ← nuevo
-    GitBranch   // ← nuevo
+    GitBranch,   // ← nuevo
+    Wrench
   } from 'lucide-react';
 
 // Helper para estilizar la recomendación según MongoDB vs DocumentDB
@@ -45,15 +45,28 @@ const CencosudDecisionMatrix = () => {
   const [animatedScore, setAnimatedScore] = useState({ mongodb: 0, documentdb: 0 });
   
   // Datos para el diagrama de radar
-  const radarData = [
-    { label: 'Compatibilidad', mongodb: 5, documentdb: 2 },
-    { label: 'Agregaciones', mongodb: 5, documentdb: 2 },
-    { label: 'Transacciones', mongodb: 5, documentdb: 1 },
-    { label: 'Rendimiento', mongodb: 5, documentdb: 3 },
-    { label: 'Gestión', mongodb: 2, documentdb: 5 },
-    { label: 'Costos', mongodb: 3, documentdb: 4 },
-    { label: 'Integración AWS', mongodb: 2, documentdb: 5 },
-    { label: 'Escalabilidad', mongodb: 3, documentdb: 5 }
+// Antes:
+// const radarData = [
+//   { label: 'Compatibilidad', mongodb: 5, documentdb: 2 },
+//   …
+// ];
+
+// Después:
+const radarData = [
+    { label: 'Compatibilidad',      mongodb: 5, documentdb: 3 },
+    { label: 'Rendimiento',         mongodb: 5, documentdb: 3 },
+    { label: 'Transacciones',       mongodb: 5, documentdb: 1 },
+    { label: 'Escalabilidad',       mongodb: 4, documentdb: 3 },
+    { label: 'Alta Disponibilidad', mongodb: 5, documentdb: 3 },
+    { label: 'Gobernanza',          mongodb: 4, documentdb: 2 },
+    { label: 'Índices',             mongodb: 5, documentdb: 2 },
+    { label: 'Búsqueda',            mongodb: 4, documentdb: 2 },
+    { label: 'Herramientas',        mongodb: 5, documentdb: 3 },
+    { label: 'Drivers',             mongodb: 5, documentdb: 3 },
+    { label: 'Seguridad',           mongodb: 5, documentdb: 3 },
+    { label: 'Ciclo de Vida',       mongodb: 4, documentdb: 3 },
+    { label: 'Portabilidad',        mongodb: 5, documentdb: 3 },
+    { label: 'Costos y TCO',        mongodb: 4, documentdb: 3 }
   ];
   
   // Calcular puntuación promedio
@@ -67,9 +80,9 @@ const CencosudDecisionMatrix = () => {
     {
       id: 1,
       category: 'compatibility',
-      question: '¿Tu aplicación necesita compatibilidad total con versiones modernas de MongoDB?',
-      documentdb: 'Parcial, solo hasta v3.6/4.0/5.0',
-      mongodb: 'Total, versiones recientes (hasta 8.0)',
+      question: '¿Tu aplicación requiere compatibilidad total con la API de MongoDB 8.0 y futuras versiones?',
+      documentdb: 'Compatibilidad parcial hasta v3.6/4.0/5.0; nuevas features tardan en llegar.',
+      mongodb: 'Compatibilidad completa con API actual y roadmap garantizado.',
       recommendation: 'MongoDB',
       importance: 'alta',
       icon: Database
@@ -77,9 +90,9 @@ const CencosudDecisionMatrix = () => {
     {
       id: 2,
       category: 'performance',
-      question: '¿Requieres ejecutar agregaciones complejas como $lookup, $merge o lógica agregada como JavaScript?',
-      documentdb: 'Soporte limitado',
-      mongodb: 'Soporte completo ($lookup, $merge, etc.)',
+      question: '¿Necesitas pipelines de agregación complejos ($lookup, $merge, stages personalizadas)?',
+      documentdb: 'Soporte limitado a etapas básicas; no soporta $merge ni JS en el pipeline.',
+      mongodb: 'Soporte completo de pipelines avanzados, stages personalizados y optimizaciones automáticas.',
       recommendation: 'MongoDB',
       importance: 'alta',
       icon: BarChart3
@@ -87,9 +100,9 @@ const CencosudDecisionMatrix = () => {
     {
       id: 3,
       category: 'transactions',
-      question: '¿Necesitas soporte para transacciones ACID entre múltiples documentos?',
-      documentdb: 'No soportadas',
-      mongodb: 'Soportadas (ACID desde v4.0)',
+      question: '¿Son críticas las transacciones ACID multi-documento?',
+      documentdb: 'No soporta transacciones ACID fuera de una sola partición.',
+      mongodb: 'Transacciones completas ACID entre múltiples documentos y colecciones desde v4.0.',
       recommendation: 'MongoDB',
       importance: 'crítica',
       icon: Shield
@@ -97,64 +110,141 @@ const CencosudDecisionMatrix = () => {
     {
       id: 4,
       category: 'performance',
-      question: '¿Te importa que el motor de base de datos sea nativo y optimizado para rendimiento?',
-      documentdb: 'Backend no nativo, emula MongoDB',
-      mongodb: 'Motor nativo optimizado',
+      question: '¿Buscas un motor de ejecución nativo y optimizado (C++ con cache interno)?',
+      documentdb: 'Backend emulado, sin optimizaciones nativas.',
+      mongodb: 'Motor nativo en C++ con caching, locking fino y optimización de I/O.',
       recommendation: 'MongoDB',
       importance: 'media',
       icon: Zap
     },
     {
       id: 5,
-      category: 'management',
-      question: '¿Prefieres una solución completamente administrada sin preocuparte por la infraestructura?',
-      documentdb: 'Totalmente administrado por AWS',
-      mongodb: 'Requiere administración (o usar Atlas)',
-      recommendation: 'DocumentDB',
+      category: 'scalability',
+      question: '¿Requieres sharding horizontal transparente para escalar a petabytes?',
+      documentdb: 'Escalado vertical únicamente; no hay sharding distribuido.',
+      mongodb: 'Sharding automático nativo con balanceo de carga y auto-healing.',
+      recommendation: 'MongoDB',
+      importance: 'alta',
+      icon: TrendingUp
+    },
+    {
+      id: 6,
+      category: 'availability',
+      question: '¿Necesitas replicación y failover multirregional con baja latencia?',
+      documentdb: 'Réplicas de lectura solo dentro de una misma región (AZs).',
+      mongodb: 'Clusters globales Atlas con lectura/escritura en múltiples regiones.',
+      recommendation: 'MongoDB',
       importance: 'alta',
       icon: Cloud
     },
     {
-      id: 6,
-      category: 'cost',
-      question: '¿Buscas un modelo de precios predecible basado en instancias?',
-      documentdb: 'Precio por instancia (on-demand/reservada)',
-      mongodb: 'Variable según implementación',
-      recommendation: 'DocumentDB',
-      importance: 'media',
-      icon: DollarSign
-    },
-    {
       id: 7,
-      category: 'integration',
-      question: '¿Tu infraestructura ya está en AWS y necesitas integración nativa?',
-      documentdb: 'Integración nativa con servicios AWS',
-      mongodb: 'Requiere configuración adicional',
-      recommendation: 'DocumentDB',
-      importance: 'alta',
+      category: 'governance',
+      question: '¿Tu proyecto requiere validación de esquema y controles de cambios?',
+      documentdb: 'No soporta validadores avanzados.',
+      mongodb: 'Validación con JSON Schema, versionado de esquemas y auditoría.',
+      recommendation: 'MongoDB',
+      importance: 'media',
       icon: Settings
     },
     {
       id: 8,
-      category: 'scalability',
-      question: '¿Necesitas auto-escalado sin intervención manual?',
-      documentdb: 'Auto-escalado administrado',
-      mongodb: 'Escalado manual (automático en Atlas)',
-      recommendation: 'DocumentDB',
+      category: 'indexes',
+      question: '¿Necesitas índices de texto, geoespaciales, wildcard y TTL?',
+      documentdb: 'Solo índices de campo y compuesto básicos.',
+      mongodb: 'Índices de texto completo, geo-, wildcard, TTL y compuestos múltiples.',
+      recommendation: 'MongoDB',
+      importance: 'alta',
+      icon: BarChart3
+    },
+    {
+      id: 9,
+      category: 'search',
+      question: '¿Requieres búsqueda de texto completo con scoring, facetas y sugerencias?',
+      documentdb: 'Sin motor de búsqueda integrado.',
+      mongodb: 'Atlas Search (Lucene): relevancia, facetas, autocomplete y más.',
+      recommendation: 'MongoDB',
+      importance: 'alta',
+      icon: Search
+    },
+    {
+      id: 10,
+      category: 'tools',
+      question: '¿Valoras herramientas gráficas y SDKs robustos para tu equipo?',
+      documentdb: 'Herramientas limitadas y sin UI especializada.',
+      mongodb: 'Compass, Charts, mongosh, Realm SDKs, Integraciones CI/CD.',
+      recommendation: 'MongoDB',
       importance: 'media',
-      icon: TrendingUp
+      icon: Wrench
+    },
+    {
+      id: 11,
+      category: 'drivers',
+      question: '¿Necesitas drivers oficiales actualizados para múltiples lenguajes?',
+      documentdb: 'Drivers MongoDB con restrictions y delays.',
+      mongodb: 'Drivers nativos, actualizaciones regulares y certificación de compatibilidad.',
+      recommendation: 'MongoDB',
+      importance: 'alta',
+      icon: Code
+    },
+    {
+      id: 12,
+      category: 'security',
+      question: '¿Requieres cifrado en reposo, TLS y encriptación a nivel de campo?',
+      documentdb: 'Cifrado KMS y TLS; no hay cifrado de campo ni DLS avanzado.',
+      mongodb: 'AES-256 en reposo, TLS, Queryable Encryption y RBAC granular.',
+      recommendation: 'MongoDB',
+      importance: 'crítica',
+      icon: Shield
+    },
+    {
+      id: 13,
+      category: 'lifecycle',
+      question: '¿Necesitas políticas automáticas de TTL, archivado y retención?',
+      documentdb: 'TTL limitado; archivado manual bajo demanda.',
+      mongodb: 'TTL, Online Archive, Atlas Data Lake y políticas de retención basadas en etiquetas.',
+      recommendation: 'MongoDB',
+      importance: 'media',
+      icon: Clock
+    },
+    {
+      id: 14,
+      category: 'portability',
+      question: '¿Importa que sea open source y portable on-premise o multi-cloud?',
+      documentdb: 'Vendor lock-in dentro de AWS.',
+      mongodb: 'Open source, ejecutable on-premise, multi-cloud y edge.',
+      recommendation: 'MongoDB',
+      importance: 'media',
+      icon: GitBranch
+    },
+    {
+      id: 15,
+      category: 'cost',
+      question: '¿Buscas optimizar costos y TCO con modelos flexibles?',
+      documentdb: 'Costos elevados por instancias y almacenamiento provisionado.',
+      mongodb: 'Modele consumo en Atlas, instancias reservadas y optimización de I/O.',
+      recommendation: 'MongoDB',
+      importance: 'alta',
+      icon: DollarSign
     }
   ];
 
   const categories = [
-    { id: 'all', name: 'Todos', color: '#00ED64' },
-    { id: 'compatibility', name: 'Compatibilidad', color: '#5644D4' },
-    { id: 'performance', name: 'Rendimiento', color: '#F59E0B' },
-    { id: 'transactions', name: 'Transacciones', color: '#EF4444' },
-    { id: 'management', name: 'Gestión', color: '#10B981' },
-    { id: 'cost', name: 'Costos', color: '#EC4899' },
-    { id: 'integration', name: 'Integración', color: '#3B82F6' },
-    { id: 'scalability', name: 'Escalabilidad', color: '#8B5CF6' }
+    { id: 'all',            name: 'Todos',               color: '#00ED64' },
+    { id: 'compatibility',  name: 'Compatibilidad',      color: '#5644D4' },
+    { id: 'performance',    name: 'Rendimiento',         color: '#F59E0B' },
+    { id: 'transactions',   name: 'Transacciones',       color: '#EF4444' },
+    { id: 'scalability',    name: 'Escalabilidad',       color: '#8B5CF6' },
+    { id: 'availability',   name: 'Alta Disponibilidad', color: '#3B82F6' },
+    { id: 'governance',     name: 'Gobernanza',          color: '#10B981' },
+    { id: 'indexes',        name: 'Índices',             color: '#EF4444' },
+    { id: 'search',         name: 'Búsqueda',            color: '#EAB308' },
+    { id: 'tools',          name: 'Herramientas',        color: '#6366F1' },
+    { id: 'drivers',        name: 'Drivers',             color: '#1D4ED8' },
+    { id: 'security',       name: 'Seguridad',           color: '#EF4444' },
+    { id: 'lifecycle',      name: 'Ciclo de Vida',       color: '#10B981' },
+    { id: 'portability',    name: 'Portabilidad',        color: '#8B5CF6' },
+    { id: 'cost',           name: 'Costos y TCO',        color: '#EC4899' }
   ];
 
   const filteredData = activeFilter === 'all' 
@@ -779,29 +869,29 @@ const CencosudDecisionMatrix = () => {
                 })}
               </svg>
               
-              {/* Leyenda */}
               <div style={{
-                position: 'absolute',
-                bottom: '20px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                display: 'flex',
-                gap: '24px',
-                background: 'rgba(0, 30, 43, 0.9)',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                border: '1px solid rgba(255,255,255,0.1)'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ width: '20px', height: '3px', background: '#00ED64' }}></div>
-                  <span style={{ fontSize: '0.875rem', color: '#FFFFFF' }}>MongoDB</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ width: '20px', height: '3px', background: '#FF9900' }}></div>
-                  <span style={{ fontSize: '0.875rem', color: '#FFFFFF' }}>DocumentDB</span>
-                </div>
-              </div>
-            </div>
+    position: 'absolute',
+    top: '100%',          // justo después del 100% de la altura del contenedor
+    left: '50%',
+    transform: 'translateX(-50%)',
+    marginTop: '16px',    // separador entre el SVG y la leyenda
+    display: 'flex',
+    gap: '24px',
+    background: 'rgba(0,30,43,0.9)',
+    padding: '12px 24px',
+    borderRadius: '8px',
+    border: '1px solid rgba(255,255,255,0.1)'
+  }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ width: '20px', height: '3px', background: '#00ED64' }} />
+      <span style={{ fontSize: '0.875rem', color: '#FFF' }}>MongoDB</span>
+    </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ width: '20px', height: '3px', background: '#FF9900' }} />
+      <span style={{ fontSize: '0.875rem', color: '#FFF' }}>DocumentDB</span>
+    </div>
+  </div>
+</div>
             
             {/* Métricas debajo del radar */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
@@ -846,30 +936,28 @@ const CencosudDecisionMatrix = () => {
       </section>
 
       {/* Filtros de Categoría */}
-      <section className="section" style={{ paddingTop: '20px', paddingBottom: '20px' }}>
-        <div className="container">
-          <div className="flex items-center gap-3 mb-6" style={{ overflowX: 'auto', paddingBottom: '8px' }}>
-            <Filter size={20} color="#B8C4CE" />
-            <div className="flex gap-3">
-              {categories.map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveFilter(cat.id)}
-                  className={`btn ${activeFilter === cat.id ? 'btn-primary' : 'btn-ghost'} btn-sm`}
-                  style={{
-                    backgroundColor: activeFilter === cat.id ? cat.color : 'transparent',
-                    borderColor: cat.color,
-                    color: activeFilter === cat.id ? '#001E2B' : cat.color,
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  {cat.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <section className="section" style={{ padding: '20px 0' }}>
+  <div className="container">
+    <div className="flex flex-wrap items-center gap-3 mb-6">
+      <Filter size={20} color="#B8C4CE" />
+      {categories.map(cat => (
+        <button
+          key={cat.id}
+          onClick={() => setActiveFilter(cat.id)}
+          className={`btn ${activeFilter === cat.id ? 'btn-primary' : 'btn-ghost'} btn-sm`}
+          style={{
+            backgroundColor: activeFilter === cat.id ? cat.color : 'transparent',
+            borderColor: cat.color,
+            color: activeFilter === cat.id ? '#001E2B' : cat.color,
+            whiteSpace: 'nowrap'
+          }}
+        >
+          {cat.name}
+        </button>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* Matriz de Comparación */}
       <section className="section" style={{ paddingTop: '20px' }}>
