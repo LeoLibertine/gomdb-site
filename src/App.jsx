@@ -1,8 +1,8 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import GoMDBLanding from './components/gomdblanding';
-import DocumentMongo from './pages/Clientes/cencosud/document-mongo';
-import BancolombiaDocument from './pages/Clientes/bancolombia/document-mongo';
+import DocumentMongo from './pages/clientes/cencosud/document-mongo';
+import BancolombiaDocument from './pages/clientes/bancolombia/document-mongo';
 import NotFound from './components/NotFound';
 import './styles/gomdb-global.css';
 
