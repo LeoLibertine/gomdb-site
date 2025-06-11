@@ -39,7 +39,7 @@ const getRecommendationStyle = (recommendation) => {
     };
   };
 
-const CencosudDecisionMatrix = () => {
+const BancolombiaDecisionMatrix = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedCriteria, setSelectedCriteria] = useState(null);
   const [animatedScore, setAnimatedScore] = useState({ mongodb: 0, documentdb: 0 });
@@ -687,7 +687,7 @@ const CencosudDecisionMatrix = () => {
           <div className="text-center animate-fadeIn">
             <div className="badge badge-primary mb-4" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
               <Sparkles size={16} />
-              <span>Herramienta de Decisión para Cencosud</span>
+              <span>Herramienta de Decisión para Bancolombia</span>
             </div>
             
             <h1 className="mb-4" style={{ 
@@ -1167,7 +1167,7 @@ const CencosudDecisionMatrix = () => {
               marginBottom: '32px',
               opacity: 0.9
             }}>
-              Nuestro equipo de arquitectos puede ayudarte a tomar la mejor decisión para Cencosud
+              Nuestro equipo de arquitectos puede ayudarte a tomar la mejor decisión para Bancolombia
             </p>
             <button className="btn btn-lg" style={{
               background: '#001E2B',
@@ -1192,7 +1192,7 @@ const CencosudDecisionMatrix = () => {
       }}>
         <div className="container text-center">
           <p style={{ color: '#718096', fontSize: '0.875rem' }}>
-            © 2024 Cencosud - Matriz de Decisión MongoDB vs DocumentDB | Powered by gomDB
+            © 2024 Bancolombia - Matriz de Decisión MongoDB vs DocumentDB | Powered by gomDB
           </p>
         </div>
       </footer>
@@ -1200,4 +1200,4 @@ const CencosudDecisionMatrix = () => {
   );
 };
 
-export default CencosudDecisionMatrix;
+export default BancolombiaDecisionMatrix;
