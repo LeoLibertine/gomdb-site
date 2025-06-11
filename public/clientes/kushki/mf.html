@@ -1,878 +1,1317 @@
-<!DOCTYPE html>
+
+    <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kushki - MongoDB Modernization Factory Assessment</title>
-    <link rel="stylesheet" href="../../styles/gomdb-global.css">
-    <style>
-        /* Page-specific styles */
-        .assessment-score {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
-        }
-        
-        .score-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: conic-gradient(var(--color-primary) 0deg 324deg, var(--color-bg-secondary) 324deg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        
-        .score-inner {
-            width: 100px;
-            height: 100px;
-            background: var(--color-bg-primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        
-        .score-value {
-            font-size: var(--text-3xl);
-            font-weight: 700;
-            color: var(--color-primary);
-        }
-        
-        .score-label {
-            font-size: var(--text-sm);
-            color: var(--color-text-secondary);
-        }
-        
-        .criteria-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-xl);
-            margin-bottom: var(--spacing-3xl);
-        }
-        
-        .criteria-card {
-            background: var(--color-bg-card);
-            backdrop-filter: blur(10px);
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-xl);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all var(--transition-base);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .criteria-card.fit {
-            border-color: var(--color-primary);
-        }
-        
-        .criteria-card.fit::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--color-primary);
-        }
-        
-        .criteria-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
-        }
-        
-        .criteria-status {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            padding: var(--spacing-xs) var(--spacing-md);
-            background: var(--color-primary);
-            color: var(--color-text-dark);
-            border-radius: var(--radius-full);
-            font-size: var(--text-sm);
-            font-weight: 600;
-            margin-bottom: var(--spacing-md);
-        }
-        
-        .criteria-title {
-            font-size: var(--text-xl);
-            margin-bottom: var(--spacing-md);
-            color: var(--color-text-primary);
-        }
-        
-        .criteria-description {
-            color: var(--color-text-secondary);
-            line-height: 1.6;
-        }
-        
-        .tech-stack {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--spacing-sm);
-            margin-top: var(--spacing-lg);
-        }
-        
-        .tech-badge {
-            padding: var(--spacing-xs) var(--spacing-md);
-            background: var(--color-bg-tertiary);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-full);
-            font-size: var(--text-sm);
-            color: var(--color-text-secondary);
-        }
-        
-        .pain-points {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-xl);
-            margin: var(--spacing-2xl) 0;
-        }
-        
-        .pain-point-item {
-            display: flex;
-            align-items: flex-start;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-        }
-        
-        .pain-icon {
-            width: 24px;
-            height: 24px;
-            background: var(--color-error);
-            border-radius: 50%;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-        
-        .timeline {
-            position: relative;
-            padding: var(--spacing-xl) 0;
-        }
-        
-        .timeline-item {
-            display: flex;
-            gap: var(--spacing-xl);
-            margin-bottom: var(--spacing-2xl);
-            position: relative;
-        }
-        
-        .timeline-marker {
-            width: 16px;
-            height: 16px;
-            background: var(--color-primary);
-            border-radius: 50%;
-            flex-shrink: 0;
-            margin-top: var(--spacing-xs);
-            position: relative;
-            z-index: 2;
-        }
-        
-        .timeline-item:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            left: 7px;
-            top: 24px;
-            width: 2px;
-            height: calc(100% + var(--spacing-xl));
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .timeline-content {
-            flex: 1;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--spacing-xl);
-            margin: var(--spacing-2xl) 0;
-        }
-        
-        .stat-card {
-            text-align: center;
-            padding: var(--spacing-xl);
-            background: var(--color-bg-card);
-            border-radius: var(--radius-lg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .stat-value {
-            font-size: var(--text-4xl);
-            font-weight: 700;
-            color: var(--color-primary);
-            margin-bottom: var(--spacing-sm);
-        }
-        
-        .stat-label {
-            color: var(--color-text-secondary);
-            font-size: var(--text-base);
-        }
-        
-        /* Animations */
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .animate-slideUp {
-            animation: slideUp 0.6s ease-out forwards;
-        }
-        
-        .delay-1 { animation-delay: 0.1s; opacity: 0; }
-        .delay-2 { animation-delay: 0.2s; opacity: 0; }
-        .delay-3 { animation-delay: 0.3s; opacity: 0; }
-        .delay-4 { animation-delay: 0.4s; opacity: 0; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kushki - MongoDB Modernization Factory Assessment</title>
+<link rel="stylesheet" href="../../../src/styles/gomdb-global.css">
+<style>
+/* Page-specific styles */
+.assessment-score {
+display: flex;
+align-items: center;
+gap: var(--spacing-md);
+margin-bottom: var(--spacing-xl);
+}
+
+.score-circle {
+width: 120px;
+height: 120px;
+border-radius: 50%;
+background: conic-gradient(var(--color-primary) 0deg 324deg, var(--color-bg-secondary) 324deg);
+display: flex;
+align-items: center;
+justify-content: center;
+position: relative;
+}
+
+.score-inner {
+width: 100px;
+height: 100px;
+background: var(--color-bg-primary);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;
+}
+
+.score-value {
+font-size: var(--text-3xl);
+font-weight: 700;
+color: var(--color-primary);
+}
+
+.score-label {
+font-size: var(--text-sm);
+color: var(--color-text-secondary);
+}
+
+.criteria-grid {
+  display: grid;
+  /* de esto: */
+  /* grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); */
+  /* a esto: */
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-3xl);
+}
+
+.criteria-card {
+background: var(--color-bg-card);
+backdrop-filter: blur(10px);
+border-radius: var(--radius-xl);
+border: 1px solid rgba(255, 255, 255, 0.1);
+transition: all var(--transition-slow);
+position: relative;
+overflow: hidden;
+cursor: pointer;
+}
+
+.criteria-card.fit {
+border-color: rgba(0, 237, 100, 0.3);
+}
+
+.criteria-card.fit::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 3px;
+background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+opacity: 0;
+transition: opacity var(--transition-base);
+}
+
+.criteria-card:hover {
+transform: translateY(-8px) scale(1.02);
+box-shadow: 0 20px 40px rgba(0, 237, 100, 0.15);
+border-color: var(--color-primary);
+}
+
+.criteria-card.fit:hover::before {
+opacity: 1;
+}
+
+.criteria-header {
+padding: var(--spacing-xl);
+cursor: pointer;
+user-select: none;
+}
+
+.criteria-header-top {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: var(--spacing-md);
+}
+
+.criteria-status {
+display: inline-flex;
+align-items: center;
+gap: var(--spacing-sm);
+padding: var(--spacing-xs) var(--spacing-md);
+background: linear-gradient(135deg, var(--color-primary) 0%, rgba(0, 237, 100, 0.8) 100%);
+color: var(--color-text-dark);
+border-radius: var(--radius-full);
+font-size: var(--text-sm);
+font-weight: 600;
+box-shadow: 0 2px 8px rgba(0, 237, 100, 0.3);
+}
+
+.criteria-expand-icon {
+width: 24px;
+height: 24px;
+color: var(--color-text-secondary);
+transition: transform var(--transition-base);
+}
+
+.criteria-card.expanded .criteria-expand-icon {
+transform: rotate(180deg);
+}
+
+.criteria-title-wrapper {
+display: flex;
+align-items: center;
+gap: var(--spacing-md);
+}
+
+.criteria-icon {
+width: 48px;
+height: 48px;
+background: rgba(0, 237, 100, 0.1);
+border-radius: var(--radius-lg);
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+}
+
+.criteria-icon svg {
+width: 28px;
+height: 28px;
+color: var(--color-primary);
+}
+
+.criteria-title {
+font-size: var(--text-xl);
+color: var(--color-text-primary);
+margin: 0;
+}
+
+.criteria-summary {
+color: var(--color-text-secondary);
+font-size: var(--text-sm);
+line-height: 1.5;
+margin-top: var(--spacing-sm);
+}
+
+.criteria-content {
+max-height: 0;
+overflow: hidden;
+transition: max-height var(--transition-slow) ease-in-out;
+}
+
+.criteria-card.expanded .criteria-content {
+max-height: 500px;
+}
+
+.criteria-description {
+padding: 0 var(--spacing-xl) var(--spacing-xl);
+color: var(--color-text-secondary);
+line-height: 1.8;
+}
+
+/* Icons animation */
+@keyframes iconPulse {
+0% { transform: scale(1); }
+50% { transform: scale(1.1); }
+100% { transform: scale(1); }
+}
+
+.criteria-card:hover .criteria-icon {
+animation: iconPulse 1s ease-in-out infinite;
+background: rgba(0, 237, 100, 0.2);
+}
+
+/* Progress indicator */
+.criteria-progress {
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+height: 2px;
+background: rgba(255, 255, 255, 0.1);
+overflow: hidden;
+}
+
+.criteria-progress-bar {
+height: 100%;
+width: 100%;
+background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+transform: translateX(-100%);
+transition: transform var(--transition-slow);
+}
+
+.criteria-card.fit .criteria-progress-bar {
+transform: translateX(0);
+}
+
+.tech-stack {
+display: flex;
+flex-wrap: wrap;
+gap: var(--spacing-sm);
+margin-top: var(--spacing-lg);
+}
+
+.tech-badge {
+padding: var(--spacing-xs) var(--spacing-md);
+background: var(--color-bg-tertiary);
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: var(--radius-full);
+font-size: var(--text-sm);
+color: var(--color-text-secondary);
+}
+
+.pain-points {
+background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+border: 1px solid rgba(239, 68, 68, 0.3);
+border-radius: var(--radius-lg);
+padding: var(--spacing-xl);
+margin: var(--spacing-2xl) 0;
+}
+
+.pain-point-item {
+display: flex;
+align-items: flex-start;
+gap: var(--spacing-md);
+margin-bottom: var(--spacing-lg);
+}
+
+.pain-icon {
+width: 24px;
+height: 24px;
+background: var(--color-error);
+border-radius: 50%;
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-weight: bold;
+}
+
+.timeline {
+position: relative;
+padding: var(--spacing-xl) 0;
+}
+
+.timeline-item {
+display: flex;
+gap: var(--spacing-xl);
+margin-bottom: var(--spacing-2xl);
+position: relative;
+}
+
+.timeline-marker {
+width: 16px;
+height: 16px;
+background: var(--color-primary);
+border-radius: 50%;
+flex-shrink: 0;
+margin-top: var(--spacing-xs);
+position: relative;
+z-index: 2;
+}
+
+.timeline-item:not(:last-child)::after {
+content: '';
+position: absolute;
+left: 7px;
+top: 24px;
+width: 2px;
+height: calc(100% + var(--spacing-xl));
+background: rgba(255, 255, 255, 0.2);
+}
+
+.timeline-content {
+flex: 1;
+}
+
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: var(--spacing-xl);
+margin: var(--spacing-2xl) 0;
+}
+
+.stat-card {
+text-align: center;
+padding: var(--spacing-xl);
+background: var(--color-bg-card);
+border-radius: var(--radius-lg);
+border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-value {
+font-size: var(--text-4xl);
+font-weight: 700;
+color: var(--color-primary);
+margin-bottom: var(--spacing-sm);
+}
+
+.stat-label {
+color: var(--color-text-secondary);
+font-size: var(--text-base);
+}
+
+/* Animations */
+@keyframes slideUp {
+from {
+opacity: 0;
+transform: translateY(30px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+.animate-slideUp {
+animation: slideUp 0.6s ease-out forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; opacity: 0; }
+.delay-2 { animation-delay: 0.2s; opacity: 0; }
+.delay-3 { animation-delay: 0.3s; opacity: 0; }
+.delay-4 { animation-delay: 0.4s; opacity: 0; }
+</style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-background"></div>
-        <div class="hero-blur hero-blur-primary"></div>
-        <div class="hero-blur hero-blur-accent"></div>
-        
-        <div class="container">
-            <div class="text-center mb-6">
-                <div class="badge badge-primary mb-4 animate-fadeIn">
-                    <span>MongoDB Modernization Factory Assessment</span>
-                </div>
-                <h1 class="text-gradient animate-slideUp">Kushki</h1>
-                <p class="text-xl text-secondary animate-slideUp delay-1" style="max-width: 800px; margin: 0 auto;">
-                    Leading digital payment infrastructure provider in Latin America
-                </p>
+<!-- Hero Section -->
+<section class="hero">
+<div class="hero-background"></div>
+<div class="hero-blur hero-blur-primary"></div>
+<div class="hero-blur hero-blur-accent"></div>
+
+<div class="container">
+<div class="text-center mb-6">
+<div class="badge badge-primary mb-4 animate-fadeIn">
+    <span>MongoDB Modernization Factory Assessment</span>
+</div>
+<h1 class="text-gradient animate-slideUp">Kushki</h1>
+<p class="text-xl text-secondary animate-slideUp delay-1" style="max-width: 800px; margin: 0 auto;">
+    Leading digital payment infrastructure provider in Latin America
+</p>
+</div>
+
+<!-- Assessment Score -->
+<div class="assessment-score justify-center animate-slideUp delay-2">
+<div class="score-circle">
+    <div class="score-inner">
+        <div class="score-value">9/10</div>
+        <div class="score-label">ICP Score</div>
+    </div>
+</div>
+<div class="text-left">
+    <h3 class="text-2xl mb-2">Ideal Candidate</h3>
+    <p class="text-secondary">Meets 9 out of 10 Ideal Customer Profile criteria</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Company Overview -->
+<section class="section">
+<div class="container">
+<h2 class="text-center mb-6">Executive Summary</h2>
+
+<div class="card card-gradient mb-6">
+<div class="grid md:grid-cols-2 gap-6">
+    <div>
+        <h3 class="text-2xl mb-4">About Kushki</h3>
+        <p class="mb-4">
+            Kushki is a leading digital payments infrastructure provider in Latin America, 
+            founded in 2017 and headquartered in Quito, Ecuador. As a regulated payment institution, 
+            they have been instrumental in helping fintechs and banks meet local regulatory requirements 
+            while modernizing payment rails across the region.
+        </p>
+        <p class="mb-4">
+            Operating across 5 countries (Mexico, Colombia, Chile, Peru, and Ecuador), Kushki's 
+            platform supports online payments, recurring billing, wire transfers, fraud prevention, 
+            and provides a robust API ecosystem tailored specifically for developers and enterprises 
+            in Latin America.
+        </p>
+        <p class="mb-4">
+            The company is experiencing explosive growth, projecting at least 2X growth in transactions 
+            this year. They've launched a strategic push in innovation and commercial expansion, 
+            which demands a scalable and resilient technology foundation.
+        </p>
+        <div class="tech-stack">
+            <span class="tech-badge">AWS</span>
+            <span class="tech-badge">MySQL</span>
+            <span class="tech-badge">Java</span>
+            <span class="tech-badge">PHP</span>
+            <span class="tech-badge">Python</span>
+            <span class="tech-badge">Node.js</span>
+            <span class="tech-badge">Tomcat</span>
+        </div>
+    </div>
+    <div>
+        <h3 class="text-2xl mb-4">Key Metrics</h3>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">25M</div>
+                <div class="stat-label">Monthly Transactions</div>
             </div>
-            
-            <!-- Assessment Score -->
-            <div class="assessment-score justify-center animate-slideUp delay-2">
-                <div class="score-circle">
-                    <div class="score-inner">
-                        <div class="score-value">9/10</div>
-                        <div class="score-label">ICP Score</div>
-                    </div>
-                </div>
-                <div class="text-left">
-                    <h3 class="text-2xl mb-2">Ideal Candidate</h3>
-                    <p class="text-secondary">Meets 9 out of 10 Ideal Customer Profile criteria</p>
-                </div>
+            <div class="stat-card">
+                <div class="stat-value">50%</div>
+                <div class="stat-label">Expected Growth</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">300GB</div>
+                <div class="stat-label">Database Size</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">170+</div>
+                <div class="stat-label">Stored Procedures</div>
             </div>
         </div>
-    </section>
+    </div>
+</div>
+</div>
+</div>
+</section>
 
-    <!-- Company Overview -->
-    <section class="section">
-        <div class="container">
-            <h2 class="text-center mb-6">Executive Summary</h2>
-            
-            <div class="card card-gradient mb-6">
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <h3 class="text-2xl mb-4">About Kushki</h3>
-                        <p class="mb-4">
-                            Kushki is a leading digital payments infrastructure provider in Latin America, 
-                            founded in 2017 and headquartered in Quito, Ecuador. As a regulated payment institution, 
-                            they have been instrumental in helping fintechs and banks meet local regulatory requirements 
-                            while modernizing payment rails across the region.
-                        </p>
-                        <p class="mb-4">
-                            Operating across 5 countries (Mexico, Colombia, Chile, Peru, and Ecuador), Kushki's 
-                            platform supports online payments, recurring billing, wire transfers, fraud prevention, 
-                            and provides a robust API ecosystem tailored specifically for developers and enterprises 
-                            in Latin America.
-                        </p>
-                        <p class="mb-4">
-                            The company is experiencing explosive growth, projecting at least 2X growth in transactions 
-                            this year. They've launched a strategic push in innovation and commercial expansion, 
-                            which demands a scalable and resilient technology foundation.
-                        </p>
-                        <div class="tech-stack">
-                            <span class="tech-badge">AWS</span>
-                            <span class="tech-badge">MySQL</span>
-                            <span class="tech-badge">Java</span>
-                            <span class="tech-badge">PHP</span>
-                            <span class="tech-badge">Python</span>
-                            <span class="tech-badge">Node.js</span>
-                            <span class="tech-badge">Tomcat</span>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl mb-4">Key Metrics</h3>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-value">25M</div>
-                                <div class="stat-label">Monthly Transactions</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value">50%</div>
-                                <div class="stat-label">Expected Growth</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value">300GB</div>
-                                <div class="stat-label">Database Size</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value">170+</div>
-                                <div class="stat-label">Stored Procedures</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<!-- Pain Points Section -->
+<section class="section">
+<div class="container">
+<h2 class="text-center mb-6">Current Challenges</h2>
+
+<div class="pain-points">
+<h3 class="text-2xl mb-4">Critical Pain Points</h3>
+<div class="pain-point-item">
+    <div class="pain-icon">!</div>
+    <div>
+        <h4 class="text-lg mb-2">Scalability Issues</h4>
+        <p>Current architecture doesn't allow for easy scalability or functional growth. 
+        The platform operates on a monolithic architecture ('big block') with high complexity 
+        that creates significant risks with every change implemented. The system was not 
+        designed to handle future transaction volumes or complexity.</p>
+    </div>
+</div>
+<div class="pain-point-item">
+    <div class="pain-icon">!</div>
+    <div>
+        <h4 class="text-lg mb-2">Performance Bottlenecks</h4>
+        <p>Fund dispersal calculations take approximately 3 hours using previous day's data. 
+        Transactional tables with over 200 million rows cause severe latency in computing 
+        account statuses and wallet balances. The transactional model involves up to 5 updates 
+        per transaction with complex joins, creating cascading performance issues.</p>
+    </div>
+</div>
+<div class="pain-point-item">
+    <div class="pain-icon">!</div>
+    <div>
+        <h4 class="text-lg mb-2">Operational Risk</h4>
+        <p>The platform is critical in Mexico with zero tolerance for downtime (RPO and RTO of zero). 
+        If a failure occurs during fund dispersal, reprocessing could cause operational breaches 
+        as dispersions must be completed by noon. This directly affects customer experience with 
+        risks of customer churn, reputational damage, and negative cash flow impact.</p>
+    </div>
+</div>
+<div class="pain-point-item">
+    <div class="pain-icon">!</div>
+    <div>
+        <h4 class="text-lg mb-2">Technical Debt</h4>
+        <p>The codebase is a mix of Java, PHP, Python, and Node.js with no microservices foundation. 
+        Running on AWS EC2 with Tomcat, Docker containers, and 18 MySQL replicas. Parts of the 
+        system are over 10 years old. The frontend presents security vulnerabilities and stability 
+        issues. Database and business logic associated with reconciliation processes are particularly problematic.</p>
+    </div>
+</div>
+<div class="pain-point-item">
+    <div class="pain-icon">!</div>
+    <div>
+        <h4 class="text-lg mb-2">Reporting & Analytics Delays</h4>
+        <p>Report generation takes excessively long, impacting departments from commercial to finops, 
+        finance, and fund distribution. Engineering and infrastructure teams are experiencing serious 
+        difficulties maintaining and optimizing the current system.</p>
+    </div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ICP Criteria Assessment -->
+<section class="section">
+<div class="container">
+<h2 class="text-center mb-6">Ideal Customer Profile Assessment</h2>
+
+<div class="criteria-grid">
+<!-- Legacy Applications Card -->
+<div class="criteria-card fit animate-slideUp" data-criteria="legacy"
+     style="background: rgba(13, 42, 61, 0.8); backdrop-filter: blur(10px);
+            border-radius: 16px; border: 1px solid rgba(0, 237, 100, 0.3);
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+            cursor: pointer;">
+  <!-- barra superior -->
+  <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px;
+              background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%);"></div>
+
+  <!-- cabecera clicable -->
+  <div class="criteria-header" onclick="toggleCard(this.parentElement)"
+       style="padding: 1.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+      <span style="display: inline-flex; align-items: center; gap: 0.5rem;
+                   padding: 0.5rem 1rem; background: linear-gradient(135deg, #00ED64 0%, rgba(0,237,100,0.8) 100%);
+                   color: #001E2B; border-radius: 999px; font-size: 0.875rem; font-weight: 600;
+                   box-shadow: 0 2px 8px rgba(0,237,100,0.3);">
+        <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none">
+          <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Good Fit
+      </span>
+      <svg class="expand-icon" style="width: 24px; height: 24px; color: #B8C4CE;
+                   transition: transform 0.3s;" viewBox="0 0 24 24" fill="none">
+        <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <div style="width: 48px; height: 48px; background: rgba(0,237,100,0.1);
+                  border-radius: 12px; display: flex; align-items: center;
+                  justify-content: center; flex-shrink: 0;">
+        <svg style="width: 28px; height: 28px; color: #00ED64;" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <h3 style="font-size: 1.25rem; color: #FFFFFF; margin: 0;">
+          Legacy Applications
+        </h3>
+        <p style="color: #B8C4CE; font-size: 0.875rem; margin: 0.25rem 0 0 0;">
+          Monolithic architecture with 250–350K lines of code
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- contenido colapsable -->
+  <div class="criteria-content"
+       style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out;">
+    <p style="padding: 0 1.5rem 1.5rem; color: #B8C4CE; line-height: 1.8; margin: 0;">
+      Bill Pocket is a critical digital payment platform that integrates with Prosa in Mexico.
+      The architecture is monolithic (“big block”), primarily using MySQL with 18 replicas and
+      some SQL Server presence. Components built with Java, PHP, Python, Node.js, and Tomcat.
+      Parts of the system are over 10 years old, not microservices-oriented, with an estimated
+      250,000–350,000 lines of code across multiple programs for payments, reconciliations, and
+      administrative systems.
+    </p>
+  </div>
+
+  <!-- barra de progreso -->
+  <div class="criteria-progress">
+    <div class="criteria-progress-bar"></div>
+  </div>
+</div>
+
+<!-- Target Platform Card -->
+<div class="criteria-card fit animate-slideUp delay-1" data-criteria="target" style="background: rgba(13, 42, 61, 0.8); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(0, 237, 100, 0.3); transition: all 0.3s ease; position: relative; overflow: hidden; cursor: pointer;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%);"></div>
+    <div class="criteria-header" onclick="toggleCard(this.parentElement)" style="padding: 1.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <span style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #00ED64 0%, rgba(0, 237, 100, 0.8) 100%); color: #001E2B; border-radius: 999px; font-size: 0.875rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0, 237, 100, 0.3);">
+                <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none">
+                    <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Good Fit
+            </span>
+            <svg class="expand-icon" style="width: 24px; height: 24px; color: #B8C4CE; transition: transform 0.3s;" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 48px; height: 48px; background: rgba(0, 237, 100, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 28px; height: 28px; color: #00ED64;" viewBox="0 0 24 24" fill="none">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div>
+                <h3 style="font-size: 1.25rem; color: #FFFFFF; margin: 0;">Target Platform</h3>
+                <p style="color: #B8C4CE; font-size: 0.875rem; margin: 0.25rem 0 0 0;">C-level aligned on MongoDB as core database</p>
             </div>
         </div>
-    </section>
+    </div>
+    <div class="criteria-content" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out;">
+        <p style="padding: 0 1.5rem 1.5rem; color: #B8C4CE; line-height: 1.8; margin: 0;">
+            The team is actively exploring migrating the entire Bill Pocket platform to MongoDB. 
+            This is not speculative - C-level has already aligned internally to move forward with 
+            MongoDB as the core database, pending technical validation. They propose a complete 
+            migration from MySQL, eliminating current dependencies and enabling more flexible data 
+            management, especially for large-scale loads and analytical requirements.
+        </p>
+    </div>
+</div>
 
-    <!-- Pain Points Section -->
-    <section class="section">
-        <div class="container">
-            <h2 class="text-center mb-6">Current Challenges</h2>
-            
-            <div class="pain-points">
-                <h3 class="text-2xl mb-4">Critical Pain Points</h3>
-                <div class="pain-point-item">
-                    <div class="pain-icon">!</div>
-                    <div>
-                        <h4 class="text-lg mb-2">Scalability Issues</h4>
-                        <p>Current architecture doesn't allow for easy scalability or functional growth. 
-                        The platform operates on a monolithic architecture ('big block') with high complexity 
-                        that creates significant risks with every change implemented. The system was not 
-                        designed to handle future transaction volumes or complexity.</p>
-                    </div>
-                </div>
-                <div class="pain-point-item">
-                    <div class="pain-icon">!</div>
-                    <div>
-                        <h4 class="text-lg mb-2">Performance Bottlenecks</h4>
-                        <p>Fund dispersal calculations take approximately 3 hours using previous day's data. 
-                        Transactional tables with over 200 million rows cause severe latency in computing 
-                        account statuses and wallet balances. The transactional model involves up to 5 updates 
-                        per transaction with complex joins, creating cascading performance issues.</p>
-                    </div>
-                </div>
-                <div class="pain-point-item">
-                    <div class="pain-icon">!</div>
-                    <div>
-                        <h4 class="text-lg mb-2">Operational Risk</h4>
-                        <p>The platform is critical in Mexico with zero tolerance for downtime (RPO and RTO of zero). 
-                        If a failure occurs during fund dispersal, reprocessing could cause operational breaches 
-                        as dispersions must be completed by noon. This directly affects customer experience with 
-                        risks of customer churn, reputational damage, and negative cash flow impact.</p>
-                    </div>
-                </div>
-                <div class="pain-point-item">
-                    <div class="pain-icon">!</div>
-                    <div>
-                        <h4 class="text-lg mb-2">Technical Debt</h4>
-                        <p>The codebase is a mix of Java, PHP, Python, and Node.js with no microservices foundation. 
-                        Running on AWS EC2 with Tomcat, Docker containers, and 18 MySQL replicas. Parts of the 
-                        system are over 10 years old. The frontend presents security vulnerabilities and stability 
-                        issues. Database and business logic associated with reconciliation processes are particularly problematic.</p>
-                    </div>
-                </div>
-                <div class="pain-point-item">
-                    <div class="pain-icon">!</div>
-                    <div>
-                        <h4 class="text-lg mb-2">Reporting & Analytics Delays</h4>
-                        <p>Report generation takes excessively long, impacting departments from commercial to finops, 
-                        finance, and fund distribution. Engineering and infrastructure teams are experiencing serious 
-                        difficulties maintaining and optimizing the current system.</p>
-                    </div>
-                </div>
+<!-- Cloud Provider Card -->
+<div class="criteria-card fit animate-slideUp delay-2" data-criteria="cloud" style="background: rgba(13, 42, 61, 0.8); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(0, 237, 100, 0.3); transition: all 0.3s ease; position: relative; overflow: hidden; cursor: pointer;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%);"></div>
+    <div class="criteria-header" onclick="toggleCard(this.parentElement)" style="padding: 1.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <span style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #00ED64 0%, rgba(0, 237, 100, 0.8) 100%); color: #001E2B; border-radius: 999px; font-size: 0.875rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0, 237, 100, 0.3);">
+                <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none">
+                    <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Good Fit
+            </span>
+            <svg class="expand-icon" style="width: 24px; height: 24px; color: #B8C4CE; transition: transform 0.3s;" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 48px; height: 48px; background: rgba(0, 237, 100, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 28px; height: 28px; color: #00ED64;" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div>
+                <h3 style="font-size: 1.25rem; color: #FFFFFF; margin: 0;">Cloud Provider</h3>
+                <p style="color: #B8C4CE; font-size: 0.875rem; margin: 0.25rem 0 0 0;">100% AWS infrastructure with AI/LLM capabilities</p>
             </div>
         </div>
-    </section>
+    </div>
+    <div class="criteria-content" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out;">
+        <p style="padding: 0 1.5rem 1.5rem; color: #B8C4CE; line-height: 1.8; margin: 0;">
+            All infrastructure runs entirely on AWS, which is their sole cloud provider. Currently 
+            using AWS EC2 with potential to leverage serverless services like AWS Lambda. For AI/LLM 
+            capabilities, they're experimenting with Gemini, OpenAI through AWS Bedrock, and Anthropic. 
+            They're flexible and open to whatever approach MongoDB recommends. Multi-region AWS 
+            architecture adds complexity for synchronization and latency management.
+        </p>
+    </div>
+</div>
 
-    <!-- ICP Criteria Assessment -->
-    <section class="section">
-        <div class="container">
-            <h2 class="text-center mb-6">Ideal Customer Profile Assessment</h2>
-            
-            <div class="criteria-grid">
-                <div class="criteria-card fit animate-slideUp">
-                    <span class="criteria-status">✓ Good Fit</span>
-                    <h3 class="criteria-title">Legacy Applications</h3>
-                    <p class="criteria-description">
-                        Bill Pocket is a critical digital payment platform that integrates with Prosa in Mexico. 
-                        The architecture is monolithic ('big block'), primarily using MySQL with 18 replicas, 
-                        some SQL Server presence. Components built with Java, PHP, Python, Node.js, and Tomcat. 
-                        Parts of the system are over 10 years old, not microservices-oriented, with an estimated 
-                        250,000-350,000 lines of code across multiple programs for payments, reconciliations, 
-                        and administrative systems.
-                    </p>
-                </div>
-                
-                <div class="criteria-card fit animate-slideUp delay-1">
-                    <span class="criteria-status">✓ Good Fit</span>
-                    <h3 class="criteria-title">Target Platform</h3>
-                    <p class="criteria-description">
-                        The team is actively exploring migrating the entire Bill Pocket platform to MongoDB. 
-                        This is not speculative - C-level has already aligned internally to move forward with 
-                        MongoDB as the core database, pending technical validation. They propose a complete 
-                        migration from MySQL, eliminating current dependencies and enabling more flexible data 
-                        management, especially for large-scale loads and analytical requirements.
-                    </p>
-                </div>
-                
-                <div class="criteria-card fit animate-slideUp delay-2">
-                    <span class="criteria-status">✓ Good Fit</span>
-                    <h3 class="criteria-title">Cloud Provider</h3>
-                    <p class="criteria-description">
-                        All infrastructure runs entirely on AWS, which is their sole cloud provider. Currently 
-                        using AWS EC2 with potential to leverage serverless services like AWS Lambda. For AI/LLM 
-                        capabilities, they're experimenting with Gemini, OpenAI through AWS Bedrock, and Anthropic. 
-                        They're flexible and open to whatever approach MongoDB recommends. Multi-region AWS 
-                        architecture adds complexity for synchronization and latency management.
-                    </p>
-                </div>
-                
-                <div class="criteria-card fit animate-slideUp delay-3">
-                    <span class="criteria-status">✓ Good Fit</span>
-                    <h3 class="criteria-title">Modernization Need</h3>
-                    <p class="criteria-description">
-                        Significant performance and architectural challenges with current relational setup. 
-                        Transactional tables exceed 200M rows causing latency issues. Complex joins with up to 
-                        5 updates per transaction. They believe in modernization value, not just lift-and-shift. 
-                        Looking for NoSQL approach to address scalability, enable sustainable growth, and build 
-                        a distributed structure that facilitates maintenance and control.
-                    </p>
-                </div>
-                
-                <div class="criteria-card fit animate-slideUp delay-4">
-                    <span class="criteria-status">✓ Good Fit</span>
-                    <h3 class="criteria-title">MongoDB Perception</h3>
-                    <p class="criteria-description">
-                        MongoDB is now highly regarded across the organization. While there were doubts in the past, 
-                        perception has changed drastically, especially due to evolving data strategies around AI. 
-                        C-level believes MongoDB is the best choice moving forward and considers it part of their 
-                        standard stack. Selected for horizontal scalability, flexibility in handling dynamic data 
-                        models, and AI-first ecosystem. MongoDB's robust tooling accelerates development.
-                    </p>
-                </div>
-                
-                <div class="criteria-card fit animate-slideUp">
-                    <span class="criteria-status">✓ Good Fit</span>
-                    <h3 class="criteria-title">Executive Sponsorship</h3>
-                    <p class="criteria-description">
-                        Decision to modernize and migrate to MongoDB was initiated by C-level (CIO and leadership). 
-                        Champion: Giacomo Orizzonte, Data and Infrastructure Director, who understands the business 
-                        and legacy estate, has executive access, and pitches this internally. The initiative is 
-                        seen as a strategic success case for the company with full sponsorship and support at the 
-                        highest levels. There's significant win potential for the champion.
-                    </p>
-                </div>
-                
-                <div class="criteria-card fit animate-slideUp delay-1">
-                    <span class="criteria-status">✓ Good Fit</span>
-                    <h3 class="criteria-title">Collaboration</h3>
-                    <p class="criteria-description">
-                        Customer has explicitly confirmed 100% commitment to working collaboratively with MongoDB 
-                        team as one integrated unit. They will dedicate a joint team focused exclusively on the 
-                        project, ensuring continuity, alignment, and technical ownership of shared goals. Full 
-                        knowledge sharing and resource alignment throughout the migration process. They hope 
-                        technical teams from both sides, especially architects, can discuss and jointly decide 
-                        on the best path forward.
-                    </p>
-                </div>
-                
-                <div class="criteria-card fit animate-slideUp delay-2">
-                    <span class="criteria-status">✓ Good Fit</span>
-                    <h3 class="criteria-title">Technology Stack</h3>
-                    <p class="criteria-description">
-                        Primarily Java-based with components in PHP and Node.js, using Tomcat services. Heavy 
-                        use of stored procedures (170+ identified in MySQL), triggers, and scheduled tasks in 
-                        both MySQL and MongoDB for reporting. Database logic tied to reconciliation processes 
-                        is particularly complex. They maintain several programs for payments, reconciliations, 
-                        and an administrative system with both backend and frontend components.
-                    </p>
-                </div>
-                
-                <div class="criteria-card fit animate-slideUp delay-3">
-                    <span class="criteria-status">✓ Good Fit</span>
-                    <h3 class="criteria-title">Current Database</h3>
-                    <p class="criteria-description">
-                        MySQL running on AWS RDS with 18 replicas (original DB ~300GB) used for reporting, 
-                        reconciliation, client systems, and business intelligence. Some data already replicated 
-                        to MongoDB and Elastic for specific reporting and analytical use cases. They have at 
-                        least 20 stored procedures handling critical business logic. Integration with Prosa in 
-                        Mexico adds sensitive connection requirements.
-                    </p>
-                </div>
+<!-- Modernization Need Card -->
+<div class="criteria-card fit animate-slideUp delay-3" data-criteria="modernization" style="background: rgba(13, 42, 61, 0.8); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(0, 237, 100, 0.3); transition: all 0.3s ease; position: relative; overflow: hidden; cursor: pointer;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%);"></div>
+    <div class="criteria-header" onclick="toggleCard(this.parentElement)" style="padding: 1.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <span style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #00ED64 0%, rgba(0, 237, 100, 0.8) 100%); color: #001E2B; border-radius: 999px; font-size: 0.875rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0, 237, 100, 0.3);">
+                <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none">
+                    <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Good Fit
+            </span>
+            <svg class="expand-icon" style="width: 24px; height: 24px; color: #B8C4CE; transition: transform 0.3s;" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 48px; height: 48px; background: rgba(0, 237, 100, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 28px; height: 28px; color: #00ED64;" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div>
+                <h3 style="font-size: 1.25rem; color: #FFFFFF; margin: 0;">Modernization Need</h3>
+                <p style="color: #B8C4CE; font-size: 0.875rem; margin: 0.25rem 0 0 0;">Critical performance issues with 200M+ row tables</p>
             </div>
         </div>
-    </section>
+    </div>
+    <div class="criteria-content" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out;">
+        <p style="padding: 0 1.5rem 1.5rem; color: #B8C4CE; line-height: 1.8; margin: 0;">
+            Significant performance and architectural challenges with current relational setup. 
+            Transactional tables exceed 200M rows causing latency issues. Complex joins with up to 
+            5 updates per transaction. They believe in modernization value, not just lift-and-shift. 
+            Looking for NoSQL approach to address scalability, enable sustainable growth, and build 
+            a distributed structure that facilitates maintenance and control.
+        </p>
+    </div>
+</div>
 
-    <!-- Current State vs Future Vision -->
-    <section class="section">
-        <div class="container">
-            <h2 class="text-center mb-6">Current State vs Future Vision</h2>
-            
-            <div class="grid md:grid-cols-2 gap-6 mb-6">
-                <div class="card card-bordered">
-                    <h3 class="text-2xl mb-4 text-gradient">Current State</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        <li class="mb-3">
-                            <strong>Architecture:</strong> Monolithic "big block" with no microservices foundation
-                        </li>
-                        <li class="mb-3">
-                            <strong>Database:</strong> MySQL with 18 replicas, 300GB original database
-                        </li>
-                        <li class="mb-3">
-                            <strong>Performance:</strong> 3-hour fund dispersal calculations, severe latency with 200M+ row tables
-                        </li>
-                        <li class="mb-3">
-                            <strong>Technology:</strong> Mixed stack (Java, PHP, Python, Node.js), AWS EC2 with Tomcat
-                        </li>
-                        <li class="mb-3">
-                            <strong>Risk:</strong> High risk with every change, zero tolerance for downtime
-                        </li>
-                        <li class="mb-3">
-                            <strong>Code:</strong> 250,000-350,000 lines across multiple programs
-                        </li>
-                        <li class="mb-3">
-                            <strong>Business Logic:</strong> 170+ stored procedures, complex reconciliation processes
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="card card-bordered" style="border-color: var(--color-primary);">
-                    <h3 class="text-2xl mb-4 text-gradient">Future Vision with MongoDB</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        <li class="mb-3">
-                            <strong>Architecture:</strong> Microservices-based with serverless (AWS Lambda)
-                        </li>
-                        <li class="mb-3">
-                            <strong>Database:</strong> MongoDB with horizontal scalability and flexible schemas
-                        </li>
-                        <li class="mb-3">
-                            <strong>Performance:</strong> Real-time processing, optimized for 2X transaction growth
-                        </li>
-                        <li class="mb-3">
-                            <strong>Technology:</strong> Modern, unified stack with AI-first capabilities
-                        </li>
-                        <li class="mb-3">
-                            <strong>Risk:</strong> Built-in resilience, automated rollback, zero-downtime deployments
-                        </li>
-                        <li class="mb-3">
-                            <strong>Code:</strong> Clean, modular, scalable, and autonomous components
-                        </li>
-                        <li class="mb-3">
-                            <strong>Business Logic:</strong> Distributed, maintainable, version-controlled services
-                        </li>
-                    </ul>
-                </div>
+<!-- MongoDB Perception Card -->
+<div class="criteria-card fit animate-slideUp delay-4" data-criteria="perception" style="background: rgba(13, 42, 61, 0.8); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(0, 237, 100, 0.3); transition: all 0.3s ease; position: relative; overflow: hidden; cursor: pointer;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%);"></div>
+    <div class="criteria-header" onclick="toggleCard(this.parentElement)" style="padding: 1.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <span style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #00ED64 0%, rgba(0, 237, 100, 0.8) 100%); color: #001E2B; border-radius: 999px; font-size: 0.875rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0, 237, 100, 0.3);">
+                <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none">
+                    <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Good Fit
+            </span>
+            <svg class="expand-icon" style="width: 24px; height: 24px; color: #B8C4CE; transition: transform 0.3s;" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 48px; height: 48px; background: rgba(0, 237, 100, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 28px; height: 28px; color: #00ED64;" viewBox="0 0 24 24" fill="none">
+                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div>
+                <h3 style="font-size: 1.25rem; color: #FFFFFF; margin: 0;">MongoDB Perception</h3>
+                <p style="color: #B8C4CE; font-size: 0.875rem; margin: 0.25rem 0 0 0;">Highly regarded, part of standard stack</p>
             </div>
         </div>
-    </section>
+    </div>
+    <div class="criteria-content" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out;">
+        <p style="padding: 0 1.5rem 1.5rem; color: #B8C4CE; line-height: 1.8; margin: 0;">
+            MongoDB is now highly regarded across the organization. While there were doubts in the past, 
+            perception has changed drastically, especially due to evolving data strategies around AI. 
+            C-level believes MongoDB is the best choice moving forward and considers it part of their 
+            standard stack. Selected for horizontal scalability, flexibility in handling dynamic data 
+            models, and AI-first ecosystem. MongoDB's robust tooling accelerates development.
+        </p>
+    </div>
+</div>
 
-    <!-- Migration Strategy -->
-    <section class="section">
-        <div class="container">
-            <h2 class="text-center mb-6">Proposed Migration Strategy</h2>
-            
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <h3 class="text-xl mb-2">Phase 1: Assessment & Mapping</h3>
-                        <p class="text-secondary">
-                            Complete functional mapping of current system to identify critical components, 
-                            business flows, and key dependencies. Map all 170+ stored procedures, understand 
-                            integration points with Prosa and other systems. Document all reconciliation 
-                            processes and business logic. Identify quick wins for immediate impact.
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <h3 class="text-xl mb-2">Phase 2: Parallel Architecture</h3>
-                        <p class="text-secondary">
-                            Build new microservices-based architecture supported by serverless services like 
-                            AWS Lambda. Create distributed structure facilitating maintenance, control, and 
-                            sustainable growth. Design clean, modular, scalable, and autonomous components. 
-                            Leverage existing connections to accelerate and reduce risk while avoiding 
-                            dependencies on legacy systems.
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <h3 class="text-xl mb-2">Phase 3: Gradual Migration</h3>
-                        <p class="text-secondary">
-                            Gradually redirect traffic to new platform with controlled testing in real 
-                            environments without disrupting operations. Implement processes ensuring 
-                            traceability, version control, transactional monitoring, and reversibility. 
-                            Include automated testing, parallel QA environments, and rollback plans per 
-                            service. Deploy each component with prior validation.
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-marker"></div>
-                    <div class="timeline-content">
-                        <h3 class="text-xl mb-2">Phase 4: Full Cutover</h3>
-                        <p class="text-secondary">
-                            Complete migration with zero transactional loss, ensuring RPO/RTO of zero. 
-                            Temporarily redirect traffic to new platform with ability to revert to current 
-                            system if needed, reconciling data to continue operations without impact. 
-                            Critical for Mexico operations where no downtime is acceptable. Final 
-                            decommissioning of legacy MySQL infrastructure.
-                        </p>
-                    </div>
-                </div>
+<!-- Executive Sponsorship Card -->
+<div class="criteria-card fit animate-slideUp" data-criteria="sponsorship" style="background: rgba(13, 42, 61, 0.8); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(0, 237, 100, 0.3); transition: all 0.3s ease; position: relative; overflow: hidden; cursor: pointer;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%);"></div>
+    <div class="criteria-header" onclick="toggleCard(this.parentElement)" style="padding: 1.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <span style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #00ED64 0%, rgba(0, 237, 100, 0.8) 100%); color: #001E2B; border-radius: 999px; font-size: 0.875rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0, 237, 100, 0.3);">
+                <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none">
+                    <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Good Fit
+            </span>
+            <svg class="expand-icon" style="width: 24px; height: 24px; color: #B8C4CE; transition: transform 0.3s;" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 48px; height: 48px; background: rgba(0, 237, 100, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 28px; height: 28px; color: #00ED64;" viewBox="0 0 24 24" fill="none">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M23 21v-2a4 4 0 00-3-3.87" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </div>
-            
-            <div class="text-center mt-6">
-                <p class="text-lg text-secondary mb-4">
-                    Estimated timeline: 6 months traditional approach / 2-3 months for Phase 1 with MongoDB Factory
-                </p>
-                <p class="text-base text-secondary mb-6">
-                    Note: Customer estimates full modernization at 6 months traditionally, but is open to 
-                    running a scoped first phase in 2-3 months if MongoDB's Factory team demonstrates 
-                    accelerated delivery path.
-                </p>
-                <a href="#" class="btn btn-primary btn-lg">
-                    <span>View Detailed Migration Plan</span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </a>
+            <div>
+                <h3 style="font-size: 1.25rem; color: #FFFFFF; margin: 0;">Executive Sponsorship</h3>
+                <p style="color: #B8C4CE; font-size: 0.875rem; margin: 0.25rem 0 0 0;">C-level initiated with full support</p>
             </div>
         </div>
-    </section>
+    </div>
+    <div class="criteria-content" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out;">
+        <p style="padding: 0 1.5rem 1.5rem; color: #B8C4CE; line-height: 1.8; margin: 0;">
+            Decision to modernize and migrate to MongoDB was initiated by C-level (CIO and leadership). 
+            Champion: Giacomo Orizzonte, Data and Infrastructure Director, who understands the business 
+            and legacy estate, has executive access, and pitches this internally. The initiative is 
+            seen as a strategic success case for the company with full sponsorship and support at the 
+            highest levels. There's significant win potential for the champion.
+        </p>
+    </div>
+</div>
 
-    <!-- Key Stakeholders & Team -->
-    <section class="section">
-        <div class="container">
-            <h2 class="text-center mb-6">Key Stakeholders & Team</h2>
-            
-            <div class="grid md:grid-cols-3 gap-4 mb-6">
-                <div class="card text-center">
-                    <h4 class="text-xl mb-2">Account Executive</h4>
-                    <p class="text-secondary mb-2">Mayra Contreras</p>
-                    <p class="text-sm text-muted">Leading the commercial relationship</p>
-                </div>
-                <div class="card text-center">
-                    <h4 class="text-xl mb-2">Solution Consultant</h4>
-                    <p class="text-secondary mb-2">Leo Alarcon</p>
-                    <p class="text-sm text-muted">Technical architecture and solution design</p>
-                </div>
-                <div class="card text-center">
-                    <h4 class="text-xl mb-2">Executive Champion</h4>
-                    <p class="text-secondary mb-2">Giacomo Orizzonte</p>
-                    <p class="text-sm text-muted">Data and Infrastructure Director</p>
-                </div>
+<!-- Collaboration Card -->
+<div class="criteria-card fit animate-slideUp delay-1" data-criteria="collaboration" style="background: rgba(13, 42, 61, 0.8); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(0, 237, 100, 0.3); transition: all 0.3s ease; position: relative; overflow: hidden; cursor: pointer;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%);"></div>
+    <div class="criteria-header" onclick="toggleCard(this.parentElement)" style="padding: 1.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <span style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #00ED64 0%, rgba(0, 237, 100, 0.8) 100%); color: #001E2B; border-radius: 999px; font-size: 0.875rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0, 237, 100, 0.3);">
+                <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none">
+                    <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Good Fit
+            </span>
+            <svg class="expand-icon" style="width: 24px; height: 24px; color: #B8C4CE; transition: transform 0.3s;" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 48px; height: 48px; background: rgba(0, 237, 100, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 28px; height: 28px; color: #00ED64;" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="9" y1="9" x2="9.01" y2="9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="15" y1="9" x2="15.01" y2="9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div>
+                <h3 style="font-size: 1.25rem; color: #FFFFFF; margin: 0;">Collaboration</h3>
+                <p style="color: #B8C4CE; font-size: 0.875rem; margin: 0.25rem 0 0 0;">100% committed to joint team approach</p>
             </div>
         </div>
-    </section>
+    </div>
+    <div class="criteria-content" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out;">
+        <p style="padding: 0 1.5rem 1.5rem; color: #B8C4CE; line-height: 1.8; margin: 0;">
+            Customer has explicitly confirmed 100% commitment to working collaboratively with MongoDB 
+            team as one integrated unit. They will dedicate a joint team focused exclusively on the 
+            project, ensuring continuity, alignment, and technical ownership of shared goals. Full 
+            knowledge sharing and resource alignment throughout the migration process. They hope 
+            technical teams from both sides, especially architects, can discuss and jointly decide 
+            on the best path forward.
+        </p>
+    </div>
+</div>
 
-    <!-- Business Case & Investment -->
-    <section class="section">
-        <div class="container">
-            <h2 class="text-center mb-6">Business Case & Investment</h2>
-            
-            <div class="card card-gradient mb-6">
-                <h3 class="text-2xl mb-4">Financial Considerations</h3>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <h4 class="text-xl mb-3">Current Situation</h4>
-                        <ul style="list-style: none; padding: 0;">
-                            <li class="mb-2">
-                                <strong>Budget Status:</strong> No approved budget yet - needs shaping and escalation
-                            </li>
-                            <li class="mb-2">
-                                <strong>Business Impact:</strong> Direct customer experience impact with risk of churn
-                            </li>
-                            <li class="mb-2">
-                                <strong>Operational Risk:</strong> Potential reputational damage and negative cash flow
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-xl mb-3">Expected Benefits</h4>
-                        <ul style="list-style: none; padding: 0;">
-                            <li class="mb-2">
-                                <strong>Performance:</strong> From 3-hour to real-time processing
-                            </li>
-                            <li class="mb-2">
-                                <strong>Scalability:</strong> Support for 50%+ annual transaction growth
-                            </li>
-                            <li class="mb-2">
-                                <strong>Agility:</strong> Faster feature deployment and reduced risk
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+<!-- Technology Stack Card -->
+<div class="criteria-card fit animate-slideUp delay-2" data-criteria="technology" style="background: rgba(13, 42, 61, 0.8); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(0, 237, 100, 0.3); transition: all 0.3s ease; position: relative; overflow: hidden; cursor: pointer;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%);"></div>
+    <div class="criteria-header" onclick="toggleCard(this.parentElement)" style="padding: 1.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <span style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #00ED64 0%, rgba(0, 237, 100, 0.8) 100%); color: #001E2B; border-radius: 999px; font-size: 0.875rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0, 237, 100, 0.3);">
+                <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none">
+                    <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Good Fit
+            </span>
+            <svg class="expand-icon" style="width: 24px; height: 24px; color: #B8C4CE; transition: transform 0.3s;" viewBox="0 0 24 24" fill="none">
+                <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 48px; height: 48px; background: rgba(0, 237, 100, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 28px; height: 28px; color: #00ED64;" viewBox="0 0 24 24" fill="none">
+                    <polyline points="16 18 22 12 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="8 6 2 12 8 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div>
+                <h3 style="font-size: 1.25rem; color: #FFFFFF; margin: 0;">Technology Stack</h3>
+                <p style="color: #B8C4CE; font-size: 0.875rem; margin: 0.25rem 0 0 0;">Java-based with 170+ stored procedures</p>
             </div>
         </div>
-    </section>
+    </div>
+    <div class="criteria-content" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out;">
+        <p style="padding: 0 1.5rem 1.5rem; color: #B8C4CE; line-height: 1.8; margin: 0;">
+            Primarily Java-based with components in PHP and Node.js, using Tomcat services. Heavy 
+            use of stored procedures (170+ identified in MySQL), triggers, and scheduled tasks in 
+            both MySQL and MongoDB for reporting. Database logic tied to reconciliation processes 
+            is particularly complex. They maintain several programs for payments, reconciliations, 
+            and an administrative system with both backend and frontend components.
+        </p>
+    </div>
+</div>
 
-    <!-- Why MongoDB Section -->
-    <section class="section">
-        <div class="container">
-            <h2 class="text-center mb-6">Why MongoDB for Kushki</h2>
-            
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="card">
-                    <h3 class="text-xl mb-4">Technical Alignment</h3>
-                    <p class="mb-3">
-                        MongoDB was selected for its horizontal scalability, flexibility in handling dynamic 
-                        data models, and ecosystem designed for AI-first solutions. The robust tooling and 
-                        support accelerate development and allow faster response to business demands.
-                    </p>
-                    <p>
-                        The current application is not designed to handle future transaction volumes or 
-                        complexity. MongoDB enables integration of analytics and automation capabilities 
-                        critical for Kushki's growth strategy.
-                    </p>
-                </div>
-                
-                <div class="card">
-                    <h3 class="text-xl mb-4">Strategic Benefits</h3>
-                    <ul style="list-style: none; padding: 0;">
-                        <li class="mb-3 flex items-start gap-2">
-                            <span class="text-primary">✓</span>
-                            <span>Eliminates MySQL dependencies and complex replication architecture</span>
-                        </li>
-                        <li class="mb-3 flex items-start gap-2">
-                            <span class="text-primary">✓</span>
-                            <span>Enables microservices architecture with independent scaling</span>
-                        </li>
-                        <li class="mb-3 flex items-start gap-2">
-                            <span class="text-primary">✓</span>
-                            <span>Provides flexible schema for evolving payment requirements</span>
-                        </li>
-                        <li class="mb-3 flex items-start gap-2">
-                            <span class="text-primary">✓</span>
-                            <span>Supports multi-region deployment for LatAm expansion</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Current Database Card -->
+<div class="criteria-card fit animate-slideUp delay-3" data-criteria="database"
+     style="background: rgba(13, 42, 61, 0.8); backdrop-filter: blur(10px);
+            border-radius: 16px; border: 1px solid rgba(0, 237, 100, 0.3);
+            transition: all 0.3s ease; position: relative; overflow: hidden; cursor: pointer;">
+  
+  <!-- barra superior -->
+  <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px;
+              background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%);">
+  </div>
+  
+  <!-- cabecera clicable -->
+  <div class="criteria-header" onclick="toggleCard(this.parentElement)" style="padding: 1.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+      <span style="display: inline-flex; align-items: center; gap: 0.5rem;
+                   padding: 0.5rem 1rem; background: linear-gradient(135deg, #00ED64 0%, rgba(0,237,100,0.8) 100%);
+                   color: #001E2B; border-radius: 999px; font-size: 0.875rem; font-weight: 600;
+                   box-shadow: 0 2px 8px rgba(0,237,100,0.3);">
+        <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none">
+          <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Good Fit
+      </span>
+      <svg class="expand-icon" style="width: 24px; height: 24px; color: #B8C4CE;
+                   transition: transform 0.3s;" viewBox="0 0 24 24" fill="none">
+        <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <div style="width: 48px; height: 48px; background: rgba(0,237,100,0.1);
+                  border-radius: 12px; display: flex; align-items: center;
+                  justify-content: center; flex-shrink: 0;">
+        <svg style="width: 28px; height: 28px; color: #00ED64;" viewBox="0 0 24 24" fill="none">
+          <ellipse cx="12" cy="5" rx="9" ry="3" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <h3 style="font-size: 1.25rem; color: #FFFFFF; margin: 0;">Current Database</h3>
+        <p style="color: #B8C4CE; font-size: 0.875rem; margin: 0.25rem 0 0 0;">
+          MySQL with 18 replicas, ~300 GB data
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- contenido colapsable -->
+  <div class="criteria-content" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out;">
+    <p style="padding: 0 1.5rem 1.5rem; color: #B8C4CE; line-height: 1.8; margin: 0;">
+      MySQL running on AWS RDS with 18 replicas (original DB ~300 GB) used for reporting,
+      reconciliation, client systems and BI. Some data already replicated to MongoDB and
+      Elasticsearch for specific analytics use cases. They have at least 20 stored
+      procedures handling critical business logic. Integration with Prosa in Mexico adds
+      sensitive connection requirements.
+    </p>
+  </div>
+  
+  <!-- barra de progreso -->
+  <div class="criteria-progress">
+    <div class="criteria-progress-bar"></div>
+  </div>
+</div>
+<!-- /Current Database Card -->
 
-    <!-- Detailed Requirements -->
-    <section class="section">
-        <div class="container">
-            <h2 class="text-center mb-6">Detailed Migration Requirements</h2>
-            
-            <div class="grid md:grid-cols-3 gap-4">
-                <div class="card">
-                    <h4 class="text-lg mb-3">Data Migration</h4>
-                    <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
-                        <li class="mb-2">• 300GB MySQL database</li>
-                        <li class="mb-2">• 18 replica instances</li>
-                        <li class="mb-2">• 200M+ row tables</li>
-                        <li class="mb-2">• Complex transactional data</li>
-                        <li class="mb-2">• Historical reconciliation data</li>
-                    </ul>
-                </div>
-                
-                <div class="card">
-                    <h4 class="text-lg mb-3">Business Logic</h4>
-                    <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
-                        <li class="mb-2">• 170+ stored procedures</li>
-                        <li class="mb-2">• Complex triggers</li>
-                        <li class="mb-2">• Scheduled tasks</li>
-                        <li class="mb-2">• Reconciliation processes</li>
-                        <li class="mb-2">• Fund dispersal calculations</li>
-                    </ul>
-                </div>
-                
-                <div class="card">
-                    <h4 class="text-lg mb-3">Integration Points</h4>
-                    <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
-                        <li class="mb-2">• Prosa (Mexico)</li>
-                        <li class="mb-2">• Payment gateways</li>
-                        <li class="mb-2">• Banking APIs</li>
-                        <li class="mb-2">• Reporting systems</li>
-                        <li class="mb-2">• BI platforms</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+</div> <!-- /criteria-grid -->
+</div> <!-- /container -->
+</section> <!-- /section ICP Criteria Assessment -->
 
-    <!-- Next Steps -->
-    <section class="section">
-        <div class="container">
-            <h2 class="text-center mb-6">Next Steps</h2>
-            
-            <div class="card card-bordered text-center" style="max-width: 800px; margin: 0 auto;">
-                <h3 class="text-2xl mb-4">Recommendation</h3>
-                <p class="text-lg mb-4">
-                    Kushki is an ideal candidate for the MongoDB Modernization Factory with a 
-                    <span class="text-gradient">9/10 ICP score</span>. They have strong executive 
-                    sponsorship, clear pain points, and full commitment to collaboration.
-                </p>
-                <p class="text-secondary mb-4">
-                    The company's explosive growth trajectory and critical operational requirements make 
-                    this modernization essential. With zero tolerance for downtime and increasing transaction 
-                    volumes, MongoDB's scalability and resilience are perfect fits.
-                </p>
-                <p class="text-secondary mb-6">
-                    We recommend proceeding with the Modernization Factory engagement to accelerate 
-                    their migration from MySQL to MongoDB, starting with a 2-3 month proof of concept 
-                    that demonstrates the accelerated delivery capabilities.
-                </p>
-                <div class="flex gap-4 justify-center">
-                    <a href="#" class="btn btn-primary">
-                        <span>Schedule Technical Deep Dive</span>
-                    </a>
-                    <a href="#" class="btn btn-secondary">
-                        <span>Contact Account Team</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <script>
-        // Add scroll effects
-        window.addEventListener('scroll', () => {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar?.classList.add('navbar-scrolled');
-            } else {
-                navbar?.classList.remove('navbar-scrolled');
-            }
-        });
-        
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                }
-            });
-        }, observerOptions);
-        
-        // Observe all animated elements
-        document.querySelectorAll('.animate-slideUp').forEach(el => {
-            observer.observe(el);
-        });
-    </script>
+
+<!-- Current State vs Future Vision -->
+<section class="section">
+<div class="container">
+<h2 class="text-center mb-6">Current State vs Future Vision</h2>
+
+<div class="grid md:grid-cols-2 gap-6 mb-6">
+<div class="card card-bordered">
+    <h3 class="text-2xl mb-4 text-gradient">Current State</h3>
+    <ul style="list-style: none; padding: 0;">
+        <li class="mb-3">
+            <strong>Architecture:</strong> Monolithic "big block" with no microservices foundation
+        </li>
+        <li class="mb-3">
+            <strong>Database:</strong> MySQL with 18 replicas, 300GB original database
+        </li>
+        <li class="mb-3">
+            <strong>Performance:</strong> 3-hour fund dispersal calculations, severe latency with 200M+ row tables
+        </li>
+        <li class="mb-3">
+            <strong>Technology:</strong> Mixed stack (Java, PHP, Python, Node.js), AWS EC2 with Tomcat
+        </li>
+        <li class="mb-3">
+            <strong>Risk:</strong> High risk with every change, zero tolerance for downtime
+        </li>
+        <li class="mb-3">
+            <strong>Code:</strong> 250,000-350,000 lines across multiple programs
+        </li>
+        <li class="mb-3">
+            <strong>Business Logic:</strong> 170+ stored procedures, complex reconciliation processes
+        </li>
+    </ul>
+</div>
+
+<div class="card card-bordered" style="border-color: var(--color-primary);">
+    <h3 class="text-2xl mb-4 text-gradient">Future Vision with MongoDB</h3>
+    <ul style="list-style: none; padding: 0;">
+        <li class="mb-3">
+            <strong>Architecture:</strong> Microservices-based with serverless (AWS Lambda)
+        </li>
+        <li class="mb-3">
+            <strong>Database:</strong> MongoDB with horizontal scalability and flexible schemas
+        </li>
+        <li class="mb-3">
+            <strong>Performance:</strong> Real-time processing, optimized for 2X transaction growth
+        </li>
+        <li class="mb-3">
+            <strong>Technology:</strong> Modern, unified stack with AI-first capabilities
+        </li>
+        <li class="mb-3">
+            <strong>Risk:</strong> Built-in resilience, automated rollback, zero-downtime deployments
+        </li>
+        <li class="mb-3">
+            <strong>Code:</strong> Clean, modular, scalable, and autonomous components
+        </li>
+        <li class="mb-3">
+            <strong>Business Logic:</strong> Distributed, maintainable, version-controlled services
+        </li>
+    </ul>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Migration Strategy -->
+<section class="section">
+<div class="container">
+<h2 class="text-center mb-6">Proposed Migration Strategy</h2>
+
+<div class="timeline">
+<div class="timeline-item">
+    <div class="timeline-marker"></div>
+    <div class="timeline-content">
+        <h3 class="text-xl mb-2">Phase 1: Assessment & Mapping</h3>
+        <p class="text-secondary">
+            Complete functional mapping of current system to identify critical components, 
+            business flows, and key dependencies. Map all 170+ stored procedures, understand 
+            integration points with Prosa and other systems. Document all reconciliation 
+            processes and business logic. Identify quick wins for immediate impact.
+        </p>
+    </div>
+</div>
+
+<div class="timeline-item">
+    <div class="timeline-marker"></div>
+    <div class="timeline-content">
+        <h3 class="text-xl mb-2">Phase 2: Parallel Architecture</h3>
+        <p class="text-secondary">
+            Build new microservices-based architecture supported by serverless services like 
+            AWS Lambda. Create distributed structure facilitating maintenance, control, and 
+            sustainable growth. Design clean, modular, scalable, and autonomous components. 
+            Leverage existing connections to accelerate and reduce risk while avoiding 
+            dependencies on legacy systems.
+        </p>
+    </div>
+</div>
+
+<div class="timeline-item">
+    <div class="timeline-marker"></div>
+    <div class="timeline-content">
+        <h3 class="text-xl mb-2">Phase 3: Gradual Migration</h3>
+        <p class="text-secondary">
+            Gradually redirect traffic to new platform with controlled testing in real 
+            environments without disrupting operations. Implement processes ensuring 
+            traceability, version control, transactional monitoring, and reversibility. 
+            Include automated testing, parallel QA environments, and rollback plans per 
+            service. Deploy each component with prior validation.
+        </p>
+    </div>
+</div>
+
+<div class="timeline-item">
+    <div class="timeline-marker"></div>
+    <div class="timeline-content">
+        <h3 class="text-xl mb-2">Phase 4: Full Cutover</h3>
+        <p class="text-secondary">
+            Complete migration with zero transactional loss, ensuring RPO/RTO of zero. 
+            Temporarily redirect traffic to new platform with ability to revert to current 
+            system if needed, reconciling data to continue operations without impact. 
+            Critical for Mexico operations where no downtime is acceptable. Final 
+            decommissioning of legacy MySQL infrastructure.
+        </p>
+    </div>
+</div>
+</div>
+
+<div class="text-center mt-6">
+<p class="text-lg text-secondary mb-4">
+    Estimated timeline: 6 months traditional approach / 2-3 months for Phase 1 with MongoDB Factory
+</p>
+<p class="text-base text-secondary mb-6">
+    Note: Customer estimates full modernization at 6 months traditionally, but is open to 
+    running a scoped first phase in 2-3 months if MongoDB's Factory team demonstrates 
+    accelerated delivery path.
+</p>
+<a href="#" class="btn btn-primary btn-lg">
+    <span>View Detailed Migration Plan</span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</a>
+</div>
+</div>
+</section>
+
+<!-- Key Stakeholders & Team -->
+<section class="section">
+<div class="container">
+<h2 class="text-center mb-6">Key Stakeholders & Team</h2>
+
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+<div class="card text-center">
+    <h4 class="text-xl mb-2">Account Executive</h4>
+    <p class="text-secondary mb-2">Mayra Contreras</p>
+    <p class="text-sm text-muted">Leading the commercial relationship</p>
+</div>
+<div class="card text-center">
+    <h4 class="text-xl mb-2">Solution Consultant</h4>
+    <p class="text-secondary mb-2">Leo Alarcon</p>
+    <p class="text-sm text-muted">Technical architecture and solution design</p>
+</div>
+<div class="card text-center">
+    <h4 class="text-xl mb-2">Executive Champion</h4>
+    <p class="text-secondary mb-2">Giacomo Orizzonte</p>
+    <p class="text-sm text-muted">Data and Infrastructure Director</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Business Case & Investment -->
+<section class="section">
+<div class="container">
+<h2 class="text-center mb-6">Business Case & Investment</h2>
+
+<div class="card card-gradient mb-6">
+<h3 class="text-2xl mb-4">Financial Considerations</h3>
+<div class="grid md:grid-cols-2 gap-6">
+    <div>
+        <h4 class="text-xl mb-3">Current Situation</h4>
+        <ul style="list-style: none; padding: 0;">
+            <li class="mb-2">
+                <strong>Budget Status:</strong> No approved budget yet - needs shaping and escalation
+            </li>
+            <li class="mb-2">
+                <strong>Business Impact:</strong> Direct customer experience impact with risk of churn
+            </li>
+            <li class="mb-2">
+                <strong>Operational Risk:</strong> Potential reputational damage and negative cash flow
+            </li>
+        </ul>
+    </div>
+    <div>
+        <h4 class="text-xl mb-3">Expected Benefits</h4>
+        <ul style="list-style: none; padding: 0;">
+            <li class="mb-2">
+                <strong>Performance:</strong> From 3-hour to real-time processing
+            </li>
+            <li class="mb-2">
+                <strong>Scalability:</strong> Support for 50%+ annual transaction growth
+            </li>
+            <li class="mb-2">
+                <strong>Agility:</strong> Faster feature deployment and reduced risk
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Why MongoDB Section -->
+<section class="section">
+<div class="container">
+<h2 class="text-center mb-6">Why MongoDB for Kushki</h2>
+
+<div class="grid md:grid-cols-2 gap-6">
+<div class="card">
+    <h3 class="text-xl mb-4">Technical Alignment</h3>
+    <p class="mb-3">
+        MongoDB was selected for its horizontal scalability, flexibility in handling dynamic 
+        data models, and ecosystem designed for AI-first solutions. The robust tooling and 
+        support accelerate development and allow faster response to business demands.
+    </p>
+    <p>
+        The current application is not designed to handle future transaction volumes or 
+        complexity. MongoDB enables integration of analytics and automation capabilities 
+        critical for Kushki's growth strategy.
+    </p>
+</div>
+
+<div class="card">
+    <h3 class="text-xl mb-4">Strategic Benefits</h3>
+    <ul style="list-style: none; padding: 0;">
+        <li class="mb-3 flex items-start gap-2">
+            <span class="text-primary">✓</span>
+            <span>Eliminates MySQL dependencies and complex replication architecture</span>
+        </li>
+        <li class="mb-3 flex items-start gap-2">
+            <span class="text-primary">✓</span>
+            <span>Enables microservices architecture with independent scaling</span>
+        </li>
+        <li class="mb-3 flex items-start gap-2">
+            <span class="text-primary">✓</span>
+            <span>Provides flexible schema for evolving payment requirements</span>
+        </li>
+        <li class="mb-3 flex items-start gap-2">
+            <span class="text-primary">✓</span>
+            <span>Supports multi-region deployment for LatAm expansion</span>
+        </li>
+    </ul>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Detailed Requirements -->
+<section class="section">
+<div class="container">
+<h2 class="text-center mb-6">Detailed Migration Requirements</h2>
+
+<div class="grid md:grid-cols-3 gap-4">
+<div class="card">
+    <h4 class="text-lg mb-3">Data Migration</h4>
+    <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+        <li class="mb-2">• 300GB MySQL database</li>
+        <li class="mb-2">• 18 replica instances</li>
+        <li class="mb-2">• 200M+ row tables</li>
+        <li class="mb-2">• Complex transactional data</li>
+        <li class="mb-2">• Historical reconciliation data</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h4 class="text-lg mb-3">Business Logic</h4>
+    <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+        <li class="mb-2">• 170+ stored procedures</li>
+        <li class="mb-2">• Complex triggers</li>
+        <li class="mb-2">• Scheduled tasks</li>
+        <li class="mb-2">• Reconciliation processes</li>
+        <li class="mb-2">• Fund dispersal calculations</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h4 class="text-lg mb-3">Integration Points</h4>
+    <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+        <li class="mb-2">• Prosa (Mexico)</li>
+        <li class="mb-2">• Payment gateways</li>
+        <li class="mb-2">• Banking APIs</li>
+        <li class="mb-2">• Reporting systems</li>
+        <li class="mb-2">• BI platforms</li>
+    </ul>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Next Steps -->
+<section class="section">
+<div class="container">
+<h2 class="text-center mb-6">Next Steps</h2>
+
+<div class="card card-bordered text-center" style="max-width: 800px; margin: 0 auto;">
+<h3 class="text-2xl mb-4">Recommendation</h3>
+<p class="text-lg mb-4">
+    Kushki is an ideal candidate for the MongoDB Modernization Factory with a 
+    <span class="text-gradient">9/10 ICP score</span>. They have strong executive 
+    sponsorship, clear pain points, and full commitment to collaboration.
+</p>
+<p class="text-secondary mb-4">
+    The company's explosive growth trajectory and critical operational requirements make 
+    this modernization essential. With zero tolerance for downtime and increasing transaction 
+    volumes, MongoDB's scalability and resilience are perfect fits.
+</p>
+<p class="text-secondary mb-6">
+    We recommend proceeding with the Modernization Factory engagement to accelerate 
+    their migration from MySQL to MongoDB, starting with a 2-3 month proof of concept 
+    that demonstrates the accelerated delivery capabilities.
+</p>
+<div class="flex gap-4 justify-center">
+    <a href="#" class="btn btn-primary">
+        <span>Schedule Technical Deep Dive</span>
+    </a>
+    <a href="#" class="btn btn-secondary">
+        <span>Contact Account Team</span>
+    </a>
+</div>
+</div>
+</div>
+</section>
+
+<script>
+    function toggleCard(card) {
+      card.classList.toggle('expanded');
+      const content = card.querySelector('.criteria-content');
+      const expandIcon = card.querySelector('.expand-icon');
+      
+      if (card.classList.contains('expanded')) {
+        content.style.maxHeight = content.scrollHeight + 'px';
+        expandIcon.style.transform = 'rotate(180deg)';
+      } else {
+        content.style.maxHeight = '0';
+        expandIcon.style.transform = 'rotate(0deg)';
+      }
+    }
+  
+    // Hover effects
+    document.querySelectorAll('.criteria-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-8px) scale(1.02)';
+        card.style.boxShadow = '0 20px 40px rgba(0,237,100,0.15)';
+        card.style.borderColor = '#00ED64';
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0) scale(1)';
+        card.style.boxShadow = 'none';
+        card.style.borderColor = 'rgba(0,237,100,0.3)';
+      });
+    });
+  
+    // Scroll effects
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 50) navbar?.classList.add('navbar-scrolled');
+      else navbar?.classList.remove('navbar-scrolled');
+    });
+  
+    // Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.style.opacity = '1';
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  
+    document.querySelectorAll('.animate-slideUp').forEach(el => observer.observe(el));
+  
+    // Expand primera tarjeta por defecto
+    window.addEventListener('DOMContentLoaded', () => {
+      const cards = document.querySelectorAll('.criteria-card');
+      if (cards[0]) toggleCard(cards[0]);
+    });
+  </script>
 </body>
 </html>

@@ -634,3 +634,8 @@
   .performance-bar:hover {
     background: linear-gradient(to top, var(--color-primary-hover), rgba(0, 215, 87, 0.4));
   }
+  @media (min-width: 768px) {
+    .criteria-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }

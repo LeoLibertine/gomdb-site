@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <!-- Metadatos esenciales -->
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta 
+          name="viewport" 
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover" 
+        />
+      
+        <!-- Título y Favicon -->
+        <title>Cuestionario de Dimensionamiento MongoDB | GoMDB</title>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+      
+        <!-- Hoja de estilos global -->
+        <link rel="stylesheet" href="../styles/gomdb-global.css" />
+      
+        <!-- Estilos específicos de esta página (si los quieres en línea) -->
+        <style>
+            /* Estilos específicos para el formulario */
+            .form-group {
+                margin-bottom: var(--spacing-lg);
+            }
+    
+            .form-label {
+                display: block;
+                font-weight: 600;
+                margin-bottom: var(--spacing-sm);
+                color: var(--color-text-primary);
+            }
+    
+            .form-label.required::after {
+                content: " *";
+                color: var(--color-error);
+            }
+    
+            .form-input, .form-select, .form-textarea {
+                width: 100%;
+                padding: var(--spacing-md);
+                background-color: var(--color-bg-tertiary);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: var(--radius-md);
+                color: var(--color-text-primary);
+                font-size: var(--text-base);
+                transition: all var(--transition-base);
+            }
+    
+            .form-input:focus, .form-select:focus, .form-textarea:focus {
+                outline: none;
+                border-color: var(--color-primary);
+                box-shadow: 0 0 0 3px var(--color-primary-light);
+            }
+    
+            .form-textarea {
+                resize: vertical;
+                min-height: 100px;
+            }
+    
+            .form-radio-group {
+                display: flex;
+                gap: var(--spacing-lg);
+                flex-wrap: wrap;
+            }
+    
+            .form-radio-item {
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-sm);
+            }
+    
+            .form-radio {
+                width: 18px;
+                height: 18px;
+                accent-color: var(--color-primary);
+            }
+    
+            .form-grid {
+                display: grid;
+                gap: var(--spacing-lg);
+            }
+    
+            @media (min-width: 768px) {
+                .form-grid-2 {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .form-grid-3 {
+                    grid-template-columns: 1fr 1fr 1fr;
+                }
+            }
+    
+            .help-text {
+                font-size: var(--text-sm);
+                color: var(--color-text-muted);
+                margin-top: var(--spacing-xs);
+            }
+    
+            .section-toggle {
+                background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: var(--radius-lg);
+                padding: var(--spacing-lg);
+                margin-bottom: var(--spacing-xl);
+            }
+    
+            .toggle-header {
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-md);
+                margin-bottom: var(--spacing-lg);
+            }
+    
+            .toggle-switch {
+                position: relative;
+                width: 60px;
+                height: 30px;
+                background-color: var(--color-bg-tertiary);
+                border-radius: var(--radius-full);
+                cursor: pointer;
+                transition: background-color var(--transition-base);
+            }
+    
+            .toggle-switch.active {
+                background-color: var(--color-primary);
+            }
+    
+            .toggle-slider {
+                position: absolute;
+                top: 3px;
+                left: 3px;
+                width: 24px;
+                height: 24px;
+                background-color: var(--color-text-primary);
+                border-radius: 50%;
+                transition: transform var(--transition-base);
+            }
+    
+            .toggle-switch.active .toggle-slider {
+                transform: translateX(30px);
+            }
+    
+            .toggle-label {
+                font-size: var(--text-lg);
+                font-weight: 600;
+                color: var(--color-text-primary);
+            }
+    
+            .section-content {
+                transition: all var(--transition-slow);
+            }
+    
+            .section-content.disabled {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+    
+            .dimensioning-options {
+                background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+                border-radius: var(--radius-xl);
+                padding: var(--spacing-xl);
+                margin-bottom: var(--spacing-xl);
+                color: var(--color-text-dark);
+            }
+    
+            .option-grid {
+                display: grid;
+                gap: var(--spacing-lg);
+                margin-top: var(--spacing-lg);
+            }
+    
+            @media (min-width: 768px) {
+                .option-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+    
+            .option-card {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: var(--radius-md);
+                padding: var(--spacing-lg);
+                text-align: center;
+                cursor: pointer;
+                transition: all var(--transition-base);
+            }
+    
+            .option-card:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: translateY(-2px);
+            }
+    
+            .option-checkbox {
+                width: 20px;
+                height: 20px;
+                margin-bottom: var(--spacing-sm);
+            }
+    
+            .section-header {
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-md);
+                margin-bottom: var(--spacing-xl);
+            }
+    
+            .section-icon {
+                width: 48px;
+                height: 48px;
+                background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+                border-radius: var(--radius-md);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--color-text-dark);
+                font-weight: bold;
+                font-size: var(--text-xl);
+            }
+        </style>
+      </head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="text-center mb-6">
+                <div class="badge badge-primary mb-4">
+                    <span>🚀</span>
+                    GoMDB Architecture
+                </div>
+                <h1 class="text-gradient">Cuestionario de Dimensionamiento MongoDB</h1>
+                <p class="text-xl" style="max-width: 600px; margin: 0 auto;">
+                    Dimensiona tu infraestructura MongoDB con precisión para obtener el máximo rendimiento
+                </p>
+            </div>
+
+            <!-- Opciones de Dimensionamiento -->
+            <div class="dimensioning-options">
+                <h3 style="margin-bottom: var(--spacing-lg); text-align: center;">¿Qué componentes necesitas dimensionar?</h3>
+                <div class="option-grid">
+                    <div class="option-card" onclick="toggleDimensioning('mongodb')">
+                        <input type="checkbox" class="option-checkbox" id="mongodb-option">
+                        <h4>MongoDB Cluster</h4>
+                        <p style="font-size: var(--text-sm); margin-top: var(--spacing-sm);">Dimensionamiento del clúster principal</p>
+                    </div>
+                    <div class="option-card" onclick="toggleDimensioning('atlas-search')">
+                        <input type="checkbox" class="option-checkbox" id="atlas-search-option">
+                        <h4>Atlas Search</h4>
+                        <p style="font-size: var(--text-sm); margin-top: var(--spacing-sm);">Búsqueda de texto completo</p>
+                    </div>
+                    <div class="option-card" onclick="toggleDimensioning('vector-search')">
+                        <input type="checkbox" class="option-checkbox" id="vector-search-option">
+                        <h4>Vector Search</h4>
+                        <p style="font-size: var(--text-sm); margin-top: var(--spacing-sm);">Búsqueda de vectores y AI</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form id="sizingForm" style="max-width: 1200px; margin: 0 auto;">
+                
+                <!-- Sección 1: Información del Proyecto -->
+                <div class="card card-bordered mb-6">
+                    <div class="section-header">
+                        <div class="section-icon">📋</div>
+                        <h3>Información del Proyecto</h3>
+                    </div>
+
+                    <div class="form-grid form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label required">Nombre de la aplicación</label>
+                            <input type="text" class="form-input" name="appName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">Contacto principal</label>
+                            <input type="email" class="form-input" name="contact" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">Descripción de la aplicación</label>
+                        <textarea class="form-textarea" name="appDescription" placeholder="Describe el problema que resuelve, experiencia del usuario, tecnologías en la pila, etc." required></textarea>
+                    </div>
+
+                    <div class="form-grid form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label required">¿Por qué eligieron MongoDB?</label>
+                            <select class="form-select" name="whyMongoDB" required>
+                                <option value="">Selecciona una opción</option>
+                                <option value="scaling">Capacidad de escalamiento</option>
+                                <option value="flexibility">Flexibilidad de datos</option>
+                                <option value="availability">Alta disponibilidad</option>
+                                <option value="performance">Rendimiento</option>
+                                <option value="experience">Experiencia previa</option>
+                                <option value="other">Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">Tipo de aplicación</label>
+                            <div class="form-radio-group">
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="appType" value="local" id="local" required>
+                                    <label for="local">Local</label>
+                                </div>
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="appType" value="vendor" id="vendor" required>
+                                    <label for="vendor">Proveedor</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label required">Tipo de proyecto</label>
+                            <div class="form-radio-group">
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="projectType" value="new" id="new" required>
+                                    <label for="new">Nuevo</label>
+                                </div>
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="projectType" value="modernization" id="modernization" required>
+                                    <label for="modernization">Modernización</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Base de datos a reemplazar</label>
+                            <input type="text" class="form-input" name="replacingDB" placeholder="ej. SQL Server, Oracle, MySQL">
+                            <div class="help-text">Solo si es modernización</div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid form-grid-3">
+                        <div class="form-group">
+                            <label class="form-label required">¿Primera aplicación MongoDB?</label>
+                            <div class="form-radio-group">
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="firstMongoDB" value="yes" id="firstYes" required>
+                                    <label for="firstYes">Sí</label>
+                                </div>
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="firstMongoDB" value="no" id="firstNo" required>
+                                    <label for="firstNo">No</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">Nivel de experiencia MongoDB (1-5)</label>
+                            <select class="form-select" name="mongoExperience" required>
+                                <option value="">Selecciona</option>
+                                <option value="1">1 - Principiante</option>
+                                <option value="2">2 - Básico</option>
+                                <option value="3">3 - Intermedio</option>
+                                <option value="4">4 - Avanzado</option>
+                                <option value="5">5 - Experto</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Clase de servicio</label>
+                            <select class="form-select" name="serviceClass">
+                                <option value="">Selecciona</option>
+                                <option value="critical">Crítico</option>
+                                <option value="high">Alto</option>
+                                <option value="medium">Medio</option>
+                                <option value="low">Bajo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secciones específicas por componente -->
+                
+                <!-- Sección MongoDB Cluster -->
+                <div class="card card-bordered mb-6 section-content" id="mongodb-section" style="display: none;">
+                    <div class="section-header">
+                        <div class="section-icon">🍃</div>
+                        <h3>MongoDB Cluster</h3>
+                    </div>
+
+                    <!-- Sección 2: Compliance y Fechas -->
+                    <div class="mb-6">
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">Compliance y Fechas</h4>
+                        
+                        <div class="form-grid form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Fecha Go Live QA</label>
+                                <input type="date" class="form-input" name="qaGoLive">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Fecha Go Live Producción</label>
+                                <input type="date" class="form-input" name="prodGoLive">
+                            </div>
+                        </div>
+
+                        <div class="form-grid form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label">RTO (Recovery Time Objective)</label>
+                                <input type="text" class="form-input" name="rto" placeholder="ej. 4 horas">
+                                <div class="help-text">Tiempo máximo aceptable de inactividad</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">RPO (Recovery Point Objective)</label>
+                                <input type="text" class="form-input" name="rpo" placeholder="ej. 1 hora">
+                                <div class="help-text">Pérdida máxima aceptable de datos</div>
+                            </div>
+                        </div>
+
+                        <div class="form-grid form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label required">¿Contiene información de privacidad?</label>
+                                <div class="form-radio-group">
+                                    <div class="form-radio-item">
+                                        <input type="radio" class="form-radio" name="privacyInfo" value="yes" id="privacyYes">
+                                        <label for="privacyYes">Sí</label>
+                                    </div>
+                                    <div class="form-radio-item">
+                                        <input type="radio" class="form-radio" name="privacyInfo" value="no" id="privacyNo">
+                                        <label for="privacyNo">No</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label required">¿Contiene información financiera/regulatoria?</label>
+                                <div class="form-radio-group">
+                                    <div class="form-radio-item">
+                                        <input type="radio" class="form-radio" name="financialInfo" value="yes" id="financialYes">
+                                        <label for="financialYes">Sí</label>
+                                    </div>
+                                    <div class="form-radio-item">
+                                        <input type="radio" class="form-radio" name="financialInfo" value="no" id="financialNo">
+                                        <label for="financialNo">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección 3: Carga de Trabajo -->
+                    <div class="mb-6">
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">Descripción de la Carga de Trabajo</h4>
+                        
+                        <div class="form-grid form-grid-3">
+                            <div class="form-group">
+                                <label class="form-label required">Monto total de datos</label>
+                                <input type="text" class="form-input" name="totalData" placeholder="ej. 2.5TB">
+                                <div class="help-text">Sin compresión (GB o TB)</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label required">Tamaño promedio documento escrito</label>
+                                <input type="number" class="form-input" name="avgWriteDocSize" placeholder="750">
+                                <div class="help-text">En bytes</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label required">Tamaño promedio documento leído</label>
+                                <input type="number" class="form-input" name="avgReadDocSize" placeholder="750">
+                                <div class="help-text">En bytes</div>
+                            </div>
+                        </div>
+
+                        <div class="form-grid form-grid-3">
+                            <div class="form-group">
+                                <label class="form-label required">Máximo documentos escritos/segundo</label>
+                                <input type="text" class="form-input" name="maxWritesPerSec" placeholder="10MB (MAX) 1.3MB (AVG)">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label required">Máximo documentos leídos/segundo</label>
+                                <input type="text" class="form-input" name="maxReadsPerSec" placeholder="48MB (MAX) 1.5MB (AVG)">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Máximo documentos borrados/segundo</label>
+                                <input type="text" class="form-input" name="maxDeletesPerSec" placeholder="Variable">
+                            </div>
+                        </div>
+
+                        <div class="form-grid form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Número y tamaño de índices (% de datos)</label>
+                                <input type="number" class="form-input" name="indexSizePercent" placeholder="20" min="0" max="100">
+                                <div class="help-text">Porcentaje del tamaño total de datos</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label required">Porcentaje de datos frecuentemente accesados</label>
+                                <input type="number" class="form-input" name="hotDataPercent" placeholder="30" min="0" max="100">
+                                <div class="help-text">% de datos activos en memoria</div>
+                            </div>
+                        </div>
+
+                        <div class="form-grid form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label required">Documentos insertados por día</label>
+                                <input type="text" class="form-input" name="docsPerDay" placeholder="34M">
+                                <div class="help-text">Indica qué tan rápido crecerán los datos</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Período para datos activos (días)</label>
+                                <input type="number" class="form-input" name="activeDataPeriod" placeholder="90">
+                                <div class="help-text">Controla cantidad de memoria necesaria</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">% de consultas usando aggregation framework</label>
+                            <input type="number" class="form-input" name="aggregationPercent" placeholder="40" min="0" max="100">
+                            <div class="help-text">Útil para dimensionar CPU</div>
+                        </div>
+
+                        <div class="form-grid form-grid-3">
+                            <div class="form-group">
+                                <label class="form-label">Documentos promedio por consulta</label>
+                                <input type="number" class="form-input" name="docsPerQuery" placeholder="1">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Duración promedio de sesión (minutos)</label>
+                                <input type="number" class="form-input" name="sessionDuration" placeholder="20">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Relación de compresión esperada (%)</label>
+                                <input type="number" class="form-input" name="compressionRatio" placeholder="50" min="0" max="100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección 4: Operaciones y SLA -->
+                    <div class="mb-6">
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">Operaciones y SLA</h4>
+                        
+                        <div class="form-group">
+                            <label class="form-label">¿Cómo se cargará la base de datos?</label>
+                            <textarea class="form-textarea" name="dataLoading" placeholder="Describe frecuencia, cantidad de datos, métodos de carga..."></textarea>
+                        </div>
+
+                        <div class="form-grid form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label">¿Las transacciones tienen SLA?</label>
+                                <textarea class="form-textarea" name="transactionSLA" placeholder="Describe SLAs específicos para transacciones"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">SLA o expectativas de rendimiento</label>
+                                <textarea class="form-textarea" name="performanceSLA" placeholder="Describe expectativas de latencia, throughput, etc."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-grid form-grid-2">
+                            <div class="form-group">
+                                <label class="form-label">Tipo de consultas</label>
+                                <div class="form-radio-group">
+                                    <div class="form-radio-item">
+                                        <input type="radio" class="form-radio" name="queryType" value="static" id="static">
+                                        <label for="static">Estáticas</label>
+                                    </div>
+                                    <div class="form-radio-item">
+                                        <input type="radio" class="form-radio" name="queryType" value="adhoc" id="adhoc">
+                                        <label for="adhoc">Ad-hoc</label>
+                                    </div>
+                                    <div class="form-radio-item">
+                                        <input type="radio" class="form-radio" name="queryType" value="mixed" id="mixed">
+                                        <label for="mixed">Mixtas</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Ventana de batch</label>
+                                <input type="text" class="form-input" name="batchWindow" placeholder="ej. 2:00 AM - 4:00 AM">
+                                <div class="help-text">Hora del día para procesos batch</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Estrategia de archivado/purga de datos</label>
+                            <textarea class="form-textarea" name="archivingStrategy" placeholder="Describe políticas de retención y archivado"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Estrategia de respaldo</label>
+                            <textarea class="form-textarea" name="backupStrategy" placeholder="Describe frecuencia, retención, tipo de respaldos"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Entornos no productivos requeridos</label>
+                            <textarea class="form-textarea" name="nonProdEnvironments" placeholder="Lista todos los entornos: dev, test, staging, etc."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Requisitos de almacenamiento para entornos no productivos</label>
+                            <textarea class="form-textarea" name="nonProdStorage" placeholder="Describe necesidades de almacenamiento para cada entorno"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 5: Atlas Search -->
+                <div class="card card-bordered mb-6 section-content" id="atlas-search-section" style="display: none;">
+                    <div class="section-header">
+                        <div class="section-icon">🔍</div>
+                        <h3>Atlas Search</h3>
+                    </div>
+                    
+                    <div class="form-grid form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Número de índices actuales en ES</label>
+                            <input type="number" class="form-input" name="esIndexCount" placeholder="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Consultas por minuto durante carga máxima</label>
+                            <input type="number" class="form-input" name="searchQueriesPerMin" placeholder="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Consultas más comunes sobre índices</label>
+                        <textarea class="form-textarea" name="commonSearchQueries" placeholder="Describe los tipos de búsquedas más frecuentes"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tamaño de cada índice ES y número de documentos</label>
+                        <textarea class="form-textarea" name="esIndexSizes" placeholder="Describe tamaño y documentos por índice"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Agregaciones realizadas con resultados</label>
+                        <textarea class="form-textarea" name="searchAggregations" placeholder="Describe qué agregaciones se realizan además de búsquedas"></textarea>
+                    </div>
+
+                    <div class="form-grid form-grid-3">
+                        <div class="form-group">
+                            <label class="form-label">¿Requiere autocompletar?</label>
+                            <div class="form-radio-group">
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="autocomplete" value="yes" id="autocompleteYes">
+                                    <label for="autocompleteYes">Sí</label>
+                                </div>
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="autocomplete" value="no" id="autocompleteNo">
+                                    <label for="autocompleteNo">No</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">¿Documentos > 1MB?</label>
+                            <div class="form-radio-group">
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="largeDocs" value="yes" id="largeDocsYes">
+                                    <label for="largeDocsYes">Sí</label>
+                                </div>
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="largeDocs" value="no" id="largeDocsNo">
+                                    <label for="largeDocsNo">No</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">¿Soporte múltiples idiomas?</label>
+                            <div class="form-radio-group">
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="multiLanguage" value="yes" id="multiLangYes">
+                                    <label for="multiLangYes">Sí</label>
+                                </div>
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="multiLanguage" value="no" id="multiLangNo">
+                                    <label for="multiLangNo">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Idiomas soportados</label>
+                        <input type="text" class="form-input" name="supportedLanguages" placeholder="ej. Español, Inglés, Portugués">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tipo de cargas de trabajo de búsqueda</label>
+                        <textarea class="form-textarea" name="searchWorkloadTypes" placeholder="Describe los tipos de búsqueda que planeas ejecutar"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">¿Almacena señales de búsqueda o metadatos?</label>
+                        <div class="form-radio-group">
+                            <div class="form-radio-item">
+                                <input type="radio" class="form-radio" name="searchMetadata" value="yes" id="searchMetaYes">
+                                <label for="searchMetaYes">Sí</label>
+                            </div>
+                            <div class="form-radio-item">
+                                <input type="radio" class="form-radio" name="searchMetadata" value="no" id="searchMetaNo">
+                                <label for="searchMetaNo">No</label>
+                            </div>
+                        </div>
+                        <div class="help-text">Clics, clasificación, popularidad en colección separada</div>
+                    </div>
+                </div>
+
+                <!-- Sección 6: Vector Search -->
+                <div class="card card-bordered mb-6 section-content" id="vector-search-section" style="display: none;">
+                    <div class="section-header">
+                        <div class="section-icon">🤖</div>
+                        <h3>Vector Search</h3>
+                    </div>
+                    
+                    <div class="form-grid form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Dimensiones de embeddings/vectores</label>
+                            <input type="number" class="form-input" name="vectorDimensions" placeholder="0">
+                            <div class="help-text">Número de dimensiones por vector</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Cantidad de vectores a almacenar</label>
+                            <input type="text" class="form-input" name="vectorCount" placeholder="ej. 1M, 10M">
+                        </div>
+                    </div>
+
+                    <div class="form-grid form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Tipo de modelo de embeddings</label>
+                            <select class="form-select" name="embeddingModel">
+                                <option value="">Selecciona un modelo</option>
+                                <option value="openai-ada">OpenAI Ada-002</option>
+                                <option value="openai-3-small">OpenAI text-embedding-3-small</option>
+                                <option value="openai-3-large">OpenAI text-embedding-3-large</option>
+                                <option value="huggingface">Hugging Face</option>
+                                <option value="cohere">Cohere</option>
+                                <option value="custom">Modelo personalizado</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Consultas de vector por minuto (pico)</label>
+                            <input type="number" class="form-input" name="vectorQueriesPerMin" placeholder="1000">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tipo de búsqueda de vectores</label>
+                        <div class="form-radio-group">
+                            <div class="form-radio-item">
+                                <input type="radio" class="form-radio" name="vectorSearchType" value="similarity" id="similarity">
+                                <label for="similarity">Búsqueda de similitud</label>
+                            </div>
+                            <div class="form-radio-item">
+                                <input type="radio" class="form-radio" name="vectorSearchType" value="recommendation" id="recommendation">
+                                <label for="recommendation">Recomendaciones</label>
+                            </div>
+                            <div class="form-radio-item">
+                                <input type="radio" class="form-radio" name="vectorSearchType" value="classification" id="classification">
+                                <label for="classification">Clasificación</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Describe el caso de uso de Vector Search</label>
+                        <textarea class="form-textarea" name="vectorUseCase" placeholder="ej. Búsqueda semántica de documentos, recomendaciones de productos, detección de anomalías, etc."></textarea>
+                    </div>
+
+                    <div class="form-grid form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">¿Necesita filtros combinados?</label>
+                            <div class="form-radio-group">
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="combinedFilters" value="yes" id="filtersYes">
+                                    <label for="filtersYes">Sí</label>
+                                </div>
+                                <div class="form-radio-item">
+                                    <input type="radio" class="form-radio" name="combinedFilters" value="no" id="filtersNo">
+                                    <label for="filtersNo">No</label>
+                                </div>
+                            </div>
+                            <div class="help-text">Combinar búsqueda de vectores con filtros tradicionales</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Frecuencia de actualización de vectores</label>
+                            <select class="form-select" name="vectorUpdateFrequency">
+                                <option value="">Selecciona frecuencia</option>
+                                <option value="realtime">Tiempo real</option>
+                                <option value="hourly">Cada hora</option>
+                                <option value="daily">Diario</option>
+                                <option value="weekly">Semanal</option>
+                                <option value="batch">Solo por lotes</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón de Envío -->
+                <div class="text-center mt-6">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <span>🚀</span>
+                        Enviar Cuestionario de Dimensionamiento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('sizingForm');
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const options = ['mongodb', 'atlas-search', 'vector-search'];
+
+      // Estado en memoria
+      let formDataMemory = {};
+
+      // 1) Función para togglear secciones
+      function toggleDimensioning(type) {
+        const checkbox = document.getElementById(`${type}-option`);
+        const section  = document.getElementById(`${type}-section`);
+
+        // MongoDB siempre habilitado
+        if (type === 'mongodb') {
+          checkbox.checked = true;
+          section.style.display = 'block';
+          section.classList.remove('disabled');
+          return;
+        }
+
+        checkbox.checked = !checkbox.checked;
+        if (checkbox.checked) {
+          section.style.display = 'block';
+          section.classList.remove('disabled');
+        } else {
+          section.style.display = 'none';
+          section.classList.add('disabled');
+          // limpiar campos
+          section.querySelectorAll('input, select, textarea')
+            .forEach(input => {
+              if (['radio','checkbox'].includes(input.type)) input.checked = false;
+              else input.value = '';
+            });
+        }
+
+        validateMinimumSelection();
+        saveFormData();
+      }
+
+      // 2) Habilitar click de las tarjetas
+      options.forEach(type => {
+        const card = document.querySelector(`.option-card[onclick*="${type}"]`);
+        if (card) card.addEventListener('click', () => toggleDimensioning(type));
+      });
+
+      // 3) Validar que al menos uno esté seleccionado
+      function validateMinimumSelection() {
+        const anyChecked = options.some(type =>
+          document.getElementById(`${type}-option`).checked
+        );
+        if (anyChecked) {
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = '1';
+          submitBtn.innerHTML = '<span>🚀</span> Enviar Cuestionario de Dimensionamiento';
+        } else {
+          submitBtn.disabled = true;
+          submitBtn.style.opacity = '0.5';
+          submitBtn.innerHTML = '<span>⚠️</span> Selecciona al menos un componente';
+        }
+      }
+
+      // 4) Guardar datos en memoria
+      function saveFormData() {
+        const fm = new FormData(form);
+        formDataMemory = Object.fromEntries(fm);
+        options.forEach(type => {
+          formDataMemory[`${type}Enabled`] = document.getElementById(`${type}-option`).checked;
+        });
+        console.log('Memoria:', formDataMemory);
+      }
+
+      // 5) Envío de formulario
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        const seleccionados = options.filter(type =>
+          document.getElementById(`${type}-option`).checked
+        );
+        if (!seleccionados.length) {
+          alert('Por favor selecciona al menos un componente.');
+          return;
+        }
+        // Construir objeto
+        const data = Object.fromEntries(new FormData(form));
+        data.dimensioningComponents = Object.fromEntries(
+          options.map(type => [type, document.getElementById(`${type}-option`).checked])
+        );
+        data.selectedComponentsSummary = seleccionados
+          .map(t => {
+            if (t === 'mongodb') return 'MongoDB Cluster';
+            if (t === 'atlas-search') return 'Atlas Search';
+            if (t === 'vector-search') return 'Vector Search';
+          })
+          .join(', ');
+        console.log('Datos a enviar:', data);
+        showSuccessMessage(seleccionados);
+      });
+
+      // 6) Mensaje de éxito
+      function showSuccessMessage(selected) {
+        const backdrop = document.createElement('div');
+        backdrop.id = 'backdrop';
+        Object.assign(backdrop.style, {
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+          background: 'rgba(0,30,43,0.8)', zIndex: 999, backdropFilter: 'blur(5px)'
+        });
+        backdrop.onclick = () => document.body.removeChild(backdrop);
+
+        const msg = document.createElement('div');
+        Object.assign(msg.style, {
+          position: 'fixed', top: '50%', left: '50%',
+          transform: 'translate(-50%,-50%)', zIndex: 1000,
+          background: 'linear-gradient(135deg, var(--color-bg-secondary), rgba(13,42,61,0.95))',
+          backdropFilter: 'blur(10px)', padding: '2rem', textAlign: 'center',
+          maxWidth: '600px', border: '1px solid var(--color-primary)',
+          borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-xl)'
+        });
+        const listItems = selected.map(t => {
+          const label = t === 'mongodb' ? 'MongoDB Cluster' : t === 'atlas-search' ? 'Atlas Search' : 'Vector Search';
+          return `<li style="color: var(--color-primary)">✓ ${label}</li>`;
+        }).join('');
+        msg.innerHTML = `
+          <div style="font-size:3rem;margin-bottom:1rem;">🚀</div>
+          <h3 style="color:var(--color-primary);margin-bottom:1rem;">¡Enviado exitosamente!</h3>
+          <p style="margin-bottom:1rem;">Recibimos tu cuestionario para:</p>
+          <ul style="list-style:none;padding:0;margin-bottom:1.5rem;text-align:left;">
+            ${listItems}
+          </ul>
+          <button class="btn btn-primary" onclick="this.closest('body').removeChild(this.parentNode);document.body.removeChild(backdrop);">
+            Entendido
+          </button>`;
+        document.body.append(backdrop, msg);
+      }
+
+      // 7) Validación en foco/blur
+      document.querySelectorAll('.form-input, .form-select, .form-textarea')
+        .forEach(input => {
+          input.addEventListener('blur', () => {
+            if (input.hasAttribute('required') && !input.value.trim()) {
+              input.style.borderColor = 'var(--color-error)';
+              input.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.2)';
+            } else {
+              input.style.borderColor = 'rgba(255,255,255,0.1)';
+              input.style.boxShadow = 'none';
+            }
+          });
+          input.addEventListener('focus', () => {
+            input.style.borderColor = 'var(--color-primary)';
+            input.style.boxShadow = '0 0 0 3px var(--color-primary-light)';
+          });
+        });
+
+      // Inicial
+      options.forEach(type => {
+        // Asegurar estado inicial
+        const checked = document.getElementById(`${type}-option`).checked;
+        document.getElementById(`${type}-section`).style.display = checked ? 'block' : 'none';
+      });
+      validateMinimumSelection();
+    });
+  </script>
+</body>
+</html>
