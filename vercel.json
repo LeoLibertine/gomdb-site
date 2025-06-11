@@ -1,20 +1,21 @@
 {
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
+  ],
   "routes": [
     { "handle": "filesystem" },
+
     {
       "src": "/clientes/kushki/mf(?:/.*)?$",
       "dest": "/clientes/kushki/mf.html"
     },
     {
-      "src": "/clientes/bancolombia/matrix(?:/.*)?$",
-      "dest": "/clientes/bancolombia/matrix.html"
-    },
-    {
-      "src": "/clientes/cencosud/document-mongo(?:/.*)?$",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/clientes/bancolombia/document-mongo(?:/.*)?$",
+      "src": "/clientes/(?:cencosud|bancolombia)/document-mongo(?:/.*)?$",
       "dest": "/index.html"
     },
     {
