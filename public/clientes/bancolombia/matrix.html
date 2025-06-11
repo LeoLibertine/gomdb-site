@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrices de Decisión Bancolombia | GoMDB</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css"">
+    <style>
+        /* Estilos específicos mínimos para esta página */
+        .decision-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .decision-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 237, 100, 0.1), transparent);
+            transition: left 0.6s;
+        }
+        
+        .decision-card:hover::before {
+            left: 100%;
+        }
+        
+        .icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--text-2xl);
+        }
+        
+        .bancolombia-logo {
+            color: #FECC00;
+            font-weight: 700;
+        }
+        
+        .vs-text {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+   <!-- Navigation -->
+<nav class="navbar">
+    <div class="container navbar-container" style="display: flex; align-items: center; justify-content: space-between;">
+      
+      <!-- Logo -->
+      <div class="navbar-logo" style="display: flex; align-items: center; gap: 0.5rem;">
+        <a href="/" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+          <img
+            src="../../mongo.png"
+            alt="GoMDB Logo"
+            style="width: 40px; height: auto;"
+            class="glow-effect"
+          />
+          <span style="font-size: 1.25rem; font-weight: 600; color: var(--color-text-primary);">
+            GoMDB
+          </span>
+        </a>
+      </div>
+  
+      <!-- Links -->
+      <div class="navbar-links" style="display: flex; gap: 1.5rem;">
+        <a href="/" class="navbar-link">Inicio</a>
+        <a href="/matrices" class="navbar-link">Matrices</a>
+        <a href="/soporte" class="navbar-link">Soporte</a>
+        <a href="/contacto" class="navbar-link">Contacto</a>
+      </div>
+    </div>
+  </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container text-center">
+            <div class="badge badge-secondary mb-4 animate-fadeIn">
+                <span>🏦</span>
+                Exclusivo para <span class="bancolombia-logo">Bancolombia</span>
+            </div>
+            
+            <h1 class="text-gradient animate-slideInLeft">
+                Matrices de Decisión
+            </h1>
+            
+            <p class="text-xl mb-6 animate-slideInRight" style="max-width: 600px; margin-left: auto; margin-right: auto;">
+                Encuentra la tecnología de base de datos perfecta para cada caso de uso específico en Bancolombia. 
+                Compara, analiza y decide con confianza.
+            </p>
+            
+            <div class="flex justify-center gap-4 animate-fadeIn">
+                <a href="#matrices" class="btn btn-primary btn-lg">
+                    🚀 Explorar Matrices
+                </a>
+                <a href="#" class="btn btn-secondary btn-lg">
+                    📊 Ver Comparativa
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Matrices Section -->
+    <section id="matrices" class="section-lg">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2 class="mb-4">Matrices de Decisión Disponibles</h2>
+                <p class="text-lg">Selecciona la comparativa que mejor se adapte a tu arquitectura</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- SQL vs NoSQL -->
+                <div class="card card-bordered decision-card animate-fadeIn">
+                    <div class="icon mongodb-gradient">
+                        🗄️
+                    </div>
+                    <h3 class="mb-3">
+                        SQL <span class="vs-text">vs</span> NoSQL
+                    </h3>
+                    <p class="mb-4">
+                        Decisión fundamental entre bases de datos relacionales tradicionales y bases de datos NoSQL. 
+                        Ideal para proyectos nuevos o migración de sistemas legacy.
+                    </p>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="badge badge-primary">Arquitectura</span>
+                        <span class="badge badge-secondary">Fundamentos</span>
+                    </div>
+                    <a href="sql-nosql.html" class="btn btn-primary">
+                        Analizar Diferencias →
+                    </a>
+                </div>
+
+                <!-- DynamoDB vs MongoDB -->
+                <div class="card card-bordered decision-card animate-fadeIn" style="animation-delay: 0.1s;">
+                    <div class="icon" style="background: linear-gradient(135deg, #FF9900 0%, var(--color-primary) 100%);">
+                        ⚡
+                    </div>
+                    <h3 class="mb-3">
+                        DynamoDB <span class="vs-text">vs</span> MongoDB
+                    </h3>
+                    <p class="mb-4">
+                        Comparativa entre la solución NoSQL de AWS y MongoDB. Perfecto para aplicaciones 
+                        de alta escala y rendimiento crítico en la nube.
+                    </p>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="badge badge-primary">Cloud</span>
+                        <span class="badge badge-secondary">Performance</span>
+                    </div>
+                    <a href="dynamo-mongo.html" class="btn btn-primary">
+                        Comparar Soluciones →
+                    </a>
+                </div>
+
+                <!-- DocumentDB vs MongoDB -->
+                <div class="card card-bordered decision-card animate-fadeIn" style="animation-delay: 0.2s;">
+                    <div class="icon" style="background: linear-gradient(135deg, #232F3E 0%, var(--color-primary) 100%);">
+                        📄
+                    </div>
+                    <h3 class="mb-3">
+                        DocumentDB <span class="vs-text">vs</span> MongoDB
+                    </h3>
+                    <p class="mb-4">
+                        Evaluación entre DocumentDB (compatible con MongoDB) y MongoDB nativo. 
+                        Esencial para estrategias de migración y compatibilidad.
+                    </p>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="badge badge-primary">AWS</span>
+                        <span class="badge badge-secondary">Migración</span>
+                    </div>
+                    <a href="#" class="btn btn-primary">
+                        Evaluar Opciones →
+                    </a>
+                </div>
+
+                <!-- CosmosDB vs MongoDB -->
+                <div class="card card-bordered decision-card animate-fadeIn" style="animation-delay: 0.3s;">
+                    <div class="icon" style="background: linear-gradient(135deg, #0078D4 0%, var(--color-primary) 100%);">
+                        🌌
+                    </div>
+                    <h3 class="mb-3">
+                        CosmosDB <span class="vs-text">vs</span> MongoDB
+                    </h3>
+                    <p class="mb-4">
+                        Análisis entre la base de datos distribuida globalmente de Azure y MongoDB. 
+                        Ideal para aplicaciones multi-región y alta disponibilidad.
+                    </p>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="badge badge-primary">Azure</span>
+                        <span class="badge badge-secondary">Global</span>
+                    </div>
+                    <a href="cosmos-mongo.html" class="btn btn-primary">
+                        Explorar Comparativa →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="section" style="background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-primary) 100%);">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2 class="mb-4">¿Por qué usar nuestras matrices?</h2>
+                <p class="text-lg">Decisiones informadas basadas en datos reales y casos de uso específicos</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card card-gradient text-center">
+                    <div class="text-5xl mb-4">🎯</div>
+                    <h4 class="mb-3">Decisiones Precisas</h4>
+                    <p>Matrices basadas en criterios técnicos, costos y casos de uso reales de la industria bancaria.</p>
+                </div>
+
+                <div class="card card-gradient text-center">
+                    <div class="text-5xl mb-4">⚡</div>
+                    <h4 class="mb-3">Ahorro de Tiempo</h4>
+                    <p>Reduce semanas de investigación a minutos de análisis con nuestras comparativas estructuradas.</p>
+                </div>
+
+                <div class="card card-gradient text-center">
+                    <div class="text-5xl mb-4">🔒</div>
+                    <h4 class="mb-3">Específico para Banca</h4>
+                    <p>Consideraciones especiales de seguridad, compliance y regulaciones del sector financiero.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section">
+        <div class="container">
+            <div class="card card-gradient text-center" style="background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent-light) 100%);">
+                <div class="text-6xl mb-4">🚀</div>
+                <h2 class="mb-4">¿Listo para tomar la mejor decisión?</h2>
+                <p class="text-lg mb-6">
+                    Nuestro equipo de expertos está disponible para asesorarte en la implementación 
+                    de la tecnología que elijas.
+                </p>
+                <div class="flex justify-center gap-4 flex-wrap">
+                    <a href="#" class="btn btn-primary btn-lg">
+                        📞 Contactar Experto
+                    </a>
+                    <a href="#" class="btn btn-secondary btn-lg">
+                        📚 Documentación
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="section" style="background-color: var(--color-bg-tertiary);">
+        <div class="container">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <div class="navbar-logo mb-4">
+                        <span>🍃</span>
+                        <span>GoMDB</span>
+                    </div>
+                    <p class="text-sm">
+                        Plataforma especializada en arquitectura MongoDB para Latinoamérica, 
+                        con foco en el sector financiero.
+                    </p>
+                </div>
+                
+                <div>
+                    <h5 class="mb-3">Matrices Disponibles</h5>
+                    <div class="flex flex-col gap-2">
+                        <a href="#" class="text-sm">SQL vs NoSQL</a>
+                        <a href="#" class="text-sm">DynamoDB vs MongoDB</a>
+                        <a href="#" class="text-sm">DocumentDB vs MongoDB</a>
+                        <a href="#" class="text-sm">CosmosDB vs MongoDB</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h5 class="mb-3">Soporte</h5>
+                    <div class="flex flex-col gap-2">
+                        <a href="#" class="text-sm">Documentación</a>
+                        <a href="#" class="text-sm">Casos de Uso</a>
+                        <a href="#" class="text-sm">Contacto</a>
+                        <a href="#" class="text-sm">FAQ</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 pt-6" style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <div class="flex justify-between items-center flex-wrap gap-4">
+                    <p class="text-sm text-muted">
+                        © 2025 GoMDB. Exclusivo para <span class="bancolombia-logo">Bancolombia</span>
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-sm">Privacidad</a>
+                        <a href="#" class="text-sm">Términos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add entrance animations on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards for animation
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

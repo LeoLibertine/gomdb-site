@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matriz de Decisión: MongoDB Atlas vs Azure Cosmos DB</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mongodb-green: #00ed64;
+            --mongodb-dark: #001e2b;
+            --mongodb-darker: #000d13;
+            --azure-blue: #0078d4;
+            --azure-dark: #002050;
+            --text-light: #e8edeb;
+            --text-gray: #b8c4c2;
+            --border-color: #21313c;
+            --card-bg: #011621;
+            --success-green: #00ed64;
+            --error-red: #ff5252;
+            --warning-yellow: #ffc107;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--mongodb-darker);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--mongodb-dark) 0%, #012a3f 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.1) 0%, transparent 70%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        .header-content {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--mongodb-green), var(--azure-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(0, 237, 100, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(0, 120, 212, 0.8)); }
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-gray);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Radar Chart Section */
+        .radar-section {
+            background-color: var(--card-bg);
+            padding: 3rem;
+            border-radius: 20px;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .radar-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--mongodb-green), var(--azure-blue));
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+
+        .radar-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .radar-header h2 {
+            font-size: 2.5rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .radar-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 2rem;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .legend-box {
+            background-color: var(--mongodb-dark);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .legend-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mongodb-legend {
+            color: var(--mongodb-green);
+        }
+
+        .cosmos-legend {
+            color: var(--azure-blue);
+        }
+
+        .legend-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .legend-label {
+            color: var(--text-gray);
+        }
+
+        .legend-score {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #radarChart {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            background-color: var(--mongodb-dark);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--card-bg);
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--mongodb-green);
+            box-shadow: 0 5px 20px rgba(0, 237, 100, 0.3);
+        }
+
+        .filter-btn.active {
+            background-color: var(--mongodb-green);
+            color: var(--mongodb-dark);
+            border-color: var(--mongodb-green);
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-light);
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--mongodb-green), var(--azure-blue));
+        }
+
+        .comparison-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .comparison-card {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.2);
+        }
+
+        .comparison-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .criteria-name {
+            font-size: 1.5rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .winner-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .mongodb-winner {
+            background-color: var(--mongodb-green);
+            color: var(--mongodb-dark);
+        }
+
+        .cosmos-winner {
+            background-color: var(--azure-blue);
+            color: white;
+        }
+
+        .tie {
+            background-color: var(--warning-yellow);
+            color: var(--mongodb-dark);
+        }
+
+        .comparison-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .service-box {
+            padding: 1.5rem;
+            background-color: var(--mongodb-dark);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .service-box:hover {
+            transform: scale(1.02);
+        }
+
+        .service-name {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .mongodb-service {
+            color: var(--mongodb-green);
+            border-color: var(--mongodb-green);
+        }
+
+        .cosmos-service {
+            color: var(--azure-blue);
+            border-color: var(--azure-blue);
+        }
+
+        .service-description {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .score-bar {
+            margin-top: 1rem;
+            background-color: var(--card-bg);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease-out;
+        }
+
+        .mongodb-score {
+            background: linear-gradient(90deg, var(--mongodb-green), #00ff88);
+        }
+
+        .cosmos-score {
+            background: linear-gradient(90deg, var(--azure-blue), #40a9ff);
+        }
+
+        /* Use Cases Section */
+        .use-cases-section {
+            margin-bottom: 3rem;
+        }
+
+        .use-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .use-case-card {
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(0, 237, 100, 0.05) 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .use-case-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.2);
+        }
+
+        .use-case-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .use-case-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 1.5rem;
+        }
+
+        .mongodb-icon {
+            background-color: rgba(0, 237, 100, 0.2);
+            color: var(--mongodb-green);
+        }
+
+        .cosmos-icon {
+            background-color: rgba(0, 120, 212, 0.2);
+            color: var(--azure-blue);
+        }
+
+        .use-case-title {
+            font-size: 1.3rem;
+            color: var(--text-light);
+        }
+
+        .use-case-list {
+            list-style: none;
+            padding-left: 1rem;
+        }
+
+        .use-case-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-gray);
+        }
+
+        .use-case-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .mongodb-list li::before {
+            color: var(--mongodb-green);
+        }
+
+        .cosmos-list li::before {
+            color: var(--azure-blue);
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, var(--mongodb-dark) 0%, var(--azure-dark) 100%);
+            padding: 3rem;
+            border-radius: 20px;
+            margin-top: 3rem;
+            text-align: center;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+        }
+
+        .summary-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            padding: 2px;
+            background: linear-gradient(45deg, var(--mongodb-green), var(--azure-blue));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .summary-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .summary-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .summary-text {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .radar-container {
+                grid-template-columns: 1fr;
+            }
+
+            .legend-box {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .comparison-content {
+                grid-template-columns: 1fr;
+            }
+
+            .use-cases-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .legend-box {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.8s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pulse-animation {
+            animation: pulse-grow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-grow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1>MongoDB Atlas vs Azure Cosmos DB</h1>
+            <p class="subtitle">Matriz de decisión completa para elegir la base de datos ideal para Bancolombia</p>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Control Panel -->
+        <div class="control-panel fade-in">
+            <h3 style="margin-bottom: 1rem; color: var(--text-light);">Filtrar por Prioridad</h3>
+            <div class="filter-buttons">
+                <button class="filter-btn active" onclick="updateRadar('all')">Vista Completa</button>
+                <button class="filter-btn" onclick="updateRadar('performance')">Rendimiento</button>
+                <button class="filter-btn" onclick="updateRadar('cost')">Costo</button>
+                <button class="filter-btn" onclick="updateRadar('technical')">Capacidades Técnicas</button>
+                <button class="filter-btn" onclick="updateRadar('ecosystem')">Ecosistema</button>
+            </div>
+        </div>
+
+        <!-- Radar Chart Section -->
+        <div class="radar-section fade-in">
+            <div class="radar-header">
+                <h2>Comparación Visual Multidimensional</h2>
+                <p style="color: var(--text-gray);">Evaluación de 15 criterios clave en escala de 1-5</p>
+            </div>
+            
+            <div class="radar-container">
+                <!-- MongoDB Legend -->
+                <div class="legend-box">
+                    <h3 class="legend-title mongodb-legend">
+                        <span style="font-size: 2rem;">🍃</span> MongoDB Atlas
+                    </h3>
+                    <div id="mongodb-scores">
+                        <!-- Scores will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Radar Chart -->
+                <div class="chart-wrapper">
+                    <canvas id="radarChart"></canvas>
+                </div>
+
+                <!-- Cosmos DB Legend -->
+                <div class="legend-box">
+                    <h3 class="legend-title cosmos-legend">
+                        <span style="font-size: 2rem;">🌐</span> Azure Cosmos DB
+                    </h3>
+                    <div id="cosmos-scores">
+                        <!-- Scores will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Comparison -->
+        <section class="comparison-section">
+            <h2 class="section-title fade-in">Análisis Detallado por Criterio</h2>
+            
+            <div class="comparison-grid" id="comparison-grid">
+                <!-- Comparison cards will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="use-cases-section">
+            <h2 class="section-title fade-in">¿Cuándo Usar Cada Servicio?</h2>
+            
+            <div class="use-cases-grid">
+                <!-- MongoDB Use Cases -->
+                <div class="use-case-card fade-in">
+                    <div class="use-case-header">
+                        <div class="use-case-icon mongodb-icon">🍃</div>
+                        <h3 class="use-case-title">Usa MongoDB Atlas cuando:</h3>
+                    </div>
+                    <ul class="use-case-list mongodb-list">
+                        <li>Necesitas compatibilidad total con MongoDB (100% vs 33-52% de Cosmos DB)</li>
+                        <li>Requieres rendimiento superior en cargas de trabajo intensivas</li>
+                        <li>Buscas flexibilidad multi-cloud (AWS, Azure, GCP)</li>
+                        <li>El costo es un factor decisivo (hasta 3.6x más económico)</li>
+                        <li>Necesitas analíticas en tiempo real con vistas materializadas</li>
+                        <li>Tu aplicación requiere consultas complejas y agregaciones avanzadas</li>
+                        <li>Priorizas la seguridad con cifrado avanzado (CSFLE, Queryable Encryption)</li>
+                        <li>Necesitas escalamiento horizontal sin límites de partición</li>
+                    </ul>
+                </div>
+
+                <!-- Cosmos DB Use Cases -->
+                <div class="use-case-card fade-in">
+                    <div class="use-case-header">
+                        <div class="use-case-icon cosmos-icon">🌐</div>
+                        <h3 class="use-case-title">Usa Azure Cosmos DB cuando:</h3>
+                    </div>
+                    <ul class="use-case-list cosmos-list">
+                        <li>Necesitas soporte multi-modelo (documentos, grafos, clave-valor)</li>
+                        <li>Requieres múltiples niveles de consistencia configurables</li>
+                        <li>Tu infraestructura está profundamente integrada con Azure</li>
+                        <li>Necesitas multi-maestro con escrituras globales</li>
+                        <li>Buscas SLA del 99.999% (vs 99.995% de MongoDB)</li>
+                        <li>Tu aplicación es principalmente de lectura con patrones simples</li>
+                        <li>Necesitas compatibilidad con múltiples APIs (SQL, Cassandra, Gremlin)</li>
+                        <li>IoT y gaming global son tus casos de uso principales</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <div class="summary-box fade-in">
+            <div class="summary-content">
+                <h2 class="summary-title">🎯 Recomendación para Bancolombia</h2>
+                <p class="summary-text">
+                    <strong>MongoDB Atlas</strong> es la opción superior para Bancolombia debido a su compatibilidad total con MongoDB, 
+                    rendimiento superior (100,000+ TPS), costos predecibles y hasta 3.6x menores, escalamiento sin límites, 
+                    y flexibilidad multi-cloud. Mientras que Cosmos DB solo emula MongoDB con compatibilidad limitada (33-52%), 
+                    MongoDB Atlas ofrece todas las características nativas necesarias para una superapp financiera en crecimiento.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data for radar chart
+        const criteria = {
+            all: {
+                labels: [
+                    'Modelos de Datos',
+                    'Escalabilidad',
+                    'Rendimiento',
+                    'Consistencia',
+                    'Consultas',
+                    'Integración',
+                    'Costo',
+                    'Facilidad de Uso',
+                    'Distribución Global',
+                    'Seguridad',
+                    'Flexibilidad Cloud',
+                    'Compatibilidad MongoDB',
+                    'Búsqueda Vectorial',
+                    'Analíticas',
+                    'Casos de Uso'
+                ],
+                mongodb: [3, 5, 5, 3, 5, 4, 5, 5, 4, 5, 5, 5, 5, 5, 5],
+                cosmos: [5, 3, 3, 5, 3, 5, 2, 3, 5, 3, 1, 2, 3, 3, 4]
+            },
+            performance: {
+                labels: ['Rendimiento', 'Escalabilidad', 'Latencia', 'Throughput', 'Consultas Complejas'],
+                mongodb: [5, 5, 5, 5, 5],
+                cosmos: [3, 3, 3, 3, 3]
+            },
+            cost: {
+                labels: ['Precio Base', 'Escalamiento', 'Predictibilidad', 'TCO', 'Plan Gratuito'],
+                mongodb: [5, 5, 5, 5, 3],
+                cosmos: [2, 2, 2, 2, 4]
+            },
+            technical: {
+                labels: ['Compatibilidad', 'Consultas', 'Analíticas', 'Búsqueda Vectorial', 'Seguridad'],
+                mongodb: [5, 5, 5, 5, 5],
+                cosmos: [2, 3, 3, 3, 3]
+            },
+            ecosystem: {
+                labels: ['Multi-Cloud', 'Integración', 'Herramientas', 'Soporte', 'Comunidad'],
+                mongodb: [5, 4, 5, 5, 5],
+                cosmos: [1, 5, 3, 3, 3]
+            }
+        };
+
+        // Comparison data
+        const comparisonData = [
+            {
+                criteria: 'Modelos de Datos',
+                icon: '📊',
+                winner: 'cosmos',
+                mongodb: {
+                    score: 3,
+                    description: 'Principalmente documental (BSON). Excelente para documentos JSON complejos, pero limitado para otros modelos.'
+                },
+                cosmos: {
+                    score: 5,
+                    description: 'Multi-modelo: documentos, clave-valor, columnas, grafos. Compatible con múltiples APIs (SQL, MongoDB, Cassandra, Gremlin).'
+                }
+            },
+            {
+                criteria: 'Escalabilidad',
+                icon: '📈',
+                winner: 'mongodb',
+                mongodb: {
+                    score: 5,
+                    description: 'Sharding horizontal sin límites. Sin restricción de 20GB por partición. Autoescalado de almacenamiento y cómputo.'
+                },
+                cosmos: {
+                    score: 3,
+                    description: 'Escalado con RUs o vCore. Límite de 20GB por partición lógica. Requiere planificación cuidadosa de particiones.'
+                }
+            },
+            {
+                criteria: 'Rendimiento',
+                icon: '⚡',
+                winner: 'mongodb',
+                mongodb: {
+                    score: 5,
+                    description: '<10ms en lecturas/escrituras. Atlas M30 supera a Cosmos vCore M30. Maneja 100,000+ TPS sin problemas.'
+                },
+                cosmos: {
+                    score: 3,
+                    description: '<10ms lecturas, <15ms escrituras. vCore M30 subpar, necesita M50 para igualar Atlas M30. Costoso en alta carga.'
+                }
+            },
+            {
+                criteria: 'Modelos de Consistencia',
+                icon: '🔄',
+                winner: 'cosmos',
+                mongodb: {
+                    score: 3,
+                    description: 'Eventual por defecto, fuerte con transacciones ACID. Orden preservado en change streams.'
+                },
+                cosmos: {
+                    score: 5,
+                    description: '5 niveles: fuerte, eventual, sesión, prefijo, obsolescencia. Flexibilidad única pero fuerte duplica RUs.'
+                }
+            },
+            {
+                criteria: 'Capacidad de Consulta',
+                icon: '🔍',
+                winner: 'mongodb',
+                mongodb: {
+                    score: 5,
+                    description: 'Pipeline de agregación completo. Consultas geoespaciales, texto completo, facetadas. Sin limitaciones.'
+                },
+                cosmos: {
+                    score: 3,
+                    description: 'SQL limitado, $lookup sin subconsultas. Agregaciones básicas. Funcionalidad reducida vs MongoDB nativo.'
+                }
+            },
+            {
+                criteria: 'Integración Ecosistema',
+                icon: '🔗',
+                winner: 'tie',
+                mongodb: {
+                    score: 4,
+                    description: 'Multi-cloud (AWS, Azure, GCP). Amplio ecosistema de herramientas. Disponible en Azure Marketplace.'
+                },
+                cosmos: {
+                    score: 5,
+                    description: 'Integración profunda con Azure (Synapse, Functions, Logic Apps). Limitada fuera de Azure.'
+                }
+            },
+            {
+                criteria: 'Costo',
+                icon: '💰',
+                winner: 'mongodb',
+                mongodb: {
+                    score: 5,
+                    description: 'Predecible por tier. 3.6x más económico que Cosmos vCore. Sin sorpresas en facturación.'
+                },
+                cosmos: {
+                    score: 2,
+                    description: 'RUs impredecibles, 6x más caro en multi-región. vCore 3.6x más costoso que Atlas equivalente.'
+                }
+            },
+            {
+                criteria: 'Facilidad de Uso',
+                icon: '👨‍💻',
+                winner: 'mongodb',
+                mongodb: {
+                    score: 5,
+                    description: 'Simple para documentos. Curva de aprendizaje suave. Documentación excelente y soporte directo.'
+                },
+                cosmos: {
+                    score: 3,
+                    description: 'Complejo por múltiples APIs y RUs. vCore imita Atlas pero con menos funciones. Más difícil de optimizar.'
+                }
+            },
+            {
+                criteria: 'Distribución Global',
+                icon: '🌍',
+                winner: 'tie',
+                mongodb: {
+                    score: 4,
+                    description: 'Clústeres globales en 110+ regiones, multi-cloud. SLA 99.995%. Control de soberanía de datos.'
+                },
+                cosmos: {
+                    score: 5,
+                    description: 'Multi-primario en ~50 regiones Azure. SLA 99.999%. Sin soberanía de datos nativa.'
+                }
+            },
+            {
+                criteria: 'Seguridad',
+                icon: '🔒',
+                winner: 'mongodb',
+                mongodb: {
+                    score: 5,
+                    description: 'CSFLE completo, Queryable Encryption. Multi-KMS (AWS, Azure, GCP). Auditoría granular.'
+                },
+                cosmos: {
+                    score: 3,
+                    description: 'Cifrado básico. CSFLE limitado (solo Java/.Net). Solo Azure Key Vault. Menos opciones avanzadas.'
+                }
+            },
+            {
+                criteria: 'Flexibilidad de Nube',
+                icon: '☁️',
+                winner: 'mongodb',
+                mongodb: {
+                    score: 5,
+                    description: 'Multi-cloud real: AWS, Azure, GCP y on-premises. Migración entre nubes sin cambios.'
+                },
+                cosmos: {
+                    score: 1,
+                    description: 'Solo Azure. Vendor lock-in total. Emulador local no apto para producción.'
+                }
+            },
+            {
+                criteria: 'Compatibilidad MongoDB',
+                icon: '🔧',
+                winner: 'mongodb',
+                mongodb: {
+                    score: 5,
+                    description: '100% compatible con MongoDB 7.0+. Todas las características y actualizaciones inmediatas.'
+                },
+                cosmos: {
+                    score: 2,
+                    description: 'RU: 33% compatible (MongoDB 4.2). vCore: 52% compatible (MongoDB 5.0-7.0). Muchas limitaciones.'
+                }
+            },
+            {
+                criteria: 'Búsqueda Vectorial',
+                icon: '🔮',
+                winner: 'mongodb',
+                mongodb: {
+                    score: 5,
+                    description: 'Hasta 4096 dimensiones. HNSW nativo. Aislamiento con nodos dedicados. Rendimiento superior.'
+                },
+                cosmos: {
+                    score: 3,
+                    description: 'vCore: máximo 2000 dimensiones. HNSW/IVFFLAT. Sin aislamiento de carga. Más limitado.'
+                }
+            },
+            {
+                criteria: 'Analíticas',
+                icon: '📊',
+                winner: 'mongodb',
+                mongodb: {
+                    score: 5,
+                    description: 'Data Federation, Online Archive nativos. Vistas materializadas. Sin duplicación de datos.'
+                },
+                cosmos: {
+                    score: 3,
+                    description: 'Synapse Link duplica datos y costos. Sin vistas materializadas nativas. Más complejo.'
+                }
+            },
+            {
+                criteria: 'Casos de Uso',
+                icon: '🎯',
+                winner: 'mongodb',
+                mongodb: {
+                    score: 5,
+                    description: 'Ideal para apps financieras, gestión contenido, analíticas tiempo real, móviles. Superapp perfecta.'
+                },
+                cosmos: {
+                    score: 4,
+                    description: 'Bueno para IoT, gaming, e-commerce global multi-modelo. Limitado en analíticas complejas.'
+                }
+            }
+        ];
+
+        // Chart instance
+        let radarChart;
+
+        // Initialize chart
+        function initializeChart(view = 'all') {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            
+            const data = criteria[view];
+            
+            if (radarChart) {
+                radarChart.destroy();
+            }
+            
+            radarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'MongoDB Atlas',
+                        data: data.mongodb,
+                        borderColor: '#00ed64',
+                        backgroundColor: 'rgba(0, 237, 100, 0.2)',
+                        pointBackgroundColor: '#00ed64',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#00ed64',
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }, {
+                        label: 'Azure Cosmos DB',
+                        data: data.cosmos,
+                        borderColor: '#0078d4',
+                        backgroundColor: 'rgba(0, 120, 212, 0.2)',
+                        pointBackgroundColor: '#0078d4',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#0078d4',
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: '#333',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.r + '/5';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1,
+                                color: '#b8c4c2',
+                                backdropColor: 'transparent',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: '#21313c',
+                                circular: true
+                            },
+                            angleLines: {
+                                color: '#21313c'
+                            },
+                            pointLabels: {
+                                color: '#e8edeb',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Update legend scores
+            updateLegendScores(view);
+        }
+
+        // Update legend scores
+        function updateLegendScores(view) {
+            const data = criteria[view];
+            const mongodbScores = document.getElementById('mongodb-scores');
+            const cosmosScores = document.getElementById('cosmos-scores');
+            
+            mongodbScores.innerHTML = '';
+            cosmosScores.innerHTML = '';
+            
+            data.labels.forEach((label, index) => {
+                mongodbScores.innerHTML += `
+                    <div class="legend-item">
+                        <span class="legend-label">${label}</span>
+                        <span class="legend-score mongodb-legend">${data.mongodb[index]}/5</span>
+                    </div>
+                `;
+                
+                cosmosScores.innerHTML += `
+                    <div class="legend-item">
+                        <span class="legend-label">${label}</span>
+                        <span class="legend-score cosmos-legend">${data.cosmos[index]}/5</span>
+                    </div>
+                `;
+            });
+        }
+
+        // Update radar chart based on filter
+        function updateRadar(view) {
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Reinitialize chart with new data
+            initializeChart(view);
+        }
+
+        // Populate comparison cards
+        function populateComparisons() {
+            const grid = document.getElementById('comparison-grid');
+            
+            comparisonData.forEach((item, index) => {
+                const winnerClass = item.winner === 'mongodb' ? 'mongodb-winner' : 
+                                  item.winner === 'cosmos' ? 'cosmos-winner' : 'tie';
+                const winnerText = item.winner === 'mongodb' ? 'MongoDB Atlas' : 
+                                 item.winner === 'cosmos' ? 'Azure Cosmos DB' : 'Empate';
+                
+                const card = document.createElement('div');
+                card.className = 'comparison-card fade-in';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                card.innerHTML = `
+                    <div class="comparison-header">
+                        <h3 class="criteria-name">
+                            <span style="font-size: 1.5rem;">${item.icon}</span>
+                            ${item.criteria}
+                        </h3>
+                        <span class="winner-badge ${winnerClass}">${winnerText}</span>
+                    </div>
+                    <div class="comparison-content">
+                        <div class="service-box mongodb-service">
+                            <div class="service-name">MongoDB Atlas</div>
+                            <p class="service-description">${item.mongodb.description}</p>
+                            <div class="score-bar">
+                                <div class="score-fill mongodb-score" style="width: ${item.mongodb.score * 20}%"></div>
+                            </div>
+                        </div>
+                        <div class="service-box cosmos-service">
+                            <div class="service-name">Azure Cosmos DB</div>
+                            <p class="service-description">${item.cosmos.description}</p>
+                            <div class="score-bar">
+                                <div class="score-fill cosmos-score" style="width: ${item.cosmos.score * 20}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeChart('all');
+            populateComparisons();
+            
+            // Animate elements on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        
+                        // Animate score bars
+                        const scoreBars = entry.target.querySelectorAll('.score-fill');
+                        scoreBars.forEach(bar => {
+                            const width = bar.style.width;
+                            bar.style.width = '0';
+                            setTimeout(() => {
+                                bar.style.width = width;
+                            }, 100);
+                        });
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.fade-in').forEach(el => {
+                el.style.animationPlayState = 'paused';
+                observer.observe(el);
+            });
+        });
+
+        // Add interactive hover effects
+        document.addEventListener('mouseover', (e) => {
+            if (e.target.closest('.comparison-card')) {
+                const card = e.target.closest('.comparison-card');
+                card.style.borderColor = '#00ed64';
+            }
+        });
+
+        document.addEventListener('mouseout', (e) => {
+            if (e.target.closest('.comparison-card')) {
+                const card = e.target.closest('.comparison-card');
+                card.style.borderColor = '#21313c';
+            }
+        });
+    </script>
+</body>
+</html>
