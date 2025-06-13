@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Costos - MongoDB Atlas para Kushki</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para análisis de costos */
+        .hero-kushki {
+            background: linear-gradient(135deg, #001E2B 0%, #0D2A3D 50%, #112331 100%);
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-kushki::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 200px;
+            background: radial-gradient(circle, #00ED64 0%, transparent 70%);
+            opacity: 0.1;
+            top: -200px;
+            right: -100px;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        .hero-kushki::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 200px;
+            background: radial-gradient(circle, #5644D4 0%, transparent 70%);
+            opacity: 0.1;
+            bottom: -150px;
+            left: -100px;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .architecture-card {
+            background: linear-gradient(135deg, rgba(13, 42, 61, 0.9) 0%, rgba(17, 35, 49, 0.7) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .architecture-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .architecture-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 237, 100, 0.2);
+            border-color: rgba(0, 237, 100, 0.5);
+        }
+
+        .architecture-card:hover::before {
+            opacity: 1;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .spec-item {
+            background: rgba(0, 30, 43, 0.5);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .spec-item:hover {
+            background: rgba(0, 30, 43, 0.8);
+            border-color: rgba(0, 237, 100, 0.3);
+            transform: scale(1.02);
+        }
+
+        .spec-label {
+            color: #718096;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .spec-value {
+            color: #00ED64;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+            background: rgba(13, 42, 61, 0.3);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #00ED64 0%, #00D757 100%);
+            color: #001E2B;
+            padding: 1.5rem;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .comparison-table td {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #B8C4CE;
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(0, 237, 100, 0.05);
+        }
+
+        .cost-highlight {
+            background: linear-gradient(135deg, #00ED64 0%, #5644D4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .cost-breakdown {
+            background: rgba(0, 30, 43, 0.8);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #00ED64 0%, #5644D4 100%);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-icon:hover {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .pulse-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #00ED64;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 237, 100, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 237, 100, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 237, 100, 0); }
+        }
+
+        .animated-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00ED64 0%, #5644D4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .savings-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 237, 100, 0.1);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            color: #00ED64;
+            font-weight: 600;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 237, 100, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(0, 237, 100, 0.6); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+  <!-- Hero Section -->
+  <section class="hero-kushki">
+    <div class="container">
+        <div class="animate-fadeIn" style="text-align: center;">
+            <div class="badge badge-primary mb-4" style="display: inline-flex;">
+                <i class="fas fa-dollar-sign"></i>
+                Análisis Detallado de Costos
+            </div>
+            <h1 class="text-gradient mb-4">Inversión en MongoDB Atlas</h1>
+            <p class="text-2xl mb-6" style="color: #B8C4CE; max-width: 800px; margin: 0 auto;">
+                Comparación transparente de las 4 arquitecturas propuestas para Kushki
+                con desglose completo de costos mensuales
+            </p>
+            <div class="flex justify-center gap-4 mb-6">
+                <a href="#arquitecturas" class="btn btn-primary btn-lg">
+                    <i class="fas fa-calculator"></i>
+                    Ver Análisis de Costos
+                </a>
+                <a href="#comparacion" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-chart-bar"></i>
+                    Comparar Arquitecturas
+                </a>
+            </div>
+            <div class="mt-4" style="background: rgba(245, 158, 11, 0.1); padding: 1rem 2rem; border-radius: 2rem; display: inline-block;">
+                <p style="color: #F59E0B; margin: 0;">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Nota:</strong> Los costos mostrados no incluyen soporte empresarial
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+   <!-- Cost Analysis by Architecture -->
+   <section class="section" id="arquitecturas">
+    <div class="container">
+        <h2 class="text-gradient text-center mb-6">Análisis de Costos por Arquitectura</h2>
+        
+        <!-- Quick Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="spec-item text-center">
+                <h5 style="color: #3B82F6;">Escenario 1</h5>
+                <p style="font-size: 0.875rem; color: #B8C4CE;">1 Shard M80 + S80</p>
+                <div class="spec-value" style="font-size: 1.25rem;">$14,067/mes</div>
+                <p style="font-size: 0.75rem; color: #718096;">$168,805/año</p>
+            </div>
+            <div class="spec-item text-center">
+                <h5 style="color: #F59E0B;">Escenario 2</h5>
+                <p style="font-size: 0.875rem; color: #B8C4CE;">2 Shards M80 + S80</p>
+                <div class="spec-value" style="font-size: 1.25rem;">$27,648/mes</div>
+                <p style="font-size: 0.75rem; color: #718096;">$331,777/año</p>
+            </div>
+            <div class="spec-item text-center" style="border: 2px solid #00ED64;">
+                <div class="badge badge-primary mb-2">Recomendado</div>
+                <h5 style="color: #00ED64;">Escenario 3</h5>
+                <p style="font-size: 0.875rem; color: #B8C4CE;">3 Shards M80</p>
+                <div class="spec-value" style="font-size: 1.25rem;">$17,932/mes</div>
+                <p style="font-size: 0.75rem; color: #718096;">$215,184/año</p>
+            </div>
+            <div class="spec-item text-center">
+                <h5 style="color: #5644D4;">Escenario 4</h5>
+                <p style="font-size: 0.875rem; color: #B8C4CE;">3 Shards M60 + S60</p>
+                <div class="spec-value" style="font-size: 1.25rem;">$17,750/mes</div>
+                <p style="font-size: 0.75rem; color: #718096;">$213,000/año</p>
+            </div>
+        </div>
+        
+        <!-- Architecture 1: 1 Shard M80 + Search -->
+        <div class="architecture-card">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <div class="badge badge-secondary mb-3">Escenario 1</div>
+                    <h3>
+                        <i class="fas fa-rocket" style="color: #3B82F6;"></i>
+                        1 Shard M80 + 6 Search Nodes S80
+                    </h3>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm" style="color: #718096;">Costo Total</p>
+                    <div class="cost-highlight">$14,067/mes</div>
+                    <p style="color: #B8C4CE;">$168,805/año</p>
+                </div>
+            </div>
+            
+            <div class="cost-breakdown">
+                <h4 style="color: #00ED64; margin-bottom: 1rem;">Desglose de Costos</h4>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Especificaciones</th>
+                            <th>Cantidad</th>
+                            <th>Costo Mensual</th>
+                            <th>Costo Anual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Nodos M80 Low CPU</strong></td>
+                            <td>16 vCPUs, 128GB RAM, 3.5TB storage</td>
+                            <td>3 nodos (1 shard × 3 réplicas)</td>
+                            <td style="color: #00ED64;">$12,693</td>
+                            <td style="color: #B8C4CE;">$152,310</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Search Nodes S80</strong></td>
+                            <td>16 vCPUs, 128GB RAM, 855GB SSD</td>
+                            <td>6 nodos (2 por región)</td>
+                            <td style="color: #00ED64;">Incluido</td>
+                            <td style="color: #B8C4CE;">Incluido</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Network Transfer</strong></td>
+                            <td>Multi-región (us-east-1, us-east-2, us-west-2)</td>
+                            <td>Estimado</td>
+                            <td style="color: #00ED64;">$889</td>
+                            <td style="color: #B8C4CE;">$10,662</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backup Storage</strong></td>
+                            <td>Continuous backup, 35 días retención</td>
+                            <td>~3.5TB</td>
+                            <td style="color: #00ED64;">$486</td>
+                            <td style="color: #B8C4CE;">$5,833</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="spec-grid mt-4">
+                <div class="spec-item">
+                    <div class="spec-label">Capacidad Total</div>
+                    <div class="spec-value">3.5 TB</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">RAM Total</div>
+                    <div class="spec-value">384 GB</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">vCPUs Totales</div>
+                    <div class="spec-value">144</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Ideal Para</div>
+                    <div class="spec-value">POC / Inicio</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture 2: 2 Shards M80 + Search -->
+        <div class="architecture-card">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <div class="badge badge-secondary mb-3">Escenario 2</div>
+                    <h3>
+                        <i class="fas fa-layer-group" style="color: #F59E0B;"></i>
+                        2 Shards M80 + 6 Search Nodes S80
+                    </h3>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm" style="color: #718096;">Costo Total</p>
+                    <div class="cost-highlight">$27,648/mes</div>
+                    <p style="color: #B8C4CE;">$331,777/año</p>
+                </div>
+            </div>
+            
+            <div class="cost-breakdown">
+                <h4 style="color: #00ED64; margin-bottom: 1rem;">Desglose de Costos</h4>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Especificaciones</th>
+                            <th>Cantidad</th>
+                            <th>Costo Mensual</th>
+                            <th>Costo Anual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Nodos M80 Low CPU</strong></td>
+                            <td>16 vCPUs, 128GB RAM, 3.5TB storage</td>
+                            <td>6 nodos (2 shards × 3 réplicas)</td>
+                            <td style="color: #00ED64;">$25,385</td>
+                            <td style="color: #B8C4CE;">$304,620</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Search Nodes S80</strong></td>
+                            <td>16 vCPUs, 128GB RAM, 855GB SSD</td>
+                            <td>6 nodos (2 por región)</td>
+                            <td style="color: #00ED64;">Incluido</td>
+                            <td style="color: #B8C4CE;">Incluido</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Network Transfer</strong></td>
+                            <td>Multi-región (us-east-1, us-east-2, us-west-2)</td>
+                            <td>Estimado</td>
+                            <td style="color: #00ED64;">$1,777</td>
+                            <td style="color: #B8C4CE;">$21,323</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backup Storage</strong></td>
+                            <td>Continuous backup, 35 días retención</td>
+                            <td>~7TB</td>
+                            <td style="color: #00ED64;">$486</td>
+                            <td style="color: #B8C4CE;">$5,833</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="spec-grid mt-4">
+                <div class="spec-item">
+                    <div class="spec-label">Capacidad Total</div>
+                    <div class="spec-value">7 TB</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">RAM Total</div>
+                    <div class="spec-value">640 GB</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">vCPUs Totales</div>
+                    <div class="spec-value">192</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Escalabilidad</div>
+                    <div class="spec-value">Media</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture 3: 3 Shards M80 -->
+        <div class="architecture-card">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <div class="badge badge-primary mb-3">Escenario 3 - Recomendado</div>
+                    <h3>
+                        <i class="fas fa-crown" style="color: #00ED64;"></i>
+                        3 Shards M80 Low CPU Multi-Región
+                    </h3>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm" style="color: #718096;">Costo Total</p>
+                    <div class="cost-highlight">$17,932/mes</div>
+                    <p style="color: #B8C4CE;">$215,184/año</p>
+                    <div class="savings-badge mt-2">
+                        <i class="fas fa-tag"></i>
+                        Sin nodos de búsqueda dedicados
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cost-breakdown">
+                <h4 style="color: #00ED64; margin-bottom: 1rem;">Desglose de Costos</h4>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Especificaciones</th>
+                            <th>Cantidad</th>
+                            <th>Costo Mensual</th>
+                            <th>Costo Anual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Nodos M80 Low CPU</strong></td>
+                            <td>16 vCPUs, 128GB RAM, 3.5TB storage</td>
+                            <td>9 nodos (3 shards × 3 réplicas)</td>
+                            <td style="color: #00ED64;">$16,305</td>
+                            <td style="color: #B8C4CE;">$195,655</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Atlas Search</strong></td>
+                            <td>Búsqueda integrada en nodos de datos</td>
+                            <td>Incluido</td>
+                            <td style="color: #00ED64;">$0</td>
+                            <td style="color: #B8C4CE;">$0</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Network Transfer</strong></td>
+                            <td>Multi-región (us-east-1, us-east-2, us-west-2)</td>
+                            <td>Estimado</td>
+                            <td style="color: #00ED64;">$1,141</td>
+                            <td style="color: #B8C4CE;">$13,696</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backup Storage</strong></td>
+                            <td>Continuous backup, 35 días retención</td>
+                            <td>~10.5TB</td>
+                            <td style="color: #00ED64;">$486</td>
+                            <td style="color: #B8C4CE;">$5,833</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="spec-grid mt-4">
+                <div class="spec-item">
+                    <div class="spec-label">Capacidad Total</div>
+                    <div class="spec-value">10.5 TB</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">RAM Total</div>
+                    <div class="spec-value">1,152 GB</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">vCPUs Totales</div>
+                    <div class="spec-value">144</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Alta Disponibilidad</div>
+                    <div class="spec-value">Multi-Región</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture 4: M60 + Search S60 -->
+        <div class="architecture-card">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <div class="badge badge-secondary mb-3">Escenario 4 - Optimizado</div>
+                    <h3>
+                        <i class="fas fa-balance-scale" style="color: #5644D4;"></i>
+                        3 Shards M60 + 6 Search Nodes S60
+                    </h3>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm" style="color: #718096;">Costo Total</p>
+                    <div class="cost-highlight">$17,750/mes</div>
+                    <p style="color: #B8C4CE;">$213,000/año</p>
+                    <div class="savings-badge mt-2">
+                        <i class="fas fa-percentage"></i>
+                        Mejor relación costo/beneficio
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cost-breakdown">
+                <h4 style="color: #00ED64; margin-bottom: 1rem;">Desglose de Costos</h4>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Especificaciones</th>
+                            <th>Cantidad</th>
+                            <th>Costo Mensual</th>
+                            <th>Costo Anual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Nodos M60</strong></td>
+                            <td>16 vCPUs, 64GB RAM, 3.5TB storage</td>
+                            <td>9 nodos (3 shards × 3 réplicas)</td>
+                            <td style="color: #00ED64;">$16,135</td>
+                            <td style="color: #B8C4CE;">$193,614</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Search Nodes S60</strong></td>
+                            <td>8 vCPUs, 64GB RAM, 426GB storage</td>
+                            <td>6 nodos (2 por región)</td>
+                            <td style="color: #00ED64;">Incluido</td>
+                            <td style="color: #B8C4CE;">Incluido</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Network Transfer</strong></td>
+                            <td>Multi-región (us-east-1, us-east-2, us-west-2)</td>
+                            <td>Estimado</td>
+                            <td style="color: #00ED64;">$1,129</td>
+                            <td style="color: #B8C4CE;">$13,553</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backup Storage</strong></td>
+                            <td>Continuous backup, 35 días retención</td>
+                            <td>~10.5TB</td>
+                            <td style="color: #00ED64;">$486</td>
+                            <td style="color: #B8C4CE;">$5,833</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="spec-grid mt-4">
+                <div class="spec-item">
+                    <div class="spec-label">Capacidad Total</div>
+                    <div class="spec-value">10.5 TB</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">RAM Total</div>
+                    <div class="spec-value">576 GB</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">vCPUs Totales</div>
+                    <div class="spec-value">192</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Optimización</div>
+                    <div class="spec-value">Costo/Beneficio</div>
+                </div>
+            </div>
+        </div>
+                            
+
+          
+    </div>
+</section>
+
+
+    <!-- Cost Comparison Section -->
+    <section class="section" id="comparacion">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Comparación de Arquitecturas</h2>
+            
+            <div style="overflow-x: auto;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Arquitectura</th>
+                            <th>Capacidad</th>
+                            <th>RAM Total</th>
+                            <th>Nodos Datos</th>
+                            <th>Search Nodes</th>
+                            <th>Costo Mensual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1 Shard M80 + S80</strong></td>
+                            <td>3.5 TB</td>
+                            <td>384 GB</td>
+                            <td>3</td>
+                            <td>6</td>
+                            <td><span class="cost-highlight" style="font-size: 1.5rem;">$168,805</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>2 Shards M80 + S80</strong></td>
+                            <td>7 TB</td>
+                            <td>640 GB</td>
+                            <td>6</td>
+                            <td>6</td>
+                            <td><span class="cost-highlight" style="font-size: 1.5rem;">$331,777</span></td>
+                        </tr>
+                        <tr style="background: rgba(0, 237, 100, 0.05);">
+                            <td><strong>3 Shards M80</strong> <span class="badge badge-primary">Recomendado</span></td>
+                            <td>10.5 TB</td>
+                            <td>1,152 GB</td>
+                            <td>9</td>
+                            <td>0</td>
+                            <td><span class="cost-highlight" style="font-size: 1.5rem;">$215,184</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>3 Shards M60 + S60</strong></td>
+                            <td>10.5 TB</td>
+                            <td>576 GB</td>
+                            <td>9</td>
+                            <td>6</td>
+                            <td><span class="cost-highlight" style="font-size: 1.5rem;">$213,000</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Visual Cost Comparison -->
+            <div class="architecture-card mt-5">
+                <h3 class="mb-4">
+                    <i class="fas fa-chart-bar" style="color: #00ED64;"></i>
+                    Análisis Visual de Costos
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <h4 style="color: #00ED64;">Costo por TB de Almacenamiento</h4>
+                        <div class="mt-3">
+                            <div class="mb-3">
+                                <p style="color: #B8C4CE;">1 Shard M80 + S80</p>
+                                <div style="background: rgba(0, 30, 43, 0.5); border-radius: 0.5rem; padding: 0.5rem;">
+                                    <div style="background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%); height: 30px; border-radius: 0.25rem; width: 90%;"></div>
+                                </div>
+                                <p class="text-right" style="color: #00ED64;">$48,230/TB</p>
+                            </div>
+                            <div class="mb-3">
+                                <p style="color: #B8C4CE;">2 Shards M80 + S80</p>
+                                <div style="background: rgba(0, 30, 43, 0.5); border-radius: 0.5rem; padding: 0.5rem;">
+                                    <div style="background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%); height: 30px; border-radius: 0.25rem; width: 100%;"></div>
+                                </div>
+                                <p class="text-right" style="color: #00ED64;">$47,397/TB</p>
+                            </div>
+                            <div class="mb-3">
+                                <p style="color: #B8C4CE;">3 Shards M80 ⭐</p>
+                                <div style="background: rgba(0, 30, 43, 0.5); border-radius: 0.5rem; padding: 0.5rem;">
+                                    <div style="background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%); height: 30px; border-radius: 0.25rem; width: 42%;"></div>
+                                </div>
+                                <p class="text-right" style="color: #00ED64;">$20,494/TB</p>
+                            </div>
+                            <div class="mb-3">
+                                <p style="color: #B8C4CE;">3 Shards M60 + S60</p>
+                                <div style="background: rgba(0, 30, 43, 0.5); border-radius: 0.5rem; padding: 0.5rem;">
+                                    <div style="background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%); height: 30px; border-radius: 0.25rem; width: 41%;"></div>
+                                </div>
+                                <p class="text-right" style="color: #00ED64;">$20,286/TB</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #5644D4;">Distribución de Costos</h4>
+                        <div class="spec-grid mt-3">
+                            <div class="spec-item">
+                                <div class="spec-label">Infraestructura</div>
+                                <div class="spec-value">85-91%</div>
+                            </div>
+                            <div class="spec-item">
+                                <div class="spec-label">Red</div>
+                                <div class="spec-value">6-8%</div>
+                            </div>
+                            <div class="spec-item">
+                                <div class="spec-label">Backup</div>
+                                <div class="spec-value">2-3%</div>
+                            </div>
+                            <div class="spec-item">
+                                <div class="spec-label">Search</div>
+                                <div class="spec-value">0-5%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <!-- TCO Analysis -->
+     <section class="section">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Análisis TCO vs OpenSearch</h2>
+            
+            <div class="architecture-card">
+                <div class="text-center" style="padding: 4rem 2rem;">
+                    <div class="feature-icon mx-auto mb-4" style="width: 100px; height: 100px;">
+                        <i class="fas fa-hard-hat" style="font-size: 3rem;"></i>
+                    </div>
+                    <h3 style="color: #00ED64; margin-bottom: 1rem;">En Construcción</h3>
+                    <p style="color: #B8C4CE; max-width: 600px; margin: 0 auto;">
+                        Estamos preparando un análisis detallado del Costo Total de Propiedad (TCO) 
+                        comparando OpenSearch con MongoDB Atlas. Esta sección incluirá todos los costos 
+                        ocultos y beneficios operacionales.
+                    </p>
+                    <div class="mt-4">
+                        <div class="pulse-dot" style="display: inline-block; margin: 0 0.5rem;"></div>
+                        <div class="pulse-dot" style="display: inline-block; margin: 0 0.5rem; animation-delay: 0.3s;"></div>
+                        <div class="pulse-dot" style="display: inline-block; margin: 0 0.5rem; animation-delay: 0.6s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Additional Costs Section -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Costos Adicionales Opcionales</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- Support Plans -->
+                <div class="architecture-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Planes de Soporte</h3>
+                    <p class="mb-4" style="color: #B8C4CE;">Soporte empresarial 24/7</p>
+                    
+                    <ul style="color: #B8C4CE; list-style: none; padding: 0;">
+                        <li class="mb-3">
+                            <i class="fas fa-check" style="color: #00ED64;"></i>
+                            <strong>Developer:</strong> Incluido
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check" style="color: #5644D4;"></i>
+                            <strong>Extended:</strong> 8% del consumo
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check" style="color: #F59E0B;"></i>
+                            <strong>Premium:</strong> 15% del consumo
+                        </li>
+                    </ul>
+                    
+                    <div style="background: rgba(0, 237, 100, 0.1); padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
+                        <p style="margin: 0; font-size: 0.875rem;">
+                            <strong>Recomendado:</strong> Premium para producción crítica
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Professional Services -->
+                <div class="architecture-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Servicios Profesionales</h3>
+                    <p class="mb-4" style="color: #B8C4CE;">Migración y optimización</p>
+                    
+                    <ul style="color: #B8C4CE; list-style: none; padding: 0;">
+                        <li class="mb-3">
+                            <i class="fas fa-check" style="color: #00ED64;"></i>
+                            <strong>Migración asistida:</strong> $50,000
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check" style="color: #5644D4;"></i>
+                            <strong>Optimización:</strong> $25,000
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check" style="color: #F59E0B;"></i>
+                            <strong>Training:</strong> $15,000
+                        </li>
+                    </ul>
+                    
+                    <div style="background: rgba(86, 68, 212, 0.1); padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
+                        <p style="margin: 0; font-size: 0.875rem;">
+                            <strong>Único pago:</strong> No recurrente
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Advanced Features -->
+                <div class="architecture-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Características Avanzadas</h3>
+                    <p class="mb-4" style="color: #B8C4CE;">Funcionalidades opcionales</p>
+                    
+                    <ul style="color: #B8C4CE; list-style: none; padding: 0;">
+                        <li class="mb-3">
+                            <i class="fas fa-check" style="color: #00ED64;"></i>
+                            <strong>Data Lake:</strong> $0.025/GB
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check" style="color: #5644D4;"></i>
+                            <strong>Realm Sync:</strong> $30/million
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check" style="color: #F59E0B;"></i>
+                            <strong>Atlas App Services:</strong> Por uso
+                        </li>
+                    </ul>
+                    
+                    <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
+                        <p style="margin: 0; font-size: 0.875rem;">
+                            <strong>Pay-as-you-go:</strong> Solo paga lo que usa
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI Calculator -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Calculadora de ROI</h2>
+            
+            <div class="architecture-card">
+                <div class="text-center" style="padding: 4rem 2rem;">
+                    <div class="feature-icon mx-auto mb-4" style="width: 100px; height: 100px;">
+                        <i class="fas fa-tools" style="font-size: 3rem;"></i>
+                    </div>
+                    <h3 style="color: #5644D4; margin-bottom: 1rem;">En Construcción</h3>
+                    <p style="color: #B8C4CE; max-width: 600px; margin: 0 auto;">
+                        Próximamente presentaremos una calculadora interactiva de Retorno de Inversión (ROI) 
+                        personalizada para Kushki, incluyendo análisis de ahorro operacional, mejoras en 
+                        productividad y tiempo de recuperación de la inversión.
+                    </p>
+                    <div class="mt-4">
+                        <div class="pulse-dot" style="display: inline-block; margin: 0 0.5rem; background: #5644D4;"></div>
+                        <div class="pulse-dot" style="display: inline-block; margin: 0 0.5rem; background: #5644D4; animation-delay: 0.3s;"></div>
+                        <div class="pulse-dot" style="display: inline-block; margin: 0 0.5rem; background: #5644D4; animation-delay: 0.6s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section" style="background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(86, 68, 212, 0.1) 100%);">
+        <div class="container text-center">
+            <h2 class="text-gradient mb-4">¿Listos para Optimizar su Inversión?</h2>
+            <p class="text-xl mb-6" style="color: #B8C4CE; max-width: 800px; margin: 0 auto;">
+                MongoDB Atlas no solo reduce costos, sino que unifica su arquitectura de datos 
+                con una plataforma empresarial completa que escala con su negocio.
+            </p>
+            
+            <div class="flex justify-center gap-4 flex-wrap">
+                <a href="#" class="btn btn-primary btn-lg">
+                    <i class="fas fa-calculator"></i>
+                    Solicitar Cotización Personalizada
+                </a>
+                <a href="#" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    Descargar Análisis TCO
+                </a>
+                <a href="#" class="btn btn-ghost btn-lg">
+                    <i class="fas fa-comments"></i>
+                    Hablar con Ventas
+                </a>
+            </div>
+            
+            <div class="mt-6">
+                <p style="color: #718096;">
+                    <i class="fas fa-info-circle"></i>
+                    Los precios mostrados son estimados y pueden variar según la región y compromisos anuales
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: #001E2B; padding: 2rem 0; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="container text-center">
+            <p style="color: #718096; margin: 0;">
+                © 2025 MongoDB Atlas | Análisis de Costos Personalizado para Kushki
+                <span class="pulse-dot"></span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Animate numbers on scroll
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'none';
+                    setTimeout(() => {
+                        entry.target.style.animation = '';
+                    }, 10);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animated-number').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add parallax effect to hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.hero-kushki');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Costos - MongoDB Atlas para Kushki</title>
+    <link rel="stylesheet" href="gomdb-global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para análisis de costos */
+        .hero-costs {
+            background: linear-gradient(135deg, #001E2B 0%, #0D2A3D 50%, #112331 100%);
+            position: relative;
+            overflow: hidden;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-costs::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #00ED64 0%, transparent 70%);
+            opacity: 0.1;
+            top: -300px;
+            right: -200px;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cost-card {
+            background: linear-gradient(135deg, rgba(13, 42, 61, 0.95) 0%, rgba(17, 35, 49, 0.8) 100%);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(0, 237, 100, 0.3);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cost-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .cost-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 237, 100, 0.3);
+            border-color: rgba(0, 237, 100, 0.6);
+        }
+
+        .cost-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .cost-breakdown {
+            background: rgba(0, 30, 43, 0.6);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .cost-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .cost-table th {
+            background: rgba(0, 237, 100, 0.1);
+            color: #00ED64;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(0, 237, 100, 0.3);
+        }
+
+        .cost-table td {
+            padding: 1rem;
+            color: #B8C4CE;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cost-table tr:hover td {
+            background: rgba(0, 237, 100, 0.05);
+        }
+
+        .total-cost {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00ED64 0%, #5644D4 100%);

@@ -15,6 +15,18 @@
       "dest": "/clientes/kushki/mf.html"
     },
     {
+      "src": "/clientes/kushki/opens-mongo(?:/.*)?$",
+      "dest": "/clientes/kushki/opens-mongo.html"
+    },
+    {
+      "src": "/clientes/kushki/opens-mongo-cost(?:/.*)?$",
+      "dest": "/clientes/kushki/opens-mongo-cost.html"
+    },
+    {
+      "src": "/clientes/kushki/preguntas-opens(?:/.*)?$",
+      "dest": "/clientes/kushki/preguntas-opens.html"
+    },
+    {
       "src": "/clientes/(?:cencosud|bancolombia)/document-mongo(?:/.*)?$",
       "dest": "/index.html"
     },
