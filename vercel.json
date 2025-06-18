@@ -11,6 +11,15 @@
     { "handle": "filesystem" },
 
     {
+      "src": "/clientes/yape/propuesta(?:/.*)?$",
+      "dest": "/clientes/yape/yape-propuesta.html"
+    },
+    {
+      "src": "/clientes/yape/arquitectura(?:/.*)?$",
+      "dest": "/clientes/yape/arquitectura.html"
+    },
+
+    {
       "src": "/clientes/kushki/mf(?:/.*)?$",
       "dest": "/clientes/kushki/mf.html"
     },
