@@ -11,6 +11,14 @@
     { "handle": "filesystem" },
 
     {
+      "src": "/clientes/yape/propuesta-final(?:/.*)?$",
+      "dest": "/clientes/yape/propuesta-final.html"
+    },
+    {
+      "src": "/clientes/yape/arquitectura-final(?:/.*)?$",
+      "dest": "/clientes/yape/arquitectura-final.html"
+    },
+    {
       "src": "/clientes/yape/propuesta(?:/.*)?$",
       "dest": "/clientes/yape/yape-propuesta.html"
     },
