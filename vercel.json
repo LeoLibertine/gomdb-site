@@ -27,6 +27,10 @@
       "dest": "/clientes/kushki/preguntas-opens.html"
     },
     {
+      "src": "/clientes/bancolobia/matrix(?:/.*)?$",
+      "dest": "/clientes/kushki/matrix.html"
+    },
+    {
       "src": "/clientes/(?:cencosud|bancolombia)/document-mongo(?:/.*)?$",
       "dest": "/index.html"
     },
