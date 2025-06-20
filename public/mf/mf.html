@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Modernization Factory - Transforma tu Legado</title>
+    <link rel="stylesheet" href="../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para esta página */
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-3xl);
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: var(--spacing-2xl);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto var(--spacing-lg);
+            background: var(--color-primary);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-3xl);
+        }
+        
+        .timeline {
+            position: relative;
+            padding: var(--spacing-2xl) 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--color-primary);
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: var(--spacing-3xl);
+            display: flex;
+            align-items: center;
+        }
+        
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+        
+        .timeline-content {
+            flex: 1;
+            padding: var(--spacing-xl);
+        }
+        
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            background: var(--color-primary);
+            border-radius: var(--radius-full);
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-xl);
+            margin: var(--spacing-3xl) 0;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: var(--spacing-xl);
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: var(--spacing-md);
+            background: var(--color-bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: var(--color-text-primary);
+            font-size: var(--text-base);
+            transition: all var(--transition-base);
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+        }
+        
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+            
+            .timeline-item {
+                flex-direction: row !important;
+                padding-left: 60px;
+            }
+            
+            .timeline-dot {
+                left: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegación -->
+    <nav class="navbar navbar-scrolled">
+        <div class="container">
+            <div class="navbar-container">
+                <a href="#" class="navbar-logo">
+                    <span>🚀</span>
+                    <span>MongoDB Modernization Factory</span>
+                </a>
+                <div class="navbar-links">
+                    <a href="#que-es" class="navbar-link">¿Qué es?</a>
+                    <a href="#proceso" class="navbar-link">Proceso</a>
+                    <a href="#beneficios" class="navbar-link">Beneficios</a>
+                    <a href="#como-usar" class="navbar-link">Cómo Usar</a>
+                    <a href="#account-overview" class="navbar-link">Caso de Éxito</a>
+                    <a href="#cuestionario" class="navbar-link">Evaluación ICP</a>
+                </div><a href="#que-es" class="navbar-link">¿Qué es?</a>
+                    <a href="#proceso" class="navbar-link">Proceso</a>
+                    <a href="#beneficios" class="navbar-link">Beneficios</a>
+                    <a href="#cuestionario" class="navbar-link">Cuestionario</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="hero-content animate-fadeIn">
+                <div class="badge badge-primary mb-4">
+                    <span>🎯</span>
+                    <span>Iniciativa Estratégica MongoDB</span>
+                </div>
+                <h1 class="text-gradient mb-4">
+                    Modernization Factory
+                </h1>
+                <p class="text-xl mb-5" style="max-width: 800px; margin: 0 auto;">
+                    Transforma tu código legacy en aplicaciones modernas con MongoDB. 
+                    Reducimos años de migración a meses usando IA avanzada.
+                </p>
+                <div class="flex justify-center gap-3">
+                    <a href="#cuestionario" class="btn btn-primary btn-lg">
+                        Evalúa tu Empresa
+                    </a>
+                    <a href="#que-es" class="btn btn-secondary btn-lg">
+                        Descubre Más
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ¿Qué es Modernization Factory? -->
+    <section id="que-es" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2 class="text-gradient mb-4">¿Qué es Modernization Factory?</h2>
+                <p class="text-lg" style="max-width: 800px; margin: 0 auto;">
+                    Una iniciativa revolucionaria de MongoDB para ayudar a las empresas a modernizar 
+                    sus aplicaciones legacy mediante IA, automatización y expertise técnico.
+                </p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="card card-gradient feature-card animate-fadeIn">
+                    <div class="feature-icon">🤖</div>
+                    <h4>IA Avanzada</h4>
+                    <p>Utilizamos inteligencia artificial para analizar y convertir código legacy automáticamente</p>
+                </div>
+                
+                <div class="card card-gradient feature-card animate-fadeIn" style="animation-delay: 0.1s;">
+                    <div class="feature-icon">⚡</div>
+                    <h4>Migración Acelerada</h4>
+                    <p>Reducimos proyectos de años a meses con herramientas especializadas</p>
+                </div>
+                
+                <div class="card card-gradient feature-card animate-fadeIn" style="animation-delay: 0.2s;">
+                    <div class="feature-icon">🔄</div>
+                    <h4>Proceso Repetible</h4>
+                    <p>Metodología probada que se puede escalar a cientos de aplicaciones</p>
+                </div>
+            </div>
+
+            <div class="stats-grid mt-6">
+                <div class="stat-card card card-bordered animate-fadeIn">
+                    <div class="metric-value">95%</div>
+                    <div class="metric-label">Ahorro en análisis</div>
+                </div>
+                <div class="stat-card card card-bordered animate-fadeIn" style="animation-delay: 0.1s;">
+                    <div class="metric-value">85%</div>
+                    <div class="metric-label">Código automatizado</div>
+                </div>
+                <div class="stat-card card card-bordered animate-fadeIn" style="animation-delay: 0.2s;">
+                    <div class="metric-value">60%</div>
+                    <div class="metric-label">Reducción en tiempo</div>
+                </div>
+                <div class="stat-card card card-bordered animate-fadeIn" style="animation-delay: 0.3s;">
+                    <div class="metric-value">500K+</div>
+                    <div class="metric-label">Líneas migradas</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proceso -->
+    <section id="proceso" class="section" style="background: var(--color-bg-secondary);">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2 class="text-gradient mb-4">Nuestro Proceso de Modernización</h2>
+                <p class="text-lg">Un enfoque estructurado para transformar tu legado tecnológico</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item animate-slideInLeft">
+                    <div class="timeline-dot"></div>
+                    <div class="card timeline-content">
+                        <h4 class="text-primary mb-2">1. Fase Incubadora (3 meses)</h4>
+                        <p>MongoDB invierte ~$300K en recursos y tecnología. Seleccionamos una aplicación piloto para demostrar el valor del proceso.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item animate-slideInRight">
+                    <div class="timeline-dot"></div>
+                    <div class="card timeline-content">
+                        <h4 class="text-primary mb-2">2. Análisis con IA</h4>
+                        <p>Nuestras herramientas analizan dependencias, mapean arquitectura y identifican los componentes críticos para la migración.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item animate-slideInLeft">
+                    <div class="timeline-dot"></div>
+                    <div class="card timeline-content">
+                        <h4 class="text-primary mb-2">3. Conversión Automatizada</h4>
+                        <p>Convertimos código PL/SQL, procedimientos almacenados y lógica de negocio a Java moderno con MongoDB.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item animate-slideInRight">
+                    <div class="timeline-dot"></div>
+                    <div class="card timeline-content">
+                        <h4 class="text-primary mb-2">4. Escalamiento</h4>
+                        <p>Aplicamos el proceso probado a múltiples aplicaciones en un programa de varios años.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Beneficios -->
+    <section id="beneficios" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2 class="text-gradient mb-4">¿Por qué Modernizar con MongoDB?</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="card card-gradient p-6">
+                    <h4 class="text-primary mb-3">Para tu Negocio</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li class="mb-2">✅ Mayor agilidad para competir en el mercado</li>
+                        <li class="mb-2">✅ Reducción significativa de costos operativos</li>
+                        <li class="mb-2">✅ Capacidad de innovar más rápidamente</li>
+                        <li class="mb-2">✅ Eliminar dependencia de tecnologías legacy</li>
+                    </ul>
+                </div>
+
+                <div class="card card-gradient p-6">
+                    <h4 class="text-primary mb-3">Para tu Tecnología</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li class="mb-2">✅ Migración de Oracle/SQL Server a MongoDB</li>
+                        <li class="mb-2">✅ Código moderno y mantenible en Java</li>
+                        <li class="mb-2">✅ Arquitectura lista para la nube</li>
+                        <li class="mb-2">✅ Herramientas y procesos reutilizables</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card card-bordered mt-5 p-6 text-center">
+                <h4 class="mb-3">Casos de Éxito</h4>
+                <p class="text-lg mb-4">Empresas como <span class="text-primary">Banco Bendigo (Australia)</span>, <span class="text-primary">B3</span> e <span class="text-primary">Itaú</span> 
+                ya están transformando cientos de aplicaciones con Modernization Factory.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cómo usar esta herramienta -->
+    <section id="como-usar" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2 class="text-gradient mb-4">Cómo Usar el Cuestionario ICP</h2>
+                <p class="text-lg">Proceso de evaluación para Modernization Factory</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="card card-bordered p-6 animate-fadeIn">
+                    <div class="feature-icon mb-3" style="background: var(--color-accent);">1</div>
+                    <h4 class="text-primary mb-2">Paso 1: Información General</h4>
+                    <p>Completa la hoja de Descripción General de la Cuenta con información básica de tu empresa</p>
+                </div>
+
+                <div class="card card-bordered p-6 animate-fadeIn" style="animation-delay: 0.1s;">
+                    <div class="feature-icon mb-3" style="background: var(--color-accent);">2</div>
+                    <h4 class="text-primary mb-2">Paso 2: Evaluación ICP</h4>
+                    <p>Completa el cuestionario ICP con apoyo de Solution Consulting y Professional Services</p>
+                </div>
+
+                <div class="card card-bordered p-6 animate-fadeIn" style="animation-delay: 0.2s;">
+                    <div class="feature-icon mb-3" style="background: var(--color-accent);">3</div>
+                    <h4 class="text-primary mb-2">Paso 3: Revisión</h4>
+                    <p>Revisa tu cuenta con Faizan, Cedric y el equipo de Modernization Factory</p>
+                </div>
+            </div>
+
+            <div class="card card-gradient mt-6 p-6">
+                <h4 class="mb-3">⚠️ Criterios Importantes</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li class="mb-2">✅ Las cuentas deben cumplir al menos <strong>6 puntos</strong> en el perfil de cliente ideal</li>
+                    <li class="mb-2">✅ La calificación rigurosa es clave para el éxito del proyecto</li>
+                    <li class="mb-2">✅ Se requiere un Champion fuerte con acceso ejecutivo</li>
+                    <li class="mb-2">✅ Debe existir dolor significativo con la tecnología actual</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Account Overview -->
+    <section id="account-overview" class="section" style="background: var(--color-bg-secondary);">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2 class="text-gradient mb-4">Descripción General de la Cuenta</h2>
+                <p class="text-lg">Completa la información de tu cuenta para el proceso de evaluación</p>
+            </div>
+
+            <div class="card card-gradient" style="max-width: 1000px; margin: 0 auto;">
+                <form id="account-form" style="padding: var(--spacing-2xl);">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                        <div class="form-group">
+                            <label class="form-label">Nombre de la Cuenta</label>
+                            <input type="text" class="form-input" placeholder="Ej: Kushki" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Account Executive</label>
+                            <input type="text" class="form-input" placeholder="Nombre del AE" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Solution Consultant</label>
+                            <input type="text" class="form-input" placeholder="Nombre del SC" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Champions</label>
+                            <input type="text" class="form-input" placeholder="Nombre y cargo del champion" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <h5 class="text-primary mb-3">📊 Información de la Empresa</h5>
+                        <div class="form-group">
+                            <label class="form-label">Descripción de la Empresa</label>
+                            <textarea class="form-textarea" rows="4" placeholder="Describe el negocio, industria, año de fundación, países donde opera, productos/servicios principales, estado actual (ej: unicornio, ARR, etc.)" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="form-group">
+                            <label class="form-label">¿Por qué ahora?</label>
+                            <textarea class="form-textarea" rows="4" placeholder="¿Qué está impulsando la necesidad de modernización en este momento?" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">¿Por qué cambiar?</label>
+                            <textarea class="form-textarea" rows="4" placeholder="¿Cuáles son los problemas con la tecnología actual?" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">¿Por qué MongoDB?</label>
+                            <textarea class="form-textarea" rows="4" placeholder="¿Por qué MongoDB es la solución elegida?" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-6">
+                        <button type="submit" class="btn btn-secondary">
+                            Guardar Información de la Cuenta
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cuestionario ICP -->
+    <section id="cuestionario" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2 class="text-gradient mb-4">Cuestionario ICP - Perfil de Cliente Ideal</h2>
+                <p class="text-lg">Evalúa si tu empresa califica para Modernization Factory</p>
+                <div class="badge badge-primary mt-3">
+                    <span>🎯</span>
+                    <span>Mínimo 6 criterios "Good Fit" requeridos</span>
+                </div>
+            </div>
+
+            <div class="card card-gradient" style="max-width: 1200px; margin: 0 auto;">
+                <form id="icp-form" style="padding: var(--spacing-2xl);">
+                    <!-- Criterio 1 -->
+                    <div class="card card-bordered mb-4" style="background: rgba(0, 30, 43, 0.5);">
+                        <div style="padding: var(--spacing-lg);">
+                            <h5 class="mb-3">1. Aplicaciones Legacy con Bases de Datos Relacionales</h5>
+                            <p class="text-sm mb-3">¿Tu organización tiene un número considerable de aplicaciones legacy usando bases de datos relacionales (Oracle, SQL Server, Sybase, DB2)?</p>
+                            <div class="flex gap-3">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria1" value="good" required>
+                                    <span class="badge badge-primary">Good Fit</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria1" value="poor" required>
+                                    <span class="badge badge-secondary">Poor Fit</span>
+                                </label>
+                            </div>
+                            <textarea class="form-textarea mt-3" placeholder="Describe tus aplicaciones legacy..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Criterio 2 -->
+                    <div class="card card-bordered mb-4" style="background: rgba(0, 30, 43, 0.5);">
+                        <div style="padding: var(--spacing-lg);">
+                            <h5 class="mb-3">2. Objetivo de Migración a MongoDB</h5>
+                            <p class="text-sm mb-3">¿El objetivo es migrar a MongoDB Atlas o MongoDB Enterprise Advanced?</p>
+                            <div class="flex gap-3">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria2" value="good" required>
+                                    <span class="badge badge-primary">Good Fit</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria2" value="poor" required>
+                                    <span class="badge badge-secondary">Poor Fit</span>
+                                </label>
+                            </div>
+                            <textarea class="form-textarea mt-3" placeholder="Explica tu estrategia de migración..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Criterio 3 -->
+                    <div class="card card-bordered mb-4" style="background: rgba(0, 30, 43, 0.5);">
+                        <div style="padding: var(--spacing-lg);">
+                            <h5 class="mb-3">3. Relación con Cloud Providers</h5>
+                            <p class="text-sm mb-3">¿Tu organización tiene relación con Azure/GCP/AWS para aprovechar sus LLMs?</p>
+                            <div class="flex gap-3">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria3" value="good" required>
+                                    <span class="badge badge-primary">Good Fit</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria3" value="poor" required>
+                                    <span class="badge badge-secondary">Poor Fit</span>
+                                </label>
+                            </div>
+                            <textarea class="form-textarea mt-3" placeholder="Describe tu infraestructura cloud..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Criterio 4 -->
+                    <div class="card card-bordered mb-4" style="background: rgba(0, 30, 43, 0.5);">
+                        <div style="padding: var(--spacing-lg);">
+                            <h5 class="mb-3">4. Dolor con Tecnología Actual</h5>
+                            <p class="text-sm mb-3">¿Existe dolor significativo con las aplicaciones relacionales actuales y desean salir de esa relación?</p>
+                            <div class="flex gap-3">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria4" value="good" required>
+                                    <span class="badge badge-primary">Good Fit</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria4" value="poor" required>
+                                    <span class="badge badge-secondary">Poor Fit</span>
+                                </label>
+                            </div>
+                            <textarea class="form-textarea mt-3" placeholder="Describe los desafíos actuales..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Criterio 5 -->
+                    <div class="card card-bordered mb-4" style="background: rgba(0, 30, 43, 0.5);">
+                        <div style="padding: var(--spacing-lg);">
+                            <h5 class="mb-3">5. Percepción de MongoDB</h5>
+                            <p class="text-sm mb-3">¿MongoDB es bien visto en la organización como estándar para nuevas aplicaciones?</p>
+                            <div class="flex gap-3">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria5" value="good" required>
+                                    <span class="badge badge-primary">Good Fit</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria5" value="poor" required>
+                                    <span class="badge badge-secondary">Poor Fit</span>
+                                </label>
+                            </div>
+                            <textarea class="form-textarea mt-3" placeholder="Describe la percepción de MongoDB..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Criterio 6 -->
+                    <div class="card card-bordered mb-4" style="background: rgba(0, 30, 43, 0.5);">
+                        <div style="padding: var(--spacing-lg);">
+                            <h5 class="mb-3">6. Champion Senior</h5>
+                            <p class="text-sm mb-3">¿Existe un Champion senior de MongoDB (CIO o CIO-1) con poder e influencia?</p>
+                            <div class="flex gap-3">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria6" value="good" required>
+                                    <span class="badge badge-primary">Good Fit</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria6" value="poor" required>
+                                    <span class="badge badge-secondary">Poor Fit</span>
+                                </label>
+                            </div>
+                            <textarea class="form-textarea mt-3" placeholder="Identifica al champion y su rol..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Criterio 7 -->
+                    <div class="card card-bordered mb-4" style="background: rgba(0, 30, 43, 0.5);">
+                        <div style="padding: var(--spacing-lg);">
+                            <h5 class="mb-3">7. Colaboración con MongoDB</h5>
+                            <p class="text-sm mb-3">¿El cliente está dispuesto a colaborar completamente con el equipo de MongoDB?</p>
+                            <div class="flex gap-3">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria7" value="good" required>
+                                    <span class="badge badge-primary">Good Fit</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria7" value="poor" required>
+                                    <span class="badge badge-secondary">Poor Fit</span>
+                                </label>
+                            </div>
+                            <textarea class="form-textarea mt-3" placeholder="Describe el nivel de colaboración esperado..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Criterio 8 -->
+                    <div class="card card-bordered mb-4" style="background: rgba(0, 30, 43, 0.5);">
+                        <div style="padding: var(--spacing-lg);">
+                            <h5 class="mb-3">8. Tecnología Java</h5>
+                            <p class="text-sm mb-3">¿La aplicación candidata está construida en Java? (Stored procedures y triggers son deseables)</p>
+                            <div class="flex gap-3">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria8" value="good" required>
+                                    <span class="badge badge-primary">Good Fit</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria8" value="poor" required>
+                                    <span class="badge badge-secondary">Poor Fit</span>
+                                </label>
+                            </div>
+                            <textarea class="form-textarea mt-3" placeholder="Describe el stack tecnológico..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Criterio 9 -->
+                    <div class="card card-bordered mb-4" style="background: rgba(0, 30, 43, 0.5);">
+                        <div style="padding: var(--spacing-lg);">
+                            <h5 class="mb-3">9. Base de Datos Relacional Actual</h5>
+                            <p class="text-sm mb-3">¿La aplicación actualmente corre en una base de datos relacional?</p>
+                            <div class="flex gap-3">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria9" value="good" required>
+                                    <span class="badge badge-primary">Good Fit</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria9" value="poor" required>
+                                    <span class="badge badge-secondary">Poor Fit</span>
+                                </label>
+                            </div>
+                            <textarea class="form-textarea mt-3" placeholder="Especifica la base de datos actual..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Criterio 10 -->
+                    <div class="card card-bordered mb-4" style="background: rgba(0, 30, 43, 0.5);">
+                        <div style="padding: var(--spacing-lg);">
+                            <h5 class="mb-3">10. Importancia y Alcance del Proyecto</h5>
+                            <p class="text-sm mb-3">¿La aplicación tiene importancia de negocio y es adecuada para un proyecto de 2-3 meses?</p>
+                            <div class="flex gap-3">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria10" value="good" required>
+                                    <span class="badge badge-primary">Good Fit</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="criteria10" value="poor" required>
+                                    <span class="badge badge-secondary">Poor Fit</span>
+                                </label>
+                            </div>
+                            <textarea class="form-textarea mt-3" placeholder="Describe la importancia del proyecto..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Resumen de puntuación -->
+                    <div class="card card-gradient p-6 mt-6 text-center">
+                        <h4 class="mb-3">Puntuación Total</h4>
+                        <div class="metric-value" id="score">0/10</div>
+                        <p class="text-lg mt-3" id="score-message">Completa todos los criterios para ver tu resultado</p>
+                    </div>
+
+                    <div class="text-center mt-6">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            Enviar Evaluación ICP
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <section class="section text-center">
+        <div class="container">
+            <h3 class="mb-4">¿Listo para transformar tu legado?</h3>
+            <p class="text-lg mb-5">MongoDB invierte en tu éxito. Iniciemos juntos el camino hacia la modernización.</p>
+            <div class="flex justify-center gap-3">
+                <a href="#" class="btn btn-primary">
+                    Contactar a un Especialista
+                </a>
+                <a href="#" class="btn btn-ghost">
+                    Descargar Whitepaper
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Animación suave al hacer scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Manejar envío del formulario de Account Overview
+        document.getElementById('account-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Información de la cuenta guardada exitosamente.');
+        });
+
+        // Manejar envío del formulario ICP
+        document.getElementById('icp-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Calcular puntuación
+            const goodFits = document.querySelectorAll('input[type="radio"][value="good"]:checked').length;
+            const scoreElement = document.getElementById('score');
+            const messageElement = document.getElementById('score-message');
+            
+            scoreElement.textContent = `${goodFits}/10`;
+            
+            if (goodFits >= 6) {
+                scoreElement.style.color = 'var(--color-primary)';
+                messageElement.textContent = '¡Excelente! Tu empresa es un candidato ideal para Modernization Factory';
+                messageElement.style.color = 'var(--color-primary)';
+                
+                setTimeout(() => {
+                    alert('¡Felicidades! Tu empresa califica para Modernization Factory. Un especialista se pondrá en contacto contigo pronto.');
+                }, 500);
+            } else {
+                scoreElement.style.color = 'var(--color-warning)';
+                messageElement.textContent = `Necesitas al menos 6 criterios "Good Fit". Te faltan ${6 - goodFits} criterios.`;
+                messageElement.style.color = 'var(--color-warning)';
+                
+                setTimeout(() => {
+                    alert('Tu empresa aún no cumple todos los criterios necesarios. Trabajemos juntos para cerrar las brechas identificadas.');
+                }, 500);
+            }
+        });
+        
+        // Actualizar puntuación en tiempo real
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const goodFits = document.querySelectorAll('input[type="radio"][value="good"]:checked').length;
+                const scoreElement = document.getElementById('score');
+                scoreElement.textContent = `${goodFits}/10`;
+                
+                if (goodFits >= 6) {
+                    scoreElement.style.color = 'var(--color-primary)';
+                } else {
+                    scoreElement.style.color = 'var(--color-text-secondary)';
+                }
+            });
+        });
+
+        // Animación de aparición en scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observar elementos animados
+        document.querySelectorAll('.animate-fadeIn, .animate-slideInLeft, .animate-slideInRight').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

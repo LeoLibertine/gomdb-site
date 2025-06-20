@@ -11,6 +11,11 @@
     { "handle": "filesystem" },
 
     {
+      "src": "/mf/mf(?:/.*)?$",
+      "dest": "/mf/mf.html"
+    },
+
+    {
       "src": "/clientes/yape/propuesta-final(?:/.*)?$",
       "dest": "/clientes/yape/propuesta-final.html"
     },
