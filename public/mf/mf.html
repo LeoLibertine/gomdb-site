@@ -7,6 +7,78 @@
     <link rel="stylesheet" href="../styles/gomdb-global.css">
     <style>
         /* Estilos específicos para esta página */
+        .navbar-logo {
+            font-size: var(--text-xl) !important;
+            white-space: nowrap;
+        }
+        
+        .navbar-links {
+            gap: var(--spacing-lg) !important;
+        }
+        
+        .navbar-link {
+            font-size: var(--text-sm);
+            white-space: nowrap;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-base);
+        }
+        
+        .navbar-link:hover {
+            background: rgba(0, 237, 100, 0.1);
+            color: var(--color-primary);
+        }
+        
+        /* Menu móvil */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text-primary);
+            font-size: var(--text-2xl);
+            cursor: pointer;
+        }
+        
+        @media (max-width: 1024px) {
+            .navbar-links {
+                gap: var(--spacing-md) !important;
+            }
+            
+            .navbar-link {
+                font-size: 0.8rem;
+                padding: var(--spacing-xs);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .navbar-links {
+                display: none !important;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--color-bg-primary);
+                flex-direction: column;
+                padding: var(--spacing-lg);
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                box-shadow: var(--shadow-xl);
+            }
+            
+            .navbar-links.active {
+                display: flex !important;
+            }
+            
+            .navbar-link {
+                width: 100%;
+                padding: var(--spacing-md);
+                text-align: center;
+            }
+        }
+        
         .hero-content {
             position: relative;
             z-index: 1;
@@ -682,6 +754,23 @@
     </section>
 
     <script>
+        // Menu móvil
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const navbarLinks = document.getElementById('navbar-links');
+        
+        mobileMenuToggle.addEventListener('click', function() {
+            navbarLinks.classList.toggle('active');
+            this.textContent = navbarLinks.classList.contains('active') ? '✕' : '☰';
+        });
+        
+        // Cerrar menu móvil al hacer click en un link
+        document.querySelectorAll('.navbar-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navbarLinks.classList.remove('active');
+                mobileMenuToggle.textContent = '☰';
+            });
+        });
+        
         // Animación suave al hacer scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
