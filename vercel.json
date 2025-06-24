@@ -15,8 +15,12 @@
       "dest": "/mf/mf.html"
     },
     {
+      "src": "/clientes/yape/demo(?:/.*)?$",
+      "dest": "/clientes/yape/demo.html"
+    },
+    {
       "src": "/clientes/segurosbolivar/poc(?:/.*)?$",
-      "dest": "/clientes/segurosboliva/poc.html"
+      "dest": "/clientes/segurosbolivar/poc.html"
     },
 
     {
