@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramas de Migración MongoDB Atlas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos personalizados para los diagramas */
+        body {
+            font-family: 'Inter', sans-serif; /* Usar fuente Inter */
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px; /* Ancho máximo del contenedor principal */
+        }
+        .cloud-container {
+            border: 2px dashed #ccc;
+            padding: 1.5rem;
+            margin: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            position: relative;
+            min-width: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .node {
+            width: 35px;
+            height: 35px;
+            background-color: #4299e1; /* Color azul de Tailwind */
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0.4rem;
+            color: white;
+            font-weight: bold;
+            font-size: 0.7rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .node.primary {
+            background-color: #f56565; /* Color rojo de Tailwind para primario */
+        }
+         .nodes-group {
+             display: flex;
+             justify-content: center;
+             margin-top: 0.5rem;
+         }
+        .arrow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: visible;
+        }
+        .arrow line, .arrow polyline {
+            stroke: #4a5568; /* Color gris oscuro de Tailwind */
+            stroke-width: 2;
+            fill: none;
+        }
+        .arrow polyline {
+             marker-end: url(#arrowhead); /* Añadir punta de flecha */
+        }
+        /* Definición de la punta de flecha SVG */
+        svg defs marker#arrowhead {
+            fill: #4a5568;
+            stroke: none;
+        }
+        .tool-box {
+            background-color: #d1fae5; /* Color verde claro de Tailwind */
+            border: 1px solid #34d399; /* Color verde de Tailwind */
+            padding: 0.6rem;
+            margin: 0.75rem auto;
+            border-radius: 0.375rem;
+            text-align: center;
+            font-weight: bold;
+            color: #065f46; /* Color verde oscuro de Tailwind */
+            max-width: 120px;
+            font-size: 0.8rem;
+        }
+        .atlas-service {
+            border: 2px solid #667eea; /* Color índigo de Tailwind */
+            padding: 1.5rem;
+            margin: 1rem auto;
+            border-radius: 0.75rem;
+            background-color: #ebf4ff; /* Color azul muy claro de Tailwind */
+            text-align: center;
+            max-width: 600px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stage-description {
+            text-align: center;
+            color: #4a5568;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+         .step-label {
+             font-size: 1rem;
+             font-weight: bold;
+             margin-bottom: 0.75rem;
+             color: #2d3748; /* Color gris oscuro de Tailwind */
+         }
+         /* Clases específicas para la disposición vertical en la etapa 2 del diagrama detallado */
+         .stage2-layout {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+         }
+         .stage2-arrows {
+             position: relative;
+             width: 100px;
+             height: 120px;
+             margin: 1rem 0;
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             justify-content: center;
+         }
+         .diagram-section {
+             margin-bottom: 4rem; /* Espacio entre diagramas */
+             padding-bottom: 2rem;
+             border-bottom: 1px solid #eee; /* Separador visual */
+         }
+         .diagram-section:last-child {
+             border-bottom: none;
+             margin-bottom: 0;
+             padding-bottom: 0;
+         }
+    </style>
+</head>
+<body class="bg-gray-100 p-4">
+
+    <div class="container mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-3xl font-bold mb-8 text-center">Diagramas de Migración de Nodos en MongoDB Atlas</h1>
+
+        <svg width="0" height="0" style="position: absolute; top: 0; left: 0;">
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7"></polygon>
+                </marker>
+            </defs>
+        </svg>
+
+        <div class="diagram-section">
+            <h2 class="text-2xl font-bold mb-6 text-center">1. Diagrama del Proceso General de Migración GCP a AWS en Atlas</h2>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">1. Inicio (Nodos en GCP)</h3>
+                <div class="flex flex-wrap justify-center items-center">
+                    <div class="cloud-container border-blue-500 bg-blue-100">
+                        <h4 class="text-lg font-medium mb-2">Google Cloud Platform (GCP)</h4>
+                        <div class="nodes-group">
+                            <div class="node primary">P</div> <div class="node">S</div> <div class="node">S</div> </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">2. Añadir Nodos en la Nueva Región (AWS)</h3>
+                <div class="flex flex-wrap justify-center items-center">
+                    <div class="cloud-container border-blue-500 bg-blue-100">
+                        <h4 class="text-lg font-medium mb-2">Google Cloud Platform (GCP)</h4>
+                        <div class="nodes-group">
+                            <div class="node primary">P</div>
+                            <div class="node">S</div>
+                            <div class="node">S</div>
+                        </div>
+                    </div>
+                    <div class="mx-8 text-2xl font-bold">+</div> <div class="cloud-container border-yellow-500 bg-yellow-100">
+                        <h4 class="text-lg font-medium mb-2">Amazon Web Services (AWS)</h4>
+                        <div class="nodes-group">
+                            <div class="node">S</div> <div class="node">S</div>
+                            <div class="node">S</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8 relative">
+                 <h3 class="text-xl font-semibold mb-4 text-center">3. Sincronización de Datos</h3>
+                 <div class="flex flex-wrap justify-center items-center">
+                     <div class="cloud-container border-blue-500 bg-blue-100">
+                         <h4 class="text-lg font-medium mb-2">GCP</h4>
+                         <div class="nodes-group">
+                             <div class="node primary">P</div>
+                             <div class="node">S</div>
+                             <div class="node">S</div>
+                         </div>
+                     </div>
+                     <div class="relative w-40 h-20 mx-auto">
+                         <svg class="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <polyline points="5,50 95,50" marker-end="url(#arrowhead)"></polyline>
+                         </svg>
+                     </div>
+                     <div class="cloud-container border-yellow-500 bg-yellow-100">
+                         <h4 class="text-lg font-medium mb-2">AWS</h4>
+                         <div class="nodes-group">
+                             <div class="node">S</div>
+                             <div class="node">S</div>
+                             <div class="node">S</div>
+                         </div>
+                     </div>
+                 </div>
+                 <p class="stage-description mt-2">Atlas replica datos de GCP a AWS.</p>
+             </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-center">4. Elección de Primario en AWS</h3>
+                <div class="flex flex-wrap justify-center items-center">
+                    <div class="cloud-container border-blue-500 bg-blue-100 opacity-50">
+                        <h4 class="text-lg font-medium mb-2">GCP</h4>
+                        <div class="nodes-group">
+                            <div class="node primary">P</div>
+                            <div class="node">S</div>
+                            <div class="node">S</div>
+                        </div>
+                    </div>
+                     <div class="relative w-40 h-20 mx-auto flex items-center justify-center">
+                         <span class="text-2xl font-bold text-green-600">✓</span>
+                     </div>
+                    <div class="cloud-container border-yellow-500 bg-yellow-100">
+                        <h4 class="text-lg font-medium mb-2">AWS</h4>
+                        <div class="nodes-group">
+                            <div class="node primary">P</div>
+                            <div class="node">S</div>
+                            <div class="node">S</div>
+                        </div>
+                    </div>
+                </div>
+                 <p class="stage-description mt-2">Atlas coordina la elección de un nuevo primario en AWS.</p>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-center">5. Eliminar Nodos de la Región Antigua (GCP)</h3>
+                <div class="flex flex-wrap justify-center items-center">
+                    <div class="cloud-container border-blue-500 bg-blue-100 opacity-20">
+                         <h4 class="text-lg font-medium mb-2">GCP</h4>
+                         <div class="nodes-group">
+                             <div class="node primary">P</div>
+                             <div class="node">S</div>
+                             <div class="node">S</div>
+                         </div>
+                     </div>
+                     <div class="relative w-40 h-20 mx-auto flex items-center justify-center">
+                         <span class="text-2xl font-bold text-red-600">X</span>
+                     </div>
+                    <div class="cloud-container border-yellow-500 bg-yellow-100">
+                        <h4 class="text-lg font-medium mb-2">AWS</h4>
+                        <div class="nodes-group">
+                            <div class="node primary">P</div>
+                            <div class="node">S</div>
+                            <div class="node">S</div>
+                        </div>
+                    </div>
+                </div>
+                 <p class="stage-description mt-2">Atlas elimina las instancias de GCP.</p>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-center">6. Finalización (Nodos en AWS)</h3>
+                <div class="flex flex-wrap justify-center items-center">
+                    <div class="cloud-container border-yellow-500 bg-yellow-100">
+                        <h4 class="text-lg font-medium mb-2">Amazon Web Services (AWS)</h4>
+                        <div class="nodes-group">
+                            <div class="node primary">P</div>
+                            <div class="node">S</div>
+                            <div class="node">S</div>
+                        </div>
+                    </div>
+                </div>
+                 <p class="stage-description mt-2">Migración completada. El cluster reside en AWS.</p>
+            </div>
+
+             <p class="text-center text-sm text-gray-500 mt-8">Este diagrama es una representación simplificada del proceso gestionado por MongoDB Atlas.</p>
+
+        </div>
+
+        <div class="diagram-section">
+            <h2 class="text-2xl font-bold mb-6 text-center">2. Diagrama Detallado: Live Migration (Push-Based) GCP a AWS en MongoDB Atlas con mongosync</h2>
+
+            <div class="mb-12">
+                <div class="step-label">1. Configuración Inicial</div>
+                <div class="flex flex-wrap justify-center items-center">
+                    <div class="cloud-container border-blue-500 bg-blue-100">
+                        <h4 class="text-lg font-medium mb-2">GCP (Origen)</h4>
+                         <p class="text-sm text-gray-600">Cluster MongoDB Atlas</p>
+                        <div class="nodes-group">
+                            <div class="node primary">P</div>
+                            <div class="node">S</div>
+                            <div class="node">S</div>
+                        </div>
+                    </div>
+                     <div class="mx-8 text-2xl font-bold">→</div>
+                    <div class="cloud-container border-yellow-500 bg-yellow-100">
+                        <h4 class="text-lg font-medium mb-2">AWS (Destino)</h4>
+                        <p class="text-sm text-gray-600">Nuevo Cluster/Región Atlas</p>
+                        <div class="nodes-group">
+                             <div class="node bg-gray-400">?</div>
+                            <div class="node bg-gray-400">?</div>
+                            <div class="node bg-gray-400">?</div>
+                        </div>
+                    </div>
+                </div>
+                 <p class="stage-description">Se configura el cluster destino (o se añade una región) en AWS a través de la interfaz de MongoDB Atlas.</p>
+            </div>
+
+            <div class="mb-12 relative">
+                 <div class="step-label text-center">2. Sincronización de Datos (Atlas Live Migration)</div>
+                 <div class="atlas-service">
+                     <h3 class="text-xl font-semibold mb-4">Servicio de MongoDB Atlas Live Migration</h3>
+                     <div class="stage2-layout">
+                         <div class="cloud-container border-blue-500 bg-blue-100">
+                             <h4 class="text-md font-medium">GCP (Origen)</h4>
+                             <div class="nodes-group">
+                                 <div class="node primary">P</div>
+                                 <div class="node">S</div>
+                                 <div class="node">S</div>
+                             </div>
+                         </div>
+
+                         <div class="stage2-arrows">
+                             <div class="tool-box">mongosync</div>
+                             <svg class="arrow" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <polyline points="50,0 50,40"></polyline>
+                                <polyline points="50,60 50,85" marker-end="url(#arrowhead)"></polyline>
+                                 <polyline points="70,60 70,85" marker-end="url(#arrowhead)"></polyline>
+                             </svg>
+                         </div>
+                          <p class="text-sm text-gray-700 mt-2">Sincronización Inicial + CDC</p>
+
+
+                         <div class="cloud-container border-yellow-500 bg-yellow-100">
+                             <h4 class="text-md font-medium">AWS (Destino)</h4>
+                             <div class="nodes-group">
+                                 <div class="node">S</div> <div class="node">S</div>
+                                 <div class="node">S</div>
+                             </div>
+                         </div>
+                     </div>
+
+                      <p class="stage-description mt-4">
+                          MongoDB Atlas orquesta <code>mongosync</code> para:
+                          <br>
+                          1. Realizar una <strong>Sincronización Inicial</strong> de los datos existentes.
+                          <br>
+                          2. Mantener una <strong>Replicación Continua (CDC)</strong> de las nuevas escrituras usando el oplog del origen.
+                      </p>
+                 </div>
+             </div>
+
+            <div class="mb-12">
+                <div class="step-label text-center">3. Cutover</div>
+                <div class="flex flex-wrap justify-center items-center">
+                    <div class="cloud-container border-blue-500 bg-blue-100 opacity-50">
+                        <h4 class="text-lg font-medium mb-2">GCP (Origen)</h4>
+                        <div class="nodes-group">
+                            <div class="node primary">P</div>
+                            <div class="node">S</div>
+                            <div class="node">S</div>
+                        </div>
+                    </div>
+                     <div class="relative w-40 h-20 mx-auto flex flex-col items-center justify-center">
+                         <span class="text-2xl font-bold text-green-600">CUTOVER</span>
+                         <p class="text-sm text-gray-600 mt-1">Tráfico redirigido</p>
+                     </div>
+                    <div class="cloud-container border-yellow-500 bg-yellow-100">
+                        <h4 class="text-lg font-medium mb-2">AWS (Destino)</h4>
+                        <div class="nodes-group">
+                            <div class="node primary">P</div>
+                            <div class="node">S</div>
+                            <div class="node">S</div>
+                        </div>
+                    </div>
+                </div>
+                 <p class="stage-description">Una vez que el destino en AWS está completamente sincronizado, Atlas realiza el cutover, redirigiendo las conexiones de las aplicaciones al nuevo cluster en AWS.</p>
+            </div>
+
+            <div class="mb-8">
+                <div class="step-label text-center">4. Finalización y Limpieza</div>
+                <div class="flex flex-wrap justify-center items-center">
+                     <div class="relative w-40 h-20 mx-auto flex items-center justify-center">
+                         <span class="text-2xl font-bold text-red-600">LIMPIEZA</span>
+                     </div>
+                    <div class="cloud-container border-yellow-500 bg-yellow-100">
+                        <h4 class="text-lg font-medium mb-2">Amazon Web Services (AWS)</h4>
+                         <p class="text-sm text-gray-600">Cluster MongoDB Atlas Final</p>
+                        <div class="nodes-group">
+                            <div class="node primary">P</div>
+                            <div class="node">S</div>
+                            <div class="node">S</div>
+                        </div>
+                    </div>
+                </div>
+                 <p class="stage-description">El cluster de MongoDB Atlas reside ahora completamente en AWS. Los nodos antiguos en GCP son eliminados por Atlas.</p>
+            </div>
+
+            <div class="mt-8 p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-700">
+                <h3 class="text-lg font-semibold mb-2">Nota Importante sobre mongosync en Atlas</h3>
+                <p class="text-sm">
+                    En el contexto de <strong>MongoDB Atlas Live Migration (Push-Based)</strong>, tú no ejecutas <code>mongosync</code> directamente. Es una herramienta interna que el servicio de Atlas utiliza y orquesta. El proceso de migración en Atlas maneja automáticamente la configuración, ejecución, monitoreo y finalización de la sincronización de datos a través de <code>mongosync</code>, así como el aprovisionamiento de infraestructura y el cutover.
+                </p>
+            </div>
+
+            <p class="text-center text-sm text-gray-500 mt-8">Este diagrama ilustra el proceso de Live Migration gestionado por MongoDB Atlas, destacando las fases de sincronización usando mongosync.</p>
+        </div>
+
+    </div>
+
+</body>
+</html>

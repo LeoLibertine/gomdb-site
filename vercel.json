@@ -9,6 +9,10 @@
   ],
   "routes": [
     { "handle": "filesystem" },
+    {
+      "src": "/migracion/migracion(?:/.*)?$",
+      "dest": "/migracion/migracion.html"
+    },
 
 
     {
@@ -16,8 +20,8 @@
       "dest": "/mf/mf.html"
     },
     {
-      "src": "/clientes/etb/licencieamiento(?:/.*)?$",
-      "dest": "/clientes/etb/licencieamiento.html"
+      "src": "/clientes/etb/licenciamiento(?:/.*)?$",
+      "dest": "/clientes/etb/licenciamiento.html"
     },
     {
       "src": "/clientes/segurosbolivar/poc(?:/.*)?$",
