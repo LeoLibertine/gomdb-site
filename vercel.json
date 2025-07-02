@@ -9,11 +9,11 @@
   ],
   "routes": [
     { "handle": "filesystem" },
+   
     {
       "src": "/migracion/migracion(?:/.*)?$",
       "dest": "/migracion/migracion.html"
     },
-
 
     {
       "src": "/mf/mf(?:/.*)?$",
@@ -64,6 +64,10 @@
     {
       "src": "/clientes/bancolobia/matrix(?:/.*)?$",
       "dest": "/clientes/kushki/matrix.html"
+    },
+    {
+      "src": "/clientes/bancolobia/matrizopciones(?:/.*)?$",
+      "dest": "/clientes/kushki/matrizopciones.html"
     },
     {
       "src": "/clientes/(?:cencosud|bancolombia)/document-mongo(?:/.*)?$",
