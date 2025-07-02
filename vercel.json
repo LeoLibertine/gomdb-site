@@ -63,11 +63,11 @@
     },
     {
       "src": "/clientes/bancolobia/matrix(?:/.*)?$",
-      "dest": "/clientes/kushki/matrix.html"
+      "dest": "/clientes/bancolombia/matrix.html"
     },
     {
       "src": "/clientes/bancolobia/matrizopciones(?:/.*)?$",
-      "dest": "/clientes/kushki/matrizopciones.html"
+      "dest": "/clientes/bancolombia/matrizopciones.html"
     },
     {
       "src": "/clientes/(?:cencosud|bancolombia)/document-mongo(?:/.*)?$",
