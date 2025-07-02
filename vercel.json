@@ -62,11 +62,11 @@
       "dest": "/clientes/kushki/preguntas-opens.html"
     },
     {
-      "src": "/clientes/bancolobia/matrix(?:/.*)?$",
+      "src": "/clientes/bancolombia/matrix(?:/.*)?$",
       "dest": "/clientes/bancolombia/matrix.html"
     },
     {
-      "src": "/clientes/bancolobia/matrizopciones(?:/.*)?$",
+      "src": "/clientes/bancolombia/matrizopciones(?:/.*)?$",
       "dest": "/clientes/bancolombia/matrizopciones.html"
     },
     {
