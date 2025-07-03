@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectura 3: El Modelo Híbrido con BaaS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #22d3ee, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+
+    <!-- Main Container -->
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <!-- Header Section -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">
+                Arquitectura 3: <span class="gradient-text">Modelo Híbrido con BaaS</span>
+            </h1>
+            <p class="text-xl text-gray-400 font-medium">(Enfoque "Pragmático")</p>
+            <p class="max-w-3xl mx-auto mt-4 text-lg">
+                Este enfoque utiliza lo mejor de dos mundos. Mantenemos MongoDB como la base de datos canónica, pero delegamos el complejo problema de la sincronización "de última milla" a un servicio de Backend-as-a-Service (BaaS) como Google Firestore.
+            </p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left Column (Diagram & Analysis) -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Conceptual Diagram -->
+                <section class="bg-gray-800/50 p-6 rounded-xl border border-gray-700 shadow-lg">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Diagrama Conceptual</h2>
+                    <div class="bg-gray-900 p-4 rounded-lg overflow-x-auto">
+                        <pre class="text-sm text-emerald-300 font-mono whitespace-pre">
+[Terminal en Botica] &lt;--&gt; [SDK Offline de Firestore]
+      ^                                   ^
+      | (Lectura/Escritura Local)         | (Sincronización automática)
+      v                                   v
+[Internet] &lt;---------------------> [Base de Datos Firestore]
+                                          ^         v
+                                          |         | (Triggers/Functions)
+                                          v         ^
+                                     [Servicios "Puente" (Cloud Functions)]
+                                          ^         v
+                                          |         |
+                                          v         ^
+                                     [MongoDB Atlas (Fuente de Verdad)]</pre>
+                    </div>
+                </section>
+
+                <!-- Analysis Section -->
+                <section>
+                    <h2 class="text-2xl font-semibold text-white mb-4 text-center">Análisis de la Arquitectura</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Pros -->
+                        <div class="bg-green-900/30 border border-green-500/50 p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-green-400 mb-3">Pros ✅</h3>
+                            <ul class="space-y-3 text-green-200">
+                                <li class="flex items-start"><span class="mr-2 mt-1">✔️</span><span><strong>Desarrollo de Cliente Rápido:</strong> El SDK de Firestore resuelve el 90% del problema de la sincronización offline.</span></li>
+                                <li class="flex items-start"><span class="mr-2 mt-1">✔️</span><span><strong>Solución Probada:</strong> Se apalanca en la tecnología de sincronización de Google, robusta y probada a escala masiva.</span></li>
+                                <li class="flex items-start"><span class="mr-2 mt-1">✔️</span><span><strong>Excelente Experiencia Offline:</strong> El comportamiento offline es el mejor de su clase y no requiere desarrollo personalizado.</span></li>
+                            </ul>
+                        </div>
+                        <!-- Cons -->
+                        <div class="bg-red-900/30 border border-red-500/50 p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-red-400 mb-3">Contras ❌</h3>
+                            <ul class="space-y-3 text-red-200">
+                                <li class="flex items-start"><span class="mr-2 mt-1">✖️</span><span><strong>Complejidad Arquitectónica:</strong> Se gestionan dos sistemas de bases de datos diferentes.</span></li>
+                                <li class="flex items-start"><span class="mr-2 mt-1">✖️</span><span><strong>Doble Costo:</strong> Se incurre en costos tanto en MongoDB Atlas como en la plataforma de Google Cloud (Firestore, Functions).</span></li>
+                                <li class="flex items-start"><span class="mr-2 mt-1">✖️</span><span><strong>Lógica de "Puente" Crítica:</strong> La sincronización entre Mongo y Firestore debe ser cuidadosamente diseñada para evitar inconsistencias.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Recommendation Section -->
+                <section class="bg-indigo-900/30 border border-indigo-500/50 p-6 rounded-xl mt-8">
+                    <h2 class="text-2xl font-semibold text-indigo-300 mb-3">Recomendación</h2>
+                    <p class="text-indigo-200"><strong>Recomendado si:</strong> La prioridad es la velocidad de desarrollo en el cliente y la calidad de la experiencia offline. Es un enfoque muy pragmático que externaliza la parte más difícil (la sincronización del cliente) a un experto.</p>
+                </section>
+
+            </div>
+
+            <!-- Right Column (Components & Flow) -->
+            <div class="lg:col-span-1 space-y-8">
+                
+                <!-- Key Components -->
+                <section class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Componentes Clave</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-cyan-400">1. Cliente (Terminal de la Botica)</h3>
+                            <ul class="list-disc list-inside pl-2 mt-2 space-y-1 text-gray-300">
+                                <li><strong>SDK de Firestore:</strong> Gestiona automáticamente la persistencia offline y la sincronización.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-cyan-400">2. Backend (Alojado en la Nube)</h3>
+                            <ul class="list-disc list-inside pl-2 mt-2 space-y-1 text-gray-300">
+                                <li><strong>MongoDB Atlas:</strong> Base de datos principal y autoritativa.</li>
+                                <li><strong>Google Firestore:</strong> Actúa como base de datos de "sincronización" o de borde.</li>
+                                <li><strong>Servicios "Puente":</strong> Cloud Functions que actúan como pegamento.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Synchronization Flow -->
+                <section class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Flujo de Sincronización</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-teal-400">Sincronización Ascendente (Uplink)</h3>
+                            <p class="mt-1 text-gray-300">El cliente escribe en Firestore. Un trigger (`onWrite`) invoca una Función "Puente" que valida y escribe el dato en MongoDB Atlas.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-teal-400">Sincronización Descendente (Downlink)</h3>
+                            <p class="mt-1 text-gray-300">Un Change Stream en MongoDB invoca una Función "Puente" que escribe el cambio en Firestore, el cual lo distribuye automáticamente a los clientes.</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="text-center mt-12 pt-8 border-t border-gray-700">
+            <p class="text-gray-500">Documento generado para Farmacias Peruanas &copy; 2025</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
