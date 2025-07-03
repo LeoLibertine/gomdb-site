@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Enterprise Advanced - Licenciamiento y Características</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mongodb-green: #00ed64;
+            --mongodb-dark: #001e2b;
+            --mongodb-darker: #000d13;
+            --enterprise-gold: #ffd700;
+            --text-light: #e8edeb;
+            --text-gray: #b8c4c2;
+            --border-color: #21313c;
+            --card-bg: #011621;
+            --success-green: #00ed64;
+            --error-red: #ff5252;
+            --warning-yellow: #ffc107;
+            --gradient-gold: linear-gradient(135deg, #ffd700, #ffed4e);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--mongodb-darker);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--mongodb-dark) 0%, #1a1a2e 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        .header-content {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .enterprise-badge {
+            display: inline-block;
+            background: var(--gradient-gold);
+            color: var(--mongodb-dark);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--mongodb-green), var(--enterprise-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(0, 237, 100, 0.8)); }
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-gray);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Licensing Models Section */
+        .licensing-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-light);
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--gradient-gold);
+        }
+
+        .licensing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .license-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .license-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-gold);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+            transform-origin: left;
+        }
+
+        .license-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .license-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.1);
+            border-color: var(--enterprise-gold);
+        }
+
+        .license-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .license-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient-gold);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--mongodb-dark);
+        }
+
+        .license-title {
+            font-size: 1.8rem;
+            color: var(--enterprise-gold);
+        }
+
+        .license-description {
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        /* RAM Calculator */
+        .calculator-section {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            border: 2px solid var(--enterprise-gold);
+            position: relative;
+        }
+
+        .calculator-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .calculator-title {
+            font-size: 2rem;
+            color: var(--enterprise-gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .server-inputs {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .server-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr 1fr;
+            gap: 1rem;
+            align-items: center;
+            background: var(--mongodb-dark);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .server-row:hover {
+            border-color: var(--enterprise-gold);
+            transform: scale(1.02);
+        }
+
+        .server-icon {
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-label {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .input-field {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--enterprise-gold);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .ram-display {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--enterprise-gold);
+            font-weight: bold;
+        }
+
+        .add-server-btn {
+            grid-column: 1 / -1;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--mongodb-green), #00ff88);
+            color: var(--mongodb-dark);
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .add-server-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 237, 100, 0.5);
+        }
+
+        .calculator-result {
+            background: linear-gradient(135deg, var(--mongodb-dark), rgba(255, 215, 0, 0.1));
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 2rem;
+            border: 2px solid var(--enterprise-gold);
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: var(--text-gray);
+        }
+
+        .result-value {
+            color: var(--enterprise-gold);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Features Section */
+        .features-section {
+            margin-bottom: 4rem;
+        }
+
+        .features-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--enterprise-gold);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: var(--gradient-gold);
+            color: var(--mongodb-dark);
+            border-color: var(--enterprise-gold);
+        }
+
+        .features-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .features-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-gold);
+            transform: scaleY(0);
+            transition: transform 0.3s;
+            transform-origin: top;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .feature-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.1);
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            color: var(--enterprise-gold);
+        }
+
+        .feature-description {
+            color: var(--text-gray);
+            margin-bottom: 1rem;
+        }
+
+        .feature-example {
+            background: var(--mongodb-dark);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--enterprise-gold);
+        }
+
+        .feature-example-title {
+            color: var(--mongodb-green);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-example-text {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            overflow-x: auto;
+            margin-bottom: 3rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--enterprise-gold);
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .check-mark {
+            color: var(--mongodb-green);
+            font-size: 1.2rem;
+        }
+
+        /* Visual RAM Distribution */
+        .ram-visual {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .ram-bars {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .ram-bar {
+            flex: 1;
+            height: 200px;
+            background: var(--mongodb-dark);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .ram-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--gradient-gold);
+            transition: height 0.5s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--mongodb-dark);
+            font-weight: bold;
+        }
+
+        .ram-label {
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: var(--text-gray);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--mongodb-dark) 0%, #1a1a2e 100%);
+            padding: 4rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid var(--enterprise-gold);
+            border-radius: 20px;
+            animation: pulse-border 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            color: var(--enterprise-gold);
+            margin-bottom: 1rem;
+        }
+
+        .cta-text {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: var(--gradient-gold);
+            color: var(--mongodb-dark);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .licensing-grid { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
+            .server-row { grid-template-columns: 1fr; gap: 1rem; }
+            .ram-bars { flex-direction: column; }
+            .ram-bar { height: 100px; }
+            .features-tabs { flex-wrap: wrap; }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInAnimation 0.8s forwards;
+        }
+
+        @keyframes fadeInAnimation {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <span class="enterprise-badge">ENTERPRISE ADVANCED</span>
+            <h1>MongoDB Enterprise Advanced</h1>
+            <p class="subtitle">Licenciamiento flexible por RAM Pool o por nodo, con soporte 24x365 y características empresariales premium para acelerar el tiempo de valor</p>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Licensing Models Section -->
+        <section class="licensing-section">
+            <h2 class="section-title fade-in">Modelos de Licenciamiento</h2>
+            
+            <div class="licensing-grid">
+                <!-- RAM Pool Model -->
+                <div class="license-card fade-in">
+                    <div class="license-header">
+                        <div class="license-icon">💾</div>
+                        <h3 class="license-title">Licenciamiento por RAM Pool</h3>
+                    </div>
+                    <p class="license-description">
+                        Las licencias RAM Pool ofrecen máxima flexibilidad. Puedes distribuir el RAM 
+                        comprado entre servidores físicos o instancias virtuales según tus necesidades. 
+                        <strong>Sin distinción entre ambientes de producción y test/QA</strong> - todo el RAM 
+                        licenciado puede usarse donde lo necesites.
+                    </p>
+                    
+                    <div class="ram-options" style="margin: 2rem 0;">
+                        <h4 style="color: var(--enterprise-gold); margin-bottom: 1rem;">Tamaños Disponibles de RAM Pool</h4>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                            <div style="background: var(--mongodb-dark); padding: 1.5rem; border-radius: 10px; text-align: center; border: 2px solid var(--enterprise-gold);">
+                                <div style="font-size: 2rem; color: var(--enterprise-gold); font-weight: bold;">256 GB</div>
+                                <div style="color: var(--text-gray);">Pool Grande</div>
+                            </div>
+                            <div style="background: var(--mongodb-dark); padding: 1.5rem; border-radius: 10px; text-align: center; border: 2px solid var(--enterprise-gold);">
+                                <div style="font-size: 2rem; color: var(--enterprise-gold); font-weight: bold;">128 GB</div>
+                                <div style="color: var(--text-gray);">Pool Medio</div>
+                            </div>
+                            <div style="background: var(--mongodb-dark); padding: 1.5rem; border-radius: 10px; text-align: center; border: 2px solid var(--enterprise-gold);">
+                                <div style="font-size: 2rem; color: var(--enterprise-gold); font-weight: bold;">64 GB</div>
+                                <div style="color: var(--text-gray);">Pool Pequeño</div>
+                            </div>
+                        </div>
+                        <p style="text-align: center; color: var(--text-gray); margin-top: 1rem; font-style: italic;">
+                            *Los RAM Pools pueden comprarse independientes o en cualquier combinación
+                        </p>
+                    </div>
+                    
+                    <div class="ram-visual">
+                        <h4 style="color: var(--enterprise-gold); margin-bottom: 1rem;">Ejemplo de Distribución</h4>
+                        <div class="ram-bars" style="position: relative;">
+                            <div class="ram-bar">
+                                <div class="ram-fill" style="height: 50%;">128 GB</div>
+                                <div class="ram-label">Servidor 1</div>
+                            </div>
+                            <div class="ram-bar">
+                                <div class="ram-fill" style="height: 50%;">128 GB</div>
+                                <div class="ram-label">Servidor 2</div>
+                            </div>
+                            <div class="ram-bar">
+                                <div class="ram-fill" style="height: 25%;">64 GB</div>
+                                <div class="ram-label">Servidor 3</div>
+                            </div>
+                        </div>
+                        <p style="text-align: center; margin-top: 3rem; color: var(--text-gray);">
+                            Total: 320 GB = 2 licencias de 256 GB
+                        </p>
+                    </div>
+                    
+                    <div class="feature-example">
+                        <div class="feature-example-title">💡 Ventaja Principal</div>
+                        <div class="feature-example-text">
+                            Estrategia moderna alineada con microservicios. Compra RAM y distribúyelo 
+                            libremente entre todos tus ambientes sin restricciones producción/test.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Node-Based Model -->
+                <div class="license-card fade-in">
+                    <div class="license-header">
+                        <div class="license-icon">🖥️</div>
+                        <h3 class="license-title">Licenciamiento por Nodos</h3>
+                    </div>
+                    <p class="license-description">
+                        MongoDB EA también ofrece licenciamiento tradicional por nodo. En este modelo, 
+                        <strong>los nodos de test/QA cuestan 50% del precio</strong> de los nodos de producción. 
+                        Debes licenciar TODOS los servidores asociados con la aplicación (producción y test/QA).
+                    </p>
+                    
+                    <div class="comparison-table" style="margin-top: 1rem;">
+                        <table>
+                            <tr>
+                                <th>Tipo de Ambiente</th>
+                                <th>Precio por Nodo</th>
+                                <th>Ejemplo (5 nodos)</th>
+                            </tr>
+                            <tr>
+                                <td>Producción</td>
+                                <td>100% del precio lista</td>
+                                <td>5 × 100% = 5 licencias completas</td>
+                            </tr>
+                            <tr>
+                                <td>Test/QA</td>
+                                <td>50% del precio lista</td>
+                                <td>5 × 50% = 2.5 licencias completas</td>
+                            </tr>
+                            <tr style="background: rgba(255, 215, 0, 0.1);">
+                                <td><strong>Configuración Mixta</strong></td>
+                                <td><strong>Variable</strong></td>
+                                <td><strong>3 prod + 2 test = 4 licencias totales</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="feature-example" style="margin-top: 1.5rem;">
+                        <div class="feature-example-title">⚠️ Importante</div>
+                        <div class="feature-example-text">
+                            No puedes licenciar solo una porción de los servidores. TODOS los nodos 
+                            asociados con la aplicación deben estar cubiertos por licencias.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RAM License Calculator -->
+        <section class="calculator-section fade-in">
+            <div class="calculator-header">
+                <h2 class="calculator-title">🧮 Calculadora de Licencias RAM Pool</h2>
+                <p style="color: var(--text-gray);">Calcula cuántas licencias necesitas para tu implementación</p>
+            </div>
+            
+            <div id="serverInputs" class="server-inputs">
+                <div class="server-row">
+                    <div class="server-icon">🖥️</div>
+                    <div class="input-group">
+                        <label class="input-label">Nombre del Servidor</label>
+                        <input type="text" class="input-field" placeholder="Servidor 1" value="Servidor 1">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">RAM (GB)</label>
+                        <input type="number" class="input-field ram-input" placeholder="128" value="128" min="1" onchange="calculateLicenses()">
+                    </div>
+                    <div class="ram-display">128 GB</div>
+                </div>
+            </div>
+            
+            <button class="add-server-btn" onclick="addServer()">+ Agregar Servidor</button>
+            
+            <div class="calculator-result">
+                <div class="result-row">
+                    <span class="result-label">RAM Total:</span>
+                    <span class="result-value" id="totalRam">128 GB</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Opción 1 - Solo licencias de 256 GB:</span>
+                    <span class="result-value" id="licenses256">1</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Opción 2 - Solo licencias de 128 GB:</span>
+                    <span class="result-value" id="licenses128">1</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Opción 3 - Solo licencias de 64 GB:</span>
+                    <span class="result-value" id="licenses64">2</span>
+                </div>
+                <div class="result-row" style="background: rgba(255, 215, 0, 0.1); margin-top: 1rem; border-radius: 10px;">
+                    <span class="result-label" style="font-weight: bold;">Combinación Óptima:</span>
+                    <span class="result-value" id="recommendation">1 licencia de 128 GB</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLA Section -->
+        <section class="sla-section fade-in" style="margin-bottom: 3rem;">
+            <h2 class="section-title">SLA y Soporte</h2>
+            
+            <div class="licensing-grid">
+                <div class="license-card">
+                    <div class="license-header">
+                        <div class="license-icon">⏱️</div>
+                        <h3 class="license-title">SLA Estándar</h3>
+                    </div>
+                    <p class="license-description">
+                        MongoDB Enterprise Advanced incluye soporte ilimitado 24x365 globalmente con:
+                    </p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 0.5rem 0; color: var(--text-gray);">
+                            <span style="color: var(--mongodb-green);">✓</span> Respuesta en <strong>1 hora</strong> para casos críticos
+                        </li>
+                        <li style="padding: 0.5rem 0; color: var(--text-gray);">
+                            <span style="color: var(--mongodb-green);">✓</span> Preguntas ilimitadas al soporte
+                        </li>
+                        <li style="padding: 0.5rem 0; color: var(--text-gray);">
+                            <span style="color: var(--mongodb-green);">✓</span> Parches de emergencia incluidos
+                        </li>
+                        <li style="padding: 0.5rem 0; color: var(--text-gray);">
+                            <span style="color: var(--mongodb-green);">✓</span> Cobertura global 24x7x365
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="license-card">
+                    <div class="license-header">
+                        <div class="license-icon">🚀</div>
+                        <h3 class="license-title">SLA Mejorado (Add-On)</h3>
+                    </div>
+                    <p class="license-description">
+                        Actualiza a MongoDB Enhanced SLA para respuesta ultra-rápida:
+                    </p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 0.5rem 0; color: var(--text-gray);">
+                            <span style="color: var(--enterprise-gold);">⚡</span> Respuesta en <strong>30 minutos</strong>
+                        </li>
+                        <li style="padding: 0.5rem 0; color: var(--text-gray);">
+                            <span style="color: var(--enterprise-gold);">⚡</span> <strong>50% adicional</strong> sobre precio de lista
+                        </li>
+                        <li style="padding: 0.5rem 0; color: var(--text-gray);">
+                            <span style="color: var(--enterprise-gold);">⚡</span> Debe ser coterminous con suscripción base
+                        </li>
+                        <li style="padding: 0.5rem 0; color: var(--text-gray);">
+                            <span style="color: var(--enterprise-gold);">⚡</span> Ideal para sistemas ultra-críticos
+                        </li>
+                    </ul>
+                    <div class="feature-example" style="margin-top: 1rem;">
+                        <div class="feature-example-title">Ejemplo de Costo</div>
+                        <div class="feature-example-text">
+                            Si tu suscripción base cuesta $100,000/año, el Enhanced SLA añade $50,000/año 
+                            para un total de $150,000/año con respuesta de 30 minutos.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="features-section">
+            <h2 class="section-title fade-in">Características Enterprise Advanced</h2>
+            
+            <div class="features-tabs">
+                <button class="tab-btn active" onclick="showTab('security')">🔒 Seguridad</button>
+                <button class="tab-btn" onclick="showTab('management')">⚙️ Gestión</button>
+                <button class="tab-btn" onclick="showTab('backup')">💾 Backup</button>
+                <button class="tab-btn" onclick="showTab('monitoring')">📊 Monitoreo</button>
+                <button class="tab-btn" onclick="showTab('integration')">🔗 Integración</button>
+                <button class="tab-btn" onclick="showTab('support')">🤝 Soporte</button>
+            </div>
+            
+        <!-- Security Features -->
+<div id="security" class="features-content active">
+    <div class="features-grid">
+        <!-- Card: Autenticación Empresarial (existente) -->
+        <div class="feature-card fade-in">
+            <div class="feature-header">
+                <div class="feature-icon">🔐</div>
+                <h3 class="feature-title">Autenticación Empresarial</h3>
+            </div>
+            <p class="feature-description">
+                Integración con Kerberos y LDAP para control de acceso empresarial unificado.
+            </p>
+            <div class="feature-example">
+                <div class="feature-example-title">Ejemplo Práctico</div>
+                <div class="feature-example-text">
+                    Los analistas pueden ver datos agregados mientras que solo los managers 
+                    pueden ver información personal de clientes.
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Active Directory Credentials (nuevo) -->
+        <div class="feature-card fade-in">
+            <div class="feature-header">
+                <div class="feature-icon">🔑</div>
+                <h3 class="feature-title">Active Directory</h3>
+            </div>
+            <p class="feature-description">
+                Una empresa puede usar sus credenciales de Active Directory existentes 
+                para acceder a MongoDB, manteniendo políticas de seguridad consistentes.
+            </p>
+        </div>
+
+        <!-- Card: Cifrado Avanzado (nuevo) -->
+        <div class="feature-card fade-in">
+            <div class="feature-header">
+                <div class="feature-icon">🛡️</div>
+                <h3 class="feature-title">Cifrado Avanzado</h3>
+            </div>
+            <p class="feature-description">
+                Cifrado en reposo (AES-256) y en tránsito (TLS/SSL) para protección total de datos.
+            </p>
+            <div class="feature-example">
+                <div class="feature-example-title">Ejemplo Práctico</div>
+                <div class="feature-example-text">
+                    Una institución financiera puede cifrar todos los datos de transacciones 
+                    tanto en disco como durante la transmisión, cumpliendo con PCI DSS.
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Auditoría Completa (nuevo) -->
+        <div class="feature-card fade-in">
+            <div class="feature-header">
+                <div class="feature-icon">📝</div>
+                <h3 class="feature-title">Auditoría Completa</h3>
+            </div>
+            <p class="feature-description">
+                Registro detallado de todas las actividades para cumplimiento normativo.
+            </p>
+            <div class="feature-example">
+                <div class="feature-example-title">Ejemplo Práctico</div>
+                <div class="feature-example-text">
+                    Rastrea quién accedió a qué datos y cuándo, generando reportes para 
+                    auditorías de cumplimiento GDPR o SOX.
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: RBAC Granular (nuevo) -->
+        <div class="feature-card fade-in">
+            <div class="feature-header">
+                <div class="feature-icon">👥</div>
+                <h3 class="feature-title">RBAC Granular</h3>
+            </div>
+            <p class="feature-description">
+                Control de acceso basado en roles con permisos detallados por colección y campo.
+            </p>
+            <div class="feature-example">
+                <div class="feature-example-title">Ejemplo Práctico</div>
+                <div class="feature-example-text">
+                    Define roles específicos para desarrolladores, analistas y administradores, 
+                    limitando lecturas y escrituras solo donde corresponda.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            
+            <!-- Management Features -->
+            <div id="management" class="features-content">
+                <div class="features-grid">
+                    <div class="feature-card fade-in">
+                        <div class="feature-header">
+                            <div class="feature-icon">🎛️</div>
+                            <h3 class="feature-title">Ops Manager</h3>
+                        </div>
+                        <p class="feature-description">
+                            Plataforma completa para gestión on-premise: configuración, monitoreo, escalado y mantenimiento automatizado.
+                        </p>
+                        <div class="feature-example">
+                            <div class="feature-example-title">Ejemplo Práctico</div>
+                            <div class="feature-example-text">
+                                Actualiza automáticamente un clúster de 50 nodos sin downtime, realizando 
+                                rolling updates mientras mantiene la aplicación disponible.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <div class="feature-header">
+                            <div class="feature-icon">☁️</div>
+                            <h3 class="feature-title">Cloud Manager</h3>
+                        </div>
+                        <p class="feature-description">
+                            Gestión optimizada para entornos cloud e híbridos con las mismas capacidades de Ops Manager.
+                        </p>
+                        <div class="feature-example">
+                            <div class="feature-example-title">Ejemplo Práctico</div>
+                            <div class="feature-example-text">
+                                Gestiona clústeres distribuidos entre on-premise y AWS, manteniendo 
+                                consistencia y control centralizado.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <div class="feature-header">
+                            <div class="feature-icon">🐳</div>
+                            <h3 class="feature-title">Operador Kubernetes</h3>
+                        </div>
+                        <p class="feature-description">
+                            Deploy y gestión nativos en Kubernetes para arquitecturas containerizadas modernas.
+                        </p>
+                        <div class="feature-example">
+                            <div class="feature-example-title">Ejemplo Práctico</div>
+                            <div class="feature-example-text">
+                                Escala automáticamente pods de MongoDB basándose en carga, integrándose 
+                                perfectamente con tu pipeline CI/CD.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Backup Features -->
+            <div id="backup" class="features-content">
+                <div class="features-grid">
+                    <div class="feature-card fade-in">
+                        <div class="feature-header">
+                            <div class="feature-icon">🔄</div>
+                            <h3 class="feature-title">Backups Continuos</h3>
+                        </div>
+                        <p class="feature-description">
+                            Respaldos incrementales sin impacto en rendimiento, capturando cada cambio.
+                        </p>
+                        <div class="feature-example">
+                            <div class="feature-example-title">Ejemplo Práctico</div>
+                            <div class="feature-example-text">
+                                Realiza backups cada 6 horas sin afectar las 100,000 transacciones/segundo 
+                                de tu aplicación de pagos.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <div class="feature-header">
+                            <div class="feature-icon">⏰</div>
+                            <h3 class="feature-title">Point-in-Time Recovery</h3>
+                        </div>
+                        <p class="feature-description">
+                            Restaura tu base de datos a cualquier segundo específico de los últimos 7 días.
+                        </p>
+                        <div class="feature-example">
+                            <div class="feature-example-title">Ejemplo Práctico</div>
+                            <div class="feature-example-text">
+                                Un desarrollador borró datos por error a las 3:47 PM. Restaura el estado 
+                                exacto de las 3:46 PM sin perder otras transacciones.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Monitoring Features -->
+            <div id="monitoring" class="features-content">
+                <div class="features-grid">
+                    <div class="feature-card fade-in">
+                        <div class="feature-header">
+                            <div class="feature-icon">📈</div>
+                            <h3 class="feature-title">Métricas Detalladas</h3>
+                        </div>
+                        <p class="feature-description">
+                            Monitoreo en tiempo real de CPU, RAM, disco, latencia y más de 100 métricas.
+                        </p>
+                        <div class="feature-example">
+                            <div class="feature-example-title">Ejemplo Práctico</div>
+                            <div class="feature-example-text">
+                                Detecta que las consultas en la colección 'orders' aumentaron su latencia 
+                                de 10ms a 50ms y optimiza índices proactivamente.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <div class="feature-header">
+                            <div class="feature-icon">🚨</div>
+                            <h3 class="feature-title">Alertas Inteligentes</h3>
+                        </div>
+                        <p class="feature-description">
+                            Notificaciones personalizables por email, SMS o integración con sistemas existentes.
+                        </p>
+                        <div class="feature-example">
+                            <div class="feature-example-title">Ejemplo Práctico</div>
+                            <div class="feature-example-text">
+                                Recibe alerta cuando el espacio en disco supera 80% o cuando hay más 
+                                de 1000 conexiones concurrentes.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Integration Features -->
+            <div id="integration" class="features-content">
+                <div class="features-grid">
+                    <div class="feature-card fade-in">
+                        <div class="feature-header">
+                            <div class="feature-icon">📊</div>
+                            <h3 class="feature-title">Conector BI</h3>
+                        </div>
+                        <p class="feature-description">
+                            Conecta MongoDB con Tableau, Power BI y otras herramientas de visualización.
+                        </p>
+                        <div class="feature-example">
+                            <div class="feature-example-title">Ejemplo Práctico</div>
+                            <div class="feature-example-text">
+                                Crea dashboards en Tableau que se actualizan en tiempo real con datos 
+                                de ventas almacenados en MongoDB.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <div class="feature-header">
+                            <div class="feature-icon">🔍</div>
+                            <h3 class="feature-title">Interfaz SQL</h3>
+                        </div>
+                        <p class="feature-description">
+                            Consulta MongoDB usando SQL estándar para facilitar la migración desde bases relacionales.
+                        </p>
+                        <div class="feature-example">
+                            <div class="feature-example-title">Ejemplo Práctico</div>
+                            <div class="feature-example-text">
+                                Los analistas pueden usar sus queries SQL existentes con mínimas 
+                                modificaciones para acceder a datos en MongoDB.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <div class="feature-header">
+                            <div class="feature-icon">📡</div>
+                            <h3 class="feature-title">Integración SNMP</h3>
+                        </div>
+                        <p class="feature-description">
+                            Conecta MongoDB con sistemas de monitoreo empresarial mediante protocolo SNMP.
+                        </p>
+                        <div class="feature-example">
+                            <div class="feature-example-title">Ejemplo Práctico</div>
+                            <div class="feature-example-text">
+                                Integra MongoDB en tu Nagios o Zabbix existente para tener una vista 
+                                unificada de toda tu infraestructura.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Support Features -->
+            <div id="support" class="features-content">
+                <div class="features-grid">
+                    <div class="feature-card fade-in">
+                        <div class="feature-header">
+                            <div class="feature-icon">🎓</div>
+                            <h3 class="feature-title">Entrenamiento Premium</h3>
+                        </div>
+                        <p class="feature-description">
+                            Cursos online exclusivos para desarrolladores y administradores con certificaciones.
+                        </p>
+                        <div class="feature-example">
+                            <div class="feature-example-title">Ejemplo Práctico</div>
+                            <div class="feature-example-text">
+                                Tu equipo completa el curso "MongoDB Performance Tuning" y reduce 
+                                la latencia de queries en 70%.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <div class="feature-header">
+                            <div class="feature-icon">📞</div>
+                            <h3 class="feature-title">Soporte 24/7</h3>
+                        </div>
+                        <p class="feature-description">
+                            Acceso directo a ingenieros de MongoDB con SLA garantizado y respuesta prioritaria.
+                        </p>
+                        <div class="feature-example">
+                            <div class="feature-example-title">Ejemplo Práctico</div>
+                            <div class="feature-example-text">
+                                A las 3 AM del domingo, un problema crítico es resuelto en 30 minutos 
+                                con ayuda directa del equipo de MongoDB.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card fade-in">
+                        <div class="feature-header">
+                            <div class="feature-icon">👨‍💼</div>
+                            <h3 class="feature-title">Consultoría Experta</h3>
+                        </div>
+                        <p class="feature-description">
+                            Sesiones con arquitectos de MongoDB para optimización y mejores prácticas.
+                        </p>
+                        <div class="feature-example">
+                            <div class="feature-example-title">Ejemplo Práctico</div>
+                            <div class="feature-example-text">
+                                Un arquitecto de MongoDB rediseña tu esquema reduciendo el uso de 
+                                almacenamiento en 40% y mejorando el rendimiento.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Summary -->
+        <section class="comparison-section fade-in">
+            <h2 class="section-title">Comparación de Características</h2>
+            
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Característica</th>
+                            <th>Community</th>
+                            <th>Enterprise Advanced</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Licencia Comercial</td>
+                            <td>❌ SSPL</td>
+                            <td><span class="check-mark">✓</span> Comercial</td>
+                        </tr>
+                        <tr>
+                            <td>Autenticación Kerberos/LDAP</td>
+                            <td>❌</td>
+                            <td><span class="check-mark">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Cifrado en Reposo</td>
+                            <td>❌</td>
+                            <td><span class="check-mark">✓</span> AES-256</td>
+                        </tr>
+                        <tr>
+                            <td>Auditoría</td>
+                            <td>❌</td>
+                            <td><span class="check-mark">✓</span> Completa</td>
+                        </tr>
+                        <tr>
+                            <td>Ops Manager</td>
+                            <td>❌</td>
+                            <td><span class="check-mark">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Soporte 24/7</td>
+                            <td>❌</td>
+                            <td><span class="check-mark">✓</span> Con SLA</td>
+                        </tr>
+                        <tr>
+                            <td>Conector BI</td>
+                            <td>❌</td>
+                            <td><span class="check-mark">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Point-in-Time Recovery</td>
+                            <td>❌</td>
+                            <td><span class="check-mark">✓</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <div class="cta-content">
+                <h2 class="cta-title">¿Listo para MongoDB Enterprise Advanced?</h2>
+                <p class="cta-text">
+                    Miles de clientes en todo el mundo usan MongoDB EA para acelerar el tiempo de valor, 
+                    reducir costos y riesgos, y obtener ventaja competitiva. Contacta con MongoDB o tu Deal Strategy 
+                    para una cotización personalizada o actualización desde suscripciones anteriores.
+                </p>
+                <a href="https://www.mongodb.com/contact" class="cta-button" target="_blank">
+                    Contactar a MongoDB
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Server management
+        let serverCount = 1;
+
+        function addServer() {
+            serverCount++;
+            const serverInputs = document.getElementById('serverInputs');
+            const newServer = document.createElement('div');
+            newServer.className = 'server-row';
+            newServer.innerHTML = `
+                <div class="server-icon">🖥️</div>
+                <div class="input-group">
+                    <label class="input-label">Nombre del Servidor</label>
+                    <input type="text" class="input-field" placeholder="Servidor ${serverCount}" value="Servidor ${serverCount}">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">RAM (GB)</label>
+                    <input type="number" class="input-field ram-input" placeholder="128" value="128" min="1" onchange="calculateLicenses()">
+                </div>
+                <div class="ram-display">128 GB</div>
+            `;
+            serverInputs.appendChild(newServer);
+            calculateLicenses();
+        }
+
+        function calculateLicenses() {
+            const ramInputs = document.querySelectorAll('.ram-input');
+            let totalRam = 0;
+            
+            ramInputs.forEach((input, index) => {
+                const value = parseInt(input.value) || 0;
+                totalRam += value;
+                // Update display
+                const displays = document.querySelectorAll('.ram-display');
+                if (displays[index]) {
+                    displays[index].textContent = value + ' GB';
+                }
+            });
+            
+            // Calculate licenses needed
+            const licenses256 = Math.ceil(totalRam / 256);
+            const licenses128 = Math.ceil(totalRam / 128);
+            const licenses64 = Math.ceil(totalRam / 64);
+            
+            // Update results
+            document.getElementById('totalRam').textContent = totalRam + ' GB';
+            document.getElementById('licenses256').textContent = licenses256;
+            document.getElementById('licenses128').textContent = licenses128;
+            document.getElementById('licenses64').textContent = licenses64;
+            
+            // Calculate optimal combination
+            let recommendation = '';
+            
+            // Try to find the most cost-effective combination
+            if (totalRam <= 64) {
+                recommendation = '1 licencia de 64 GB';
+            } else if (totalRam <= 128) {
+                recommendation = '1 licencia de 128 GB';
+            } else if (totalRam <= 256) {
+                recommendation = '1 licencia de 256 GB';
+            } else {
+                // For larger amounts, calculate optimal mix
+                const full256 = Math.floor(totalRam / 256);
+                const remainder = totalRam % 256;
+                
+                if (remainder === 0) {
+                    recommendation = `${full256} licencias de 256 GB`;
+                } else if (remainder <= 64) {
+                    recommendation = `${full256} licencias de 256 GB + 1 licencia de 64 GB`;
+                } else if (remainder <= 128) {
+                    recommendation = `${full256} licencias de 256 GB + 1 licencia de 128 GB`;
+                } else {
+                    recommendation = `${full256 + 1} licencias de 256 GB`;
+                }
+            }
+            
+            document.getElementById('recommendation').textContent = recommendation;
+        }
+
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all content
+            const contents = document.querySelectorAll('.features-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            calculateLicenses();
+            
+            // Animate elements on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.fade-in').forEach(el => {
+                el.style.animationPlayState = 'paused';
+                observer.observe(el);
+            });
+            
+            // Animate RAM bars
+            setTimeout(() => {
+                const fills = document.querySelectorAll('.ram-fill');
+                fills.forEach(fill => {
+                    const height = fill.style.height;
+                    fill.style.height = '0';
+                    setTimeout(() => {
+                        fill.style.height = height;
+                    }, 100);
+                });
+            }, 500);
+        });
+    </script>
+</body>
+</html>>
+          

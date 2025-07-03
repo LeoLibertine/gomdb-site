@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB + Yape Bolivia - Portal de Transformación Digital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mongodb-green: #00ed64;
+            --mongodb-dark: #001e2b;
+            --mongodb-darker: #000d13;
+            --yape-purple: #8b54ff;
+            --ops-manager-blue: #13aa52;
+            --text-light: #e8edeb;
+            --text-gray: #b8c4c2;
+            --border-color: #21313c;
+            --card-bg: #011621;
+            --success-green: #00ed64;
+            --error-red: #ff5252;
+            --warning-yellow: #ffc107;
+            --info-blue: #2196f3;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--mongodb-darker);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Background Animation */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .floating-shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--mongodb-green), transparent);
+            top: -200px;
+            left: -200px;
+            animation-delay: 0s;
+        }
+
+        .shape2 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--yape-purple), transparent);
+            bottom: -150px;
+            right: -150px;
+            animation-delay: 5s;
+        }
+
+        .shape3 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, var(--ops-manager-blue), transparent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(30px, -30px) rotate(120deg);
+            }
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--mongodb-dark) 0%, #012a3f 100%);
+            padding: 2rem 0;
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 30, 43, 0.95);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .logo-main {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .logo-main span:first-child {
+            color: var(--yape-purple);
+        }
+
+        .logo-main .plus {
+            color: var(--text-gray);
+            font-size: 2rem;
+        }
+
+        .logo-main span:last-child {
+            color: var(--mongodb-green);
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--yape-purple), var(--mongodb-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(139, 84, 255, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(0, 237, 100, 0.8)); }
+        }
+
+        .hero-description {
+            font-size: 1.3rem;
+            color: var(--text-gray);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(0, 237, 100, 0.05) 100%);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--yape-purple), var(--mongodb-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+        }
+
+        /* Navigation Grid */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .nav-card {
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(0, 237, 100, 0.03) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 237, 100, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .nav-card:hover::before {
+            left: 100%;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--mongodb-green);
+            box-shadow: 0 10px 40px rgba(0, 237, 100, 0.2);
+        }
+
+        .nav-card.primary {
+            background: linear-gradient(135deg, rgba(139, 84, 255, 0.1) 0%, rgba(0, 237, 100, 0.1) 100%);
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+
+        .nav-card.primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: -1;
+            margin: -2px;
+            border-radius: inherit;
+            background: linear-gradient(45deg, var(--yape-purple), var(--mongodb-green));
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .nav-card.primary:hover::after {
+            opacity: 1;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .card-description {
+            color: var(--text-gray);
+            margin-bottom: 1rem;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .card-features li {
+            padding: 0.3rem 0;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .card-features li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--mongodb-green);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: var(--mongodb-green);
+            color: var(--mongodb-dark);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 4rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .quick-actions-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--mongodb-green);
+            text-align: center;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, var(--mongodb-dark) 0%, rgba(0, 237, 100, 0.1) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-light);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            border-color: var(--mongodb-green);
+            box-shadow: 0 5px 20px rgba(0, 237, 100, 0.2);
+        }
+
+        .action-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Resources Section */
+        .resources-section {
+            text-align: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, var(--mongodb-dark) 0%, #012a3f 100%);
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+
+        .resources-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--mongodb-green);
+        }
+
+        .resources-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .resource-link {
+            color: var(--text-gray);
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .resource-link:hover {
+            color: var(--mongodb-green);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-gray);
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.8s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-delay-1 { animation-delay: 0.1s; }
+        .fade-in-delay-2 { animation-delay: 0.2s; }
+        .fade-in-delay-3 { animation-delay: 0.3s; }
+        .fade-in-delay-4 { animation-delay: 0.4s; }
+        .fade-in-delay-5 { animation-delay: 0.5s; }
+        .fade-in-delay-6 { animation-delay: 0.6s; }
+        .fade-in-delay-7 { animation-delay: 0.7s; }
+        .fade-in-delay-8 { animation-delay: 0.8s; }
+        .fade-in-delay-9 { animation-delay: 0.9s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-description {
+                font-size: 1.1rem;
+            }
+
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .logo-main {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="background-animation">
+        <div class="floating-shape shape1"></div>
+        <div class="floating-shape shape2"></div>
+        <div class="floating-shape shape3"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo-main">
+                <span>Yape Bolivia</span>
+                <span class="plus">+</span>
+                <span>MongoDB</span>
+            </div>
+            <p class="tagline">Portal de Transformación Digital Bancaria</p>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Hero Section -->
+        <section class="hero-section fade-in">
+            <h1 class="hero-title">Transformación Digital para el Futuro de los Pagos</h1>
+            <p class="hero-description">
+                Explore cómo MongoDB Enterprise puede revolucionar la infraestructura de Yape Bolivia,
+                soportando el crecimiento de 2 a 4 millones de usuarios con arquitectura escalable,
+                alta disponibilidad y cumplimiento regulatorio.
+            </p>
+        </section>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar fade-in fade-in-delay-1">
+            <div class="stat-item">
+                <div class="stat-number">4M</div>
+                <div class="stat-label">Usuarios Objetivo 2025</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">6M+</div>
+                <div class="stat-label">Transacciones/Día</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">99.99%</div>
+                <div class="stat-label">Uptime Garantizado</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number"><10ms</div>
+                <div class="stat-label">Latencia P99</div>
+            </div>
+        </div>
+
+        <!-- Navigation Grid -->
+        <div class="nav-grid">
+            <!-- Estrategia de Modernización -->
+            <a href="Principal.html" class="nav-card primary fade-in fade-in-delay-2">
+                <span class="card-badge">PRINCIPAL</span>
+                <span class="card-icon">🚀</span>
+                <h3 class="card-title">Estrategia de Modernización</h3>
+                <p class="card-description">
+                    Visión completa de la transformación de Yape Bolivia con MongoDB
+                </p>
+                <ul class="card-features">
+                    <li>Análisis de desafíos actuales</li>
+                    <li>Soluciones propuestas</li>
+                    <li>Objetivos y métricas</li>
+                    <li>Roadmap de implementación</li>
+                </ul>
+            </a>
+
+            <!-- Arquitectura Técnica -->
+            <a href="arquitectura.html" class="nav-card fade-in fade-in-delay-3">
+                <span class="card-icon">🏗️</span>
+                <h3 class="card-title">Arquitectura Técnica</h3>
+                <p class="card-description">
+                    Diseño detallado de la arquitectura MongoDB para Yape
+                </p>
+                <ul class="card-features">
+                    <li>Replica Sets y Sharding</li>
+                    <li>Alta disponibilidad</li>
+                    <li>Backup y recuperación</li>
+                    <li>Patrones de diseño</li>
+                </ul>
+            </a>
+
+            <!-- MongoDB Enterprise + Ops Manager -->
+            <a href="Automatizacion.html" class="nav-card fade-in fade-in-delay-4">
+                <span class="card-icon">⚙️</span>
+                <h3 class="card-title">Enterprise + Ops Manager</h3>
+                <p class="card-description">
+                    Plataforma de gestión empresarial completa
+                </p>
+                <ul class="card-features">
+                    <li>Automatización de operaciones</li>
+                    <li>Monitoreo en tiempo real</li>
+                    <li>Seguridad empresarial</li>
+                    <li>Gestión centralizada</li>
+                </ul>
+            </a>
+
+            <!-- Comparativa -->
+            <a href="Comparativa.html" class="nav-card fade-in fade-in-delay-5">
+                <span class="card-icon">📊</span>
+                <h3 class="card-title">Análisis Comparativo</h3>
+                <p class="card-description">
+                    MongoDB vs SQL Server vs Cosmos DB
+                </p>
+                <ul class="card-features">
+                    <li>Comparación de características</li>
+                    <li>Análisis de costos</li>
+                    <li>Rendimiento y escalabilidad</li>
+                    <li>Casos de uso específicos</li>
+                </ul>
+            </a>
+
+            <!-- Licenciamiento -->
+            <a href="licenciamiento.html" class="nav-card fade-in fade-in-delay-6">
+                <span class="card-icon">📋</span>
+                <h3 class="card-title">Licenciamiento y Costos</h3>
+                <p class="card-description">
+                    Opciones de licenciamiento y análisis TCO
+                </p>
+                <ul class="card-features">
+                    <li>MongoDB Enterprise Advanced</li>
+                    <li>Modelo de suscripción</li>
+                    <li>ROI y ahorro de costos</li>
+                    <li>Soporte y servicios</li>
+                </ul>
+            </a>
+
+            <!-- Casos de Éxito -->
+            <a href="https://www.mongodb.com/solutions/customer-case-studies" class="nav-card fade-in fade-in-delay-7">
+                <span class="card-icon">🏆</span>
+                <h3 class="card-title">Casos de Éxito</h3>
+                <p class="card-description">
+                    Empresas líderes usando MongoDB
+                </p>
+                <ul class="card-features">
+                    <li>Stripe: 99.999% uptime</li>
+                    <li>PicPay: 100M usuarios</li>
+                    <li>Dojo: Procesamiento global</li>
+                    <li>Mejores prácticas</li>
+                </ul>
+            </a>
+
+            <!-- Technical Feasibility Workshop -->
+            <a href="tfw.html" class="nav-card fade-in fade-in-delay-8" style="background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(0, 237, 100, 0.1) 100%); border: 2px solid var(--info-blue);">
+                <span class="card-badge" style="background-color: var(--info-blue);">NUEVO</span>
+                <span class="card-icon">🔬</span>
+                <h3 class="card-title">Technical Feasibility Workshop</h3>
+                <p class="card-description">
+                    Sesión técnica práctica para validar la viabilidad de MongoDB
+                </p>
+                <ul class="card-features">
+                    <li>Solución al Problema de Depuración de Datos (Índices TTL)</li>
+                    <li>Arquitectura y Escalabilidad para Alto Crecimiento (On-Premise)</li>
+                    <li>Alta Disponibilidad, Respaldo y Recuperación (On-Premise)</li>
+                    <li>Seguridad y Cumplimiento Normativo (On-Premise)</li>
+                    <li>Gestión, Monitoreo y Operaciones (On-Premise con Ops Manager)</li>
+                    <li>Estrategias de Migración desde SQL Server</li>
+                    <li>Implicaciones Técnicas del Modelo de Licenciamiento</li>
+                </ul>
+            </a>
+
+            <!-- Próximamente -->
+            <div class="nav-card fade-in fade-in-delay-9" style="background: linear-gradient(135deg, var(--card-bg) 0%, rgba(255, 255, 255, 0.02) 100%); border: 2px dashed var(--border-color); cursor: default; opacity: 0.7;">
+                <span class="card-icon" style="font-size: 2.5rem;">➕</span>
+                <h3 class="card-title" style="color: var(--text-gray);">Más Contenido Próximamente</h3>
+                <p class="card-description" style="color: var(--text-gray); opacity: 0.8;">
+                    Nuevos recursos y herramientas se agregarán continuamente
+                </p>
+                <ul class="card-features" style="opacity: 0.6;">
+                    <li>Guías de migración</li>
+                    <li>Calculadoras interactivas</li>
+                    <li>Videos tutoriales</li>
+                    <li>Casos de uso específicos</li>
+                </ul>
+            </div>
+        </div>
+
+
+
+        <!-- Resources Section -->
+        <div class="resources-section fade-in">
+            <h2 class="resources-title">Recursos Adicionales</h2>
+            <p style="color: var(--text-gray); margin-bottom: 2rem;">
+                Profundice su conocimiento sobre MongoDB Enterprise y las mejores prácticas para servicios financieros
+            </p>
+            <div class="resources-links">
+                <a href="#" class="resource-link">
+                    <span>📚</span>
+                    <span>Documentación Técnica</span>
+                </a>
+                <a href="#" class="resource-link">
+                    <span>🎓</span>
+                    <span>MongoDB University</span>
+                </a>
+                <a href="#" class="resource-link">
+                    <span>👥</span>
+                    <span>Comunidad MongoDB</span>
+                </a>
+                <a href="#" class="resource-link">
+                    <span>🔧</span>
+                    <span>Herramientas y Drivers</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Update Notice -->
+        <div style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, transparent 100%); border: 1px solid var(--warning-yellow); border-radius: 12px; padding: 1.5rem; text-align: center; margin-top: 2rem;">
+            <span style="font-size: 1.5rem; margin-right: 0.5rem;">🔔</span>
+            <span style="color: var(--text-light); font-weight: 600;">Portal en Constante Evolución</span>
+            <p style="color: var(--text-gray); margin-top: 0.5rem; margin-bottom: 0;">
+                Este portal se actualiza regularmente con nuevos recursos, herramientas y casos de estudio para apoyar la transformación digital de Yape Bolivia.
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 MongoDB + Yape Bolivia. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Animate stats on page load
+        window.addEventListener('load', () => {
+            const animateValue = (element, start, end, duration) => {
+                const range = end - start;
+                const increment = end > start ? 1 : -1;
+                const stepTime = Math.abs(Math.floor(duration / range));
+                let current = start;
+                
+                const timer = setInterval(() => {
+                    current += increment * Math.ceil(range / 50);
+                    if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                        current = end;
+                        clearInterval(timer);
+                    }
+                    if (element.dataset.suffix) {
+                        element.textContent = current.toLocaleString() + element.dataset.suffix;
+                    } else {
+                        element.textContent = current.toLocaleString();
+                    }
+                }, stepTime);
+            };
+
+            // Animate specific stats
+            setTimeout(() => {
+                const statNumbers = document.querySelectorAll('.stat-number');
+                statNumbers[0].dataset.suffix = 'M';
+                animateValue(statNumbers[0], 0, 4, 1500);
+                
+                statNumbers[1].dataset.suffix = 'M+';
+                animateValue(statNumbers[1], 0, 6, 1500);
+            }, 500);
+        });
+
+        // Add parallax effect to floating shapes
+        document.addEventListener('mousemove', (e) => {
+            const shapes = document.querySelectorAll('.floating-shape');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 20;
+                const xOffset = (x - 0.5) * speed;
+                const yOffset = (y - 0.5) * speed;
+                
+                shape.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+            });
+        });
+
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

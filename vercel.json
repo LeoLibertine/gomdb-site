@@ -57,6 +57,18 @@
       "dest": "/clientes/yape/yape-propuesta.html"
     },
     {
+      "src": "/clientes/yape/sql-nosql(?:/.*)?$",
+      "dest": "/clientes/yape/sql-nosql.html"
+    },
+    {
+      "src": "/clientes/yape/comparativa(?:/.*)?$",
+      "dest": "/clientes/yape/comparativa.html"
+    },
+    {
+      "src": "/clientes/yape/matrizopciones(?:/.*)?$",
+      "dest": "/clientes/yape/matrizopciones.html"
+    },
+    {
       "src": "/clientes/yape/arquitectura(?:/.*)?$",
       "dest": "/clientes/yape/arquitectura.html"
     },
