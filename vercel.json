@@ -11,6 +11,22 @@
     { "handle": "filesystem" },
    
     {
+      "src": "/clientes/fp/sync1(?:/.*)?$",
+      "dest": "/clientes/fp/sync1.html"
+    },
+    {
+      "src": "/clientes/fp/sync2(?:/.*)?$",
+      "dest": "/clientes/fp/sync2.html"
+    },
+    {
+      "src": "/clientes/fp/sync3(?:/.*)?$",
+      "dest": "/clientes/fp/sync3.html"
+    },
+    {
+      "src": "/clientes/fp/sync4(?:/.*)?$",
+      "dest": "/clientes/fp/sync4.html"
+    },
+    {
       "src": "/migracion/migracion(?:/.*)?$",
       "dest": "/migracion/migracion.html"
     },
