@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoMDB - Matriz de Decisión Interactiva</title>
+    <link rel="stylesheet" href="../styles/gomdb-global.css">
+    <style>
+        .question-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            margin-bottom: var(--spacing-lg);
+            transition: all var(--transition-base);
+        }
+
+        .question-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 20px rgba(0, 237, 100, 0.2);
+        }
+
+        .question-text {
+            color: var(--color-text-primary);
+            font-size: var(--text-lg);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+
+        .response-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .response-btn {
+            flex: 1;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: 2px solid transparent;
+            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            font-weight: 600;
+        }
+
+        .response-btn:hover {
+            background: rgba(0, 237, 100, 0.1);
+            border-color: var(--color-primary);
+            color: var(--color-text-primary);
+        }
+
+        .response-btn.selected {
+            background: var(--color-primary);
+            color: var(--color-text-dark);
+            border-color: var(--color-primary);
+        }
+
+        .results-section {
+            margin-top: var(--spacing-3xl);
+            padding: var(--spacing-xl);
+            background: linear-gradient(135deg, var(--color-bg-card) 0%, rgba(86, 68, 212, 0.1) 100%);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+        }
+
+        .database-score {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-base);
+        }
+
+        .database-score:hover {
+            transform: translateX(4px);
+            border-color: var(--color-primary);
+        }
+
+        .database-name {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .score-container {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .score-bar {
+            width: 200px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            border-radius: var(--radius-full);
+            transition: width var(--transition-slow);
+            position: relative;
+        }
+
+        .score-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .score-value {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: var(--spacing-xl);
+            gap: var(--spacing-sm);
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all var(--transition-base);
+        }
+
+        .progress-dot.completed {
+            background: var(--color-primary);
+            box-shadow: 0 0 10px rgba(0, 237, 100, 0.5);
+        }
+
+        .progress-dot.current {
+            background: var(--color-accent);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, rgba(86, 68, 212, 0.1) 100%);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+            text-align: center;
+        }
+
+        .recommendation h3 {
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .reset-btn {
+            margin-top: var(--spacing-xl);
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid #EF4444;
+            color: #EF4444;
+        }
+
+        .reset-btn:hover {
+            background: #EF4444;
+            color: white;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .subtitle {
+            font-size: var(--text-xl);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        /* Justificación Técnica Styles */
+        .technical-justification {
+            margin-top: var(--spacing-3xl);
+            background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, rgba(17, 35, 49, 0.8) 100%);
+            border: 1px solid rgba(86, 68, 212, 0.3);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+        }
+
+        .justification-question {
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .question-title {
+            color: var(--color-primary);
+            font-size: var(--text-lg);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .user-response {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: var(--text-sm);
+            margin-left: var(--spacing-md);
+        }
+
+        .user-response.yes {
+            background: rgba(0, 237, 100, 0.2);
+            color: var(--color-primary);
+        }
+
+        .user-response.no {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+        }
+
+        .justification-content {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        .tech-score {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: var(--text-sm);
+            margin: 0 var(--spacing-xs);
+        }
+
+        .tech-score.score-1 {
+            background: rgba(0, 237, 100, 0.2);
+            color: var(--color-primary);
+        }
+
+        .tech-score.score-0 {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+        }
+
+        .tech-explanation {
+            margin-top: var(--spacing-sm);
+            padding: var(--spacing-md);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--color-accent);
+        }
+
+        .toggle-justification {
+            background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%);
+            margin-top: var(--spacing-xl);
+        }
+
+        .toggle-justification:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(86, 68, 212, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="header-section">
+                <div class="badge badge-primary mb-4">
+                    <span>🎯</span>
+                    Arquitectura de Datos
+                </div>
+                <h1 class="text-gradient">Matriz de Decisión Interactiva</h1>
+                <p class="subtitle">
+                    Encuentra la tecnología de base de datos perfecta para tu proyecto
+                    respondiendo estas 14 preguntas estratégicas
+                </p>
+            </div>
+
+            <!-- Progress Indicator -->
+            <div class="progress-indicator" id="progressIndicator"></div>
+
+            <!-- Questions Section -->
+            <div id="questionsContainer"></div>
+
+            <!-- Results Section -->
+            <div class="results-section" id="resultsSection">
+                <h2 class="text-center mb-4">📊 Resultados en Tiempo Real</h2>
+                <div id="scoresContainer"></div>
+                <div id="recommendationContainer"></div>
+                <div class="text-center" id="resetButtonContainer" style="display: none;">
+                    <button class="btn toggle-justification" onclick="toggleJustification()" id="justificationBtn">
+                        📋 Ver Justificación Técnica Detallada
+                    </button>
+                    <button class="btn reset-btn" onclick="resetMatrix()">
+                        🔄 Realizar Nueva Evaluación
+                    </button>
+                </div>
+            </div>
+
+            <!-- Technical Justification Section -->
+            <div class="technical-justification" id="technicalJustification" style="display: none;">
+                <h2 class="text-center mb-4">🔬 Justificación Técnica Detallada</h2>
+                <p class="text-center mb-5" style="color: var(--color-text-secondary);">
+                    Análisis arquitectónico caso por caso de cada tecnología de base de datos
+                </p>
+                <div id="justificationContent"></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const questions = [
+            "¿Necesita realizar consultas complejas (joins, subqueries, etc.)?",
+            "¿Require una solución basada en protocolo abierto para evitar vendor lock-in?",
+            "¿Necesita mínimo impacto/overhead de operaciones (Serverless/Full Managed)?",
+            "¿La base de datos será utilizada para analítica sobre grandes volúmenes de datos estructurados (Data Warehouse)?",
+            "¿Require realizar consultas geoespaciales avanzadas?",
+            "¿Las operaciones con datos de tipo fecha (Time-Series) son muy frecuentes?",
+            "¿Necesita alta disponibilidad de escritura nativa multi-región (Activo-Activo)?",
+            "¿Require un modelo de datos enriquecido (Documentos, JSON nativo)?",
+            "¿La base de datos será usada para cargas de trabajo poco frecuentes (modelo Serverless real, pago por uso)?",
+            "¿Necesita un modelo de datos nativo de Grafos?",
+            "¿Require validación estricta y forzada de esquema?",
+            "¿Necesita paginación tradicional eficiente con conteo total (COUNT(*))?",
+            "¿El uso principal será como caché en memoria de ultra baja latencia?",
+            "¿Necesita operaciones simples de clave-valor (Key-Value) a escala masiva?"
+        ];
+
+        const databases = {
+            'RDS PostgreSQL': [1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0],
+            'Redshift': [1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0],
+            'MongoDB': [1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0],
+            'DynamoDB': [0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1],
+            'Aurora': [1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0],
+            'Redis': [0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1]
+        };
+
+        const technicalJustifications = [
+            {
+                question: "¿Consultas complejas? (joins, subqueries, etc.)",
+                explanations: {
+                    "RDS PostgreSQL": "Las bases de datos relacionales son los reyes aquí. PostgreSQL maneja joins complejos, subqueries y agregaciones con optimizadores de consultas avanzados.",
+                    "Redshift": "Como data warehouse con arquitectura MPP, está optimizado para consultas analíticas complejas sobre grandes datasets.",
+                    "Aurora": "Combina la potencia de PostgreSQL/MySQL con optimizaciones de AWS para consultas complejas de alta performance.",
+                    "MongoDB": "Con su Aggregation Pipeline es extremadamente potente y puede manejar consultas muy complejas de manera eficiente.",
+                    "DynamoDB": "No está diseñada para esto. Su modelo de acceso se basa en claves primarias. Realizar 'joins' es ineficiente o imposible.",
+                    "Redis": "Es un almacén clave-valor. Las consultas complejas van contra su arquitectura fundamental de simplicidad y velocidad."
+                }
+            },
+            {
+                question: "¿Protocolo abierto / Evitar Lock-in?",
+                explanations: {
+                    "RDS PostgreSQL": "Motor de código abierto reconocido mundialmente. Puedes migrar a otro proveedor cloud o on-premise con esfuerzo relativamente bajo.",
+                    "MongoDB": "Basado en motor open source. La migración entre diferentes proveedores (Atlas, autohosteado) es factible.",
+                    "Redis": "Protocolo y motor completamente abiertos. Máxima portabilidad entre diferentes implementaciones.",
+                    "Redshift": "Servicio propietario de AWS. Migrar a una alternativa no-AWS es un proyecto complejo y costoso.",
+                    "DynamoDB": "API completamente propietaria de AWS. Alto lock-in con pocas alternativas compatibles en el mercado.",
+                    "Aurora": "Aunque compatible con PostgreSQL/MySQL, su arquitectura subyacente (storage, replicación) es única de AWS."
+                }
+            },
+            {
+                question: "¿Mínimo impacto operativo? (Serverless/Full Managed)",
+                explanations: {
+                    "Redshift": "Redshift Serverless elimina la gestión de clústeres. Escala automáticamente según la demanda.",
+                    "MongoDB": "MongoDB Atlas es completamente gestionado. Automatiza backups, scaling, monitoreo y security patches.",
+                    "DynamoDB": "El epítome del serverless. Cero administración de infraestructura, escalado automático, pay-per-use.",
+                    "Aurora": "Aurora Serverless v2 maneja automáticamente el scaling y puedes pagar solo por el consumo real.",
+                    "Redis": "ElastiCache es completamente gestionado. Maneja replicación, failover y mantenimiento automáticamente.",
+                    "RDS PostgreSQL": "RDS requiere que administres tamaño de instancia, almacenamiento y optimizaciones manuales. Más carga operativa."
+                }
+            },
+            {
+                question: "¿Analítica / Data Warehouse?",
+                explanations: {
+                    "Redshift": "Herramienta correcta para este trabajo. Arquitectura MPP y almacenamiento columnar optimizados para consultas analíticas masivas.",
+                    "RDS PostgreSQL": "Usar una base transaccional como data warehouse es un anti-patrón. No escalará ni rendirá igual.",
+                    "MongoDB": "Base de datos operacional, no analítica. Para análisis masivos necesitarías soluciones complementarias.",
+                    "DynamoDB": "Almacén operacional clave-valor. No está diseñado para consultas analíticas complejas cross-record.",
+                    "Aurora": "Aunque potente para OLTP, usar una base transaccional para análisis masivos es ineficiente.",
+                    "Redis": "Cache en memoria. Usar como data warehouse sería técnicamente incorrecto y extremadamente costoso."
+                }
+            },
+            {
+                question: "¿Consultas geoespaciales avanzadas?",
+                explanations: {
+                    "RDS PostgreSQL": "Con PostGIS es el estándar de oro en el mundo open source para aplicaciones geoespaciales complejas.",
+                    "MongoDB": "Excelentes capacidades geoespaciales nativas con índices 2d, 2dsphere y consultas geo avanzadas.",
+                    "Aurora": "Al ser compatible con Postgres, puede usar extensiones geoespaciales como PostGIS con optimizaciones de AWS.",
+                    "Redshift": "Data warehouse tabular. Las consultas geoespaciales no son su fortaleza ni caso de uso típico.",
+                    "DynamoDB": "Modelo clave-valor sin soporte nativo para consultas geoespaciales complejas o índices espaciales.",
+                    "Redis": "Tiene algunas funciones geo básicas, pero son limitadas comparadas con soluciones especializadas."
+                }
+            },
+            {
+                question: "¿Operaciones frecuentes con fechas (Time-Series)?",
+                explanations: {
+                    "RDS PostgreSQL": "Con TimescaleDB se convierte en una potente base de datos para series temporales con particionado automático.",
+                    "MongoDB": "Excelente para patrones time-series con índices TTL, agregaciones temporales y almacenamiento eficiente.",
+                    "DynamoDB": "Patrón de diseño común para time-series usando composite keys. Escalabilidad masiva para ingesta de eventos.",
+                    "Aurora": "Potente para aplicaciones que combinan datos transaccionales con patrones temporales frecuentes.",
+                    "Redis": "Ideal para datos time-series en tiempo real, métricas en memoria y análisis de alta velocidad.",
+                    "Redshift": "Optimizado para análisis, no para ingesta frecuente de eventos time-series. Mejor para análisis históricos."
+                }
+            },
+            {
+                question: "¿Escritura nativa multi-región (Activo-Activo)?",
+                explanations: {
+                    "DynamoDB": "Global Tables ofrecen replicación activa-activa nativa con resolución automática de conflictos.",
+                    "Aurora": "Global Database permite escribir en múltiples regiones con latencia de replicación sub-segundo.",
+                    "MongoDB": "Global Clusters en Atlas proporcionan distribución geográfica con escrituras locales optimizadas.",
+                    "RDS PostgreSQL": "Posible configurar, pero es manual, complejo y propenso a errores. No es una característica 'out-of-the-box'.",
+                    "Redshift": "Data warehouse no diseñado para escrituras distribuidas activo-activo. Modelo típicamente centralizado.",
+                    "Redis": "Replicación master-slave tradicional. Configurar multi-master es complejo y no es el patrón estándar."
+                }
+            },
+            {
+                question: "¿Modelo de datos enriquecido (Documentos, JSON nativo)?",
+                explanations: {
+                    "MongoDB": "Líder indiscutible. Base de datos de documentos nativa con esquemas flexibles y consultas ricas sobre JSON.",
+                    "RDS PostgreSQL": "Soporte nativo y excelente para JSONB. Permite indexar y consultar documentos de manera muy eficiente.",
+                    "Aurora": "Hereda las capacidades JSON de PostgreSQL/MySQL con optimizaciones adicionales de AWS.",
+                    "DynamoDB": "Base de datos de documentos con soporte nativo para estructuras JSON complejas y anidadas.",
+                    "Redshift": "Maneja JSON pero está optimizado para datos estructurados tabulares, no para documentos flexibles.",
+                    "Redis": "Almacena strings, no documentos complejos. Para JSON necesitarías serializar/deserializar manualmente."
+                }
+            },
+            {
+                question: "¿Cargas poco frecuentes (Serverless real)?",
+                explanations: {
+                    "DynamoDB": "On-Demand scaling perfecto para cargas esporádicas. Pagas exactamente por las operaciones realizadas.",
+                    "Aurora": "Aurora Serverless v2 escala a cero automáticamente. Perfecto para aplicaciones con uso intermitente.",
+                    "MongoDB": "Atlas tiene opciones serverless que escalan basado en demanda real de la aplicación.",
+                    "Redshift": "Redshift Serverless permite análisis esporádicos sin gestionar infraestructura permanente.",
+                    "RDS PostgreSQL": "RDS tradicional requiere instancias siempre corriendo. Pagas por hora aunque no uses la base.",
+                    "Redis": "ElastiCache requiere nodos activos continuamente. No hay opción serverless true con scaling a cero."
+                }
+            },
+            {
+                question: "¿Modelo de Grafos nativo?",
+                explanations: {
+                    "RDS PostgreSQL": "No es una base de grafos nativa. Intentar modelar relaciones complejas resultará en diseño ineficiente.",
+                    "Redshift": "Data warehouse tabular. Modelar grafos aquí sería técnicamente incorrecto y extremadamente lento.",
+                    "MongoDB": "Aunque flexible, no está optimizada para traversals de grafos. Consultas de grafos serían lentas.",
+                    "DynamoDB": "Modelo clave-valor. Las relaciones complejas de grafos van contra su diseño fundamental.",
+                    "Aurora": "Base relacional tradicional. Los grafos complejos requerirían joins recursivos ineficientes.",
+                    "Redis": "Cache clave-valor. Para grafos reales necesitarías una base especializada como Neo4j o Neptune."
+                }
+            },
+            {
+                question: "¿Validación estricta de esquema?",
+                explanations: {
+                    "RDS PostgreSQL": "Validación de esquema estricta por definición. Constraints, tipos de datos y reglas de integridad robustas.",
+                    "Redshift": "Esquema estrictamente tipado con validación automática en tiempo de carga de datos.",
+                    "Aurora": "Hereda la validación estricta de PostgreSQL/MySQL con constraints y tipos de datos enforced.",
+                    "MongoDB": "Schema Validation potente y flexible que permite forzar estructura cuando se desea mantener flexibilidad.",
+                    "DynamoDB": "Schema-on-read puro. La base no impone estructura; toda validación recae en la aplicación.",
+                    "Redis": "Almacén de strings sin esquema. Validación completamente responsabilidad del código de aplicación."
+                }
+            },
+            {
+                question: "¿Paginación tradicional eficiente con conteo total?",
+                explanations: {
+                    "RDS PostgreSQL": "COUNT(*) y paginación OFFSET/LIMIT optimizados por el query planner para la mayoría de casos.",
+                    "Redshift": "Soporta COUNT(*) eficiente y paginación tradicional sobre datasets analíticos grandes.",
+                    "Aurora": "Optimizaciones adicionales para COUNT(*) y paginación comparado con PostgreSQL/MySQL estándar.",
+                    "MongoDB": "Puede ejecutar count() y skip()/limit() aunque para colecciones muy grandes puede ser lento.",
+                    "DynamoDB": "COUNT requiere Scan completo de tabla, operación extremadamente costosa que debe evitarse. Paginación por tokens.",
+                    "Redis": "No aplica el concepto tradicional de paginación. Es un cache clave-valor sin consultas complejas."
+                }
+            },
+            {
+                question: "¿Uso principal como caché en memoria?",
+                explanations: {
+                    "Redis": "Definición misma de almacén en memoria para caché. Latencia de microsegundos y estructuras de datos especializadas.",
+                    "RDS PostgreSQL": "Base persistente en disco. Usarla como caché principal sería lento, caro e incorrecto arquitectónicamente.",
+                    "Redshift": "Data warehouse analítico. Usar como caché sería un anti-patrón técnico fundamental.",
+                    "MongoDB": "Base operacional persistente. Aunque tiene cache interno, no está diseñada como cache principal.",
+                    "DynamoDB": "Base persistente operacional. Para cache necesitarías DAX como capa adicional encima.",
+                    "Aurora": "Base transaccional persistente. Usar como cache primario iría contra principios de arquitectura de datos."
+                }
+            },
+            {
+                question: "¿Operaciones simples clave-valor a escala masiva?",
+                explanations: {
+                    "DynamoDB": "Diseñada específicamente para este patrón. Escalabilidad casi ilimitada con latencia consistente.",
+                    "Redis": "Optimizada para operaciones clave-valor de ultra alta velocidad con estructuras de datos especializadas.",
+                    "RDS PostgreSQL": "Como usar un tráiler para llevar una caja. Funcionará pero es excesivamente complejo para algo tan simple.",
+                    "Redshift": "Data warehouse para análisis complejos. Usar para operaciones simples K-V sería técnicamente incorrecto.",
+                    "MongoDB": "Aunque puede hacer operaciones por _id, está sobredimensionada para casos de uso puramente clave-valor.",
+                    "Aurora": "Base relacional robusta. Para K-V simple es una herramienta demasiado compleja y costosa."
+                }
+            }
+        ];
+
+        let currentAnswers = [];
+        let currentQuestionIndex = 0;
+
+        function initializeMatrix() {
+            createProgressIndicator();
+            updateLiveResults();
+            showQuestion(0);
+        }
+
+        function createProgressIndicator() {
+            const container = document.getElementById('progressIndicator');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'progress-dot';
+                if (i === 0) dot.classList.add('current');
+                container.appendChild(dot);
+            }
+        }
+
+        function updateProgressIndicator() {
+            const dots = document.querySelectorAll('.progress-dot');
+            dots.forEach((dot, index) => {
+                dot.className = 'progress-dot';
+                if (index < currentQuestionIndex) {
+                    dot.classList.add('completed');
+                } else if (index === currentQuestionIndex) {
+                    dot.classList.add('current');
+                }
+            });
+        }
+
+        function showQuestion(index) {
+            if (index >= questions.length) {
+                // Completado
+                const container = document.getElementById('questionsContainer');
+                container.innerHTML = `
+                    <div class="card question-card animate-fadeIn" style="text-align: center; background: linear-gradient(135deg, var(--color-primary-light) 0%, rgba(86, 68, 212, 0.1) 100%); border: 2px solid var(--color-primary);">
+                        <h3 style="color: var(--color-primary); margin-bottom: var(--spacing-md);">
+                            🎉 ¡Evaluación Completada!
+                        </h3>
+                        <p style="color: var(--color-text-secondary); font-size: var(--text-lg);">
+                            Has respondido todas las preguntas. Revisa los resultados finales abajo.
+                        </p>
+                    </div>
+                `;
+                document.getElementById('resetButtonContainer').style.display = 'block';
+                document.querySelector('#resultsSection h2').innerHTML = '🎯 Análisis Completado - Resultados Finales';
+                return;
+            }
+
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = `
+                <div class="card question-card animate-fadeIn">
+                    <div class="badge badge-secondary mb-3">
+                        Pregunta ${index + 1} de ${questions.length}
+                    </div>
+                    <div class="question-text">
+                        ${questions[index]}
+                    </div>
+                    <div class="response-buttons">
+                        <button class="response-btn" onclick="answerQuestion(true, ${index})">
+                            ✅ Sí
+                        </button>
+                        <button class="response-btn" onclick="answerQuestion(false, ${index})">
+                            ❌ No
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Mostrar respuesta previa si existe
+            if (currentAnswers[index] !== undefined) {
+                const buttons = container.querySelectorAll('.response-btn');
+                if (currentAnswers[index]) {
+                    buttons[0].classList.add('selected');
+                } else {
+                    buttons[1].classList.add('selected');
+                }
+            }
+        }
+
+        function answerQuestion(answer, index) {
+            currentAnswers[index] = answer;
+            
+            // Actualizar botones visuales
+            const buttons = document.querySelectorAll('.response-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            if (answer) {
+                buttons[0].classList.add('selected');
+            } else {
+                buttons[1].classList.add('selected');
+            }
+
+            // Actualizar resultados en tiempo real
+            updateLiveResults();
+
+            // Avanzar a la siguiente pregunta después de un delay
+            setTimeout(() => {
+                currentQuestionIndex = index + 1;
+                updateProgressIndicator();
+                showQuestion(currentQuestionIndex);
+            }, 500);
+        }
+
+        function updateLiveResults() {
+            const scores = calculateScores();
+            const maxScore = Math.max(...Object.values(scores));
+            const winner = Object.keys(scores).find(db => scores[db] === maxScore);
+
+            displayScores(scores, maxScore);
+            
+            const answeredQuestions = currentAnswers.filter(a => a !== undefined).length;
+            if (answeredQuestions > 0) {
+                displayRecommendation(winner, maxScore);
+            } else {
+                // Mostrar mensaje inicial
+                const container = document.getElementById('recommendationContainer');
+                container.innerHTML = `
+                    <div class="recommendation animate-fadeIn">
+                        <h3>🔮 Predicción en Progreso</h3>
+                        <p style="color: var(--color-text-secondary); font-size: var(--text-lg); text-align: center;">
+                            Responde las preguntas para ver tu recomendación personalizada
+                        </p>
+                        <div class="badge badge-secondary mt-3">
+                            Progreso: 0/${questions.length} preguntas
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function calculateScores() {
+            const scores = {};
+            const answeredQuestions = currentAnswers.filter(a => a !== undefined).length;
+            
+            Object.keys(databases).forEach(dbName => {
+                let score = 0;
+                const dbAnswers = databases[dbName];
+                
+                for (let i = 0; i < currentAnswers.length; i++) {
+                    if (currentAnswers[i] !== undefined) {
+                        if (currentAnswers[i] === true && dbAnswers[i] === 1) {
+                            score++;
+                        } else if (currentAnswers[i] === false && dbAnswers[i] === 0) {
+                            score++;
+                        }
+                    }
+                }
+                
+                scores[dbName] = score;
+            });
+            
+            return scores;
+        }
+
+        function displayScores(scores, maxScore) {
+            const container = document.getElementById('scoresContainer');
+            container.innerHTML = '';
+
+            // Calcular preguntas respondidas
+            const answeredQuestions = currentAnswers.filter(a => a !== undefined).length;
+            const totalQuestions = questions.length;
+
+            // Ordenar por puntuación
+            const sortedDatabases = Object.entries(scores)
+                .sort(([,a], [,b]) => b - a);
+
+            sortedDatabases.forEach(([dbName, score], index) => {
+                const percentage = answeredQuestions > 0 ? (score / answeredQuestions) * 100 : 0;
+                const isWinner = score === maxScore && answeredQuestions > 0 && score > 0;
+                
+                const scoreDiv = document.createElement('div');
+                scoreDiv.className = `database-score animate-slideInLeft`;
+                scoreDiv.style.animationDelay = `${index * 0.1}s`;
+                
+                scoreDiv.innerHTML = `
+                    <div class="database-name ${isWinner ? 'text-gradient' : ''}">
+                        ${isWinner ? '🏆 ' : ''}${dbName}
+                    </div>
+                    <div class="score-container">
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="score-value">${score}/${answeredQuestions || totalQuestions}</div>
+                    </div>
+                `;
+                
+                container.appendChild(scoreDiv);
+            });
+        }
+
+        function displayRecommendation(winner, maxScore) {
+            const container = document.getElementById('recommendationContainer');
+            const answeredQuestions = currentAnswers.filter(a => a !== undefined).length;
+            const percentage = answeredQuestions > 0 ? Math.round((maxScore / answeredQuestions) * 100) : 0;
+            
+            const recommendations = {
+                'MongoDB': 'Ideal para aplicaciones modernas con modelos de datos flexibles, consultas complejas y alta disponibilidad multi-región.',
+                'DynamoDB': 'Perfecto para aplicaciones serverless, operaciones key-value masivas y casos de uso con patrones de acceso predecibles.',
+                'RDS PostgreSQL': 'Excelente para aplicaciones que requieren consultas relacionales complejas, validación estricta de esquema y funcionalidades geoespaciales.',
+                'Redshift': 'Óptimo para análisis de datos, data warehousing y consultas analíticas sobre grandes volúmenes de datos estructurados.',
+                'Aurora': 'Ideal para aplicaciones que necesitan alto rendimiento, compatibilidad SQL y características serverless con escalabilidad automática.',
+                'Redis': 'Perfecto para caché en memoria, operaciones key-value de ultra baja latencia y casos de uso de alta velocidad.'
+            };
+
+            const isComplete = answeredQuestions === questions.length;
+            const title = isComplete ? '🎯 Recomendación Final' : '🔮 Recomendación Actual';
+
+            if (maxScore > 0) {
+                container.innerHTML = `
+                    <div class="recommendation animate-fadeIn">
+                        <h3>${title}</h3>
+                        <div class="database-name" style="font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">
+                            ${winner}
+                        </div>
+                        <div class="metric-value" style="margin-bottom: var(--spacing-md);">
+                            ${percentage}% de compatibilidad
+                        </div>
+                        <p style="color: var(--color-text-secondary); font-size: var(--text-lg);">
+                            ${recommendations[winner]}
+                        </p>
+                        ${!isComplete ? `
+                            <div class="badge badge-secondary mt-3">
+                                Progreso: ${answeredQuestions}/${questions.length} preguntas
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+        }
+
+        function resetMatrix() {
+            currentAnswers = [];
+            currentQuestionIndex = 0;
+            document.getElementById('questionsContainer').style.display = 'block';
+            document.getElementById('progressIndicator').style.display = 'flex';
+            document.getElementById('resetButtonContainer').style.display = 'none';
+            document.getElementById('technicalJustification').style.display = 'none';
+            document.querySelector('#resultsSection h2').innerHTML = '📊 Resultados en Tiempo Real';
+            initializeMatrix();
+        }
+
+        function toggleJustification() {
+            const justificationSection = document.getElementById('technicalJustification');
+            const btn = document.getElementById('justificationBtn');
+            
+            if (justificationSection.style.display === 'none') {
+                generateJustificationContent();
+                justificationSection.style.display = 'block';
+                btn.innerHTML = '📋 Ocultar Justificación Técnica';
+                justificationSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                justificationSection.style.display = 'none';
+                btn.innerHTML = '📋 Ver Justificación Técnica Detallada';
+            }
+        }
+
+        function generateJustificationContent() {
+            const container = document.getElementById('justificationContent');
+            container.innerHTML = '';
+
+            technicalJustifications.forEach((justification, index) => {
+                if (currentAnswers[index] !== undefined) {
+                    const userAnswer = currentAnswers[index];
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'justification-question animate-fadeIn';
+                    questionDiv.style.animationDelay = `${index * 0.1}s`;
+
+                    // Obtener puntuaciones para esta pregunta
+                    const scores = {};
+                    Object.keys(databases).forEach(dbName => {
+                        scores[dbName] = databases[dbName][index];
+                    });
+
+                    questionDiv.innerHTML = `
+                        <div class="question-title">
+                            <span>❓</span>
+                            ${justification.question}
+                            <span class="user-response ${userAnswer ? 'yes' : 'no'}">
+                                ${userAnswer ? '✅ Sí' : '❌ No'}
+                            </span>
+                        </div>
+                        <div class="justification-content">
+                            <div style="margin-bottom: var(--spacing-md);">
+                                <strong>Puntuaciones por tecnología:</strong>
+                                ${Object.entries(scores).map(([db, score]) => 
+                                    `<span class="tech-score score-${score}">
+                                        ${db}: ${score}
+                                    </span>`
+                                ).join('')}
+                            </div>
+                            <div class="tech-explanation">
+                                <strong style="color: var(--color-primary);">Análisis Arquitectónico:</strong><br><br>
+                                ${Object.entries(justification.explanations).map(([db, explanation]) => {
+                                    const score = scores[db];
+                                    return `<div style="margin-bottom: var(--spacing-sm);">
+                                        <span class="tech-score score-${score}">${db} (${score})</span>: ${explanation}
+                                    </div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+
+                    container.appendChild(questionDiv);
+                }
+            });
+        }
+
+        // Inicializar la matriz al cargar la página
+        document.addEventListener('DOMContentLoaded', initializeMatrix);
+    </script>
+</body>
+</html>
