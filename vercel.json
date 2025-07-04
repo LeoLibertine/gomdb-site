@@ -36,6 +36,30 @@
       "dest": "/mf/mf.html"
     },
     {
+      "src": "/comparativa/cosmos-mongo(?:/.*)?$",
+      "dest": "/comparativa/cosmos-mongo.html"
+    },
+    {
+      "src": "/comparativa/document-mongo(?:/.*)?$",
+      "dest": "/comparativa/document-mongo.html"
+    },
+    {
+      "src": "/comparativa/dynamo-mongo(?:/.*)?$",
+      "dest": "/comparativa/dynamo-mongo.html"
+    },
+    {
+      "src": "/comparativa/matrix(?:/.*)?$",
+      "dest": "/comparativa/matrix.html"
+    },
+    {
+      "src": "/comparativa/matrizopciones(?:/.*)?$",
+      "dest": "/comparativa/matrizopciones.html"
+    },
+    {
+      "src": "/comparativa/sql-nosql;(?:/.*)?$",
+      "dest": "/comparativa/sql-nosql.html"
+    },
+    {
       "src": "/clientes/etb/licenciamiento(?:/.*)?$",
       "dest": "/clientes/etb/licenciamiento.html"
     },
