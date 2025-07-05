@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Definiciones y estilos -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e9ecef;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="azure-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0078d4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0063b1;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="archive-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9b59b6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8e44ad;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="3" stdDeviation="5" flood-opacity="0.3"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+    <marker id="archive-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#8e44ad"/>
+    </marker>
+    <symbol id="cloud-icon" viewBox="0 0 50 50">
+      <path d="M38.71,20.07c-1.71-6.37-7.54-11.03-14.42-11.03c-7.21,0-13.26,5.05-14.7,11.79c-4.77,0.99-8.36,5.2-8.36,10.23c0,5.77,4.68,10.45,10.45,10.45h25.74c5.77,0,10.45-4.68,10.45-10.45C47.87,24.95,43.89,20.55,38.71,20.07z" fill="#0078D4" stroke="#0063B1" stroke-width="1"/>
+    </symbol>
+    <symbol id="database-icon" viewBox="0 0 50 50">
+      <ellipse cx="25" cy="10" rx="15" ry="7" fill="#13aa52" stroke="#0d8540" stroke-width="1"/>
+      <path d="M10,10v30c0,3.866,6.716,7,15,7s15-3.134,15-7V10" fill="none" stroke="#0d8540" stroke-width="1"/>
+      <path d="M10,25c0,3.866,6.716,7,15,7s15-3.134,15-7" fill="none" stroke="#0d8540" stroke-width="1"/>
+      <path d="M10,40c0,3.866,6.716,7,15,7s15-3.134,15-7" fill="none" stroke="#0d8540" stroke-width="1"/>
+    </symbol>
+    <symbol id="shard-icon" viewBox="0 0 50 50">
+      <rect x="5" y="5" width="40" height="40" rx="5" ry="5" fill="#3498db" stroke="#2980b9" stroke-width="1.5"/>
+      <rect x="10" y="10" width="30" height="30" rx="3" ry="3" fill="#2980b9" stroke="#2471a3" stroke-width="1"/>
+      <rect x="15" y="15" width="20" height="20" rx="2" ry="2" fill="#1f618d" stroke="#154360" stroke-width="0.5"/>
+    </symbol>
+    <symbol id="storage-icon" viewBox="0 0 50 50">
+      <path d="M10,15h30v25c0,2.761-6.716,5-15,5s-15-2.239-15-5V15z" fill="#9b59b6" stroke="#8e44ad" stroke-width="1"/>
+      <ellipse cx="25" cy="15" rx="15" ry="5" fill="#9b59b6" stroke="#8e44ad" stroke-width="1"/>
+      <path d="M10,25c0,2.761,6.716,5,15,5s15-2.239,15-5" fill="none" stroke="#8e44ad" stroke-width="1"/>
+      <path d="M10,35c0,2.761,6.716,5,15,5s15-2.239,15-5" fill="none" stroke="#8e44ad" stroke-width="1"/>
+    </symbol>
+    <symbol id="backup-icon" viewBox="0 0 50 50">
+      <path d="M25,5L5,25h10v20h20V25h10L25,5z" fill="#2ecc71" stroke="#27ae60" stroke-width="1"/>
+    </symbol>
+    <symbol id="network-icon" viewBox="0 0 50 50">
+      <circle cx="25" cy="25" r="20" fill="#f1c40f" stroke="#f39c12" stroke-width="1"/>
+      <path d="M15,15L35,35M15,35L35,15" stroke="#f39c12" stroke-width="2"/>
+      <circle cx="15" cy="15" r="3" fill="#fff"/>
+      <circle cx="35" cy="15" r="3" fill="#fff"/>
+      <circle cx="15" cy="35" r="3" fill="#fff"/>
+      <circle cx="35" cy="35" r="3" fill="#fff"/>
+    </symbol>
+    <symbol id="support-icon" viewBox="0 0 50 50">
+      <circle cx="25" cy="25" r="20" fill="#e74c3c" stroke="#c0392b" stroke-width="1"/>
+      <text x="25" y="32" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">?</text>
+    </symbol>
+  </defs>
+  
+  <!-- Fondo y título -->
+  <rect width="1000" height="800" fill="url(#bg-gradient)" rx="10" ry="10"/>
+  
+  <text x="500" y="50" font-family="Arial, sans-serif" font-size="26" font-weight="bold" text-anchor="middle" fill="#2b3990">
+    Arquitectura MongoDB Atlas R300 - Sharded Cluster con Online Archive
+  </text>
+  
+  <!-- Azure Cloud Region Rectangle -->
+  <rect x="50" y="80" width="900" height="500" rx="20" ry="20" fill="#f0f8ff" stroke="#0078d4" stroke-width="2" stroke-dasharray="5,5" opacity="0.7"/>
+  
+  <!-- Azure Cloud Icon & Label -->
+  
+  <text x="120" y="115" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#0078d4">Microsoft Azure - US Central</text>
+  
+  <!-- Atlas Cluster Container -->
+  <rect x="100" y="130" width="800" height="320" rx="15" ry="15" fill="#f5f5f5" stroke="#13aa52" stroke-width="3" filter="url(#shadow)"/>
+  
+  <!-- Atlas Logo & Title -->
+  <text x="500" y="160" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#13aa52">MongoDB Atlas R300</text>
+  <text x="500" y="185" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#444">Sharded Cluster | 768GB RAM | 96 vCPUs | 8TB Storage</text>
+  
+  <!-- Shard 1 Container -->
+  <rect x="130" y="200" width="340" height="230" rx="10" ry="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+ 
+  <text x="300" y="230" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#1565c0">Shard 1 (R300)</text>
+  <text x="300" y="250" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#444">384GB RAM | 48 vCPUs | 4TB Storage</text>
+  
+  <!-- Shard 1 Nodes -->
+  <!-- Primario -->
+  <g transform="translate(150, 270)">
+    <rect width="90" height="140" rx="5" ry="5" fill="#13aa52" stroke="#0d8540" stroke-width="2"/>
+    
+    <text x="45" y="90" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Nodo 1</text>
+    <text x="45" y="110" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Primario</text>
+    <circle cx="45" cy="125" r="7" fill="#2ecc71"/>
+  </g>
+  
+  <!-- Secundario 1 -->
+  <g transform="translate(255, 270)">
+    <rect width="90" height="140" rx="5" ry="5" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+    
+    <text x="45" y="90" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Nodo 2</text>
+    <text x="45" y="110" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Secundario</text>
+    <circle cx="45" cy="125" r="7" fill="#3498db"/>
+  </g>
+  
+  <!-- Secundario 2 -->
+  <g transform="translate(360, 270)">
+    <rect width="90" height="140" rx="5" ry="5" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+    
+    <text x="45" y="90" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Nodo 3</text>
+    <text x="45" y="110" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Secundario</text>
+    <circle cx="45" cy="125" r="7" fill="#3498db"/>
+  </g>
+  
+  <!-- Líneas de conexión entre nodos Shard 1 -->
+  <line x1="240" y1="340" x2="255" y2="340" stroke="#666" stroke-width="2" stroke-dasharray="3,2" marker-end="url(#arrow)"/>
+  <line x1="345" y1="340" x2="360" y2="340" stroke="#666" stroke-width="2" stroke-dasharray="3,2" marker-end="url(#arrow)"/>
+  <path d="M 195 410 Q 300 430 405 410" stroke="#666" stroke-width="2" stroke-dasharray="3,2" fill="none" marker-end="url(#arrow)"/>
+  
+  <!-- Shard 2 Container -->
+  <rect x="530" y="200" width="340" height="230" rx="10" ry="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+  
+  <text x="700" y="230" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#1565c0">Shard 2 (R300)</text>
+  <text x="700" y="250" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#444">384GB RAM | 48 vCPUs | 4TB Storage</text>
+  
+  <!-- Shard 2 Nodes -->
+  <!-- Primario -->
+  <g transform="translate(550, 270)">
+    <rect width="90" height="140" rx="5" ry="5" fill="#13aa52" stroke="#0d8540" stroke-width="2"/>
+    
+    <text x="45" y="90" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Nodo 1</text>
+    <text x="45" y="110" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Primario</text>
+    <circle cx="45" cy="125" r="7" fill="#2ecc71"/>
+  </g>
+  
+  <!-- Secundario 1 -->
+  <g transform="translate(655, 270)">
+    <rect width="90" height="140" rx="5" ry="5" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+    
+    <text x="45" y="90" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Nodo 2</text>
+    <text x="45" y="110" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Secundario</text>
+    <circle cx="45" cy="125" r="7" fill="#3498db"/>
+  </g>
+  
+  <!-- Secundario 2 -->
+  <g transform="translate(760, 270)">
+    <rect width="90" height="140" rx="5" ry="5" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+    
+    <text x="45" y="90" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Nodo 3</text>
+    <text x="45" y="110" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Secundario</text>
+    <circle cx="45" cy="125" r="7" fill="#3498db"/>
+  </g>
+  
+  <!-- Líneas de conexión entre nodos Shard 2 -->
+  <line x1="640" y1="340" x2="655" y2="340" stroke="#666" stroke-width="2" stroke-dasharray="3,2" marker-end="url(#arrow)"/>
+  <line x1="745" y1="340" x2="760" y2="340" stroke="#666" stroke-width="2" stroke-dasharray="3,2" marker-end="url(#arrow)"/>
+  <path d="M 595 410 Q 700 430 805 410" stroke="#666" stroke-width="2" stroke-dasharray="3,2" fill="none" marker-end="url(#arrow)"/>
+  
+  <!-- Línea de conexión entre shards -->
+  <line x1="470" y1="320" x2="530" y2="320" stroke="#666" stroke-width="3" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+  
+  <!-- Online Archive -->
+  <g transform="translate(0, 30)">
+    <rect x="300" y="500" width="400" height="100" rx="15" ry="15" fill="url(#archive-gradient)" stroke="#8e44ad" stroke-width="2" filter="url(#shadow)"/>
+    
+    <text x="500" y="540" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">Online Archive</text>
+    <text x="500" y="565" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">Datos fríos en Azure Blob Storage</text>
+    
+    
+    <!-- Flechas de conexión al Online Archive -->
+    <path d="M 300 450 C 300 470 350 490 400 500" stroke="#8e44ad" stroke-width="2" fill="none" marker-end="url(#archive-arrow)"/>
+    <path d="M 700 450 C 700 470 650 490 600 500" stroke="#8e44ad" stroke-width="2" fill="none" marker-end="url(#archive-arrow)"/>
+  </g>
+  
+  <!-- Backup, Network y Support Services -->
+  <!-- Backup -->
+  <g transform="translate(0, 20)">
+    <rect x="70" y="650" width="250" height="80" rx="10" ry="10" fill="#2ecc71" stroke="#27ae60" stroke-width="2" filter="url(#shadow)"/>
+   
+    <text x="170" y="680" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">Backup</text>
+    <text x="170" y="705" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#333">Snapshots and PITR</text>
+    
+    <!-- Línea conectora -->
+    <line x1="170" y1="600" x2="170" y2="650" stroke="#27ae60" stroke-width="2" marker-end="url(#arrow)"/>
+  </g>
+  
+  <!-- Network -->
+  <g transform="translate(0, 20)">
+    <rect x="375" y="650" width="250" height="80" rx="10" ry="10" fill="#f1c40f" stroke="#f39c12" stroke-width="2" filter="url(#shadow)"/>
+    
+    <text x="475" y="680" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">Network</text>
+    <!-- Precio eliminado -->
+    
+    <!-- Línea conectora -->
+    <line x1="475" y1="600" x2="475" y2="650" stroke="#f39c12" stroke-width="2" marker-end="url(#arrow)"/>
+  </g>
+  
+  <!-- Soporte Pro -->
+  <g transform="translate(0, 20)">
+    <rect x="680" y="650" width="250" height="80" rx="10" ry="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2" filter="url(#shadow)"/>
+    
+    <text x="780" y="680" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#fff">Soporte Pro</text>
+    <!-- Precio eliminado -->
+    
+    <!-- Línea conectora -->
+    <line x1="780" y1="600" x2="780" y2="650" stroke="#c0392b" stroke-width="2" marker-end="url(#arrow)"/>
+  </g>
+  
+  <!-- Casos de uso del Online Archive -->
+  <g transform="translate(0, 30)">
+    <rect x="750" y="490" width="220" height="110" rx="5" ry="5" fill="white" stroke="#9b59b6" stroke-width="1" opacity="0.9"/>
+    <text x="860" y="515" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#8e44ad">Casos de Uso Archive</text>
+    
+    <text x="760" y="540" font-family="Arial, sans-serif" font-size="12" fill="#333">✓ MDM_FIJA_AUDITORIA_WS</text>
+    <text x="760" y="560" font-family="Arial, sans-serif" font-size="12" fill="#333">✓ MDM_AUDITORIA_PLANDINAMICO</text>
+    <text x="760" y="580" font-family="Arial, sans-serif" font-size="12" fill="#333">✓ Logs históricos con baja lectura</text>
+  </g>
+  
+  <!-- Características de seguridad -->
+  <g transform="translate(0, 30)">
+    <rect x="50" y="490" width="220" height="110" rx="5" ry="5" fill="white" stroke="#0078d4" stroke-width="1" opacity="0.9"/>
+    <text x="160" y="515" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#0078d4">Seguridad</text>
+    
+    <text x="60" y="540" font-family="Arial, sans-serif" font-size="12" fill="#333">✓ Cifrado en tránsito (TLS)</text>
+    <text x="60" y="560" font-family="Arial, sans-serif" font-size="12" fill="#333">✓ Cifrado en reposo</text>
+    <text x="60" y="580" font-family="Arial, sans-serif" font-size="12" fill="#333">✓ Acceso restringido por IP/VPC</text>
+  </g>
+  
+  <!-- Leyenda -->
+  <g transform="translate(0, 40)">
+    <rect x="50" y="730" width="900" height="30" rx="5" ry="5" fill="white" stroke="#ccc" stroke-width="1" opacity="0.9"/>
+    
+    <circle cx="80" cy="745" r="6" fill="#2ecc71"/>
+    <text x="100" y="748" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#333">Nodo Primario</text>
+    
+    <circle cx="200" cy="745" r="6" fill="#3498db"/>
+    <text x="220" y="748" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#333">Nodo Secundario</text>
+    
+    <rect x="320" y="739" width="12" height="12" rx="2" ry="2" fill="#1565c0"/>
+    <text x="345" y="748" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#333">Shard</text>
+    
+    <rect x="420" y="739" width="12" height="12" rx="2" ry="2" fill="#9b59b6"/>
+    <text x="445" y="748" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#333">Online Archive</text>
+    
+    <rect x="560" y="739" width="12" height="12" rx="2" ry="2" fill="#13aa52"/>
+    <text x="585" y="748" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#333">MongoDB Atlas</text>
+    
+    <rect x="700" y="739" width="12" height="12" rx="2" ry="2" fill="#0078d4"/>
+    <text x="725" y="748" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#333">Azure Cloud</text>
+    
+    <line x1="820" y1="745" x2="840" y2="745" stroke="#666" stroke-width="2" stroke-dasharray="3,2"/>
+    <text x="860" y="748" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#333">Replicación</text>
+  </g>
+  
+  <!-- Alta disponibilidad -->
+  <text x="500" y="470" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#2b3990">Sharded Cluster con Alta Disponibilidad y Failover Automático</text>
+</svg>

@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoMDB - Propuestas MongoDB Atlas ETB</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navegación -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="navbar-container">
+                <div class="navbar-logo">
+                    <div style="width: 40px; height: 40px; background: var(--mongodb-gradient); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--color-text-dark); font-weight: 800;">Go</div>
+                    <span class="text-gradient">MDB</span>
+                </div>
+                <div class="navbar-links">
+                    <a href="#atlas-overview" class="navbar-link">MongoDB Atlas</a>
+                    <a href="#propuestas" class="navbar-link">Propuestas</a>
+                    <a href="#opcion1" class="navbar-link">M200 Cluster</a>
+                    <a href="#opcion2" class="navbar-link">R300 Cluster</a>
+                    <a href="#comparacion" class="navbar-link">Comparación</a>
+                    <a href="#online-archive" class="navbar-link">Online Archive</a>
+                </div>
+                <div>
+                    <span class="badge badge-primary">ETB</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="text-center animate-fadeIn">
+                <div class="badge badge-secondary mb-4">
+                    ☁️ Propuestas MongoDB Atlas • Julio 2025
+                </div>
+                <h1 class="text-gradient mb-4">
+                    Propuestas MongoDB Atlas
+                </h1>
+                <h2 class="mb-6" style="color: var(--color-text-secondary); font-weight: 400;">
+                    Opciones de Migración para ETB
+                </h2>
+                <p class="mb-6" style="font-size: var(--text-xl); max-width: 800px; margin: 0 auto;">
+                    Dos propuestas estratégicas para la migración del cluster shardeado de ETB a MongoDB Atlas: M200 económico vs R300 premium con mayor capacidad.
+                </p>
+                <div class="flex justify-center gap-4 flex-wrap">
+                    <a href="#atlas-overview" class="btn btn-primary btn-lg animate-glow">
+                        ☁️ ¿Por qué Atlas?
+                    </a>
+                    <a href="#propuestas" class="btn btn-secondary btn-lg">
+                        💰 Ver Propuestas
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Fin HERO -->
+    </section>
+
+
+            
+
+    <!-- MongoDB Atlas Overview -->
+    <section id="atlas-overview" class="section">
+        <div class="container">
+            <div class="text-center mb-8">
+                <h2 class="text-gradient">¿Por qué MongoDB Atlas?</h2>
+                <p style="color: var(--color-text-secondary); font-size: var(--text-lg); margin-top: var(--spacing-md);">
+                    La decisión que define dónde invierte su recurso más valioso: el tiempo de su equipo
+                </p>
+            </div>
+
+            <!-- Hero Comparison -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Atlas Card -->
+                <div class="card" style="background: linear-gradient(135deg, rgba(0, 237, 100, 0.2) 0%, rgba(0, 237, 100, 0.05) 100%); border: 3px solid var(--color-primary); padding: var(--spacing-2xl); position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--color-primary); border-radius: 50%; opacity: 0.1;"></div>
+                    <div class="text-center mb-6">
+                        <div style="width: 80px; height: 80px; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-lg) auto; font-size: var(--text-3xl);">☁️</div>
+                        <h3 style="color: var(--color-primary); font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">MongoDB Atlas</h3>
+                        <p style="color: var(--color-success); font-weight: 600; font-size: var(--text-xl);">RECOMENDADO</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">⚡</div>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: 600;">Gestión Automática</p>
+                        </div>
+                        <div class="text-center">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">🚀</div>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: 600;">Escalado Instantáneo</p>
+                        </div>
+                        <div class="text-center">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">🛡️</div>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: 600;">Seguridad Incluida</p>
+                        </div>
+                        <div class="text-center">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">💰</div>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: 600;">Costos Predecibles</p>
+                        </div>
+                    </div>
+                    <div class="badge badge-primary" style="width: 100%; text-align: center; padding: var(--spacing-md); font-size: var(--text-lg);">
+                        ✅ Enfoque en Innovación
+                    </div>
+                </div>
+
+                <!-- Enterprise Advanced Card -->
+                <div class="card" style="background: linear-gradient(135deg, rgba(86, 68, 212, 0.2) 0%, rgba(86, 68, 212, 0.05) 100%); border: 3px solid var(--color-accent); padding: var(--spacing-2xl); position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--color-accent); border-radius: 50%; opacity: 0.1;"></div>
+                    <div class="text-center mb-6">
+                        <div style="width: 80px; height: 80px; background: var(--color-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-lg) auto; font-size: var(--text-3xl);">🔧</div>
+                        <h3 style="color: var(--color-accent); font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">Enterprise Advanced</h3>
+                        <p style="color: var(--color-warning); font-weight: 600; font-size: var(--text-xl);">AUTOGESTIONADO</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">⚙️</div>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: 600;">Control Total</p>
+                        </div>
+                        <div class="text-center">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">👥</div>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: 600;">Requiere Equipo</p>
+                        </div>
+                        <div class="text-center">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">⏰</div>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: 600;">Gestión Manual</p>
+                        </div>
+                        <div class="text-center">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">💸</div>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: 600;">Costos Ocultos</p>
+                        </div>
+                    </div>
+                    <div class="badge badge-secondary" style="background-color: var(--color-accent); color: white; width: 100%; text-align: center; padding: var(--spacing-md); font-size: var(--text-lg);">
+                        ⚠️ Enfoque en Infraestructura
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Comparison -->
+            <div class="card mb-8" style="padding: var(--spacing-2xl);">
+                <h3 class="text-center mb-6" style="color: var(--color-primary);">⚡ Comparación Visual de Capacidades</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                    <!-- Administración -->
+                    <div class="text-center">
+                        <div style="font-size: var(--text-5xl); margin-bottom: var(--spacing-md);">🤖</div>
+                        <h4 style="font-size: var(--text-lg); margin-bottom: var(--spacing-md); color: var(--color-primary);">Administración</h4>
+                        <div class="text-center mb-2">
+                            <div class="badge badge-primary" style="font-size: var(--text-xs); padding: var(--spacing-xs) var(--spacing-sm);">AUTOMÁTICA</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="badge badge-secondary" style="background-color: var(--color-error); color: white; font-size: var(--text-xs); padding: var(--spacing-xs) var(--spacing-sm);">MANUAL</div>
+                        </div>
+                    </div>
+
+                    <!-- Escalabilidad -->
+                    <div class="text-center">
+                        <div style="font-size: var(--text-5xl); margin-bottom: var(--spacing-md);">📈</div>
+                        <h4 style="font-size: var(--text-lg); margin-bottom: var(--spacing-md); color: var(--color-primary);">Escalabilidad</h4>
+                        <div class="text-center mb-2">
+                            <div class="badge badge-primary" style="font-size: var(--text-xs); padding: var(--spacing-xs) var(--spacing-sm);">UN CLIC</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="badge badge-secondary" style="background-color: var(--color-warning); color: white; font-size: var(--text-xs); padding: var(--spacing-xs) var(--spacing-sm);">COMPLEJO</div>
+                        </div>
+                    </div>
+
+                    <!-- Backups -->
+                    <div class="text-center">
+                        <div style="font-size: var(--text-5xl); margin-bottom: var(--spacing-md);">💾</div>
+                        <h4 style="font-size: var(--text-lg); margin-bottom: var(--spacing-md); color: var(--color-primary);">Backups</h4>
+                        <div class="text-center mb-2">
+                            <div class="badge badge-primary" style="font-size: var(--text-xs); padding: var(--spacing-xs) var(--spacing-sm);">CONTINUO</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="badge badge-secondary" style="background-color: var(--color-error); color: white; font-size: var(--text-xs); padding: var(--spacing-xs) var(--spacing-sm);">MANUAL</div>
+                        </div>
+                    </div>
+
+                    <!-- Búsqueda -->
+                    <div class="text-center">
+                        <div style="font-size: var(--text-5xl); margin-bottom: var(--spacing-md);">🔍</div>
+                        <h4 style="font-size: var(--text-lg); margin-bottom: var(--spacing-md); color: var(--color-primary);">Búsqueda IA</h4>
+                        <div class="text-center mb-2">
+                            <div class="badge badge-primary" style="font-size: var(--text-xs); padding: var(--spacing-xs) var(--spacing-sm);">INCLUIDO</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="badge badge-secondary" style="background-color: var(--color-error); color: white; font-size: var(--text-xs); padding: var(--spacing-xs) var(--spacing-sm);">COMPLEJO</div>
+                        </div>
+                    </div>
+
+                    <!-- Multi-Cloud -->
+                    <div class="text-center">
+                        <div style="font-size: var(--text-5xl); margin-bottom: var(--spacing-md);">🌐</div>
+                        <h4 style="font-size: var(--text-lg); margin-bottom: var(--spacing-md); color: var(--color-primary);">Multi-Cloud</h4>
+                        <div class="text-center mb-2">
+                            <div class="badge badge-primary" style="font-size: var(--text-xs); padding: var(--spacing-xs) var(--spacing-sm);">NATIVO</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="badge badge-secondary" style="background-color: var(--color-error); color: white; font-size: var(--text-xs); padding: var(--spacing-xs) var(--spacing-sm);">IMPOSIBLE</div>
+                        </div>
+                    </div>
+
+                    <!-- TCO -->
+                    <div class="text-center">
+                        <div style="font-size: var(--text-5xl); margin-bottom: var(--spacing-md);">💰</div>
+                        <h4 style="font-size: var(--text-lg); margin-bottom: var(--spacing-md); color: var(--color-primary);">TCO</h4>
+                        <div class="text-center mb-2">
+                            <div class="badge badge-primary" style="font-size: var(--text-xs); padding: var(--spacing-xs) var(--spacing-sm);">PREDECIBLE</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="badge badge-secondary" style="background-color: var(--color-warning); color: white; font-size: var(--text-xs); padding: var(--spacing-xs) var(--spacing-sm);">OCULTO</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decision Matrix -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Cuándo Elegir Atlas -->
+                <div class="card" style="background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(0, 237, 100, 0.05) 100%); border: 3px solid var(--color-primary); padding: var(--spacing-2xl);">
+                    <div class="text-center mb-6">
+                        <div style="font-size: var(--text-6xl); margin-bottom: var(--spacing-md);">✅</div>
+                        <h3 style="color: var(--color-primary); margin-bottom: var(--spacing-md);">Elija MongoDB Atlas</h3>
+                    </div>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="flex items-center gap-3">
+                            <div style="width: 40px; height: 40px; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: var(--text-lg);">🚀</div>
+                            <div>
+                                <h5 style="color: var(--color-primary); margin-bottom: var(--spacing-xs);">Velocidad e Innovación</h5>
+                                <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">Lanzar productos rápidamente</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div style="width: 40px; height: 40px; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: var(--text-lg);">⚡</div>
+                            <div>
+                                <h5 style="color: var(--color-primary); margin-bottom: var(--spacing-xs);">Eficiencia Operativa</h5>
+                                <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">Enfoque en valor de negocio</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div style="width: 40px; height: 40px; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: var(--text-lg);">💰</div>
+                            <div>
+                                <h5 style="color: var(--color-primary); margin-bottom: var(--spacing-xs);">Costos Predecibles</h5>
+                                <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">Sin sorpresas en la factura</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div style="width: 40px; height: 40px; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: var(--text-lg);">🛡️</div>
+                            <div>
+                                <h5 style="color: var(--color-primary); margin-bottom: var(--spacing-xs);">Seguridad Clase Mundial</h5>
+                                <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">Por expertos de MongoDB</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cuándo Considerar Enterprise -->
+                <div class="card" style="background: linear-gradient(135deg, rgba(86, 68, 212, 0.1) 0%, rgba(86, 68, 212, 0.05) 100%); border: 3px solid var(--color-accent); padding: var(--spacing-2xl);">
+                    <div class="text-center mb-6">
+                        <div style="font-size: var(--text-6xl); margin-bottom: var(--spacing-md);">⚠️</div>
+                        <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Considere Enterprise Advanced</h3>
+                    </div>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="flex items-center gap-3">
+                            <div style="width: 40px; height: 40px; background: var(--color-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: var(--text-lg);">🏛️</div>
+                            <div>
+                                <h5 style="color: var(--color-accent); margin-bottom: var(--spacing-xs);">Requisitos Regulatorios</h5>
+                                <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">Control físico del hardware</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div style="width: 40px; height: 40px; background: var(--color-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: var(--text-lg);">👥</div>
+                            <div>
+                                <h5 style="color: var(--color-accent); margin-bottom: var(--spacing-xs);">Equipo Experto Disponible</h5>
+                                <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">DevOps/DBA con capacidad 24/7</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div style="width: 40px; height: 40px; background: var(--color-warning); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: var(--text-lg);">⏰</div>
+                            <div>
+                                <h5 style="color: var(--color-warning); margin-bottom: var(--spacing-xs);">Tiempo para Gestión</h5>
+                                <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">Recursos para infraestructura</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div style="width: 40px; height: 40px; background: var(--color-error); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: var(--text-lg);">💸</div>
+                            <div>
+                                <h5 style="color: var(--color-error); margin-bottom: var(--spacing-xs);">Presupuesto Amplio</h5>
+                                <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">Para costos ocultos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Call to Action -->
+            <div class="card mt-8 mongodb-glow" style="background: linear-gradient(135deg, rgba(0, 237, 100, 0.2) 0%, rgba(86, 68, 212, 0.1) 100%); padding: var(--spacing-2xl); text-center;">
+                <div style="font-size: var(--text-6xl); margin-bottom: var(--spacing-lg);">🏆</div>
+                <h3 class="text-gradient" style="margin-bottom: var(--spacing-lg); font-size: var(--text-3xl);">La Agilidad es la Mayor Ventaja Competitiva</h3>
+                <p style="color: var(--color-text-secondary); font-size: var(--text-xl); line-height: 1.6; max-width: 600px; margin: 0 auto var(--spacing-lg) auto;">
+                    MongoDB Atlas libera a su organización para concentrarse en <strong style="color: var(--color-success);">servir a sus clientes</strong>
+                </p>
+                <div class="badge badge-primary" style="font-size: var(--text-lg); padding: var(--spacing-lg) var(--spacing-2xl);">
+                    💡 Atlas = Más Innovación, Menos Infraestructura
+                </div>
+            </div>
+        </div>
+    </section>        
+
+            <!-- Recomendación Como Arquitectos -->
+            <section id="recomendacion-arquitectos" class="section">
+              <div class="container">
+                <div class="card" style="padding: var(--spacing-2xl);">
+                <h3 style="margin-bottom: var(--spacing-xl);">🏗️ Nuestra Recomendación Como Arquitectos</h3>
+                <p style="color: var(--color-text-secondary); font-size: var(--text-lg); line-height: 1.8; margin-bottom: var(--spacing-xl);">
+                    La elección depende de sus prioridades estratégicas:
+                </p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Elija Atlas -->
+                    <div class="card" style="background-color: rgba(0, 237, 100, 0.1); border: 3px solid var(--color-primary); padding: var(--spacing-xl);">
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">✅ Elija MongoDB Atlas si su prioridad es:</h4>
+                        <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg); line-height: 1.8;">
+                            <li style="margin-bottom: var(--spacing-md);"><strong style="color: var(--color-primary);">Velocidad e Innovación:</strong> Lanzar productos y nuevas funcionalidades al mercado rápidamente.</li>
+                            <li style="margin-bottom: var(--spacing-md);"><strong style="color: var(--color-primary);">Eficiencia Operativa:</strong> Reducir la carga de trabajo de su equipo técnico y permitir que se centren en generar valor para el negocio.</li>
+                            <li style="margin-bottom: var(--spacing-md);"><strong style="color: var(--color-primary);">Costos Predecibles:</strong> Tener un modelo de costos claro y sin sorpresas.</li>
+                            <li style="margin-bottom: var(--spacing-md);"><strong style="color: var(--color-primary);">Seguridad y Escalabilidad de Clase Mundial:</strong> Aprovechar la experiencia de los creadores de MongoDB para asegurar y escalar su plataforma.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Considere Enterprise -->
+                    <div class="card" style="background-color: rgba(86, 68, 212, 0.1); border: 3px solid var(--color-accent); padding: var(--spacing-xl);">
+                        <h4 style="color: var(--color-accent); margin-bottom: var(--spacing-lg);">⚠️ Considere MongoDB Enterprise Advanced solo si:</h4>
+                        <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg); line-height: 1.8;">
+                            <li style="margin-bottom: var(--spacing-md);">Tiene <strong style="color: var(--color-accent);">requisitos regulatorios o de soberanía de datos extremos</strong> que le obligan a controlar físicamente el hardware en una ubicación específica no cubierta por Atlas.</li>
+                            <li style="margin-bottom: var(--spacing-md);">Ya cuenta con un <strong style="color: var(--color-accent);">equipo grande y experto de DevOps/DBA</strong> con capacidad disponible para asumir la carga operativa 24/7 de una base de datos crítica.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Conclusión Final -->
+                <div class="card mt-8 mongodb-glow" style="background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(86, 68, 212, 0.1) 100%); padding: var(--spacing-2xl);">
+                    <h4 class="text-gradient" style="margin-bottom: var(--spacing-lg);">🚀 Conclusión Estratégica</h4>
+                    <p style="color: var(--color-text-secondary); font-size: var(--text-xl); line-height: 1.8; text-align: center;">
+                        En el panorama tecnológico actual, <strong style="color: var(--color-primary);">la agilidad es la mayor ventaja competitiva</strong>. MongoDB Atlas es la plataforma que la habilita, liberando a su organización para que se concentre en lo que mejor sabe hacer: <strong style="color: var(--color-success);">servir a sus clientes</strong>.
+                    </p>
+                </div>
+                </div>
+              </div>
+            </section>
+
+    <!-- Resumen de Propuestas -->
+    <section id="propuestas" class="section">
+        <div class="container">
+            <div class="text-center mb-8">
+                <h2 class="text-gradient">Resumen de Propuestas</h2>
+                <p style="color: var(--color-text-secondary); font-size: var(--text-lg); margin-top: var(--spacing-md);">
+                    Comparación rápida de las dos opciones de migración a Atlas
+                </p>
+            </div>
+
+            <!-- Comparación Rápida -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Opción M200 -->
+                <div class="card card-bordered" style="border-left: 6px solid var(--color-primary); padding: var(--spacing-2xl);">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div style="width: 60px; height: 60px; background-color: var(--color-primary); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--text-xl);">M200</div>
+                        <div>
+                            <h3 style="color: var(--color-primary); margin-bottom: var(--spacing-xs);">Opción Económica</h3>
+                            <p style="color: var(--color-text-secondary); margin: 0; font-size: var(--text-sm);">Solución costo-efectiva para empezar</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-6 mb-6">
+                        <div class="text-center">
+                            <div class="metric-value" style="color: var(--color-primary); font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">$376,702</div>
+                            <div class="metric-label">Costo Anual (USD)</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="metric-value" style="color: var(--color-primary); font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">2 Shards</div>
+                            <div class="metric-label">256 GB RAM c/u</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="metric-value" style="color: var(--color-primary); font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">64 vCPUs</div>
+                            <div class="metric-label">por Shard</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="metric-value" style="color: var(--color-primary); font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">4 TB</div>
+                            <div class="metric-label">Storage por Shard</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="badge badge-primary" style="padding: var(--spacing-sm) var(--spacing-lg);">
+                            💰 Más Económico
+                        </div>
+                        <div class="badge badge-secondary" style="background-color: var(--color-warning); color: white; padding: var(--spacing-sm) var(--spacing-lg);">
+                            ⚠️ Requiere Optimización
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Opción R300 -->
+                <div class="card card-bordered" style="border-left: 6px solid var(--color-accent); padding: var(--spacing-2xl);">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div style="width: 60px; height: 60px; background-color: var(--color-accent); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--text-xl);">R300</div>
+                        <div>
+                            <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-xs);">Opción Premium</h3>
+                            <p style="color: var(--color-text-secondary); margin: 0; font-size: var(--text-sm);">Mayor capacidad y rendimiento</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-6 mb-6">
+                        <div class="text-center">
+                            <div class="metric-value" style="color: var(--color-accent); font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">$505,078</div>
+                            <div class="metric-label">Costo Anual (USD)</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="metric-value" style="color: var(--color-accent); font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">2 Shards</div>
+                            <div class="metric-label">384 GB RAM c/u</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="metric-value" style="color: var(--color-accent); font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">48 vCPUs</div>
+                            <div class="metric-label">por Shard</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="metric-value" style="color: var(--color-accent); font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">4 TB</div>
+                            <div class="metric-label">Storage por Shard</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="badge badge-secondary" style="background-color: var(--color-accent); color: white; padding: var(--spacing-sm) var(--spacing-lg);">
+                            🚀 Mayor Capacidad
+                        </div>
+                        <div class="badge badge-success" style="padding: var(--spacing-sm) var(--spacing-lg);">
+                            ✅ Mejor Performance
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diferencia de Costo -->
+            <div class="card mongodb-glow" style="background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(86, 68, 212, 0.1) 100%); padding: var(--spacing-2xl);">
+                <h3 class="text-gradient" style="margin-bottom: var(--spacing-lg);">💡 Análisis de Costo-Beneficio</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-warning); font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">$128,376</div>
+                        <div class="metric-label" style="font-size: var(--text-lg);">Diferencia Anual</div>
+                        <p style="color: var(--color-text-secondary); margin-top: var(--spacing-sm); font-size: var(--text-sm);">
+                            R300 cuesta 34% más que M200
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-primary); font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">+50%</div>
+                        <div class="metric-label" style="font-size: var(--text-lg);">Más RAM</div>
+                        <p style="color: var(--color-text-secondary); margin-top: var(--spacing-sm); font-size: var(--text-sm);">
+                            384 GB vs 256 GB por shard
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-success); font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">~191 GB</div>
+                        <div class="metric-label" style="font-size: var(--text-lg);">Cache WiredTiger</div>
+                        <p style="color: var(--color-text-secondary); margin-top: var(--spacing-sm); font-size: var(--text-sm);">
+                            Mejor para índices grandes
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Opción 1: M200 -->
+    <section id="opcion1" class="section" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <div class="text-center mb-8">
+                <h2 class="text-gradient">Opción 1: M200 Cluster</h2>
+                <p style="color: var(--color-text-secondary); font-size: var(--text-lg); margin-top: var(--spacing-md);">
+                    Solución económica para optimización post-implementación
+                </p>
+            </div>
+
+            <!-- Especificaciones M200 -->
+            <div class="card mb-8" style="padding: var(--spacing-2xl);">
+                <h3 style="margin-bottom: var(--spacing-xl);">⚙️ Especificaciones Técnicas M200</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-primary); font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">256 GB</div>
+                        <div class="metric-label" style="font-size: var(--text-base);">RAM por Shard</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-primary); font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">64</div>
+                        <div class="metric-label" style="font-size: var(--text-base);">vCPUs por Shard</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-primary); font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">4 TB</div>
+                        <div class="metric-label" style="font-size: var(--text-base);">Storage por Shard</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-primary); font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">2</div>
+                        <div class="metric-label" style="font-size: var(--text-base);">Shards Totales</div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Costos M200 -->
+                <h4 style="margin-bottom: var(--spacing-lg);">💰 Desglose de Costos M200</h4>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--color-primary);">
+                                <th style="padding: var(--spacing-lg); text-align: left; color: var(--color-primary); font-size: var(--text-lg);">Concepto</th>
+                                <th style="padding: var(--spacing-lg); text-align: center; color: var(--color-primary); font-size: var(--text-lg);">Costo Anual (USD)</th>
+                                <th style="padding: var(--spacing-lg); text-align: center; color: var(--color-primary); font-size: var(--text-lg);">Costo Mensual (USD)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">Cluster (M200, 2 shards, 256 GB RAM, 64 vCPU, 4 TB por shard)</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-primary); font-weight: 700;">$281,490.00</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-primary); font-weight: 700;">$23,457.50</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">Network</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-secondary);">$19,704.00</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-secondary);">$1,642.00</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">Backup</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-secondary);">$12,724.00</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-secondary);">$1,060.33</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">Soporte Pro</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-secondary);">$62,784.00</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-secondary);">$5,232.00</td>
+                            </tr>
+                            <tr style="background-color: rgba(0, 237, 100, 0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 700; color: var(--color-primary);">TOTAL</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-primary); font-weight: 700; font-size: var(--text-xl);">$376,702.00</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-primary); font-weight: 700; font-size: var(--text-xl);">$31,391.83</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Arquitectura M200 -->
+            <div class="card" style="padding: var(--spacing-2xl);">
+                <h3 style="margin-bottom: var(--spacing-xl);">🏗️ Arquitectura M200 - ETB</h3>
+                <div class="text-center" style="margin-bottom: var(--spacing-lg);">
+                    <p style="color: var(--color-text-secondary); font-size: var(--text-lg);">
+                        Configuración de cluster sharded con 2 instancias M200 en MongoDB Atlas
+                    </p>
+                </div>
+                <div class="text-center">
+                    <img src="../../img/m200.svg" alt="Arquitectura M200 ETB" style="max-width: 100%; height: auto; border-radius: var(--radius-lg);">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                    <div>
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">✅ Ventajas M200</h4>
+                        <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg); line-height: 1.8;">
+                            <li style="margin-bottom: var(--spacing-sm);">• Costo inicial más bajo</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Migración directa desde cluster actual</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Buena relación costo-beneficio</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Escalable según necesidades futuras</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--color-warning); margin-bottom: var(--spacing-lg);">⚠️ Consideraciones</h4>
+                        <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg); line-height: 1.8;">
+                            <li style="margin-bottom: var(--spacing-sm);">• Requiere optimización previa de índices</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• RAM limitada para workloads grandes</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Puede necesitar archivado de datos</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Monitoreo constante requerido</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Opción 2: R300 -->
+    <section id="opcion2" class="section">
+        <div class="container">
+            <div class="text-center mb-8">
+                <h2 class="text-gradient">Opción 2: R300 Cluster</h2>
+                <p style="color: var(--color-text-secondary); font-size: var(--text-lg); margin-top: var(--spacing-md);">
+                    Solución premium con mayor capacidad y rendimiento
+                </p>
+            </div>
+
+            <!-- Especificaciones R300 -->
+            <div class="card mb-8" style="padding: var(--spacing-2xl);">
+                <h3 style="margin-bottom: var(--spacing-xl);">⚙️ Especificaciones Técnicas R300</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-accent); font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">384 GB</div>
+                        <div class="metric-label" style="font-size: var(--text-base);">RAM por Shard</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-accent); font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">48</div>
+                        <div class="metric-label" style="font-size: var(--text-base);">vCPUs por Shard</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-accent); font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">4 TB</div>
+                        <div class="metric-label" style="font-size: var(--text-base);">Storage por Shard</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-accent); font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">2</div>
+                        <div class="metric-label" style="font-size: var(--text-base);">Shards Totales</div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Costos R300 -->
+                <h4 style="margin-bottom: var(--spacing-lg);">💰 Desglose de Costos R300</h4>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--color-accent);">
+                                <th style="padding: var(--spacing-lg); text-align: left; color: var(--color-accent); font-size: var(--text-lg);">Concepto</th>
+                                <th style="padding: var(--spacing-lg); text-align: center; color: var(--color-accent); font-size: var(--text-lg);">Costo Anual (USD)</th>
+                                <th style="padding: var(--spacing-lg); text-align: center; color: var(--color-accent); font-size: var(--text-lg);">Costo Mensual (USD)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">Cluster (R300, 2 shards, 384 GB RAM, 48 vCPUs, 4 TB por shard)</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-accent); font-weight: 700;">$379,717.00</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-accent); font-weight: 700;">$31,643.08</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">Network</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-secondary);">$26,580.00</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-secondary);">$2,215.00</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">Backup</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-secondary);">$14,601.00</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-secondary);">$1,216.75</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">Soporte Pro</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-secondary);">$84,180.00</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-text-secondary);">$7,015.00</td>
+                            </tr>
+                            <tr style="background-color: rgba(86, 68, 212, 0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 700; color: var(--color-accent);">TOTAL</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-accent); font-weight: 700; font-size: var(--text-xl);">$505,078.00</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-accent); font-weight: 700; font-size: var(--text-xl);">$42,089.83</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Arquitectura R300 -->
+            <div class="card" style="padding: var(--spacing-2xl);">
+                <h3 style="margin-bottom: var(--spacing-xl);">🏗️ Arquitectura R300 - ETB</h3>
+                <div class="text-center" style="margin-bottom: var(--spacing-lg);">
+                    <p style="color: var(--color-text-secondary); font-size: var(--text-lg);">
+                        Configuración de cluster sharded con 2 instancias R300 en MongoDB Atlas
+                    </p>
+                </div>
+                <div class="text-center">
+                    <img src="../../img/r300v2.svg" alt="Arquitectura R300 ETB" style="max-width: 100%; height: auto; border-radius: var(--radius-lg);">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                    <div>
+                        <h4 style="color: var(--color-accent); margin-bottom: var(--spacing-lg);">✅ Ventajas R300</h4>
+                        <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg); line-height: 1.8;">
+                            <li style="margin-bottom: var(--spacing-sm);">• 50% más RAM que M200 (384 GB vs 256 GB)</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Mejor manejo de índices grandes</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Mayor capacidad de WiredTiger Cache (~191 GB)</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Menos presión de memoria en operaciones</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Mejor rendimiento para workloads intensivos</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--color-warning); margin-bottom: var(--spacing-lg);">⚠️ Consideraciones</h4>
+                        <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg); line-height: 1.8;">
+                            <li style="margin-bottom: var(--spacing-sm);">• Costo 34% mayor que M200</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Soporte Pro más costoso</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Puede ser sobre-dimensionado inicialmente</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Requiere justificación de ROI</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparación Final -->
+    <section id="comparacion" class="section" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <div class="text-center mb-8">
+                <h2 class="text-gradient">Comparación Final</h2>
+                <p style="color: var(--color-text-secondary); font-size: var(--text-lg); margin-top: var(--spacing-md);">
+                    Análisis detallado para la toma de decisión
+                </p>
+            </div>
+
+            <!-- Tabla Comparativa -->
+            <div class="card mb-8" style="padding: var(--spacing-2xl);">
+                <h3 style="margin-bottom: var(--spacing-xl);">📊 Comparación Técnica y Económica</h3>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--color-primary);">
+                                <th style="padding: var(--spacing-lg); text-align: left; color: var(--color-primary); font-size: var(--text-lg);">Aspecto</th>
+                                <th style="padding: var(--spacing-lg); text-align: center; color: var(--color-primary); font-size: var(--text-lg);">M200</th>
+                                <th style="padding: var(--spacing-lg); text-align: center; color: var(--color-accent); font-size: var(--text-lg);">R300</th>
+                                <th style="padding: var(--spacing-lg); text-align: center; color: var(--color-success); font-size: var(--text-lg);">Ganador</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">Costo Anual</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-primary); font-weight: 600;">$376,702</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-accent); font-weight: 600;">$505,078</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-primary); font-weight: 600;">M200</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">RAM Total</td>
+                                <td style="padding: var(--spacing-lg); text-align: center;">512 GB (256 x 2)</td>
+                                <td style="padding: var(--spacing-lg); text-align: center;">768 GB (384 x 2)</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-accent); font-weight: 600;">R300</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">WiredTiger Cache Total</td>
+                                <td style="padding: var(--spacing-lg); text-align: center;">~255 GB</td>
+                                <td style="padding: var(--spacing-lg); text-align: center;">~383 GB</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-accent); font-weight: 600;">R300</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">vCPUs Total</td>
+                                <td style="padding: var(--spacing-lg); text-align: center;">128 (64 x 2)</td>
+                                <td style="padding: var(--spacing-lg); text-align: center;">96 (48 x 2)</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-primary); font-weight: 600;">M200</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">Storage Total</td>
+                                <td style="padding: var(--spacing-lg); text-align: center;">8 TB (4 x 2)</td>
+                                <td style="padding: var(--spacing-lg); text-align: center;">8 TB (4 x 2)</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-info); font-weight: 600;">Empate</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">Viabilidad para Índices Actuales</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-warning);">Requiere Optimización</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-success);">Viable sin Optimización</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-accent); font-weight: 600;">R300</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: var(--spacing-lg); font-weight: 600;">ROI a 3 años</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-success);">Mejor a corto plazo</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-accent);">Mejor a largo plazo</td>
+                                <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-info); font-weight: 600;">Depende</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gráfico de Comparación -->
+            <div class="card mb-8" style="padding: var(--spacing-2xl);">
+                <h3 style="margin-bottom: var(--spacing-xl);">📈 Visualización Comparativa</h3>
+                <div style="position: relative; height: 400px;">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recomendaciones -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Recomendación M200 -->
+                <div class="card" style="background-color: rgba(0, 237, 100, 0.1); border: 3px solid var(--color-primary); padding: var(--spacing-2xl);">
+                    <h3 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">💰 Recomendamos M200 si:</h3>
+                    <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg); line-height: 1.8;">
+                        <li style="margin-bottom: var(--spacing-md);">• <strong>Presupuesto limitado</strong> y necesidad de optimizar costos</li>
+                        <li style="margin-bottom: var(--spacing-md);">• <strong>Compromiso de optimización</strong> de índices antes de migración</li>
+                        <li style="margin-bottom: var(--spacing-md);">• <strong>Implementación de archivado</strong> de datos históricos</li>
+                        <li style="margin-bottom: var(--spacing-md);">• <strong>Escalabilidad gradual</strong> según crecimiento</li>
+                        <li style="margin-bottom: var(--spacing-md);">• <strong>Equipo técnico disponible</strong> para monitoreo constante</li>
+                    </ul>
+                    <div style="margin-top: var(--spacing-lg);">
+                        <div class="badge badge-primary" style="padding: var(--spacing-md) var(--spacing-xl);">
+                            Ahorro de $128,376/año
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recomendación R300 -->
+                <div class="card" style="background-color: rgba(86, 68, 212, 0.1); border: 3px solid var(--color-accent); padding: var(--spacing-2xl);">
+                    <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-lg);">🚀 Recomendamos R300 si:</h3>
+                    <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg); line-height: 1.8;">
+                        <li style="margin-bottom: var(--spacing-md);">• <strong>Performance crítico</strong> para operaciones del negocio</li>
+                        <li style="margin-bottom: var(--spacing-md);">• <strong>Migración inmediata</strong> sin tiempo para optimizaciones</li>
+                        <li style="margin-bottom: var(--spacing-md);">• <strong>Crecimiento acelerado</strong> de datos esperado</li>
+                        <li style="margin-bottom: var(--spacing-md);">• <strong>Minimizar riesgos</strong> de rendimiento</li>
+                        <li style="margin-bottom: var(--spacing-md);">• <strong>Presupuesto disponible</strong> para mayor capacidad</li>
+                    </ul>
+                    <div style="margin-top: var(--spacing-lg);">
+                        <div class="badge badge-secondary" style="background-color: var(--color-accent); color: white; padding: var(--spacing-md) var(--spacing-xl);">
+                            +50% Capacidad RAM
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decisión Final -->
+            <div class="card mt-8 mongodb-glow" style="background: linear-gradient(135deg, rgba(86, 68, 212, 0.1) 0%, rgba(0, 237, 100, 0.1) 100%); padding: var(--spacing-2xl);">
+                <h3 class="text-gradient" style="margin-bottom: var(--spacing-lg);">🎯 Decisión Recomendada para ETB</h3>
+                <p style="font-size: var(--text-xl); margin-bottom: var(--spacing-lg);">
+                    Basándose en el análisis técnico y del tamaño de los índices, recomendamos <strong style="color: var(--color-accent);">R300</strong> para maximizar el uso de memoria disponible.
+                </p>
+                <div class="card mb-6" style="background-color: rgba(86, 68, 212, 0.1); border: 2px solid var(--color-accent); padding: var(--spacing-lg);">
+                    <h4 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">💡 Justificación Técnica</h4>
+                    <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
+                        Aunque R300 es más costoso, su capacidad de RAM (384 GB por shard) permite una mejor gestión de los índices grandes identificados en el análisis. Con ~218.5 GB de índices por shard post-optimización, R300 ofrece margen suficiente para operaciones sin presión de memoria.
+                    </p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-accent); font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">Fase 1</div>
+                        <div class="metric-label" style="margin-bottom: var(--spacing-sm);">Optimización</div>
+                        <p style="color: var(--color-text-secondary); font-size: var(--text-sm);">
+                            Ejecutar plan de optimización de índices
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-accent); font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">Fase 2</div>
+                        <div class="metric-label" style="margin-bottom: var(--spacing-sm);">Migración R300</div>
+                        <p style="color: var(--color-text-secondary); font-size: var(--text-sm);">
+                            Migrar a Atlas con mayor capacidad RAM
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-accent); font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">Fase 3</div>
+                        <div class="metric-label" style="margin-bottom: var(--spacing-sm);">Maximizar Performance</div>
+                        <p style="color: var(--color-text-secondary); font-size: var(--text-sm);">
+                            Aprovechar memoria adicional para índices
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MongoDB Atlas Online Archive -->
+    <section id="online-archive" class="section">
+        <div class="container">
+            <div class="text-center mb-8">
+                <h2 class="text-gradient">MongoDB Atlas Online Archive</h2>
+                <p style="color: var(--color-text-secondary); font-size: var(--text-lg); margin-top: var(--spacing-md);">
+                    Solución inteligente para optimizar costos y rendimiento
+                </p>
+            </div>
+
+            <!-- Descripción Principal -->
+            <div class="card mb-8" style="padding: var(--spacing-2xl);">
+                <h3 style="margin-bottom: var(--spacing-xl);">📚 ¿Qué es MongoDB Online Archive?</h3>
+                <p style="color: var(--color-text-secondary); font-size: var(--text-lg); line-height: 1.8; margin-bottom: var(--spacing-xl);">
+                    Proponemos implementar <strong style="color: var(--color-primary);">MongoDB Online Archive</strong>, un servicio gestionado de Atlas, para archivar datos históricos de manera automática. Esta acción nos permitirá <strong style="color: var(--color-success);">reducir significativamente los costos de almacenamiento</strong> y, al mismo tiempo, <strong style="color: var(--color-primary);">mejorar el rendimiento de la aplicación</strong> para los usuarios activos, todo sin perder la capacidad de consultar los datos históricos cuando sea necesario.
+                </p>
+
+                <!-- El Desafío Actual -->
+                <div class="card mb-6" style="background-color: rgba(239, 68, 68, 0.1); border: 2px solid var(--color-error); padding: var(--spacing-xl);">
+                    <h4 style="color: var(--color-error); margin-bottom: var(--spacing-lg);">🚨 El Desafío Actual: El Costo del Crecimiento</h4>
+                    <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); line-height: 1.6;">
+                        A medida que su aplicación crece, también lo hace el volumen de datos que almacenamos. Gran parte de estos datos (por ejemplo, registros de hace más de 6 meses) se consultan con muy poca frecuencia. Sin embargo, actualmente ocupan espacio en nuestro clúster principal de alto rendimiento, lo que genera dos desafíos clave:
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h5 style="color: var(--color-error); margin-bottom: var(--spacing-md);">💸 Costos Elevados</h5>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); line-height: 1.6;">
+                                Estamos pagando por almacenamiento premium (SSD rápidos) para guardar datos que rara vez se utilizan.
+                            </p>
+                        </div>
+                        <div>
+                            <h5 style="color: var(--color-error); margin-bottom: var(--spacing-md);">🐌 Rendimiento Comprometido</h5>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); line-height: 1.6;">
+                                Un gran volumen de datos históricos puede ralentizar las consultas diarias y las operaciones sobre los datos más recientes y relevantes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nuestra Solución -->
+                <div class="card" style="background-color: rgba(0, 237, 100, 0.1); border: 2px solid var(--color-success); padding: var(--spacing-xl);">
+                    <h4 style="color: var(--color-success); margin-bottom: var(--spacing-lg);">✅ Nuestra Solución: MongoDB Online Archive</h4>
+                    <p style="color: var(--color-text-secondary); line-height: 1.6;">
+                        Online Archive es la solución inteligente a este problema. Funciona como un "anexo" de nuestra base de datos principal. Nos permite definir una regla simple (ej. "archivar datos con más de X días de antigüedad") y el sistema mueve automáticamente estos datos a un nivel de almacenamiento en la nube mucho más económico.
+                        Lo más importante es que los datos archivados <strong style="color: var(--color-primary);">permanecen accesibles</strong> y pueden ser consultados directamente cuando se necesiten para reportes, auditorías o análisis.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Beneficios Clave -->
+            <div class="card mb-8" style="padding: var(--spacing-2xl);">
+                <h3 style="margin-bottom: var(--spacing-xl);">🎯 Beneficios Clave para su Negocio</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card" style="background-color: rgba(0, 237, 100, 0.1); border: 2px solid var(--color-success); padding: var(--spacing-lg);">
+                        <h4 style="color: var(--color-success); margin-bottom: var(--spacing-md);">💰 Reducción Directa de Costos</h4>
+                        <p style="color: var(--color-text-secondary); line-height: 1.6;">
+                            Al mover datos históricos a un almacenamiento de bajo costo, podemos reducir la factura de almacenamiento de esos datos en más de un 90%. Esto optimiza el presupuesto y asegura que paguemos solo por el rendimiento que realmente necesitamos.
+                        </p>
+                    </div>
+                    <div class="card" style="background-color: rgba(0, 237, 100, 0.1); border: 2px solid var(--color-primary); padding: var(--spacing-lg);">
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-md);">⚡️ Aplicación Más Ágil y Rápida</h4>
+                        <p style="color: var(--color-text-secondary); line-height: 1.6;">
+                            Al reducir el volumen de datos en el clúster principal, las consultas sobre la información reciente son más rápidas. Sus usuarios experimentarán una aplicación con mejor tiempo de respuesta en sus operaciones del día a día.
+                        </p>
+                    </div>
+                    <div class="card" style="background-color: rgba(59, 130, 246, 0.1); border: 2px solid var(--color-info); padding: var(--spacing-lg);">
+                        <h4 style="color: var(--color-info); margin-bottom: var(--spacing-md);">⚙️ Simplificación y Cero Mantenimiento</h4>
+                        <p style="color: var(--color-text-secondary); line-height: 1.6;">
+                            La archivación es automática y gestionada por MongoDB. Esto elimina la necesidad de desarrollar y mantener complejos scripts manuales, reduciendo costos operativos y riesgos de error. Es una solución de "configurar y olvidar".
+                        </p>
+                    </div>
+                    <div class="card" style="background-color: rgba(86, 68, 212, 0.1); border: 2px solid var(--color-accent); padding: var(--spacing-lg);">
+                        <h4 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">🔍 Acceso y Cumplimiento Garantizado</h4>
+                        <p style="color: var(--color-text-secondary); line-height: 1.6;">
+                            Cumpla con las políticas de retención de datos (compliance) de forma económica. Los datos históricos permanecen disponibles para ser consultados, permitiendo generar reportes anuales o auditorías sin esfuerzo y sin tener que restaurar backups.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cómo Funciona -->
+            <div class="card mb-8" style="padding: var(--spacing-2xl);">
+                <h3 style="margin-bottom: var(--spacing-xl);">🔧 ¿Cómo Funciona? Proceso Simplificado</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div style="width: 60px; height: 60px; background-color: var(--color-primary); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--text-xl); margin: 0 auto var(--spacing-lg) auto;">1</div>
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-md);">Definimos la Regla</h4>
+                        <p style="color: var(--color-text-secondary); line-height: 1.6;">
+                            Analizamos los patrones de uso y establecemos una política de archivado clara (ej. archivar facturas cerradas con más de un año de antigüedad).
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <div style="width: 60px; height: 60px; background-color: var(--color-accent); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--text-xl); margin: 0 auto var(--spacing-lg) auto;">2</div>
+                        <h4 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Archivado Automático</h4>
+                        <p style="color: var(--color-text-secondary); line-height: 1.6;">
+                            MongoDB Atlas mueve los datos que cumplen la regla de forma transparente y continua, sin intervención manual.
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <div style="width: 60px; height: 60px; background-color: var(--color-success); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--text-xl); margin: 0 auto var(--spacing-lg) auto;">3</div>
+                        <h4 style="color: var(--color-success); margin-bottom: var(--spacing-md);">Consulta Unificada</h4>
+                        <p style="color: var(--color-text-secondary); line-height: 1.6;">
+                            Su equipo puede seguir consultando <strong>todos los datos</strong> (tanto los activos como los archivados) desde la misma aplicación, como siempre lo ha hecho.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Costos Online Archive -->
+            <div class="card mb-8" style="padding: var(--spacing-2xl);">
+                <h3 style="margin-bottom: var(--spacing-xl);">💰 Costos MongoDB Online Archive</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Tabla de Costos -->
+                    <div>
+                        <h4 style="margin-bottom: var(--spacing-lg);">📊 Desglose de Costos</h4>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid var(--color-primary);">
+                                        <th style="padding: var(--spacing-md); text-align: left; color: var(--color-primary);">Concepto</th>
+                                        <th style="padding: var(--spacing-md); text-align: center; color: var(--color-primary);">Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                        <td style="padding: var(--spacing-md); font-weight: 600;">Almacenamiento (GB)</td>
+                                        <td style="padding: var(--spacing-md); text-align: center;">4812.8</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                        <td style="padding: var(--spacing-md); font-weight: 600;">Costo por GB por día (USD)</td>
+                                        <td style="padding: var(--spacing-md); text-align: center;">0.001578</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                        <td style="padding: var(--spacing-md); font-weight: 600;">Días del mes</td>
+                                        <td style="padding: var(--spacing-md); text-align: center;">30</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                        <td style="padding: var(--spacing-md); font-weight: 600;">Costo total de almacenamiento (USD)</td>
+                                        <td style="padding: var(--spacing-md); text-align: center; color: var(--color-primary);">227.837952</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                        <td style="padding: var(--spacing-md); font-weight: 600;">Consulta mensual desde archivo (TB)</td>
+                                        <td style="padding: var(--spacing-md); text-align: center;">10</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                        <td style="padding: var(--spacing-md); font-weight: 600;">Costo por TB consultado (USD)</td>
+                                        <td style="padding: var(--spacing-md); text-align: center;">5</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                        <td style="padding: var(--spacing-md); font-weight: 600;">Costo total de consultas (USD)</td>
+                                        <td style="padding: var(--spacing-md); text-align: center; color: var(--color-accent);">50</td>
+                                    </tr>
+                                    <tr style="background-color: rgba(0, 237, 100, 0.1);">
+                                        <td style="padding: var(--spacing-md); font-weight: 700; color: var(--color-success);">Costo mensual total (USD)</td>
+                                        <td style="padding: var(--spacing-md); text-align: center; color: var(--color-success); font-weight: 700; font-size: var(--text-lg);">277.837952</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Comparación de Ahorros -->
+                    <div>
+                        <h4 style="margin-bottom: var(--spacing-lg);">💡 Ahorro Potencial</h4>
+                        <div class="card" style="background-color: rgba(0, 237, 100, 0.1); border: 2px solid var(--color-success); padding: var(--spacing-xl);">
+                            <div class="text-center mb-4">
+                                <div class="metric-value" style="color: var(--color-success); font-size: var(--text-4xl); margin-bottom: var(--spacing-md);">~90%</div>
+                                <div class="metric-label" style="font-size: var(--text-lg);">Reducción de Costos</div>
+                            </div>
+                            <p style="color: var(--color-text-secondary); text-align: center; margin-bottom: var(--spacing-lg);">
+                                Comparado con mantener todos los datos en el cluster principal
+                            </p>
+                            <div class="grid grid-cols-1 gap-4">
+                                <div class="flex justify-between" style="padding: var(--spacing-sm) 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <span style="color: var(--color-text-secondary);">Costo Archive Mensual:</span>
+                                    <span style="color: var(--color-success); font-weight: 600;">$277.84</span>
+                                </div>
+                                <div class="flex justify-between" style="padding: var(--spacing-sm) 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <span style="color: var(--color-text-secondary);">Costo Archive Anual:</span>
+                                    <span style="color: var(--color-success); font-weight: 600;">$3,334.05</span>
+                                </div>
+                                <div class="flex justify-between" style="padding: var(--spacing-sm) 0;">
+                                    <span style="color: var(--color-text-secondary);">Procesamiento de Datos:</span>
+                                    <span style="color: var(--color-info); font-weight: 600;">$9 por TB</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arquitectura Online Archive -->
+            <div class="card mb-8" style="padding: var(--spacing-2xl);">
+                <h3 style="margin-bottom: var(--spacing-xl);">🏗️ Arquitectura MongoDB Online Archive - ETB</h3>
+                <div class="text-center" style="margin-bottom: var(--spacing-lg);">
+                    <p style="color: var(--color-text-secondary); font-size: var(--text-lg);">
+                        Flujo de datos automatizado del cluster principal al archivo en la nube
+                    </p>
+                </div>
+                <div class="text-center">
+                    <img src="../../img/oa.svg" alt="Arquitectura Online Archive ETB" style="max-width: 100%; height: auto; border-radius: var(--radius-lg);">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                    <div>
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">🔄 Proceso Automático</h4>
+                        <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg); line-height: 1.8;">
+                            <li style="margin-bottom: var(--spacing-sm);">• Identificación automática de datos históricos</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Migración transparente a almacenamiento económico</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Mantiene índices para consultas rápidas</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Acceso unificado desde aplicaciones</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--color-success); margin-bottom: var(--spacing-lg);">✅ Beneficios Técnicos</h4>
+                        <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg); line-height: 1.8;">
+                            <li style="margin-bottom: var(--spacing-sm);">• Reduce presión en cluster principal</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Mejora rendimiento de consultas frecuentes</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Optimiza uso de memoria RAM</li>
+                            <li style="margin-bottom: var(--spacing-sm);">• Mantiene disponibilidad de datos históricos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Próximos Pasos -->
+            <div class="card mongodb-glow" style="background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); padding: var(--spacing-2xl);">
+                <h3 class="text-gradient" style="margin-bottom: var(--spacing-lg);">🚀 Próximos Pasos</h3>
+                <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-xl);">
+                    Proponemos llevar a cabo las siguientes acciones para implementar MongoDB Online Archive:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="card" style="background-color: rgba(0, 237, 100, 0.1); border: 2px solid var(--color-success); padding: var(--spacing-lg);">
+                        <h4 style="color: var(--color-success); margin-bottom: var(--spacing-md);">1. Análisis</h4>
+                        <p style="color: var(--color-text-secondary); line-height: 1.6;">
+                            Identificar las colecciones y los datos candidatos para el archivado basándose en patrones de uso histórico.
+                        </p>
+                    </div>
+                    <div class="card" style="background-color: rgba(59, 130, 246, 0.1); border: 2px solid var(--color-info); padding: var(--spacing-lg);">
+                        <h4 style="color: var(--color-info); margin-bottom: var(--spacing-md);">2. Estimación</h4>
+                        <p style="color: var(--color-text-secondary); line-height: 1.6;">
+                            Realizar una proyección detallada del ahorro en costos y mejora de rendimiento esperada.
+                        </p>
+                    </div>
+                    <div class="card" style="background-color: rgba(86, 68, 212, 0.1); border: 2px solid var(--color-accent); padding: var(--spacing-lg);">
+                        <h4 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">3. Implementación</h4>
+                        <p style="color: var(--color-text-secondary); line-height: 1.6;">
+                            Presentar un plan de trabajo para activar Online Archive sin interrumpir el servicio.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="section" style="background-color: var(--color-bg-tertiary); border-top: 1px solid rgba(255,255,255,0.1);">
+        <div class="container">
+            <div class="text-center">
+                <div class="navbar-logo mb-4" style="justify-content: center;">
+                    <div style="width: 40px; height: 40px; background: var(--mongodb-gradient); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--color-text-dark); font-weight: 800;">Go</div>
+                    <span class="text-gradient">MDB</span>
+                </div>
+                <p style="color: var(--color-text-muted); margin-bottom: var(--spacing-md);">
+                    Propuestas MongoDB Atlas generadas para ETB
+                </p>
+                <p style="color: var(--color-text-muted); font-size: var(--text-sm);">
+                    Empresa de Telecomunicaciones de Bogotá • Julio 2025
+                </p>
+                <div class="flex justify-center gap-4 mt-4">
+                    <span class="badge badge-primary">MongoDB Atlas M200</span>
+                    <span class="badge badge-secondary">Atlas R300</span>
+                    <span class="badge badge-secondary">Online Archive</span>
+                    <span class="badge badge-secondary">Propuestas ETB</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navegación con scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Smooth scrolling para enlaces internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Configuración de gráficos
+        Chart.defaults.color = '#B8C4CE';
+        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+        // Gráfico de comparación
+        const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+        new Chart(comparisonCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Costo (Invertido)', 'RAM', 'vCPUs', 'Storage', 'Performance', 'Facilidad Migración'],
+                datasets: [
+                    {
+                        label: 'M200',
+                        data: [85, 60, 80, 100, 65, 70], // Valores normalizados a 100
+                        backgroundColor: 'rgba(0, 237, 100, 0.2)',
+                        borderColor: '#00ED64',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#00ED64'
+                    },
+                    {
+                        label: 'R300',
+                        data: [55, 90, 60, 100, 85, 90], // Valores normalizados a 100
+                        backgroundColor: 'rgba(86, 68, 212, 0.2)',
+                        borderColor: '#5644D4',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#5644D4'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        angleLines: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.r + '/100';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Animaciones de entrada
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Aplicar animaciones a las cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

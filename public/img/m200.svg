@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo y título -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e9ecef;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="3" dy="3" stdDeviation="5" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <rect width="1000" height="800" fill="url(#bg-gradient)" rx="10" ry="10"/>
+  
+  <text x="500" y="50" font-family="Arial, sans-serif" font-size="26" font-weight="bold" text-anchor="middle" fill="#2b3990">
+    Arquitectura MongoDB Atlas para ETB con Online Archive
+  </text>
+  
+  <!-- Load Balancer -->
+  <g transform="translate(0, -30)">
+    <rect x="400" y="100" width="200" height="60" rx="10" ry="10" fill="#ff9966" stroke="#e67300" stroke-width="2" filter="url(#shadow)"/>
+    <text x="500" y="135" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">Load Balancer</text>
+    
+    <!-- Línea conectora -->
+    <line x1="500" y1="160" x2="500" y2="200" stroke="#666" stroke-width="3" stroke-dasharray="5,3"/>
+    <polygon points="500,208 495,198 505,198" fill="#666"/>
+  </g>
+  
+  <!-- MongoDB Atlas Cluster -->
+  <g transform="translate(0, -20)">
+    <rect x="275" y="210" width="450" height="80" rx="10" ry="10" fill="#13aa52" stroke="#0d8540" stroke-width="2" filter="url(#shadow)"/>
+    <text x="500" y="250" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="white">MongoDB Atlas - Sharded Cluster M200</text>
+    <text x="500" y="275" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">256GB RAM | 64 vCPUs | 4TB SSD por shard</text>
+    
+    <!-- Líneas conectoras a los shards -->
+    <line x1="500" y1="290" x2="500" y2="310" stroke="#666" stroke-width="3" stroke-dasharray="5,3"/>
+    <line x1="500" y1="310" x2="300" y2="310" stroke="#666" stroke-width="3" stroke-dasharray="5,3"/>
+    <line x1="500" y1="310" x2="700" y2="310" stroke="#666" stroke-width="3" stroke-dasharray="5,3"/>
+    <line x1="300" y1="310" x2="300" y2="330" stroke="#666" stroke-width="3" stroke-dasharray="5,3"/>
+    <line x1="700" y1="310" x2="700" y2="330" stroke="#666" stroke-width="3" stroke-dasharray="5,3"/>
+    <polygon points="300,338 295,328 305,328" fill="#666"/>
+    <polygon points="700,338 695,328 705,328" fill="#666"/> 
+  </g>
+  
+  <!-- Shard 1 -->
+  <g transform="translate(-100, 0)">
+    <rect x="200" y="340" width="200" height="60" rx="10" ry="10" fill="#3498db" stroke="#2980b9" stroke-width="2" filter="url(#shadow)"/>
+    <text x="300" y="370" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">Shard 1 (M200)</text>
+    <text x="300" y="390" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">3 Nodos</text>
+    
+    <!-- Nodos de Shard 1 -->
+    <circle cx="230" cy="440" r="30" fill="#2c3e50" stroke="#34495e" stroke-width="2"/>
+    <text x="230" y="445" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">P</text>
+    
+    <circle cx="300" cy="440" r="30" fill="#7f8c8d" stroke="#95a5a6" stroke-width="2"/>
+    <text x="300" y="445" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">S</text>
+    
+    <circle cx="370" cy="440" r="30" fill="#7f8c8d" stroke="#95a5a6" stroke-width="2"/>
+    <text x="370" y="445" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">S</text>
+    
+    <text x="230" y="490" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">Primario</text>
+    <text x="300" y="490" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">Secundario</text>
+    <text x="370" y="490" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">Secundario</text>
+  </g>
+  
+  <!-- Shard 2 -->
+  <g transform="translate(100, 0)">
+    <rect x="600" y="340" width="200" height="60" rx="10" ry="10" fill="#3498db" stroke="#2980b9" stroke-width="2" filter="url(#shadow)"/>
+    <text x="700" y="370" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">Shard 2 (M200)</text>
+    <text x="700" y="390" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="white">3 Nodos</text>
+    
+    <!-- Nodos de Shard 2 -->
+    <circle cx="630" cy="440" r="30" fill="#2c3e50" stroke="#34495e" stroke-width="2"/>
+    <text x="630" y="445" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">P</text>
+    
+    <circle cx="700" cy="440" r="30" fill="#7f8c8d" stroke="#95a5a6" stroke-width="2"/>
+    <text x="700" y="445" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">S</text>
+    
+    <circle cx="770" cy="440" r="30" fill="#7f8c8d" stroke="#95a5a6" stroke-width="2"/>
+    <text x="770" y="445" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="white">S</text>
+    
+    <text x="630" y="490" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">Primario</text>
+    <text x="700" y="490" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">Secundario</text>
+    <text x="770" y="490" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">Secundario</text>
+  </g>
+  
+  <!-- Online Archive -->
+  <g transform="translate(0, 30)">
+    <rect x="375" y="530" width="250" height="70" rx="10" ry="10" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" filter="url(#shadow)"/>
+    <text x="500" y="565" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">Online Archive</text>
+    <text x="500" y="585" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">Datos fríos en almacenamiento económico</text>
+    
+    <!-- Flecha desde Shard 1 -->
+    <path d="M 300 480 C 300 505 350 510 400 530" stroke="#8e44ad" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+    
+    <!-- Flecha desde Shard 2 -->
+    <path d="M 700 480 C 700 505 650 510 600 530" stroke="#8e44ad" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+    
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#8e44ad"/>
+      </marker>
+    </defs>
+  </g>
+  
+  <!-- Backups -->
+  <g>
+    <rect x="170" y="640" width="200" height="60" rx="10" ry="10" fill="#2ecc71" stroke="#27ae60" stroke-width="2" filter="url(#shadow)"/>
+    <text x="270" y="675" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">Backups</text>
+    <text x="270" y="695" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">PITR y snapshots automáticos</text>
+    
+    <!-- Línea conectora -->
+    <line x1="280" y1="580" x2="270" y2="640" stroke="#27ae60" stroke-width="2" stroke-dasharray="5,3"/>
+    <polygon points="270,640 265,630 275,630" fill="#27ae60"/>
+  </g>
+  
+  <!-- Monitoring -->
+  <g>
+    <rect x="630" y="640" width="200" height="60" rx="10" ry="10" fill="#f1c40f" stroke="#f39c12" stroke-width="2" filter="url(#shadow)"/>
+    <text x="730" y="675" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">Monitoring</text>
+    <text x="730" y="695" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#333">CPU, RAM, IOPS, Alertas</text>
+    
+    <!-- Línea conectora -->
+    <line x1="720" y1="580" x2="730" y2="640" stroke="#f39c12" stroke-width="2" stroke-dasharray="5,3"/>
+    <polygon points="730,640 725,630 735,630" fill="#f39c12"/>
+  </g>
+  
+  <!-- Soporte Pro -->
+  <g>
+    <rect x="400" y="700" width="200" height="60" rx="10" ry="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2" filter="url(#shadow)"/>
+    <text x="500" y="735" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="white">Soporte Pro</text>
+    <text x="500" y="755" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">24/7 con SLA prioritaria</text>
+    
+    <!-- Línea conectora -->
+    <line x1="500" y1="600" x2="500" y2="700" stroke="#c0392b" stroke-width="2" stroke-dasharray="5,3"/>
+    <polygon points="500,700 495,690 505,690" fill="#c0392b"/>
+  </g>
+  
+  <!-- Leyenda -->
+  <g transform="translate(30, 30)">
+    <rect x="30" y="100" width="180" height="170" rx="5" ry="5" fill="white" stroke="#ccc" stroke-width="1" opacity="0.9"/>
+    <text x="120" y="125" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333">Leyenda</text>
+    
+    <circle cx="50" cy="150" r="10" fill="#2c3e50"/>
+    <text x="65" y="155" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#333">Nodo Primario</text>
+    
+    <circle cx="50" cy="180" r="10" fill="#7f8c8d"/>
+    <text x="65" y="185" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#333">Nodo Secundario</text>
+    
+    <rect x="45" y="205" width="10" height="10" fill="#9b59b6"/>
+    <text x="65" y="215" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#333">Datos Archivados</text>
+    
+    <rect x="45" y="235" width="10" height="10" fill="#13aa52"/>
+    <text x="65" y="245" font-family="Arial, sans-serif" font-size="12" text-anchor="start" fill="#333">Clúster Atlas</text>
+  </g>
+  
+ 
+</svg>

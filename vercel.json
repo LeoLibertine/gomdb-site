@@ -9,7 +9,7 @@
   ],
   "routes": [
     { "handle": "filesystem" },
-   
+
     {
       "src": "/clientes/fp/sync1(?:/.*)?$",
       "dest": "/clientes/fp/sync1.html"
@@ -62,6 +62,22 @@
     {
       "src": "/clientes/etb/licenciamiento(?:/.*)?$",
       "dest": "/clientes/etb/licenciamiento.html"
+    },
+    {
+      "src": "/clientes/etb/etb-atlas-propuesta1(?:/.*)?$",
+      "dest": "/clientes/etb/etb-atlas-propuesta1.html"
+    },
+    {
+      "src": "/clientes/etb/etb-atlas-propuesta2(?:/.*)?$",
+      "dest": "/clientes/etb/etb-atlas-propuesta2.html"
+    },
+    {
+      "src": "/clientes/etb/optimizacion(?:/.*)?$",
+      "dest": "/clientes/etb/optimizacion.html"
+    },
+    {
+      "src": "/clientes/etb/ea-propuesta1(?:/.*)?$",
+      "dest": "/clientes/etb/ea-propuesta1.html"
     },
     {
       "src": "/clientes/segurosbolivar/poc(?:/.*)?$",
