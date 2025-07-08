@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta MongoDB AE para ETB</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css">
+    <style>
+        /* Estilos adicionales específicos para esta propuesta */
+        .proposal-header {
+            background: linear-gradient(135deg, rgba(0, 30, 43, 0.95) 0%, rgba(13, 42, 61, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .proposal-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .option-card {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 237, 100, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .option-card:hover::before {
+            left: 100%;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 237, 100, 0.3);
+        }
+        
+        .architecture-container {
+            background-color: var(--color-bg-tertiary);
+            border: 2px solid rgba(0, 237, 100, 0.3);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .architecture-container::before {
+            content: '📊';
+            position: absolute;
+            font-size: 200px;
+            opacity: 0.05;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .architecture-placeholder {
+            text-align: center;
+            color: var(--color-text-muted);
+            z-index: 1;
+        }
+        
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-2xl);
+        }
+        
+        .pros, .cons {
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+        }
+        
+        .pros {
+            background-color: rgba(0, 237, 100, 0.1);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+        }
+        
+        .cons {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.5) 100%);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background-color: var(--color-bg-tertiary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .requirement-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--color-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .etb-logo {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            letter-spacing: 2px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-20px); }
+            60% { transform: translateX(-50%) translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="proposal-header">
+        <div class="container">
+            <div class="section-lg text-center">
+                <div class="etb-logo mb-4">ETB</div>
+                <h1 class="text-gradient mb-4">Propuesta de MongoDB AE para ETB</h1>
+                <p class="text-xl mb-6" style="color: var(--color-text-secondary); max-width: 800px; margin: 0 auto;">
+                    Arquitectura Enterprise Advanced optimizada para las necesidades de escalabilidad y rendimiento de ETB
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a href="#opcion1" class="btn btn-primary btn-lg">Ver Opción 1</a>
+                    <a href="#opcion2" class="btn btn-secondary btn-lg">Ver Opción 2</a>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+                    <path d="M15 20L10 15L12 13L15 16L18 13L20 15L15 20Z" fill="#00ED64"/>
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <!-- Métricas Clave -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center mb-6">Métricas Clave del Proyecto</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="metric-card">
+                    <div class="metric-value"></div>
+                    <div class="metric-label">Operaciones/seg</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value"></div>
+                    <div class="metric-label">Latencia</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value"></div>
+                    <div class="metric-label">Disponibilidad</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value"></div>
+                    <div class="metric-label">Ahorro en Storage</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Opción 1: Arquitectura con 3 Shards -->
+    <section id="opcion1" class="section" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <div class="option-card card card-gradient">
+                <div class="badge badge-primary mb-4">Recomendada</div>
+                <h2 class="mb-4">Opción 1: Arquitectura con 3 Shards</h2>
+                <p class="text-lg mb-6" style="color: var(--color-text-secondary);">
+                    Arquitectura robusta diseñada para máximo rendimiento y escalabilidad horizontal
+                </p>
+
+                <!-- Contenedor para el diagrama SVG -->
+                <div class="architecture-container mb-6">
+                    
+                    <!-- Aquí puedes insertar tu SVG directamente o usar una etiqueta img -->
+                    <img src="../../img/ae-3shards.svg" alt="Arquitectura 3 Shards" style="width: 100%; height: auto;">
+                </div>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h3 class="mb-3" style="color: var(--color-primary);">✅ Ventajas</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            <li class="mb-2">✓ Distribución óptima de carga</li>
+                            <li class="mb-2">✓ Mayor capacidad de procesamiento paralelo</li>
+                            <li class="mb-2">✓ Mejor tolerancia a fallos</li>
+                            <li class="mb-2">✓ Escalabilidad horizontal sin límites</li>
+                            <li class="mb-2">✓ Rendimiento consistente bajo alta carga</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h3 class="mb-3" style="color: var(--color-error);">⚠️ Consideraciones</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            <li class="mb-2">• Mayor inversión inicial en infraestructura</li>
+                            <li class="mb-2">• Complejidad operacional incrementada</li>
+                            <li class="mb-2">• Requiere más recursos de administración</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <h3 class="mb-4">Especificaciones Técnicas</h3>
+                    <div class="code-block">
+                        <pre style="margin: 0; color: var(--color-primary);">
+Shards: 3 x R300 (256GB RAM, 64 vCPUs, 6TB Storage cada uno)
+Replica Set: 3 nodos por shard (1 Primary + 2 Secondary)
+Config Servers: 3 nodos CSRS
+Mongos Routers: Mínimo 2 para alta disponibilidad</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Opción 2: Arquitectura con 2 Shards -->
+    <section id="opcion2" class="section">
+        <div class="container">
+            <div class="option-card card">
+                <div class="badge badge-secondary mb-4">Alternativa Optimizada</div>
+                <h2 class="mb-4">Opción 2: Arquitectura con 2 Shards</h2>
+                <p class="text-lg mb-4" style="color: var(--color-text-secondary);">
+                    Arquitectura optimizada que requiere un trabajo previo de optimización exhaustivo
+                </p>
+
+                <div class="card" style="background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);">
+                    <h4 style="color: var(--color-warning);">⚠️ Importante: Requisitos Previos</h4>
+                    <p style="color: var(--color-text-secondary);">
+                        El uso de esta arquitectura <strong>depende críiticamente</strong> de la optimización de índices y memoria. 
+                        <strong>Sin esta optimización, esta arquitectura NO es viable</strong> para los volúmenes de datos y 
+                        transacciones esperados en ETB.
+                    </p>
+                </div>
+
+                <!-- Contenedor para el diagrama SVG -->
+                <div class="architecture-container mb-6">
+                    
+                    <!-- Aquí puedes insertar tu SVG directamente o usar una etiqueta img -->
+                    <img src="../../img/ae-2shards.svg" alt="Arquitectura 2 Shards" style="width: 100%; height: auto;">
+                </div>
+
+                <div class="mt-6">
+                    <h3 class="mb-4">Requisitos de Optimización Previos</h3>
+                    <div class="requirement-item">
+                        <div class="requirement-icon">📊</div>
+                        <div>
+                            <h4 style="margin: 0;">Análisis y Rediseño de Índices</h4>
+                            <p style="margin: 0; color: var(--color-text-muted);">
+                                Identificación y eliminación de índices redundantes, creación de índices compuestos optimizados
+                            </p>
+                        </div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-icon">💾</div>
+                        <div>
+                            <h4 style="margin: 0;">Optimización de Memoria y Cache</h4>
+                            <p style="margin: 0; color: var(--color-text-muted);">
+                                Ajuste fino de WiredTiger cache, configuración de memory limits por operación
+                            </p>
+                        </div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-icon">🔍</div>
+                        <div>
+                            <h4 style="margin: 0;">Query Performance Tuning</h4>
+                            <p style="margin: 0; color: var(--color-text-muted);">
+                                Reescritura de queries críticas, implementación de agregaciones optimizadas
+                            </p>
+                        </div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-icon">📦</div>
+                        <div>
+                            <h4 style="margin: 0;">Implementación de Online Archive</h4>
+                            <p style="margin: 0; color: var(--color-text-muted);">
+                                Movimiento de datos históricos a storage de menor costo para liberar recursos
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pros-cons mt-6">
+                    <div class="pros">
+                        <h3 class="mb-3" style="color: var(--color-primary);">✅ Ventajas (Post-Optimización)</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            <li class="mb-2">✓ Menor inversión en infraestructura</li>
+                            <li class="mb-2">✓ Administración más simple</li>
+                            <li class="mb-2">✓ Menor complejidad operacional</li>
+                            <li class="mb-2">✓ Costos operativos reducidos</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h3 class="mb-3" style="color: var(--color-error);">⚠️ Riesgos</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            <li class="mb-2">• Menor margen para picos de carga</li>
+                            <li class="mb-2">• Requiere optimización continua</li>
+                            <li class="mb-2">• Límites de escalabilidad más bajos</li>
+                            <li class="mb-2">• Riesgo de degradación sin mantenimiento</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <h3 class="mb-4">Especificaciones Técnicas</h3>
+                    <div class="code-block">
+                        <pre style="margin: 0; color: var(--color-primary);">
+Shards: 2 x R400 (256GB RAM, 64 vCPUs, 6TB Storage cada uno)
+Replica Set: 3 nodos por shard (1 Primary + 2 Secondary)
+Config Servers: 3 nodos CSRS
+Mongos Routers: Mínimo 2 para alta disponibilidad
+Online Archive: Obligatorio para datos históricos</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recomendación Final -->
+    <section class="section" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <div class="card card-gradient text-center">
+                <h2 class="mb-4">Recomendación Final</h2>
+                <p class="text-xl mb-6" style="max-width: 800px; margin: 0 auto;">
+                    Para ETB, recomendamos <strong>fuertemente la Opción 1 (3 Shards)</strong> debido a:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="metric-card">
+                        <h4>Crecimiento Proyectado</h4>
+                        <p style="color: var(--color-text-muted);">Soporta el crecimiento esperado de 300% en los próximos 3 años</p>
+                    </div>
+                    <div class="metric-card">
+                        <h4>Estabilidad Operacional</h4>
+                        <p style="color: var(--color-text-muted);">Menor riesgo de interrupciones y mejor distribución de carga</p>
+                    </div>
+                    <div class="metric-card">
+                        <h4>ROI a Largo Plazo</h4>
+                        <p style="color: var(--color-text-muted);">Menor costo total de propiedad considerando el ciclo de vida completo</p>
+                    </div>
+                </div>
+                <a href="#contacto" class="btn btn-primary btn-lg">Iniciar Implementación</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background-color: var(--color-bg-primary); padding: var(--spacing-2xl) 0;">
+        <div class="container text-center">
+            <p style="color: var(--color-text-muted);">
+                © 2025 Propuesta MongoDB Enterprise Advanced para ETB | Arquitectura de Alta Disponibilidad
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling para los enlaces internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animación de aparición al hacer scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeIn');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.option-card, .metric-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

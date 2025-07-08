@@ -1,0 +1,257 @@
+<svg viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradientes -->
+    <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ED64;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00D757;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#001E2B;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0D2A3D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#001E2B;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0D2A3D;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#112331;stop-opacity:0.8" />
+    </linearGradient>
+    
+    <!-- Filtros -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Fondo -->
+  <rect width="1400" height="900" fill="url(#bgGradient)"/>
+  
+  <!-- Patrón de puntos de fondo -->
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="2" cy="2" r="1" fill="#00ED64" opacity="0.1"/>
+  </pattern>
+  <rect width="1400" height="900" fill="url(#dots)"/>
+  
+  <!-- Título -->
+  <text x="700" y="50" text-anchor="middle" fill="#FFFFFF" font-size="36" font-weight="700" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+    Resolviendo las Inquietudes de Bancolombia con MongoDB Atlas
+  </text>
+  
+  <!-- Subtítulo -->
+  <text x="700" y="85" text-anchor="middle" fill="#B8C4CE" font-size="18" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+    Transformando desafíos en oportunidades con tecnología de vanguardia
+  </text>
+  
+  <!-- Logo MongoDB -->
+  <g transform="translate(650, 110)">
+    <path d="M50 0L75 15V30L50 45L25 30V15L50 0Z" stroke="#00ED64" stroke-width="2" fill="none" filter="url(#glow)"/>
+    <circle cx="50" cy="22.5" r="8" fill="#00ED64"/>
+  </g>
+  
+  <!-- Columna Izquierda: Inquietudes -->
+  <text x="250" y="200" text-anchor="middle" fill="#EF4444" font-size="24" font-weight="600">
+    🚨 Inquietudes Actuales
+  </text>
+  
+  <!-- Inquietud 1: Rendimiento -->
+  <g transform="translate(50, 220)">
+    <rect x="0" y="0" width="400" height="140" rx="16" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="400" height="140" rx="16" fill="none" stroke="#EF4444" stroke-width="1" opacity="0.5"/>
+    
+    <!-- Icono -->
+    <circle cx="40" cy="40" r="20" fill="#EF4444" opacity="0.2"/>
+    <path d="M40 30 L40 45 M40 50 L40 50" stroke="#EF4444" stroke-width="3" stroke-linecap="round"/>
+    
+    <!-- Texto -->
+    <text x="70" y="35" fill="#FFFFFF" font-size="18" font-weight="600">Rendimiento con 20M+ registros</text>
+    <text x="20" y="70" fill="#B8C4CE" font-size="14">
+      <tspan x="20" dy="0">"JOINs complejos entre tablas masivas causan</tspan>
+      <tspan x="20" dy="18">cuellos de botella. Consultas de 30+ segundos"</tspan>
+    </text>
+    <text x="20" y="120" fill="#718096" font-size="12" font-style="italic">- José Camacho</text>
+  </g>
+  
+  <!-- Inquietud 2: Particionamiento -->
+  <g transform="translate(50, 370)">
+    <rect x="0" y="0" width="400" height="140" rx="16" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="400" height="140" rx="16" fill="none" stroke="#F59E0B" stroke-width="1" opacity="0.5"/>
+    
+    <!-- Icono -->
+    <circle cx="40" cy="40" r="20" fill="#F59E0B" opacity="0.2"/>
+    <g transform="translate(30, 30)">
+      <rect x="0" y="0" width="8" height="20" fill="#F59E0B"/>
+      <rect x="12" y="0" width="8" height="20" fill="#F59E0B"/>
+    </g>
+    
+    <!-- Texto -->
+    <text x="70" y="35" fill="#FFFFFF" font-size="18" font-weight="600">Particionamiento Manual</text>
+    <text x="20" y="70" fill="#B8C4CE" font-size="14">
+      <tspan x="20" dy="0">"Manejamos particiones por mes manualmente.</tspan>
+      <tspan x="20" dy="18">¿Cómo automatizar esto en MongoDB?"</tspan>
+    </text>
+    <text x="20" y="120" fill="#718096" font-size="12" font-style="italic">- Héctor</text>
+  </g>
+  
+  <!-- Inquietud 3: Migración -->
+  <g transform="translate(50, 520)">
+    <rect x="0" y="0" width="400" height="140" rx="16" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="400" height="140" rx="16" fill="none" stroke="#3B82F6" stroke-width="1" opacity="0.5"/>
+    
+    <!-- Icono -->
+    <circle cx="40" cy="40" r="20" fill="#3B82F6" opacity="0.2"/>
+    <path d="M30 40 L50 40 M45 35 L50 40 L45 45" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Texto -->
+    <text x="70" y="35" fill="#FFFFFF" font-size="18" font-weight="600">Migración Compleja</text>
+    <text x="20" y="70" fill="#B8C4CE" font-size="14">
+      <tspan x="20" dy="0">"Datos cifrados y comprimidos desde PostgreSQL.</tspan>
+      <tspan x="20" dy="18">¿Cómo migrar sin downtime?"</tspan>
+    </text>
+    <text x="20" y="120" fill="#718096" font-size="12" font-style="italic">- Francisco</text>
+  </g>
+  
+  <!-- Inquietud 4: Capacitación -->
+  <g transform="translate(50, 670)">
+    <rect x="0" y="0" width="400" height="120" rx="16" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="400" height="120" rx="16" fill="none" stroke="#8B5CF6" stroke-width="1" opacity="0.5"/>
+    
+    <!-- Icono -->
+    <circle cx="40" cy="40" r="20" fill="#8B5CF6" opacity="0.2"/>
+    <path d="M30 35 L30 45 L50 45 L50 35 M35 35 L35 30 L45 30 L45 35" stroke="#8B5CF6" stroke-width="2" fill="none"/>
+    
+    <!-- Texto -->
+    <text x="70" y="35" fill="#FFFFFF" font-size="18" font-weight="600">Curva de Aprendizaje</text>
+    <text x="20" y="70" fill="#B8C4CE" font-size="14">
+      <tspan x="20" dy="0">"El equipo necesita aprender MongoDB"</tspan>
+    </text>
+    <text x="20" y="100" fill="#718096" font-size="12" font-style="italic">- Equipo técnico</text>
+  </g>
+  
+  <!-- Flecha Central -->
+  <g transform="translate(640, 430)">
+    <path d="M0 0 L80 0 M60 -15 L80 0 L60 15" stroke="#00ED64" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+      <animate attributeName="stroke-dasharray" values="0 100;100 0" dur="2s" repeatCount="indefinite"/>
+    </path>
+    <text x="40" y="-10" text-anchor="middle" fill="#00ED64" font-size="16" font-weight="600">MongoDB Atlas</text>
+  </g>
+  
+  <!-- Columna Derecha: Soluciones -->
+  <text x="1050" y="200" text-anchor="middle" fill="#00ED64" font-size="24" font-weight="600">
+    ✅ Soluciones MongoDB Atlas
+  </text>
+  
+  <!-- Solución 1: Rendimiento -->
+  <g transform="translate(850, 220)">
+    <rect x="0" y="0" width="500" height="140" rx="16" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="500" height="140" rx="16" fill="none" stroke="#00ED64" stroke-width="2" opacity="0.8"/>
+    
+    <!-- Icono -->
+    <circle cx="40" cy="40" r="20" fill="#00ED64" opacity="0.2"/>
+    <path d="M30 45 L35 40 L40 43 L48 30" stroke="#00ED64" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Texto -->
+    <text x="70" y="35" fill="#00ED64" font-size="18" font-weight="600">Vistas Materializadas + Índices Compuestos</text>
+    <text x="20" y="70" fill="#FFFFFF" font-size="14">
+      <tspan x="20" dy="0">• Pre-agregación de datos complejos</tspan>
+      <tspan x="20" dy="18">• Consultas de 30s → 600ms (50x más rápido)</tspan>
+    </text>
+    <rect x="20" y="110" width="200" height="8" rx="4" fill="#0D2A3D"/>
+    <rect x="20" y="110" width="180" height="8" rx="4" fill="#00ED64">
+      <animate attributeName="width" from="0" to="180" dur="2s" fill="freeze"/>
+    </rect>
+  </g>
+  
+  <!-- Solución 2: Sharding -->
+  <g transform="translate(850, 370)">
+    <rect x="0" y="0" width="500" height="140" rx="16" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="500" height="140" rx="16" fill="none" stroke="#00ED64" stroke-width="2" opacity="0.8"/>
+    
+    <!-- Icono -->
+    <circle cx="40" cy="40" r="20" fill="#00ED64" opacity="0.2"/>
+    <g transform="translate(30, 30)">
+      <rect x="0" y="0" width="8" height="8" fill="#00ED64"/>
+      <rect x="12" y="0" width="8" height="8" fill="#00ED64"/>
+      <rect x="0" y="12" width="8" height="8" fill="#00ED64"/>
+      <rect x="12" y="12" width="8" height="8" fill="#00ED64"/>
+    </g>
+    
+    <!-- Texto -->
+    <text x="70" y="35" fill="#00ED64" font-size="18" font-weight="600">Sharding Automático por Fecha</text>
+    <text x="20" y="70" fill="#FFFFFF" font-size="14">
+      <tspan x="20" dy="0">• Distribución automática sin intervención manual</tspan>
+      <tspan x="20" dy="18">• Balanceo de carga inteligente entre shards</tspan>
+    </text>
+    <text x="20" y="115" fill="#B8C4CE" font-size="12">sh.shardCollection("tdc.transacciones", {fecha: 1})</text>
+  </g>
+  
+  <!-- Solución 3: CDC -->
+  <g transform="translate(850, 520)">
+    <rect x="0" y="0" width="500" height="140" rx="16" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="500" height="140" rx="16" fill="none" stroke="#00ED64" stroke-width="2" opacity="0.8"/>
+    
+    <!-- Icono -->
+    <circle cx="40" cy="40" r="20" fill="#00ED64" opacity="0.2"/>
+    <path d="M25 40 L35 40 M35 40 L35 35 L45 35 L45 40 M45 40 L55 40" stroke="#00ED64" stroke-width="2" stroke-linecap="round"/>
+    
+    <!-- Texto -->
+    <text x="70" y="35" fill="#00ED64" font-size="18" font-weight="600">CDC + AWS Glue Integration</text>
+    <text x="20" y="70" fill="#FFFFFF" font-size="14">
+      <tspan x="20" dy="0">• Reutiliza infraestructura ETL existente</tspan>
+      <tspan x="20" dy="18">• Migración sin downtime con rollback seguro</tspan>
+    </text>
+    <circle cx="40" cy="115" r="3" fill="#00ED64">
+      <animate attributeName="cx" values="40;460;40" dur="3s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Solución 4: Universidad -->
+  <g transform="translate(850, 670)">
+    <rect x="0" y="0" width="500" height="120" rx="16" fill="url(#cardGradient)" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="500" height="120" rx="16" fill="none" stroke="#00ED64" stroke-width="2" opacity="0.8"/>
+    
+    <!-- Icono -->
+    <circle cx="40" cy="40" r="20" fill="#00ED64" opacity="0.2"/>
+    <path d="M30 30 L50 30 L50 50 L30 50 Z M35 30 L35 25 L45 25 L45 30" stroke="#00ED64" stroke-width="2" fill="none"/>
+    
+    <!-- Texto -->
+    <text x="70" y="35" fill="#00ED64" font-size="18" font-weight="600">MongoDB University + AI Tools</text>
+    <text x="20" y="70" fill="#FFFFFF" font-size="14">
+      <tspan x="20" dy="0">• Certificación incluida + Soporte 24/7</tspan>
+      <tspan x="20" dy="18">• Compass AI: queries en lenguaje natural</tspan>
+    </text>
+  </g>
+  
+  <!-- Resultado Final -->
+  <g transform="translate(500, 820)">
+    <rect x="0" y="0" width="400" height="60" rx="30" fill="url(#primaryGradient)" filter="url(#glow)"/>
+    <text x="200" y="40" text-anchor="middle" fill="#001E2B" font-size="20" font-weight="700">
+      = Plataforma Lista para el Futuro
+    </text>
+  </g>
+  
+  <!-- Animación de partículas -->
+  <g opacity="0.3">
+    <circle r="2" fill="#00ED64">
+      <animateMotion dur="10s" repeatCount="indefinite">
+        <mpath href="#particlePath1"/>
+      </animateMotion>
+    </circle>
+    <circle r="2" fill="#00ED64">
+      <animateMotion dur="12s" repeatCount="indefinite">
+        <mpath href="#particlePath2"/>
+      </animateMotion>
+    </circle>
+  </g>
+  
+  <!-- Paths para animación -->
+  <path id="particlePath1" d="M100,400 Q350,300 600,400 T1100,400" fill="none"/>
+  <path id="particlePath2" d="M100,500 Q350,400 600,500 T1100,500" fill="none"/>
+</svg>

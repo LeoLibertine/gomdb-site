@@ -80,6 +80,10 @@
       "dest": "/clientes/etb/ea-propuesta1.html"
     },
     {
+      "src": "/clientes/etb/ea-propuesta2(?:/.*)?$",
+      "dest": "/clientes/etb/ea-propuesta2.html"
+    },
+    {
       "src": "/clientes/segurosbolivar/poc(?:/.*)?$",
       "dest": "/clientes/segurosbolivar/poc.html"
     },
@@ -136,6 +140,10 @@
     {
       "src": "/clientes/bancolombia/matrizopciones(?:/.*)?$",
       "dest": "/clientes/bancolombia/matrizopciones.html"
+    },
+    {
+      "src": "/clientes/bancolombia/tdc-solucion(?:/.*)?$",
+      "dest": "/clientes/bancolombia/tdc-solucion.html"
     },
     {
       "src": "/clientes/(?:cencosud|bancolombia)/document-mongo(?:/.*)?$",

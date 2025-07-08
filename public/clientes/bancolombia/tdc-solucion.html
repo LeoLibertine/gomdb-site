@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB para Bancolombia - Transformación Digital TDC</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para esta presentación */
+        .timeline-item {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .metric-card {
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 237, 100, 0.2);
+        }
+        
+        .pattern-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pattern-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 237, 100, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .pattern-card:hover::before {
+            left: 100%;
+        }
+        
+        .floating-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .progress-bar {
+            width: 0;
+            transition: width 2s ease;
+        }
+        
+        .progress-bar.animate {
+            width: var(--progress);
+        }
+        
+        .code-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+        }
+        
+        @media (max-width: 768px) {
+            .code-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .concern-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .concern-card:hover {
+            background-color: rgba(0, 237, 100, 0.05);
+        }
+        
+        .solution-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .solution-content.active {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegación -->
+    <nav class="navbar" id="navbar">
+        <div class="container navbar-container">
+            <div class="navbar-logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <path d="M20 5L35 15V25L20 35L5 25V15L20 5Z" stroke="var(--color-primary)" stroke-width="2" fill="none"/>
+                    <circle cx="20" cy="20" r="5" fill="var(--color-primary)"/>
+                </svg>
+                <span class="text-gradient">MongoDB + Bancolombia</span>
+            </div>
+            <div class="navbar-links">
+                <a href="#overview" class="navbar-link">Visión General</a>
+                <a href="#architecture" class="navbar-link">Arquitectura</a>
+                <a href="#modeling" class="navbar-link">Modelado</a>
+                <a href="#concerns" class="navbar-link">Inquietudes</a>
+                <a href="#benefits" class="navbar-link">Beneficios</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="text-center animate-fadeIn">
+                <div class="badge badge-primary mb-4">
+                    <svg width="16" height="16" fill="currentColor" class="floating-icon">
+                        <circle cx="8" cy="8" r="2"/>
+                        <path d="M8 4a4 4 0 100 8 4 4 0 000-8z" opacity="0.3"/>
+                    </svg>
+                    Proyecto TDC - Transformación Digital
+                </div>
+                <h1 class="text-gradient mb-4">MongoDB: La Plataforma de Datos del Futuro para Bancolombia</h1>
+                <p class="text-xl mb-6" style="max-width: 800px; margin: 0 auto;">
+                    Una estrategia integral para revolucionar su plataforma de pagos y transacciones con 
+                    rendimiento excepcional, escalabilidad ilimitada y agilidad sin precedentes.
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a href="#architecture" class="btn btn-primary btn-lg">
+                        <svg width="20" height="20" fill="currentColor">
+                            <path d="M10 2l8 8-8 8-1.5-1.5L14 11H2V9h12l-5.5-5.5L10 2z"/>
+                        </svg>
+                        Explorar Solución
+                    </a>
+                    <button class="btn btn-secondary btn-lg" onclick="scrollToSection('concerns')">
+                        Resolver Inquietudes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Inquietudes y Soluciones con Diagrama -->
+    <section class="section" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-3">Transformando Desafíos en Oportunidades</h2>
+            <p class="text-center text-xl mb-6" style="max-width: 800px; margin: 0 auto;">
+                Entendemos sus preocupaciones. MongoDB Atlas tiene una solución probada para cada una.
+            </p>
+            
+            <!-- Contenedor para el diagrama SVG -->
+            <div class="card card-gradient" style="padding: 0; overflow: hidden;">
+                <img src="../../img/tdc-solucion.svg" 
+                     alt="Diagrama de Inquietudes y Soluciones MongoDB" 
+                     style="width: 100%; height: auto; display: block;"
+                     class="animate-fadeIn"/>
+            </div>
+            
+            <!-- Texto adicional -->
+            <div class="text-center mt-6">
+                <p class="text-lg text-secondary mb-4">
+                    Cada inquietud expresada por su equipo tiene una respuesta técnica sólida y casos de éxito que la respaldan.
+                </p>
+                <a href="#concerns" class="btn btn-secondary">
+                    <svg width="20" height="20" fill="currentColor">
+                        <path d="M7 10l5 5 5-5z"/>
+                    </svg>
+                    Ver Detalles de Cada Solución
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Casos de Éxito en la Industria Financiera -->
+    <section class="section" id="overview">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-3">Casos de Éxito en la Industria Financiera</h2>
+            <p class="text-center text-xl mb-6" style="max-width: 800px; margin: 0 auto;">
+                Instituciones financieras líderes ya están transformando sus operaciones con MongoDB Atlas
+            </p>
+            
+            <!-- Casos destacados en cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                <!-- Citizens Bank -->
+                <a href="https://www.mongodb.com/solutions/customer-case-studies/citizens-bank" target="_blank" class="card card-gradient transform hover:scale-105 transition-all duration-300 cursor-pointer" style="text-decoration: none; color: inherit;">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-12 h-12 rounded-full bg-primary bg-opacity-20 flex items-center justify-center">
+                            <svg width="24" height="24" fill="var(--color-primary)">
+                                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold">Citizens Bank</h3>
+                            <p class="text-sm text-secondary">Detección de Fraude</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="text-4xl font-bold text-primary mb-1">Semanas → Minutos</div>
+                        <p class="text-sm">Implementación de reglas antifraude</p>
+                    </div>
+                    <p class="text-xs text-secondary">
+                        Pasó de procesos en lote a detección en tiempo real, reduciendo pérdidas y falsos positivos
+                    </p>
+                    <div class="text-xs text-primary mt-2">Ver caso completo →</div>
+                </a>
+
+                <!-- Agibank -->
+                <a href="https://www.mongodb.com/solutions/customer-case-studies/agibank" target="_blank" class="card card-gradient transform hover:scale-105 transition-all duration-300 cursor-pointer" style="text-decoration: none; color: inherit;">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-12 h-12 rounded-full bg-primary bg-opacity-20 flex items-center justify-center">
+                            <svg width="24" height="24" fill="var(--color-primary)">
+                                <path d="M3 13h2v7H3zm4-8h2v15H7zm4-2h2v17h-2zm4 4h2v13h-2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold">Agibank</h3>
+                            <p class="text-sm text-secondary">Sistema ECM</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="text-4xl font-bold text-primary mb-1">4.8x más rápido</div>
+                        <p class="text-sm">vs PostgreSQL anterior</p>
+                    </div>
+                    <div class="flex gap-3 text-xs">
+                        <span class="badge badge-secondary">90% más rentable</span>
+                        <span class="badge badge-secondary">8h/mes ahorradas</span>
+                    </div>
+                    <div class="text-xs text-primary mt-2">Ver caso completo →</div>
+                </a>
+
+                <!-- Temenos -->
+                <a href="https://www.mongodb.com/blog/post/temenos-banking-cloud-scales-record-high-transactions-mongodb-atlas-microsoft-azure?hideMenu=1" target="_blank" class="card card-gradient transform hover:scale-105 transition-all duration-300 cursor-pointer" style="text-decoration: none; color: inherit;">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-12 h-12 rounded-full bg-primary bg-opacity-20 flex items-center justify-center">
+                            <svg width="24" height="24" fill="var(--color-primary)">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold">Temenos</h3>
+                            <p class="text-sm text-secondary">Banking Cloud</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="text-4xl font-bold text-primary mb-1">150,000 TPS</div>
+                        <p class="text-sm">Transacciones por segundo</p>
+                    </div>
+                    <p class="text-xs text-secondary">
+                        50% más rendimiento usando solo 1/3 de los recursos
+                    </p>
+                    <div class="text-xs text-primary mt-2">Ver caso completo →</div>
+                </a>
+            </div>
+
+            <!-- Más casos en formato compacto -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Koibanx -->
+                <a href="https://www.mongodb.com/solutions/customer-case-studies/koibanx" target="_blank" class="card card-bordered flex items-center gap-4 p-4 hover:bg-primary hover:bg-opacity-5 transition-all cursor-pointer" style="text-decoration: none; color: inherit;">
+                    <div class="flex-shrink-0">
+                        <div class="w-16 h-16 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
+                            <span class="text-2xl font-bold text-primary">K</span>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold flex items-center gap-2">
+                            Koibanx
+                            <span class="badge badge-primary text-xs">Cripto</span>
+                        </h4>
+                        <p class="text-sm text-secondary">4.5M transacciones en 10 minutos</p>
+                        <p class="text-xs text-muted">Eliminó cuellos de botella en blockchain</p>
+                    </div>
+                </a>
+
+                <!-- FitBank -->
+                <a href="https://www.mongodb.com/solutions/customer-case-studies/fitbank" target="_blank" class="card card-bordered flex items-center gap-4 p-4 hover:bg-primary hover:bg-opacity-5 transition-all cursor-pointer" style="text-decoration: none; color: inherit;">
+                    <div class="flex-shrink-0">
+                        <div class="w-16 h-16 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
+                            <span class="text-2xl font-bold text-primary">F</span>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold flex items-center gap-2">
+                            FitBank
+                            <span class="badge badge-primary text-xs">BaaS</span>
+                        </h4>
+                        <p class="text-sm text-secondary">20% menos contención DB</p>
+                        <p class="text-xs text-muted">Arquitectura híbrida con Data Federation</p>
+                    </div>
+                </a>
+
+                <!-- Base39 -->
+                <a href="https://www.mongodb.com/blog/post/mongodb-ai-applications-program-delivering-customer-value" target="_blank" class="card card-bordered flex items-center gap-4 p-4 hover:bg-primary hover:bg-opacity-5 transition-all cursor-pointer" style="text-decoration: none; color: inherit;">
+                    <div class="flex-shrink-0">
+                        <div class="w-16 h-16 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
+                            <span class="text-2xl font-bold text-primary">B</span>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold flex items-center gap-2">
+                            Base39
+                            <span class="badge badge-primary text-xs">IA</span>
+                        </h4>
+                        <p class="text-sm text-secondary">3 días → 1 hora en préstamos</p>
+                        <p class="text-xs text-muted">96% reducción en costos con IA</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Resumen de impacto -->
+            <div class="card mongodb-gradient text-center mt-6 p-6">
+                <h3 class="text-2xl mb-4">El Patrón es Claro</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div>
+                        <div class="text-3xl font-bold">10-50x</div>
+                        <p class="text-sm opacity-90">Mejora en velocidad</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold">90%+</div>
+                        <p class="text-sm opacity-90">Reducción de costos</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold">Minutos</div>
+                        <p class="text-sm opacity-90">vs Días/Semanas</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold">Millones</div>
+                        <p class="text-sm opacity-90">TXN procesadas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Arquitectura -->
+    <section class="section section-lg" id="architecture">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-6">Arquitectura de Escalabilidad y Rendimiento</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                <!-- Sharding -->
+                <div class="card card-bordered animate-slideInLeft">
+                    <div class="flex items-start gap-4">
+                        <div class="mongodb-glow" style="padding: 12px; border-radius: 50%;">
+                            <svg width="32" height="32" fill="var(--color-primary)">
+                                <path d="M4 4h6v6H4zM14 4h6v6h-6zM24 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6zM24 14h6v6h-6zM4 24h6v6H4zM14 24h6v6h-6zM24 24h6v6h-6z" opacity="0.3"/>
+                                <path d="M7 7h2v2H7zM17 7h2v2h-2zM27 7h2v2h-2zM7 17h2v2H7zM17 17h2v2h-2zM27 17h2v2h-2zM7 27h2v2H7zM17 27h2v2h-2zM27 27h2v2h-2z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3>Sharding Automático</h3>
+                            <p class="mb-3">Distribución inteligente de datos sin particiones manuales</p>
+                            <div class="code-block text-sm">
+                                <code>// Configuración automática
+sh.shardCollection("tdc.transacciones", { fecha: 1, cuenta_id: 1 })
+// MongoDB distribuye automáticamente los datos</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zone Sharding -->
+                <div class="card card-bordered animate-slideInRight">
+                    <div class="flex items-start gap-4">
+                        <div class="mongodb-glow" style="padding: 12px; border-radius: 50%;">
+                            <svg width="32" height="32" fill="var(--color-primary)">
+                                <path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2z" opacity="0.3"/>
+                                <path d="M16 8c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 12c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3>Zonificación de Datos</h3>
+                            <p class="mb-3">Optimización de costos con datos calientes y fríos</p>
+                            <ul class="text-sm space-y-1">
+                                <li>• <span class="text-primary">Zona Caliente:</span> Últimos 90 días en SSD NVMe</li>
+                                <li>• <span class="text-primary">Zona Fría:</span> Históricos en almacenamiento económico</li>
+                                <li>• <span class="text-primary">Migración:</span> Automática y transparente</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Nodes -->
+                <div class="card card-bordered">
+                    <div class="flex items-start gap-4">
+                        <div class="mongodb-glow" style="padding: 12px; border-radius: 50%;">
+                            <svg width="32" height="32" fill="var(--color-primary)">
+                                <rect x="4" y="8" width="24" height="16" rx="2" opacity="0.3"/>
+                                <path d="M8 12h16v2H8zM8 16h12v2H8zM8 20h8v2H8z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3>Nodos de Analítica Dedicados</h3>
+                            <p class="mb-3">Reportería sin impacto en operaciones</p>
+                            <div class="performance-bar" style="--progress: 95%; height: 8px; background: var(--color-primary);"></div>
+                            <p class="text-sm mt-2">95% de aislamiento de cargas de trabajo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Online Archive -->
+                <div class="card card-bordered">
+                    <div class="flex items-start gap-4">
+                        <div class="mongodb-glow" style="padding: 12px; border-radius: 50%;">
+                            <svg width="32" height="32" fill="var(--color-primary)">
+                                <path d="M6 2h20l-2 28H8L6 2z" opacity="0.3"/>
+                                <path d="M10 8h12v2H10zM10 14h12v2H10zM10 20h12v2H10z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3>Archivado Online Consultable</h3>
+                            <p class="mb-3">Años de historia accesibles al instante</p>
+                            <p class="text-sm">Consultas transparentes combinando datos activos y archivados en S3</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modelado de Datos -->
+    <section class="section" id="modeling" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-6">Modelado de Datos Inteligente</h2>
+            
+            <!-- Comparación SQL vs MongoDB -->
+            <div class="mb-6">
+                <h3 class="text-center mb-4">De Complejidad a Simplicidad</h3>
+                
+                <!-- Ejemplo Simple -->
+                <div class="card card-gradient mb-4 text-center">
+                    <h4 class="mb-3">Ejemplo Simple: Consultar Cliente y Sus Tarjetas</h4>
+                    <div class="code-comparison">
+                        <div class="card">
+                            <h5 class="text-error mb-2">❌ SQL - 2 Tablas + JOIN</h5>
+                            <div class="code-block text-sm">
+                                <code>SELECT c.nombre, t.numero, t.tipo 
+FROM clientes c
+JOIN tarjetas t ON c.id = t.cliente_id
+WHERE c.id = 12345;</code>
+                            </div>
+                            <p class="text-xs mt-2">2 consultas a disco, JOIN costoso</p>
+                        </div>
+                        
+                        <div class="card">
+                            <h5 class="text-success mb-2">✅ MongoDB - 1 Documento</h5>
+                            <div class="code-block text-sm">
+                                <code>db.clientes.findOne({ _id: 12345 })
+
+// Resultado inmediato:
+{
+    nombre: "María García",
+    tarjetas: [
+        { numero: "****1234", tipo: "débito" },
+        { numero: "****5678", tipo: "crédito" }
+    ]
+}</code>
+                            </div>
+                            <p class="text-xs mt-2">1 consulta, toda la info junta</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ejemplo Complejo -->
+                <div class="code-comparison">
+                    <div class="card">
+                        <h4 class="text-error mb-3">❌ SQL Actual - Múltiples JOINs</h4>
+                        <div class="code-block text-sm" style="max-height: 300px; overflow-y: auto;">
+                            <code>SELECT 
+    t.transaction_id,
+    t.amount,
+    c.customer_name,
+    a.account_number,
+    ca.card_number,
+    m.merchant_name
+FROM transactions t
+JOIN accounts a ON t.account_id = a.id
+JOIN customers c ON a.customer_id = c.id
+JOIN cards ca ON t.card_id = ca.id
+JOIN merchants m ON t.merchant_id = m.id
+WHERE t.date >= '2024-01-01'
+    AND t.amount > 500000
+ORDER BY t.date DESC;</code>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h4 class="text-success mb-3">✅ MongoDB - Documento Único</h4>
+                        <div class="code-block text-sm" style="max-height: 300px; overflow-y: auto;">
+                            <code>db.transactions.find({
+    date: { $gte: ISODate("2024-01-01") },
+    amount: { $gt: 500000 }
+}).sort({ date: -1 })
+
+// Toda la información ya está embebida:
+{
+    transaction_id: "TXN123",
+    amount: 750000,
+    customer: { name: "Juan Pérez" },
+    account: { number: "***4567" },
+    card: { number: "****1234" },
+    merchant: { name: "Comercio XYZ" }
+}</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patrones de Diseño -->
+            <h3 class="text-center mb-4">Catálogo de Patrones de Modelado Esenciales</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Patrón Embebido -->
+                <div class="pattern-card card card-gradient">
+                    <h4 class="flex items-center gap-2 mb-3">
+                        <span class="badge badge-primary">🏠 Básico</span>
+                        Patrón de Embebido (Embedding)
+                    </h4>
+                    <p class="mb-3">Anidar documentos relacionados dentro de un documento principal</p>
+                    <div class="code-block text-sm mb-3">
+                        <code>// Cliente con sus direcciones embebidas
+{
+    _id: "CLI123",
+    nombre: "María García",
+    direcciones: [
+        {
+            tipo: "casa",
+            calle: "Cra 7 # 123-45",
+            ciudad: "Bogotá"
+        },
+        {
+            tipo: "oficina",
+            calle: "Calle 100 # 15-20",
+            ciudad: "Bogotá"
+        }
+    ]
+}</code>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded">
+                        <p class="text-sm font-semibold mb-1">💡 Cuándo usarlo:</p>
+                        <p class="text-xs">Para relaciones "uno a pocos" (cliente con 2-3 direcciones)</p>
+                        <p class="text-sm font-semibold mt-2 mb-1">✅ Beneficio:</p>
+                        <p class="text-xs">Elimina JOINs. Todos los datos en una sola operación de lectura</p>
+                    </div>
+                </div>
+
+                <!-- Patrón Referencia -->
+                <div class="pattern-card card card-gradient">
+                    <h4 class="flex items-center gap-2 mb-3">
+                        <span class="badge badge-primary">🔗 Básico</span>
+                        Patrón de Referencia (Referencing)
+                    </h4>
+                    <p class="mb-3">Almacenar el _id de un documento en otro, similar a clave foránea</p>
+                    <div class="code-block text-sm mb-3">
+                        <code>// Cliente (colección: clientes)
+{
+    _id: "CLI456",
+    nombre: "Juan Pérez"
+}
+
+// Transacciones (colección: transacciones)
+{
+    _id: "TXN789",
+    cliente_id: "CLI456", // Referencia
+    monto: 150000,
+    fecha: ISODate("2024-01-15")
+}</code>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded">
+                        <p class="text-sm font-semibold mb-1">💡 Cuándo usarlo:</p>
+                        <p class="text-xs">Para relaciones "uno a muchos" (cliente con miles de transacciones)</p>
+                        <p class="text-sm font-semibold mt-2 mb-1">✅ Beneficio:</p>
+                        <p class="text-xs">Evita duplicación masiva y documentos que excedan 16MB</p>
+                    </div>
+                </div>
+
+                <!-- Patrón Subset -->
+                <div class="pattern-card card card-gradient">
+                    <h4 class="flex items-center gap-2 mb-3">
+                        <span class="badge badge-primary">⭐ Optimización Clave</span>
+                        Patrón de Subconjunto (Subset Pattern)
+                    </h4>
+                    <p class="mb-3">Duplicar solo la información más consultada para evitar lookups</p>
+                    <div class="code-block text-sm mb-3">
+                        <code>// En vez de hacer $lookup para el nombre:
+{
+    transaction_id: "TXN123",
+    monto: 250000,
+    // Subconjunto del cliente embebido:
+    cliente: {
+        id: "CLI789",
+        nombre: "Ana López",     // Solo campos
+        tipo: "Premium"         // necesarios
+    }
+    // NO embebemos todo el documento del cliente
+}</code>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded">
+                        <p class="text-sm font-semibold mb-1">💡 Ejemplo Práctico:</p>
+                        <p class="text-xs">Lista de transacciones mostrando nombre del cliente sin cargar todo su perfil</p>
+                        <p class="text-sm font-semibold mt-2 mb-1">✅ Beneficio:</p>
+                        <p class="text-xs">Optimiza drásticamente las lecturas más comunes. No más $lookup para datos básicos</p>
+                    </div>
+                </div>
+
+                <!-- Patrón Bucket -->
+                <div class="pattern-card card card-gradient">
+                    <h4 class="flex items-center gap-2 mb-3">
+                        <span class="badge badge-primary">🚀 Alto Volumen</span>
+                        Patrón Cubo (Bucket Pattern)
+                    </h4>
+                    <p class="mb-3">Agrupar cientos de eventos en un único documento por período</p>
+                    <div class="code-block text-sm mb-3">
+                        <code>// En vez de 1 doc por transacción:
+{
+    cuenta_id: "ACC123",
+    fecha: ISODate("2024-01-15"),
+    contador_transacciones: 156,
+    monto_total: 15750000,
+    transacciones: [
+        {
+            timestamp: ISODate("2024-01-15T09:15:00"),
+            monto: 50000,
+            tipo: "compra",
+            comercio: "Almacén XYZ"
+        },
+        // ... hasta 500 transacciones del día
+    ]
+}</code>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded">
+                        <p class="text-sm font-semibold mb-1">💡 Implementación:</p>
+                        <p class="text-xs">Un documento por cuenta por día, conteniendo todas las transacciones</p>
+                        <p class="text-sm font-semibold mt-2 mb-1">✅ Beneficio:</p>
+                        <p class="text-xs">Reduce documentos e índices en órdenes de magnitud. Consultas por fecha ultra-rápidas</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guía Estratégica -->
+            <div class="card card-gradient mt-6">
+                <h3 class="text-center mb-4">🎯 Guía Estratégica: ¿Cómo Elegir el Patrón Correcto?</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-gray-600">
+                                <th class="text-left p-3">Si la relación es...</th>
+                                <th class="text-left p-3">Y los datos se leen...</th>
+                                <th class="text-left p-3">Y el tamaño/volatilidad es...</th>
+                                <th class="text-left p-3">El patrón recomendado es...</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-700">
+                                <td class="p-3">Uno a pocos<br/><span class="text-xs text-secondary">(cliente-direcciones)</span></td>
+                                <td class="p-3">Casi siempre juntos</td>
+                                <td class="p-3">Pequeño y estable</td>
+                                <td class="p-3"><span class="badge badge-primary">Embebido</span></td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="p-3">Uno a muchos<br/><span class="text-xs text-secondary">(cliente-transacciones)</span></td>
+                                <td class="p-3">A menudo por separado</td>
+                                <td class="p-3">Grande o volátil</td>
+                                <td class="p-3"><span class="badge badge-primary">Referencia</span></td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="p-3">Uno a "muchísimos"<br/><span class="text-xs text-secondary">(logs, IoT, transacciones)</span></td>
+                                <td class="p-3">Por rangos de tiempo</td>
+                                <td class="p-3">Pequeño por evento</td>
+                                <td class="p-3"><span class="badge badge-primary">Cubo (Bucket)</span></td>
+                            </tr>
+                            <tr>
+                                <td class="p-3">Cualquiera</td>
+                                <td class="p-3">Necesito info básica rápido</td>
+                                <td class="p-3">-</td>
+                                <td class="p-3"><span class="badge badge-primary">Subconjunto</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 p-4 bg-primary bg-opacity-10 rounded">
+                    <p class="text-sm text-center">
+                        <strong>Regla de Oro:</strong> Modelamos los datos según cómo la aplicación los necesita, no según relaciones teóricas
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inquietudes y Soluciones -->
+    <section class="section section-lg" id="concerns">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-6">Resolviendo Sus Inquietudes</h2>
+            
+            <div class="space-y-4">
+                <!-- Inquietud 1: Rendimiento con volúmenes masivos -->
+                <div class="concern-card card" onclick="toggleSolution('solution1')">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="flex items-center gap-3">
+                                <svg width="24" height="24" fill="var(--color-warning)">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                </svg>
+                                "¿Cómo manejará MongoDB 20 millones de registros con JOINs complejos?"
+                            </h3>
+                            <p class="text-secondary mt-2">Preocupación expresada por José Camacho sobre las tablas actuales</p>
+                        </div>
+                        <svg width="24" height="24" fill="currentColor" class="transition-transform">
+                            <path d="M7 10l5 5 5-5z"/>
+                        </svg>
+                    </div>
+                    
+                    <div id="solution1" class="solution-content mt-4">
+                        <div class="grid md:grid-cols-2 gap-4 mt-4">
+                            <div class="card card-bordered" style="background: rgba(0, 237, 100, 0.05);">
+                                <h4 class="text-primary mb-2">Solución Técnica</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li>• <strong>Vistas Materializadas:</strong> Pre-calculamos JOINs complejos</li>
+                                    <li>• <strong>Índices Compuestos:</strong> Optimizados para sus consultas específicas</li>
+                                    <li>• <strong>Sharding por fecha:</strong> Distribución automática de carga</li>
+                                    <li>• <strong>Paralelización:</strong> Consultas concurrentes en múltiples shards</li>
+                                </ul>
+                            </div>
+                            <div class="card card-bordered" style="background: rgba(0, 237, 100, 0.05);">
+                                <h4 class="text-primary mb-2">Resultado Esperado</h4>
+                                <div class="metric-value text-3xl mb-2">600ms</div>
+                                <p class="text-sm">vs 30 segundos actuales</p>
+                                <p class="text-xs mt-2">Caso real: Cliente en Colombia con volumen similar</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inquietud 2: Particionamiento -->
+                <div class="concern-card card" onclick="toggleSolution('solution2')">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="flex items-center gap-3">
+                                <svg width="24" height="24" fill="var(--color-warning)">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                </svg>
+                                "Actualmente usamos particiones por mes. ¿Cómo lo manejaría MongoDB?"
+                            </h3>
+                            <p class="text-secondary mt-2">Pregunta de Héctor sobre la estrategia de particionamiento</p>
+                        </div>
+                        <svg width="24" height="24" fill="currentColor">
+                            <path d="M7 10l5 5 5-5z"/>
+                        </svg>
+                    </div>
+                    
+                    <div id="solution2" class="solution-content mt-4">
+                        <div class="card card-bordered" style="background: rgba(0, 237, 100, 0.05);">
+                            <h4 class="text-primary mb-3">MongoDB Sharding vs Particiones SQL</h4>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <h5 class="text-secondary mb-2">Su Método Actual</h5>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• Particiones manuales por mes</li>
+                                        <li>• Mantenimiento manual de índices</li>
+                                        <li>• Consultas complejas entre particiones</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="text-success mb-2">Con MongoDB</h5>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• Sharding automático por fecha</li>
+                                        <li>• Balanceo automático de datos</li>
+                                        <li>• Consultas transparentes entre shards</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="code-block text-sm mt-4">
+                                <code>// Configuración única - MongoDB maneja el resto
+sh.shardCollection("tdc.transacciones", { 
+    fecha: 1,     // Sharding por fecha
+    cuenta_id: 1  // Para distribución uniforme
+})</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inquietud 3: Migración de datos -->
+                <div class="concern-card card" onclick="toggleSolution('solution3')">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="flex items-center gap-3">
+                                <svg width="24" height="24" fill="var(--color-warning)">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                </svg>
+                                "¿Cómo migrar desde PostgreSQL con datos cifrados y comprimidos?"
+                            </h3>
+                            <p class="text-secondary mt-2">Inquietud de Francisco sobre el proceso de migración</p>
+                        </div>
+                        <svg width="24" height="24" fill="currentColor">
+                            <path d="M7 10l5 5 5-5z"/>
+                        </svg>
+                    </div>
+                    
+                    <div id="solution3" class="solution-content mt-4">
+                        <div class="card card-bordered" style="background: rgba(0, 237, 100, 0.05);">
+                            <h4 class="text-primary mb-3">Estrategia de Migración Probada</h4>
+                            <div class="timeline">
+                                <div class="timeline-item flex gap-4 mb-4">
+                                    <div class="badge badge-primary">1</div>
+                                    <div>
+                                        <h5>Integración con AWS Glue existente</h5>
+                                        <p class="text-sm">Reutilizamos su infraestructura actual de ETL</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-item flex gap-4 mb-4">
+                                    <div class="badge badge-primary">2</div>
+                                    <div>
+                                        <h5>CDC en tiempo real</h5>
+                                        <p class="text-sm">Sincronización continua sin downtime</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-item flex gap-4">
+                                    <div class="badge badge-primary">3</div>
+                                    <div>
+                                        <h5>Validación y cutover</h5>
+                                        <p class="text-sm">Migración segura con rollback disponible</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inquietud 4: Capacitación -->
+                <div class="concern-card card" onclick="toggleSolution('solution4')">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="flex items-center gap-3">
+                                <svg width="24" height="24" fill="var(--color-warning)">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                </svg>
+                                "El equipo necesitará aprender un nuevo lenguaje de consultas"
+                            </h3>
+                            <p class="text-secondary mt-2">Preocupación sobre la curva de aprendizaje</p>
+                        </div>
+                        <svg width="24" height="24" fill="currentColor">
+                            <path d="M7 10l5 5 5-5z"/>
+                        </svg>
+                    </div>
+                    
+                    <div id="solution4" class="solution-content mt-4">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="card card-bordered" style="background: rgba(0, 237, 100, 0.05);">
+                                <h4 class="text-primary mb-2">Plan de Capacitación</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li>• <strong>MongoDB University:</strong> Cursos certificados incluidos</li>
+                                    <li>• <strong>Soporte 24/7:</strong> Expertos disponibles siempre</li>
+                                    <li>• <strong>Herramientas AI:</strong> Compass con queries en lenguaje natural</li>
+                                    <li>• <strong>Acompañamiento:</strong> 3 meses de mentoría directa</li>
+                                </ul>
+                            </div>
+                            <div class="card card-bordered" style="background: rgba(0, 237, 100, 0.05);">
+                                <h4 class="text-primary mb-2">Facilidades</h4>
+                                <div class="code-block text-sm">
+                                    <code>// Con Compass AI:
+"Mostrar transacciones mayores a 500k del último mes"
+
+// Se convierte automáticamente a:
+db.transactions.find({
+    amount: { $gt: 500000 },
+    date: { $gte: ISODate("2024-12-01") }
+})</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Beneficios Clave -->
+    <section class="section" id="benefits" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-6">Beneficios Transformadores para Bancolombia</h2>
+            
+            <div class="grid md:grid-cols-3 gap-5">
+                <!-- Rendimiento -->
+                <div class="card animate-fadeIn">
+                    <div class="text-center mb-4">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mongodb-glow mb-4">
+                            <svg width="32" height="32" fill="var(--color-primary)">
+                                <path d="M3 13h2v7H3zm4-8h2v15H7zm4-2h2v17h-2zm4 4h2v13h-2zm4-2h2v15h-2zm4 5h2v8h-2zm4-3h2v11h-2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-center mb-3">Rendimiento Extremo</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start gap-2">
+                            <svg width="16" height="16" fill="var(--color-success)" class="mt-0.5 flex-shrink-0">
+                                <path d="M6 11l4-4-4-4v8z"/>
+                            </svg>
+                            <span>Consultas 50x más rápidas con datos pre-agregados</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg width="16" height="16" fill="var(--color-success)" class="mt-0.5 flex-shrink-0">
+                                <path d="M6 11l4-4-4-4v8z"/>
+                            </svg>
+                            <span>Eliminación de JOINs costosos mediante embebido inteligente</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg width="16" height="16" fill="var(--color-success)" class="mt-0.5 flex-shrink-0">
+                                <path d="M6 11l4-4-4-4v8z"/>
+                            </svg>
+                            <span>Respuesta en milisegundos para consultas del cliente</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Escalabilidad -->
+                <div class="card animate-fadeIn" style="animation-delay: 0.2s;">
+                    <div class="text-center mb-4">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mongodb-glow mb-4">
+                            <svg width="32" height="32" fill="var(--color-primary)">
+                                <path d="M16 2l-14 14h8v14h12V16h8L16 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-center mb-3">Escalabilidad Sin Límites</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start gap-2">
+                            <svg width="16" height="16" fill="var(--color-success)" class="mt-0.5 flex-shrink-0">
+                                <path d="M6 11l4-4-4-4v8z"/>
+                            </svg>
+                            <span>Crecimiento horizontal automático según demanda</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg width="16" height="16" fill="var(--color-success)" class="mt-0.5 flex-shrink-0">
+                                <path d="M6 11l4-4-4-4v8z"/>
+                            </svg>
+                            <span>Sin downtime para mantenimiento o expansión</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg width="16" height="16" fill="var(--color-success)" class="mt-0.5 flex-shrink-0">
+                                <path d="M6 11l4-4-4-4v8z"/>
+                            </svg>
+                            <span>Preparado para el crecimiento de los próximos 10 años</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Agilidad -->
+                <div class="card animate-fadeIn" style="animation-delay: 0.4s;">
+                    <div class="text-center mb-4">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mongodb-glow mb-4">
+                            <svg width="32" height="32" fill="var(--color-primary)">
+                                <path d="M12 2v6l4-4 4 4V2h-8zM2 12h6l-4 4 4 4H2v-8zm20 0h6v8h-6l4-4-4-4zm-10 10v6h8v-6l-4 4-4-4z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-center mb-3">Agilidad de Desarrollo</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start gap-2">
+                            <svg width="16" height="16" fill="var(--color-success)" class="mt-0.5 flex-shrink-0">
+                                <path d="M6 11l4-4-4-4v8z"/>
+                            </svg>
+                            <span>Esquema flexible: nuevos campos sin migraciones</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg width="16" height="16" fill="var(--color-success)" class="mt-0.5 flex-shrink-0">
+                                <path d="M6 11l4-4-4-4v8z"/>
+                            </svg>
+                            <span>Time-to-market 3x más rápido para nuevas funciones</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <svg width="16" height="16" fill="var(--color-success)" class="mt-0.5 flex-shrink-0">
+                                <path d="M6 11l4-4-4-4v8z"/>
+                            </svg>
+                            <span>Adaptación inmediata a cambios del negocio</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ROI -->
+            <div class="card card-gradient mt-6 text-center">
+                <h3 class="text-2xl mb-4">Retorno de Inversión Proyectado</h3>
+                <div class="grid md:grid-cols-4 gap-4">
+                    <div>
+                        <div class="text-3xl font-bold text-primary">70%</div>
+                        <p class="text-sm">Reducción en costos de infraestructura</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-primary">85%</div>
+                        <p class="text-sm">Menos tiempo en mantenimiento</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-primary">3x</div>
+                        <p class="text-sm">Velocidad de desarrollo</p>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-primary">99.99%</div>
+                        <p class="text-sm">Disponibilidad garantizada</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Próximos Pasos -->
+    <section class="section section-lg">
+        <div class="container">
+            <div class="card card-gradient text-center max-w-4xl mx-auto">
+                <h2 class="text-gradient mb-4">Próximos Pasos: Prueba de Concepto</h2>
+                <p class="text-xl mb-6">
+                    Demostraremos empíricamente estos beneficios con sus datos reales
+                </p>
+                
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div class="card card-bordered">
+                        <div class="badge badge-primary mb-3">Semana 1-2</div>
+                        <h4>Análisis y Modelado</h4>
+                        <p class="text-sm">Diseño del modelo de datos optimizado para sus casos de uso críticos</p>
+                    </div>
+                    <div class="card card-bordered">
+                        <div class="badge badge-primary mb-3">Semana 3-4</div>
+                        <h4>Implementación PoC</h4>
+                        <p class="text-sm">Migración de subset de datos y configuración del clúster de prueba</p>
+                    </div>
+                    <div class="card card-bordered">
+                        <div class="badge badge-primary mb-3">Semana 5</div>
+                        <h4>Benchmarks y Resultados</h4>
+                        <p class="text-sm">Comparación directa de rendimiento con métricas reales</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-center gap-4">
+                    <button class="btn btn-primary btn-lg" onclick="scheduleDemo()">
+                        <svg width="20" height="20" fill="currentColor">
+                            <path d="M17 12h-5v5h5v-5zM16 3v2H8V3H6v2H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-1V3h-2z"/>
+                        </svg>
+                        Agendar Reunión Técnica
+                    </button>
+                    <button class="btn btn-ghost btn-lg" onclick="downloadPresentation()">
+                        <svg width="20" height="20" fill="currentColor">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                        Descargar Propuesta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="section" style="background-color: var(--color-bg-tertiary);">
+        <div class="container text-center">
+            <div class="flex justify-center items-center gap-4 mb-4">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <path d="M20 5L35 15V25L20 35L5 25V15L20 5Z" stroke="var(--color-primary)" stroke-width="2" fill="none"/>
+                    <circle cx="20" cy="20" r="5" fill="var(--color-primary)"/>
+                </svg>
+                <span class="text-2xl font-bold">GoMDB</span>
+            </div>
+            <p class="text-secondary mb-4">Partner Oficial de MongoDB para Latinoamérica</p>
+            <p class="text-sm text-muted">
+                © 2025 GoMDB. Transformando la banca digital con MongoDB.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Animación de scroll para navbar
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Animación de elementos al hacer scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Animar barras de progreso
+                    const progressBars = entry.target.querySelectorAll('.progress-bar');
+                    progressBars.forEach(bar => {
+                        setTimeout(() => {
+                            bar.classList.add('animate');
+                        }, 300);
+                    });
+                }
+            });
+        }, observerOptions);
+
+        // Observar elementos
+        document.querySelectorAll('.timeline-item, .metric-card, .card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Toggle de soluciones
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            const isActive = solution.classList.contains('active');
+            
+            // Cerrar todas las soluciones
+            document.querySelectorAll('.solution-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Abrir la seleccionada si no estaba activa
+            if (!isActive) {
+                solution.classList.add('active');
+            }
+        }
+
+        // Scroll suave a sección
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Funciones de acción
+        function scheduleDemo() {
+            alert('¡Excelente decisión! Un especialista de GoMDB se pondrá en contacto en las próximas 24 horas para coordinar la reunión técnica.');
+        }
+
+        function downloadPresentation() {
+            alert('La propuesta completa está siendo preparada. Se enviará a su correo electrónico registrado.');
+        }
+
+        // Animación de números
+        function animateNumbers() {
+            const numbers = document.querySelectorAll('.metric-value');
+            numbers.forEach(num => {
+                const finalValue = num.textContent;
+                const isPercentage = finalValue.includes('%');
+                const isMultiplier = finalValue.includes('x');
+                const isMillion = finalValue.includes('M');
+                
+                let value = 0;
+                let target = parseInt(finalValue.replace(/[^0-9]/g, ''));
+                
+                const increment = target / 50;
+                const timer = setInterval(() => {
+                    value += increment;
+                    if (value >= target) {
+                        value = target;
+                        clearInterval(timer);
+                    }
+                    
+                    let display = Math.floor(value);
+                    if (isPercentage) display += '%';
+                    if (isMultiplier) display += 'x';
+                    if (isMillion) display = (value / 1).toFixed(0) + 'M+';
+                    
+                    num.textContent = display;
+                }, 30);
+            });
+        }
+
+        // Activar animación de números cuando sean visibles
+        const metricsSection = document.getElementById('overview');
+        const metricsObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                animateNumbers();
+                metricsObserver.disconnect();
+            }
+        });
+        metricsObserver.observe(metricsSection);
+
+        // Smooth scroll para enlaces de navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
