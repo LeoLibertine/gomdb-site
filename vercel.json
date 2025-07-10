@@ -158,6 +158,14 @@
       "dest": "/clientes/bancolombia/tdc-architecture.html"
     },
     {
+      "src": "/clientes/bancolombia/mongo-voyage(?:/.*)?$",
+      "dest": "/clientes/bancolombia//mongo-voyage.html"
+    },
+    {
+      "src": "/clientes/bancolombia/voyageai(?:/.*)?$",
+      "dest": "/clientes/bancolombia/voyageai.html"
+    },
+    {
       "src": "/clientes/(?:cencosud|bancolombia)/document-mongo(?:/.*)?$",
       "dest": "/index.html"
     },
