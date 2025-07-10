@@ -103,10 +103,7 @@
     <nav class="navbar" id="navbar">
         <div class="container navbar-container">
             <div class="navbar-logo">
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                    <path d="M20 5L35 15V25L20 35L5 25V15L20 5Z" stroke="var(--color-primary)" stroke-width="2" fill="none"/>
-                    <circle cx="20" cy="20" r="5" fill="var(--color-primary)"/>
-                </svg>
+                  
                 <span class="text-gradient">MongoDB + Bancolombia</span>
             </div>
             <div class="navbar-links">
@@ -429,6 +426,403 @@ sh.shardCollection("tdc.transacciones", { fecha: 1, cuenta_id: 1 })
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- Sección de Sharding Detallada -->
+    <section class="section section-lg" style="background-color: var(--color-bg-primary);">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-3">Sharding en Atlas: Del Particionamiento Manual a la Automatización Total</h2>
+            <p class="text-center text-xl mb-6" style="max-width: 900px; margin: 0 auto;">
+                La solución definitiva para gestionar miles de millones de registros sin la complejidad operativa del particionamiento manual
+            </p>
+
+            <!-- Comparación Visual -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <!-- Situación Actual -->
+                <div class="card card-bordered" style="border-color: rgba(239, 68, 68, 0.5);">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-error bg-opacity-20 flex items-center justify-center">
+                            <svg width="24" height="24" fill="var(--color-error)">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold">Su Enfoque Actual en PostgreSQL</h3>
+                    </div>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start gap-2">
+                            <span class="text-error mt-1">×</span>
+                            <span><strong>Particionamiento Manual:</strong> Crear particiones por mes manualmente</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-error mt-1">×</span>
+                            <span><strong>Mantenimiento Complejo:</strong> Gestionar índices para cada partición</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-error mt-1">×</span>
+                            <span><strong>Lógica en Aplicación:</strong> Código complejo para consultar múltiples particiones</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-error mt-1">×</span>
+                            <span><strong>Escalabilidad Limitada:</strong> Difícil agregar más capacidad sin downtime</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Solución Atlas -->
+                <div class="card card-gradient animate-glow">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-primary bg-opacity-20 flex items-center justify-center">
+                            <svg width="24" height="24" fill="var(--color-primary)">
+                                <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-primary">Sharding Automatizado en Atlas</h3>
+                    </div>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary mt-1">✓</span>
+                            <span><strong>100% Automatizado:</strong> Atlas gestiona toda la complejidad</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary mt-1">✓</span>
+                            <span><strong>Sin Mantenimiento:</strong> Balanceo y optimización automáticos</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary mt-1">✓</span>
+                            <span><strong>Transparente:</strong> Una sola conexión, sin lógica compleja</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary mt-1">✓</span>
+                            <span><strong>Auto-Scaling:</strong> Crece automáticamente según demanda</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Implementación Push-Button -->
+            <div class="card card-gradient mb-8">
+                <h3 class="text-2xl mb-4 text-center">Implementación "Push-Button" en 3 Pasos</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="w-20 h-20 rounded-full bg-primary bg-opacity-20 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-3xl font-bold text-primary">1</span>
+                        </div>
+                        <h4 class="font-bold mb-2">Crear Cluster Sharded</h4>
+                        <p class="text-sm text-secondary">
+                            Un click en la consola Atlas. La infraestructura compleja se provisiona automáticamente.
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-20 h-20 rounded-full bg-primary bg-opacity-20 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-3xl font-bold text-primary">2</span>
+                        </div>
+                        <h4 class="font-bold mb-2">Definir Shard Key</h4>
+                        <p class="text-sm text-secondary">
+                            Elegir la estrategia de distribución óptima para sus datos.
+                        </p>
+                        <div class="code-block text-xs mt-2">
+                            <code>sh.shardCollection("tdc.transacciones", 
+  { fecha: 1, cuenta_id: 1 }
+)</code>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-20 h-20 rounded-full bg-primary bg-opacity-20 flex items-center justify-center mx-auto mb-3">
+                            <span class="text-3xl font-bold text-primary">3</span>
+                        </div>
+                        <h4 class="font-bold mb-2">¡Listo!</h4>
+                        <p class="text-sm text-secondary">
+                            Atlas se encarga del resto. Balanceo, routing y escalado totalmente automáticos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventajas Clave -->
+            <h3 class="text-center mb-6">Ventajas Clave del Sharding en Atlas</h3>
+            <div class="grid md:grid-cols-3 gap-5">
+                <!-- Auto-Scaling -->
+                <div class="card card-bordered">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="mongodb-glow p-3 rounded-full">
+                            <svg width="24" height="24" fill="var(--color-primary)">
+                                <path d="M7 17h2v-5H7v5zm4 0h2V7h-2v10zm4 0h2v-7h-2v7z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-bold">Auto-Scaling Inteligente</h4>
+                    </div>
+                    <p class="text-sm mb-3">
+                        Configure reglas simples y Atlas escala automáticamente sin downtime.
+                    </p>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded text-xs">
+                        <strong>Ejemplo:</strong> "Si CPU > 75%, escalar automáticamente"
+                    </div>
+                </div>
+
+                <!-- Balanceo Automático -->
+                <div class="card card-bordered">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="mongodb-glow p-3 rounded-full">
+                            <svg width="24" height="24" fill="var(--color-primary)">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-bold">Balanceo Sin Intervención</h4>
+                    </div>
+                    <p class="text-sm mb-3">
+                        El balanceador distribuye datos uniformemente entre shards 24/7.
+                    </p>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded text-xs">
+                        <strong>Resultado:</strong> Rendimiento óptimo constante
+                    </div>
+                </div>
+
+                <!-- Cero Operaciones -->
+                <div class="card card-bordered">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="mongodb-glow p-3 rounded-full">
+                            <svg width="24" height="24" fill="var(--color-primary)">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-bold">Cero Carga Operativa</h4>
+                    </div>
+                    <p class="text-sm mb-3">
+                        No más gestión de config servers, mongos o infraestructura.
+                    </p>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded text-xs">
+                        <strong>Su equipo:</strong> 100% enfocado en el negocio
+                    </div>
+                </div>
+            </div>
+
+            <!-- Por qué NO usar particionamiento manual -->
+            <div class="card card-bordered mt-8" style="border-color: rgba(239, 68, 68, 0.5); background-color: rgba(239, 68, 68, 0.05);">
+                <h3 class="text-xl mb-3 flex items-center gap-2">
+                    <svg width="24" height="24" fill="var(--color-warning)">
+                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                    </svg>
+                    Por Qué el Particionamiento Manual es un Anti-Patrón en Atlas
+                </h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <h4 class="font-bold text-error mb-2">❌ Si usa colecciones por mes:</h4>
+                        <ul class="text-sm space-y-1">
+                            <li>• Complejidad trasladada al código de aplicación</li>
+                            <li>• Rendimiento subóptimo en consultas cross-partition</li>
+                            <li>• Pérdida de beneficios de automatización</li>
+                            <li>• Mayor deuda técnica y mantenimiento</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-success mb-2">✅ Con Sharding nativo:</h4>
+                        <ul class="text-sm space-y-1">
+                            <li>• MongoDB maneja toda la complejidad</li>
+                            <li>• Consultas optimizadas automáticamente</li>
+                            <li>• Aprovecha toda la potencia de Atlas</li>
+                            <li>• Cero mantenimiento, máxima eficiencia</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="text-center mt-8">
+                <div class="inline-block p-6 bg-primary bg-opacity-10 rounded-lg">
+                    <h3 class="text-2xl mb-3">La Decisión es Clara</h3>
+                    <p class="text-lg mb-4">
+                        Para <strong>miles de millones de registros</strong>, el Sharding Gestionado en Atlas<br/>
+                        es la única opción estratégica viable para Bancolombia.
+                    </p>
+                    <p class="text-sm text-secondary">
+                        Libere a su equipo de la complejidad operativa y enfóquese en la innovación.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Arquitecturas de Escalabilidad -->
+    <section class="section section-lg" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-3">Dos Caminos Hacia la Escalabilidad Masiva</h2>
+            <p class="text-center text-xl mb-6" style="max-width: 900px; margin: 0 auto;">
+                MongoDB Atlas ofrece múltiples estrategias para manejar sus miles de millones de registros. 
+                Elija la que mejor se adapte a sus necesidades operativas y presupuesto.
+            </p>
+            
+            <!-- Tabs de navegación -->
+            <div class="flex justify-center gap-4 mb-8">
+                <button id="shardingTab" class="btn btn-primary" onclick="showDiagram('sharding')">
+                    <svg width="20" height="20" fill="currentColor">
+                        <rect x="2" y="2" width="7" height="7"/>
+                        <rect x="11" y="2" width="7" height="7"/>
+                        <rect x="2" y="11" width="7" height="7"/>
+                        <rect x="11" y="11" width="7" height="7"/>
+                    </svg>
+                    Opción 1: Sharding Inteligente
+                </button>
+                <button id="aurasTab" class="btn btn-ghost" onclick="showDiagram('auras')">
+                    <svg width="20" height="20" fill="currentColor">
+                        <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="10" cy="10" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                        <circle cx="10" cy="10" r="2"/>
+                    </svg>
+                    Opción 2: Arquitectura de Auras
+                </button>
+            </div>
+            
+            <!-- Contenedor para los diagramas -->
+            <div class="card card-gradient" style="padding: 0; overflow: hidden; min-height: 600px;">
+                <!-- Diagrama de Sharding -->
+                <div id="shardingDiagram" class="diagram-container">
+                    <img src="../../img/sharding-strategy.svg" 
+                         alt="Diagrama de Solución de Sharding MongoDB" 
+                         style="width: 100%; height: auto; display: block;"
+                         class="animate-fadeIn"/>
+                    
+                    <!-- Resumen debajo del diagrama -->
+                    <div class="p-6 bg-primary bg-opacity-5">
+                        <h3 class="text-2xl mb-3 text-primary">✅ Sharding: La Solución Empresarial Probada</h3>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div>
+                                <h4 class="font-bold mb-2">Ideal para:</h4>
+                                <ul class="text-sm space-y-1">
+                                    <li>• Crecimiento ilimitado</li>
+                                    <li>• Máxima automatización</li>
+                                    <li>• Zero downtime</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-2">Beneficios clave:</h4>
+                                <ul class="text-sm space-y-1">
+                                    <li>• 100% automático</li>
+                                    <li>• Consultas dirigidas ultra-rápidas</li>
+                                    <li>• Auto-scaling sin límites</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-2">Complejidad:</h4>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-full bg-gray-700 rounded-full h-2">
+                                        <div class="bg-primary h-2 rounded-full" style="width: 30%"></div>
+                                    </div>
+                                    <span class="text-sm">Baja</span>
+                                </div>
+                                <p class="text-xs mt-2">Atlas maneja toda la complejidad</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Diagrama de Auras -->
+                <div id="aurasDiagram" class="diagram-container" style="display: none;">
+                    <img src="../../img/aura-strategy.svg" 
+                         alt="Diagrama de Arquitectura de Auras de Datos" 
+                         style="width: 100%; height: auto; display: block;"
+                         class="animate-fadeIn"/>
+                    
+                    <!-- Resumen debajo del diagrama -->
+                    <div class="p-6 bg-primary bg-opacity-5">
+                        <h3 class="text-2xl mb-3 text-primary">✅ Auras: La Alternativa Inteligente</h3>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div>
+                                <h4 class="font-bold mb-2">Ideal para:</h4>
+                                <ul class="text-sm space-y-1">
+                                    <li>• Control granular de datos</li>
+                                    <li>• Optimización de costos</li>
+                                    <li>• Transición gradual</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-2">Beneficios clave:</h4>
+                                <ul class="text-sm space-y-1">
+                                    <li>• 50% reducción de costos</li>
+                                    <li>• Rendimiento extremo (hot data)</li>
+                                    <li>• Sin complejidad de sharding</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold mb-2">Complejidad:</h4>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-full bg-gray-700 rounded-full h-2">
+                                        <div class="bg-primary h-2 rounded-full" style="width: 50%"></div>
+                                    </div>
+                                    <span class="text-sm">Media</span>
+                                </div>
+                                <p class="text-xs mt-2">Requiere lógica en aplicación</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comparación rápida -->
+            <div class="grid md:grid-cols-2 gap-6 mt-8">
+                <div class="card card-bordered">
+                    <h4 class="text-lg font-bold mb-3 flex items-center gap-2">
+                        <svg width="24" height="24" fill="var(--color-primary)">
+                            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                        </svg>
+                        ¿Cuándo elegir Sharding?
+                    </h4>
+                    <ul class="space-y-2 text-sm">
+                        <li>• Necesita escalar más allá de un servidor</li>
+                        <li>• Quiere automatización completa</li>
+                        <li>• Prefiere cero complejidad operativa</li>
+                        <li>• Planea crecimiento exponencial</li>
+                    </ul>
+                </div>
+                
+                <div class="card card-bordered">
+                    <h4 class="text-lg font-bold mb-3 flex items-center gap-2">
+                        <svg width="24" height="24" fill="var(--color-primary)">
+                            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                        </svg>
+                        ¿Cuándo elegir Auras?
+                    </h4>
+                    <ul class="space-y-2 text-sm">
+                        <li>• Busca optimizar costos agresivamente</li>
+                        <li>• Tiene patrones de acceso predecibles</li>
+                        <li>• Prefiere empezar sin sharding</li>
+                        <li>• Necesita control sobre ciclo de vida de datos</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Call to action -->
+            <div class="text-center mt-8">
+                <p class="text-lg mb-4">
+                    <strong>Ambas opciones son válidas y probadas.</strong> 
+                    Podemos ayudarle a elegir la mejor para su caso específico.
+                </p>
+                <a href="#concerns" class="btn btn-secondary">
+                    Explorar más detalles técnicos
+                </a>
+            </div>
+        </div>
+        
+        <!-- Script para cambiar entre diagramas -->
+        <script>
+            function showDiagram(type) {
+                // Ocultar todos los diagramas
+                document.getElementById('shardingDiagram').style.display = 'none';
+                document.getElementById('aurasDiagram').style.display = 'none';
+                
+                // Resetear estilos de botones
+                document.getElementById('shardingTab').className = 'btn btn-ghost';
+                document.getElementById('aurasTab').className = 'btn btn-ghost';
+                
+                // Mostrar el diagrama seleccionado
+                if (type === 'sharding') {
+                    document.getElementById('shardingDiagram').style.display = 'block';
+                    document.getElementById('shardingTab').className = 'btn btn-primary';
+                } else {
+                    document.getElementById('aurasDiagram').style.display = 'block';
+                    document.getElementById('aurasTab').className = 'btn btn-primary';
+                }
+            }
+        </script>
     </section>
 
     <!-- Modelado de Datos -->
@@ -1068,11 +1462,11 @@ db.transactions.find({
                     <path d="M20 5L35 15V25L20 35L5 25V15L20 5Z" stroke="var(--color-primary)" stroke-width="2" fill="none"/>
                     <circle cx="20" cy="20" r="5" fill="var(--color-primary)"/>
                 </svg>
-                <span class="text-2xl font-bold">GoMDB</span>
+                <span class="text-2xl font-bold">MongoDB</span>
             </div>
             <p class="text-secondary mb-4">Partner Oficial de MongoDB para Latinoamérica</p>
             <p class="text-sm text-muted">
-                © 2025 GoMDB. Transformando la banca digital con MongoDB.
+                © 2025 MongoDB. Transformando la banca digital con MongoDB.
             </p>
         </div>
     </footer>
@@ -1139,7 +1533,7 @@ db.transactions.find({
 
         // Funciones de acción
         function scheduleDemo() {
-            alert('¡Excelente decisión! Un especialista de GoMDB se pondrá en contacto en las próximas 24 horas para coordinar la reunión técnica.');
+            alert('¡Excelente decisión! Un especialista de MongoDB se pondrá en contacto en las próximas 24 horas para coordinar la reunión técnica.');
         }
 
         function downloadPresentation() {

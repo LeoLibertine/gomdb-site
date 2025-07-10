@@ -1,0 +1,249 @@
+<svg viewBox="0 0 1600 1600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradientes -->
+    <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ED64;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00D757;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#001E2B;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0D2A3D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#001E2B;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="errorGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#EF4444;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#DC2626;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Filtros -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Fondo -->
+  <rect width="1600" height="1600" fill="url(#bgGradient)"/>
+  
+  <!-- Título -->
+  <text x="800" y="50" text-anchor="middle" fill="#FFFFFF" font-size="36" font-weight="700" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+    De Particionamiento Manual a Sharding Inteligente
+  </text>
+  
+  <!-- División vertical -->
+  <line x1="800" y1="100" x2="800" y2="1150" stroke="#00ED64" stroke-width="2" stroke-dasharray="5,5" opacity="0.3"/>
+  
+  <!-- LADO IZQUIERDO: PROBLEMA ACTUAL -->
+  <text x="400" y="120" text-anchor="middle" fill="#EF4444" font-size="28" font-weight="600">
+    ❌ Reto Actual: Particionamiento Manual
+  </text>
+  
+  <!-- Representación de tablas particionadas -->
+  <g transform="translate(100, 160)">
+    <!-- Aplicación -->
+    <rect x="150" y="0" width="200" height="60" rx="8" fill="#2D3748" stroke="#EF4444" stroke-width="2"/>
+    <text x="250" y="35" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="600">Aplicación</text>
+    
+    <!-- Lógica compleja -->
+    <rect x="100" y="90" width="300" height="80" rx="8" fill="rgba(239, 68, 68, 0.1)" stroke="#EF4444" stroke-width="1" stroke-dasharray="5,5"/>
+    <text x="250" y="115" text-anchor="middle" fill="#EF4444" font-size="14">Lógica Compleja de Routing</text>
+    <text x="250" y="135" text-anchor="middle" fill="#B8C4CE" font-size="12">"¿A qué partición(es) consultar?"</text>
+    <text x="250" y="155" text-anchor="middle" fill="#B8C4CE" font-size="12">"Unir resultados manualmente"</text>
+    
+    <!-- Flechas a múltiples tablas -->
+    <path d="M150 170 L80 220" stroke="#EF4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+    <path d="M250 170 L250 220" stroke="#EF4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+    <path d="M350 170 L420 220" stroke="#EF4444" stroke-width="2" marker-end="url(#arrowRed)"/>
+    
+    <!-- Tablas particionadas -->
+    <g transform="translate(0, 230)">
+      <!-- Enero -->
+      <rect x="20" y="0" width="120" height="100" rx="8" fill="#1A202C" stroke="#718096" stroke-width="1"/>
+      <text x="80" y="25" text-anchor="middle" fill="#FFFFFF" font-size="14" font-weight="600">TXN_2025_01</text>
+      <rect x="30" y="40" width="100" height="8" rx="4" fill="#EF4444" opacity="0.3"/>
+      <rect x="30" y="55" width="100" height="8" rx="4" fill="#EF4444" opacity="0.3"/>
+      <rect x="30" y="70" width="100" height="8" rx="4" fill="#EF4444" opacity="0.3"/>
+      
+      <!-- Febrero -->
+      <rect x="160" y="0" width="120" height="100" rx="8" fill="#1A202C" stroke="#718096" stroke-width="1"/>
+      <text x="220" y="25" text-anchor="middle" fill="#FFFFFF" font-size="14" font-weight="600">TXN_2025_02</text>
+      <rect x="170" y="40" width="100" height="8" rx="4" fill="#EF4444" opacity="0.3"/>
+      <rect x="170" y="55" width="100" height="8" rx="4" fill="#EF4444" opacity="0.3"/>
+      <rect x="170" y="70" width="100" height="8" rx="4" fill="#EF4444" opacity="0.3"/>
+      
+      <!-- Marzo -->
+      <rect x="300" y="0" width="120" height="100" rx="8" fill="#1A202C" stroke="#718096" stroke-width="1"/>
+      <text x="360" y="25" text-anchor="middle" fill="#FFFFFF" font-size="14" font-weight="600">TXN_2025_03</text>
+      <rect x="310" y="40" width="100" height="8" rx="4" fill="#EF4444" opacity="0.3"/>
+      <rect x="310" y="55" width="100" height="8" rx="4" fill="#EF4444" opacity="0.3"/>
+      <rect x="310" y="70" width="100" height="8" rx="4" fill="#EF4444" opacity="0.3"/>
+      
+      <text x="220" y="130" text-anchor="middle" fill="#718096" font-size="12" font-style="italic">... más tablas cada mes ...</text>
+    </g>
+    
+    <!-- Problemas -->
+    <g transform="translate(50, 400)">
+      <text x="0" y="0" fill="#EF4444" font-size="18" font-weight="600">Problemas:</text>
+      <text x="0" y="30" fill="#B8C4CE" font-size="14">• Crear partición cada mes (manual)</text>
+      <text x="0" y="55" fill="#B8C4CE" font-size="14">• Lógica compleja en aplicación</text>
+      <text x="0" y="80" fill="#B8C4CE" font-size="14">• Consultas cross-partition lentas</text>
+      <text x="0" y="105" fill="#B8C4CE" font-size="14">• Mantenimiento de índices por tabla</text>
+      <text x="0" y="130" fill="#B8C4CE" font-size="14">• Difícil escalar sin downtime</text>
+    </g>
+    
+    <!-- Query ejemplo -->
+    <rect x="50" y="580" width="500" height="120" rx="8" fill="rgba(239, 68, 68, 0.1)" stroke="#EF4444" stroke-width="1"/>
+    <text x="300" y="605" text-anchor="middle" fill="#EF4444" font-size="14" font-weight="600">Consulta: "Últimos 90 días del cliente 123"</text>
+    <text x="60" y="630" fill="#B8C4CE" font-size="12" font-family="monospace">SELECT * FROM txn_2025_01 WHERE cliente_id = 123</text>
+    <text x="60" y="650" fill="#B8C4CE" font-size="12" font-family="monospace">UNION SELECT * FROM txn_2025_02 WHERE cliente_id = 123</text>
+    <text x="60" y="670" fill="#B8C4CE" font-size="12" font-family="monospace">UNION SELECT * FROM txn_2025_03 WHERE cliente_id = 123;</text>
+  </g>
+  
+  <!-- LADO DERECHO: SOLUCIÓN MONGODB -->
+  <text x="1200" y="120" text-anchor="middle" fill="#00ED64" font-size="28" font-weight="600">
+    ✅ Solución: Sharding Inteligente
+  </text>
+  
+  <!-- Representación de sharding -->
+  <g transform="translate(900, 160)">
+    <!-- Aplicación -->
+    <rect x="150" y="0" width="200" height="60" rx="8" fill="#2D3748" stroke="#00ED64" stroke-width="2" filter="url(#glow)"/>
+    <text x="250" y="35" text-anchor="middle" fill="#FFFFFF" font-size="16" font-weight="600">Aplicación</text>
+    
+    <!-- Conexión simple -->
+    <rect x="175" y="80" width="150" height="40" rx="8" fill="rgba(0, 237, 100, 0.1)" stroke="#00ED64" stroke-width="1"/>
+    <text x="250" y="105" text-anchor="middle" fill="#00ED64" font-size="14">Una sola conexión</text>
+    
+    <!-- Flecha a mongos -->
+    <path d="M250 120 L250 150" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowGreen)"/>
+    
+    <!-- Mongos (Router) -->
+    <rect x="150" y="160" width="200" height="80" rx="8" fill="url(#primaryGradient)" filter="url(#shadow)"/>
+    <text x="250" y="185" text-anchor="middle" fill="#001E2B" font-size="16" font-weight="600">mongos</text>
+    <text x="250" y="205" text-anchor="middle" fill="#001E2B" font-size="12">(Query Router)</text>
+    <text x="250" y="225" text-anchor="middle" fill="#001E2B" font-size="11">Inteligencia de Routing</text>
+    
+    <!-- Shard Key -->
+    <rect x="380" y="170" width="220" height="60" rx="8" fill="rgba(0, 237, 100, 0.2)" stroke="#00ED64" stroke-width="1" stroke-dasharray="5,5"/>
+    <text x="490" y="190" text-anchor="middle" fill="#00ED64" font-size="12" font-weight="600">Shard Key:</text>
+    <text x="490" y="210" text-anchor="middle" fill="#FFFFFF" font-size="11" font-family="monospace">{id_cliente: 1, fecha: 1}</text>
+    
+    <!-- Flechas inteligentes a shards -->
+    <path d="M200 240 L100 300" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowGreen)">
+      <animate attributeName="stroke-dasharray" values="0 10;10 0" dur="1s" repeatCount="indefinite"/>
+    </path>
+    <path d="M250 240 L250 300" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowGreen)">
+      <animate attributeName="stroke-dasharray" values="0 10;10 0" dur="1s" repeatCount="indefinite"/>
+    </path>
+    <path d="M300 240 L400 300" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowGreen)">
+      <animate attributeName="stroke-dasharray" values="0 10;10 0" dur="1s" repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Shards -->
+    <g transform="translate(0, 310)">
+      <!-- Shard 1 -->
+      <g>
+        <rect x="20" y="0" width="140" height="120" rx="8" fill="#1A202C" stroke="#00ED64" stroke-width="2" filter="url(#glow)"/>
+        <text x="90" y="25" text-anchor="middle" fill="#00ED64" font-size="14" font-weight="600">Shard 1</text>
+        <text x="90" y="45" text-anchor="middle" fill="#B8C4CE" font-size="11">Clientes A-H</text>
+        <rect x="30" y="55" width="120" height="8" rx="4" fill="#00ED64" opacity="0.6"/>
+        <rect x="30" y="70" width="120" height="8" rx="4" fill="#00ED64" opacity="0.4"/>
+        <rect x="30" y="85" width="120" height="8" rx="4" fill="#00ED64" opacity="0.2"/>
+        <text x="90" y="110" text-anchor="middle" fill="#718096" font-size="10">Auto-balanceado</text>
+      </g>
+      
+      <!-- Shard 2 -->
+      <g>
+        <rect x="180" y="0" width="140" height="120" rx="8" fill="#1A202C" stroke="#00ED64" stroke-width="2" filter="url(#glow)"/>
+        <text x="250" y="25" text-anchor="middle" fill="#00ED64" font-size="14" font-weight="600">Shard 2</text>
+        <text x="250" y="45" text-anchor="middle" fill="#B8C4CE" font-size="11">Clientes I-P</text>
+        <rect x="190" y="55" width="120" height="8" rx="4" fill="#00ED64" opacity="0.6"/>
+        <rect x="190" y="70" width="120" height="8" rx="4" fill="#00ED64" opacity="0.4"/>
+        <rect x="190" y="85" width="120" height="8" rx="4" fill="#00ED64" opacity="0.2"/>
+        <text x="250" y="110" text-anchor="middle" fill="#718096" font-size="10">Auto-balanceado</text>
+      </g>
+      
+      <!-- Shard 3 -->
+      <g>
+        <rect x="340" y="0" width="140" height="120" rx="8" fill="#1A202C" stroke="#00ED64" stroke-width="2" filter="url(#glow)"/>
+        <text x="410" y="25" text-anchor="middle" fill="#00ED64" font-size="14" font-weight="600">Shard 3</text>
+        <text x="410" y="45" text-anchor="middle" fill="#B8C4CE" font-size="11">Clientes Q-Z</text>
+        <rect x="350" y="55" width="120" height="8" rx="4" fill="#00ED64" opacity="0.6"/>
+        <rect x="350" y="70" width="120" height="8" rx="4" fill="#00ED64" opacity="0.4"/>
+        <rect x="350" y="85" width="120" height="8" rx="4" fill="#00ED64" opacity="0.2"/>
+        <text x="410" y="110" text-anchor="middle" fill="#718096" font-size="10">Auto-balanceado</text>
+      </g>
+    </g>
+    
+    <!-- Ventajas -->
+    <g transform="translate(50, 470)">
+      <text x="0" y="0" fill="#00ED64" font-size="18" font-weight="600">Ventajas:</text>
+      <text x="0" y="30" fill="#FFFFFF" font-size="14">• 100% Automatizado</text>
+      <text x="0" y="55" fill="#FFFFFF" font-size="14">• Una sola colección "transacciones"</text>
+      <text x="0" y="80" fill="#FFFFFF" font-size="14">• Consultas dirigidas ultra-rápidas</text>
+      <text x="0" y="105" fill="#FFFFFF" font-size="14">• Auto-scaling sin downtime</text>
+      <text x="0" y="130" fill="#FFFFFF" font-size="14">• Balanceo continuo 24/7</text>
+    </g>
+    
+    <!-- Query ejemplo optimizado -->
+    <rect x="50" y="630" width="500" height="70" rx="8" fill="rgba(0, 237, 100, 0.1)" stroke="#00ED64" stroke-width="1"/>
+    <text x="300" y="655" text-anchor="middle" fill="#00ED64" font-size="14" font-weight="600">Misma Consulta: Simple y Rápida</text>
+    <text x="60" y="680" fill="#FFFFFF" font-size="12" font-family="monospace">db.transacciones.find({id_cliente: 123, fecha: {$gte: ...}})</text>
+  </g>
+  
+  <!-- Explicación de la Shard Key -->
+  <g transform="translate(100, 1200)">
+    <rect x="0" y="0" width="1400" height="300" rx="12" fill="rgba(0, 237, 100, 0.05)" stroke="#00ED64" stroke-width="2"/>
+    <text x="700" y="50" text-anchor="middle" fill="#00ED64" font-size="26" font-weight="700">
+      🔑 La Magia de la Shard Key Compuesta: {id_cliente: 1, fecha_transaccion: 1}
+    </text>
+    
+    <!-- Explicación visual -->
+    <g transform="translate(65, 100)">
+      <!-- id_cliente -->
+      <rect x="0" y="0" width="350" height="150" rx="10" fill="rgba(0, 237, 100, 0.1)" stroke="#00ED64" stroke-width="2"/>
+      <text x="175" y="35" text-anchor="middle" fill="#00ED64" font-size="20" font-weight="600">id_cliente (Primario)</text>
+      <text x="20" y="65" fill="#B8C4CE" font-size="15">• Agrupa datos del mismo cliente</text>
+      <text x="20" y="95" fill="#B8C4CE" font-size="15">• Consultas dirigidas a 1 shard</text>
+      <text x="20" y="125" fill="#B8C4CE" font-size="15">• Máxima localidad de datos</text>
+      
+      <!-- Plus -->
+      <text x="385" y="75" fill="#00ED64" font-size="48" font-weight="700">+</text>
+      
+      <!-- fecha_transaccion -->
+      <rect x="450" y="0" width="350" height="150" rx="10" fill="rgba(0, 237, 100, 0.1)" stroke="#00ED64" stroke-width="2"/>
+      <text x="625" y="35" text-anchor="middle" fill="#00ED64" font-size="20" font-weight="600">fecha_transaccion (Secundario)</text>
+      <text x="470" y="65" fill="#B8C4CE" font-size="15">• Evita "jumbo chunks"</text>
+      <text x="470" y="95" fill="#B8C4CE" font-size="15">• Distribución granular</text>
+      <text x="470" y="125" fill="#B8C4CE" font-size="15">• Consultas por rango eficientes</text>
+      
+      <!-- Equals -->
+      <text x="835" y="75" fill="#00ED64" font-size="48" font-weight="700">=</text>
+      
+      <!-- Resultado -->
+      <rect x="900" y="15" width="450" height="120" rx="10" fill="url(#primaryGradient)" filter="url(#glow)"/>
+      <text x="1125" y="50" text-anchor="middle" fill="#001E2B" font-size="22" font-weight="700">Rendimiento + Escalabilidad</text>
+      <text x="1125" y="80" text-anchor="middle" fill="#001E2B" font-size="16">✓ Localidad por cliente</text>
+      <text x="1125" y="105" text-anchor="middle" fill="#001E2B" font-size="16">✓ Sin hotspots</text>
+    </g>
+  </g>
+  
+  <!-- Markers -->
+  <defs>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#EF4444"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#00ED64"/>
+    </marker>
+  </defs>
+</svg>

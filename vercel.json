@@ -146,6 +146,18 @@
       "dest": "/clientes/bancolombia/tdc-solucion.html"
     },
     {
+      "src": "/clientes/bancolombia/tdc(?:/.*)?$",
+      "dest": "/clientes/bancolombia/tdc.html"
+    },
+    {
+      "src": "/clientes/bancolombia/tdc-flow(?:/.*)?$",
+      "dest": "/clientes/bancolombia/tdc-flow.html"
+    },
+    {
+      "src": "/clientes/bancolombia/tdc-architecture(?:/.*)?$",
+      "dest": "/clientes/bancolombia/tdc-architecture.html"
+    },
+    {
       "src": "/clientes/(?:cencosud|bancolombia)/document-mongo(?:/.*)?$",
       "dest": "/index.html"
     },
