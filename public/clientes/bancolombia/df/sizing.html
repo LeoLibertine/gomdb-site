@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoMDB - Análisis de Sizing y Recomendación de Cluster</title>
+    <link rel="stylesheet" href="../../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para la presentación de sizing */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-2xl) 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            text-align: center;
+            transition: all var(--transition-base);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--color-primary);
+        }
+        
+        .stat-number {
+            font-size: var(--text-4xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+            display: block;
+        }
+        
+        .stat-label {
+            color: var(--color-text-secondary);
+            font-size: var(--text-base);
+            font-weight: 500;
+        }
+        
+        .calculation-section {
+            background-color: var(--color-bg-tertiary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+            border-left: 4px solid var(--color-primary);
+        }
+        
+        .comparison-table {
+            width: 100%;
+            background-color: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: var(--spacing-md);
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .comparison-table th {
+            background-color: var(--color-bg-secondary);
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+        
+        .comparison-table td {
+            color: var(--color-text-secondary);
+        }
+        
+        .scenario-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin: var(--spacing-xl) 0;
+            border: 2px solid transparent;
+            transition: all var(--transition-base);
+            position: relative;
+        }
+        
+        .scenario-card.recommended {
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .scenario-card.recommended::before {
+            content: "RECOMENDADO";
+            position: absolute;
+            top: -12px;
+            right: var(--spacing-xl);
+            background-color: var(--color-primary);
+            color: var(--color-text-dark);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 700;
+        }
+        
+        .scenario-specs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .spec-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+        
+        .spec-value {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            display: block;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .spec-label {
+            color: var(--color-text-secondary);
+            font-size: var(--text-sm);
+        }
+        
+        .diagram-placeholder {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(86, 68, 212, 0.1) 100%);
+            border: 2px dashed var(--color-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-3xl);
+            text-align: center;
+            margin: var(--spacing-xl) 0;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .diagram-placeholder h4 {
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .diagram-placeholder p {
+            color: var(--color-text-muted);
+            font-style: italic;
+        }
+        
+        /* Estilos para las imágenes de diagramas */
+        .diagram-section {
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .diagram-section h4 {
+            color: var(--color-primary);
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .diagram-container {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.05) 0%, rgba(86, 68, 212, 0.05) 100%);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            text-align: center;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .diagram-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-base);
+        }
+        
+        .diagram-image:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent-light) 100%);
+            border-left: 4px solid var(--color-primary);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        @media (min-width: 768px) {
+            .criteria-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+        }
+        
+        .criteria-item {
+            background-color: var(--color-bg-card);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            transition: all var(--transition-base);
+        }
+        
+        .criteria-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .criteria-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-md);
+            font-size: var(--text-2xl);
+            color: var(--color-text-dark);
+        }
+        
+        /* Estilos específicos para la descripción visual del caso de uso */
+        .use-case-visual {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin: var(--spacing-xl) 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .use-case-visual::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+        }
+        
+        .process-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .process-step {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(86, 68, 212, 0.1) 100%);
+            border: 2px solid transparent;
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            text-align: center;
+            position: relative;
+            transition: all var(--transition-base);
+            backdrop-filter: blur(10px);
+        }
+        
+        .process-step:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .process-step-number {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: var(--text-sm);
+            color: var(--color-text-dark);
+        }
+        
+        .process-icon {
+            font-size: var(--text-4xl);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .process-title {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .process-description {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+        
+        .flow-arrow {
+            display: none;
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: var(--text-2xl);
+            color: var(--color-primary);
+            z-index: 1;
+        }
+        
+        @media (min-width: 1024px) {
+            .process-flow {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .flow-arrow {
+                display: block;
+            }
+            
+            .process-step:last-child .flow-arrow {
+                display: none;
+            }
+        }
+        
+        .users-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+            text-align: center;
+        }
+        
+        .users-icon {
+            font-size: var(--text-5xl);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .users-title {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .users-description {
+            color: var(--color-text-secondary);
+            font-size: var(--text-lg);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <div class="navbar-logo">
+                <span class="text-gradient">GoMDB</span>
+            </div>
+            <div class="navbar-links">
+                <a href="#overview" class="navbar-link">Resumen</a>
+                <a href="#calculations" class="navbar-link">Cálculos</a>
+                <a href="#scenarios" class="navbar-link">Escenarios</a>
+                <a href="#recommendation" class="navbar-link">Recomendación</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        <div class="container">
+            <div class="text-center">
+                <div class="badge badge-primary mb-4">
+                    <span>📊</span>
+                    Análisis de Sizing MongoDB Atlas
+                </div>
+                <h1 class="text-gradient mb-4">
+                    Proyecto de Monitoreo de Fraude
+                </h1>
+                <p class="text-xl text-secondary mb-6">
+                    Análisis de dimensionamiento y recomendación de cluster para Bancolombia
+                </p>
+                <div class="badge badge-secondary">
+                    Sistema de orquestación transaccional y detección de fraude
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview" class="section">
+        <div class="container">
+            <h2 class="text-center mb-6">Descripción del Caso de Uso</h2>
+            
+            <!-- Descripción Visual del Proceso -->
+            <div class="use-case-visual">
+                <div class="text-center mb-6">
+                    <h3 class="text-gradient mb-4">Sistema de Orquestación Transaccional</h3>
+                    <p class="text-lg text-secondary">
+                        Reemplazo de producto descontinuado con nueva infraestructura de detección de fraude
+                    </p>
+                </div>
+                
+                <!-- Flujo del Proceso -->
+                <div class="process-flow">
+                    <div class="process-step">
+                        <div class="process-step-number">1</div>
+                        <div class="process-icon">📱</div>
+                        <div class="process-title">Recepción</div>
+                        <div class="process-description">
+                            Transacciones de todos los canales digitales
+                        </div>
+                        <div class="flow-arrow">→</div>
+                    </div>
+                    
+                    <div class="process-step">
+                        <div class="process-step-number">2</div>
+                        <div class="process-icon">🔍</div>
+                        <div class="process-title">Enriquecimiento</div>
+                        <div class="process-description">
+                            Información adicional agregada al contexto
+                        </div>
+                        <div class="flow-arrow">→</div>
+                    </div>
+                    
+                    <div class="process-step">
+                        <div class="process-step-number">3</div>
+                        <div class="process-icon">🎯</div>
+                        <div class="process-title">Evaluación</div>
+                        <div class="process-description">
+                            Motor de riesgo analiza y decide (aprobación/declinación)
+                        </div>
+                        <div class="flow-arrow">→</div>
+                    </div>
+                    
+                    <div class="process-step">
+                        <div class="process-step-number">4</div>
+                        <div class="process-icon">💾</div>
+                        <div class="process-title">Almacenamiento</div>
+                        <div class="process-description">
+                            Todo el proceso queda registrado en MongoDB
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sección de Usuarios -->
+                <div class="users-section">
+                    <div class="users-icon">👥</div>
+                    <div class="users-title">Consulta por Asesores</div>
+                    <div class="users-description">
+                        Los datos almacenados serán consultados por asesores de call center 
+                        para investigar y gestionar casos de fraude reportados por clientes
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métricas Clave -->
+            <h3 class="text-center mb-4">Métricas Clave del Proyecto</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">1,200M</span>
+                    <span class="stat-label">Registros en 3 meses</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">TPS promedio</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">300-400</span>
+                    <span class="stat-label">Asesores concurrentes</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">300-400</span>
+                    <span class="stat-label">Campos por documento</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">Meses ciclo de vida</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Índices en memoria</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Requisitos Calculados -->
+    <section id="calculations" class="section">
+        <div class="container">
+            <h2 class="text-center mb-6">Requisitos Calculados de Infraestructura</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="card card-bordered">
+                    <h4 class="text-primary mb-3">💾 Almacenamiento Total</h4>
+                    <div class="metric-value">~7.0 TB</div>
+                    <p class="text-secondary">Incluye datos, índices y buffer de seguridad del 25%</p>
+                </div>
+                <div class="card card-bordered">
+                    <h4 class="text-primary mb-3">🧠 RAM Física Total</h4>
+                    <div class="metric-value">~230 GB</div>
+                    <p class="text-secondary">Para mantener 100% de índices en memoria</p>
+                </div>
+            </div>
+
+            <!-- Detalle del Cálculo -->
+            <div class="calculation-section">
+                <h3 class="text-primary mb-4">Detalle del Cálculo de Índices y Memoria RAM</h3>
+                
+                <h4 class="mb-3">Supuestos para el Cálculo:</h4>
+                <ul class="text-secondary mb-4 space-y-2">
+                    <li>• <strong>Total de Documentos:</strong> 1,200 millones</li>
+                    <li>• <strong>Campos a Indexar:</strong></li>
+                    <ul class="ml-4 mt-2 space-y-1">
+                        <li>- tipo_documento (String): ~8 bytes</li>
+                        <li>- numero_documento (String): ~15 bytes</li>
+                        <li>- id_transaccion (UUID String): ~16 bytes</li>
+                        <li>- fecha (BSON Date): 8 bytes</li>
+                    </ul>
+                    <li>• <strong>Sobrecarga por Entrada:</strong> ~16 bytes por entrada</li>
+                </ul>
+
+                <h4 class="mb-3">Cálculo por Índice:</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="spec-item">
+                        <span class="spec-value">56.4 GB</span>
+                        <span class="spec-label">Índice Principal (Cliente + Fecha)</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-value">38.4 GB</span>
+                        <span class="spec-label">Índice ID Transacción</span>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h4 class="text-primary mb-2">Cálculo Final de Memoria:</h4>
+                    <p class="mb-2"><strong>Tamaño Total de Índices:</strong> 94.8 GB</p>
+                    <p class="mb-2"><strong>Con Buffer de Seguridad (20%):</strong> ~115 GB</p>
+                    <p><strong>RAM Física Requerida:</strong> 230 GB (115 GB / 0.50 de caché WiredTiger)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Escenarios -->
+    <section id="scenarios" class="section">
+        <div class="container">
+            <h2 class="text-center mb-6">Arquitecturas Propuestas</h2>
+
+            <!-- Escenario A -->
+            <div class="scenario-card">
+                <h3 class="text-primary mb-4">🏗️ Escenario A: Arquitectura con 2 Shards</h3>
+                
+                <div class="scenario-specs">
+                    <div class="spec-item">
+                        <span class="spec-value">3.5 TB</span>
+                        <span class="spec-label">Almacenamiento por Shard</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-value">115 GB</span>
+                        <span class="spec-label">RAM por Shard</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-value">M80</span>
+                        <span class="spec-label">Tier Atlas Recomendado</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-value">4 TB</span>
+                        <span class="spec-label">Disco Provisionado</span>
+                    </div>
+                </div>
+
+                <div class="card card-bordered mt-4">
+                    <h4 class="text-primary mb-3">Configuración Final:</h4>
+                    <div class="criteria-grid">
+                        <div class="criteria-item">
+                            <div class="criteria-icon">🔧</div>
+                            <h5>Arquitectura</h5>
+                            <p>2 Shards</p>
+                        </div>
+                        <div class="criteria-item">
+                            <div class="criteria-icon">⚡</div>
+                            <h5>Tier por Shard</h5>
+                            <p>M80 (128 GB RAM, 32 vCPU)</p>
+                        </div>
+                        <div class="criteria-item">
+                            <div class="criteria-icon">📊</div>
+                            <h5>Capacidad Total</h5>
+                            <p>256 GB RAM, 64 vCPU, 8 TB</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección para Diagrama -->
+                <div class="diagram-section">
+                    <h4>📐 Diagrama de Arquitectura - Escenario A</h4>
+                    <div class="diagram-container">
+                        <img src="../../../img/2shards.svg" 
+                             alt="Diagrama de Arquitectura con 2 Shards" 
+                             class="diagram-image"
+                             onerror="this.parentElement.innerHTML='<div class=diagram-placeholder><p>⚠️ Imagen no encontrada: ./images/diagrama-escenario-a.png</p><p>Verifica que la imagen esté en la carpeta correcta</p></div>'">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Escenario B -->
+            <div class="scenario-card recommended">
+                <h3 class="text-primary mb-4">🏗️ Escenario B: Arquitectura con 3 Shards</h3>
+                
+                <div class="scenario-specs">
+                    <div class="spec-item">
+                        <span class="spec-value">~2.3 TB</span>
+                        <span class="spec-label">Almacenamiento por Shard</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-value">~77 GB</span>
+                        <span class="spec-label">RAM por Shard</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-value">M80</span>
+                        <span class="spec-label">Tier Atlas Recomendado</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-value">3 TB</span>
+                        <span class="spec-label">Disco Provisionado</span>
+                    </div>
+                </div>
+
+                <div class="card card-bordered mt-4">
+                    <h4 class="text-primary mb-3">Configuración Final:</h4>
+                    <div class="criteria-grid">
+                        <div class="criteria-item">
+                            <div class="criteria-icon">🔧</div>
+                            <h5>Arquitectura</h5>
+                            <p>3 Shards</p>
+                        </div>
+                        <div class="criteria-item">
+                            <div class="criteria-icon">⚡</div>
+                            <h5>Tier por Shard</h5>
+                            <p>M80 (128 GB RAM, 32 vCPU)</p>
+                        </div>
+                        <div class="criteria-item">
+                            <div class="criteria-icon">📊</div>
+                            <h5>Capacidad Total</h5>
+                            <p>384 GB RAM, 96 vCPU, 9 TB</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección para Diagrama -->
+                <div class="diagram-section">
+                    <h4>📐 Diagrama de Arquitectura - Escenario B</h4>
+                    <div class="diagram-container" style="padding: 0; height: 1000px;">
+                        <iframe src="../../../img/3shards.html" width="100%" height="100%" style="border: none; border-radius: var(--radius-md); box-shadow: var(--shadow-lg);"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparativa -->
+    <section id="recommendation" class="section">
+        <div class="container">
+            <h2 class="text-center mb-6">Comparativa y Recomendación Final</h2>
+            
+            <div class="card card-gradient mb-6">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Característica</th>
+                            <th>Escenario A (2x M80)</th>
+                            <th>Escenario B (3x M80) - Recomendado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Costo</strong></td>
+                            <td>Menor</td>
+                            <td style="color: var(--color-warning);">Más elevado</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rendimiento Escritura</strong></td>
+                            <td>Bueno</td>
+                            <td style="color: var(--color-success);">Excelente (distribuye la carga en más nodos)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Escalabilidad Futura</strong></td>
+                            <td>Buena</td>
+                            <td style="color: var(--color-success);">Superior (más fácil añadir capacidad)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ajuste a Requisitos RAM</strong></td>
+                            <td>Excelente y eficiente</td>
+                            <td style="color: var(--color-success);">Holgado, con margen para crecimiento</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="highlight-box">
+                <h3 class="text-primary mb-4">🎯 Recomendación Final</h3>
+                <p class="mb-4">
+                    La alta carga de escritura (500+ TPS) es el factor más desafiante de este proyecto. 
+                    Aunque la arquitectura de 2 shards (Escenario A) es más económica y cumple con los 
+                    requisitos de RAM de forma muy eficiente, <strong>la arquitectura de 3 shards (Escenario B) 
+                    sigue siendo la recomendación principal.</strong>
+                </p>
+                
+                <h4 class="text-primary mb-3">Razón:</h4>
+                <p class="mb-4">
+                    Distribuir la intensa carga de transacciones entre tres nodos en lugar de dos reduce 
+                    significativamente el riesgo de cuellos de botella y proporciona un rendimiento de 
+                    escritura superior y más consistente, lo cual es crítico para la estabilidad del sistema. 
+                    Este beneficio en rendimiento y la mayor facilidad para escalar a futuro justifican 
+                    la diferencia en costo.
+                </p>
+                
+                <div class="card card-bordered">
+                    <h4 class="text-primary mb-3">📋 Próximo Paso:</h4>
+                    <p class="text-center">
+                        Validar la arquitectura recomendada (3 shards M80) mediante pruebas de carga 
+                        para confirmar su comportamiento bajo los picos de transacciones esperados.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Efecto de scroll para la navbar
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Animaciones de aparición
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeIn');
+                }
+            });
+        }, observerOptions);
+
+        // Observar elementos para animación
+        document.querySelectorAll('.card, .stat-card, .scenario-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducción al Proyecto BDTL - Bancolombia</title>
+    <link rel="stylesheet" href="../../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para la aplicación */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--color-bg-secondary);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: var(--spacing-md) var(--spacing-xl);
+            z-index: var(--z-fixed);
+            height: 70px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--color-text-dark);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 300px;
+            height: calc(100vh - 70px);
+            background-color: var(--color-bg-secondary);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            z-index: var(--z-sticky);
+        }
+
+        .sidebar-content {
+            padding: var(--spacing-xl);
+        }
+
+        .menu-item {
+            display: block;
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+            border-radius: var(--radius-lg);
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+        }
+
+        .menu-item.active {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            border-left: 3px solid var(--color-primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            margin-top: 70px;
+            padding: var(--spacing-2xl);
+            flex: 1;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform var(--transition-slow);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text-primary);
+            font-size: var(--text-xl);
+            cursor: pointer;
+        }
+
+        /* Estilos específicos para el contenido */
+        .visual-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: var(--spacing-xl) 0;
+            flex-wrap: wrap;
+            gap: var(--spacing-lg);
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            position: relative;
+        }
+
+        .flow-arrow {
+            font-size: var(--text-2xl);
+            color: var(--color-primary);
+            margin: 0 var(--spacing-md);
+        }
+
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-xl);
+            margin: var(--spacing-2xl) 0;
+        }
+
+        .content-section {
+            margin: var(--spacing-3xl) 0;
+        }
+
+        .diagram-container {
+            background-color: var(--color-bg-tertiary);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin: var(--spacing-xl) 0;
+            border: 2px dashed var(--color-primary);
+            text-align: center;
+        }
+
+        .diagram-placeholder {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-3xl);
+            margin: var(--spacing-lg) 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .visual-flow {
+                flex-direction: column;
+            }
+            
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">B</div>
+                <div>
+                    <h2 style="margin-bottom: 0; font-size: var(--text-xl);">Bitácora Digital BDTL</h2>
+                    <p style="margin-bottom: 0; font-size: var(--text-sm); color: var(--color-text-muted);">Bancolombia MongoDB Architecture</p>
+                </div>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <nav>
+                    <a href="bdtl.html" class="menu-item active">
+                        📚 Introducción al Proyecto BDTL
+                    </a>
+                    <a href="arquitectura.html" class="menu-item">
+                        🏗️ Arquitectura del Sistema
+                    </a>
+                    <a href="evolucion.html" class="menu-item">
+                        📈 Evolución de la Arquitectura
+                    </a>
+                    <a href="ventajas.html" class="menu-item">
+                        ⚡ Ventajas de MongoDB como BDTL
+                    </a>
+                    <a href="tabla.html" class="menu-item">
+                        📋 Descripción Tablas y Campos
+                    </a>
+                    <a href="procedures.html" class="menu-item">
+                        ⚙️ Store Procedures
+                    </a>
+                    <a href="modelo.html" class="menu-item">
+                        🗃️ Modelo de Datos
+                    </a>
+                    <a href="servicios.html" class="menu-item">
+                        🔌 Servicios y APIs
+                    </a>
+                    <a href="logica.html" class="menu-item">
+                        🧠 Lógica de Negocio
+                    </a>
+                    <a href="guias.html" class="menu-item">
+                        📖 Guías y Mejores Prácticas
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+        <h1 class="text-gradient">Introducción al Proyecto BDTL</h1>
+        <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-2xl);">
+            Servicio Base de Datos de Texto Líquido - EVC Evolución Digital
+        </p>
+
+        <!-- Definición Visual de BDTL -->
+        <div class="content-section">
+            <div class="card" style="background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%); border: 2px solid var(--color-primary); box-shadow: var(--shadow-glow);">
+                <div style="display: flex; align-items: center; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                    <div style="width: 60px; height: 60px; background: var(--color-primary); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: var(--text-2xl);">🗄️</div>
+                    <h2 style="margin-bottom: 0; font-size: var(--text-3xl);">¿Qué es BDTL?</h2>
+                </div>
+                
+                <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-lg);">
+                    La BDTL es un <strong style="color: var(--color-primary);">repositorio temporal</strong> soportado en una base de datos que centraliza la información extraída de documentos. Los datos líquidos almacenados son el resultado de procesos que usan habilitadores de extracción para el procesamiento de documentos y que disponen los datos en formato JSON.
+                </p>
+
+                <!-- Flujo Visual del Proceso -->
+                <div class="visual-flow" style="background-color: var(--color-bg-tertiary); padding: var(--spacing-xl); border-radius: var(--radius-lg); margin: var(--spacing-xl) 0;">
+                    <div class="flow-step">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">📄</div>
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-xs);">Documentos</h4>
+                        <p style="font-size: var(--text-sm); margin: 0;">Procesamiento con habilitadores de extracción</p>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">💧</div>
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-xs);">Datos Líquidos</h4>
+                        <p style="font-size: var(--text-sm); margin: 0;">Información en formato JSON</p>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">🗄️</div>
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-xs);">BDTL</h4>
+                        <p style="font-size: var(--text-sm); margin: 0;">Almacenamiento temporal centralizado</p>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">📊</div>
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-xs);">LZ Analytics</h4>
+                        <p style="font-size: var(--text-sm); margin: 0;">Procesos de analítica</p>
+                    </div>
+                </div>
+
+                <p style="font-size: var(--text-base);">
+                    La información almacenada se pone a disposición según <strong>políticas de reúso</strong> a través de servicios de consulta y finalmente es utilizada para alimentar archivos/fuentes de datos maestros que tendrán como resultado final la LZ.
+                </p>
+            </div>
+        </div>
+
+        <!-- APIs y Servicios -->
+        <div class="content-section">
+            <h2 style="text-align: center; margin-bottom: var(--spacing-xl); font-size: var(--text-3xl);">🔌 APIs y Servicios BDTL</h2>
+            
+            <div class="api-grid">
+                <!-- API Ingesta -->
+                <div style="background: linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%); padding: var(--spacing-xl); border-radius: var(--radius-xl); color: white; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -20px; right: -20px; font-size: 80px; opacity: 0.2;">📝</div>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+                        <div style="background: rgba(255,255,255,0.2); padding: var(--spacing-md); border-radius: var(--radius-md); font-size: var(--text-xl);">📝</div>
+                        <h3 style="margin: 0; font-size: var(--text-xl);">API Ingesta</h3>
+                    </div>
+                    <p style="margin-bottom: var(--spacing-lg);">
+                        Permite almacenar como registros en la BD la información capturada de documentos a través de diferentes herramientas de extracción o servicios de recolección digital.
+                    </p>
+                    <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-md); border-radius: var(--radius-md);">
+                        <strong>✨ Recibe:</strong><br>
+                        • Parámetros generales del proceso<br>
+                        • Herramienta que captura el documento<br>
+                        • JSON con data líquida extraída
+                    </div>
+                    <div style="margin-top: var(--spacing-md); padding: var(--spacing-sm); background: rgba(255,255,255,0.1); border-radius: var(--radius-sm); font-size: var(--text-sm);">
+                        <strong>Propósito:</strong> Respaldar y centralizar datos capturados para habilitar reúso sin reprocesamiento
+                    </div>
+                </div>
+
+                <!-- API Actualización -->
+                <div style="background: linear-gradient(135deg, #A8E6CF 0%, #88D8A3 100%); padding: var(--spacing-xl); border-radius: var(--radius-xl); color: var(--color-text-dark); position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -20px; right: -20px; font-size: 80px; opacity: 0.2;">✏️</div>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+                        <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-md); border-radius: var(--radius-md); font-size: var(--text-xl);">✏️</div>
+                        <h3 style="margin: 0; font-size: var(--text-xl);">API Actualización</h3>
+                    </div>
+                    <p style="margin-bottom: var(--spacing-lg);">
+                        Permite a los procesos y habilitadores modificar la metadata de los documentos ingestados en la base de datos de texto líquido.
+                    </p>
+                    <div style="background: rgba(0,0,0,0.05); padding: var(--spacing-md); border-radius: var(--radius-md);">
+                        <strong>🔧 Actualiza:</strong><br>
+                        • ID del registro<br>
+                        • Campos habilitados para edición<br>
+                        • JSON de datos líquidos extraídos
+                    </div>
+                    <div style="margin-top: var(--spacing-md); padding: var(--spacing-sm); background: rgba(0,0,0,0.05); border-radius: var(--radius-sm); font-size: var(--text-sm);">
+                        <strong>Uso:</strong> Validación realizada o corrección de extracción en el documento
+                    </div>
+                </div>
+
+                <!-- API Consulta -->
+                <div style="background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%); padding: var(--spacing-xl); border-radius: var(--radius-xl); color: white; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -20px; right: -20px; font-size: 80px; opacity: 0.2;">🔍</div>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+                        <div style="background: rgba(255,255,255,0.2); padding: var(--spacing-md); border-radius: var(--radius-md); font-size: var(--text-xl);">🔍</div>
+                        <h3 style="margin: 0; font-size: var(--text-xl);">API Consulta</h3>
+                    </div>
+                    <p style="margin-bottom: var(--spacing-lg);">
+                        Expone información de documentos procesados para habilitar consumo cercano a tiempo real y el re-uso de texto líquido.
+                    </p>
+                    <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-md); border-radius: var(--radius-md);">
+                        <strong>🎯 Consultas por Cliente:</strong><br>
+                        • ID cliente para fecha específica<br>
+                        • ID cliente para rango de tiempo<br>
+                        • ID cliente para tipos documentales<br>
+                        <br>
+                        <strong>🎯 Consultas por Proceso:</strong><br>
+                        • Proceso y subtipo para fecha/hora específica
+                    </div>
+                </div>
+
+                <!-- Servicio Batch -->
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: var(--spacing-xl); border-radius: var(--radius-xl); color: white; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -20px; right: -20px; font-size: 80px; opacity: 0.2;">⚡</div>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+                        <div style="background: rgba(255,255,255,0.2); padding: var(--spacing-md); border-radius: var(--radius-md); font-size: var(--text-xl);">⚡</div>
+                        <h3 style="margin: 0; font-size: var(--text-xl);">Servicio Carga Batch</h3>
+                    </div>
+                    <p style="margin-bottom: var(--spacing-lg);">
+                        Permite realizar ingesta masiva de registros. Se ejecuta de forma programada tomando como base un archivo que lista los registros a insertar.
+                    </p>
+                    <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-md); border-radius: var(--radius-md);">
+                        <strong>🚀 Características:</strong><br>
+                        • Ejecución programada<br>
+                        • Archivo desde Bucket S3<br>
+                        • Procesamiento masivo<br>
+                        • No requiere consulta en línea
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lo que SÍ permite hacer -->
+        <div class="content-section">
+            <div class="card" style="border-left: 4px solid var(--color-success);">
+                <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+                    <div style="font-size: var(--text-3xl);">✅</div>
+                    <h2 style="margin: 0; color: var(--color-success);">¿Qué SÍ permite hacer la BDTL?</h2>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg);">
+                    <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-success);">
+                        <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">🗂️</div>
+                        <h4 style="color: var(--color-success);">Almacenamiento Temporal (6 meses)</h4>
+                        <p style="font-size: var(--text-sm);">Información de diferentes herramientas de extracción, fuentes públicas o habilitadores de recolección digital</p>
+                    </div>
+                    
+                    <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-success);">
+                        <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">📦</div>
+                        <h4 style="color: var(--color-success);">Carga Masiva Programada</h4>
+                        <p style="font-size: var(--text-sm);">Almacenamiento programado para carga masiva de información capturada desde los procesos</p>
+                    </div>
+                    
+                    <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-success);">
+                        <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">🔄</div>
+                        <h4 style="color: var(--color-success);">Actualización de Datos</h4>
+                        <p style="font-size: var(--text-sm);">Actualizar datos almacenados según gobierno de la información y el proceso</p>
+                    </div>
+                    
+                    <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-success);">
+                        <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">🔍</div>
+                        <h4 style="color: var(--color-success);">Consulta Multi-proceso</h4>
+                        <p style="font-size: var(--text-sm);">Disponer información para ser consultada por diferentes procesos y servicios</p>
+                    </div>
+                    
+                    <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-success);">
+                        <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">♻️</div>
+                        <h4 style="color: var(--color-success);">Reúso de Información</h4>
+                        <p style="font-size: var(--text-sm);">Reutilizar información almacenada a través del API de consulta de data líquida</p>
+                    </div>
+                    
+                    <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-success);">
+                        <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">📊</div>
+                        <h4 style="color: var(--color-success);">Replicación a LZ</h4>
+                        <p style="font-size: var(--text-sm);">Replicar información en zona de datos crudos (cada hora) y zona de resultados T-1 (cada día)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lo que NO permite hacer -->
+        <div class="content-section">
+            <div class="card" style="border-left: 4px solid var(--color-error);">
+                <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+                    <div style="font-size: var(--text-3xl);">❌</div>
+                    <h2 style="margin: 0; color: var(--color-error);">¿Qué NO se debe hacer en la BDTL?</h2>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg);">
+                    <div style="background-color: rgba(239, 68, 68, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-error);">
+                        <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">⏰</div>
+                        <h4 style="color: var(--color-error);">Almacenamiento Indefinido</h4>
+                        <p style="font-size: var(--text-sm);">No almacenar por tiempo indefinido. BDTL tiene mecanismo de depuración: máximo 6 meses desde inserción</p>
+                    </div>
+                    
+                    <div style="background-color: rgba(239, 68, 68, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-error);">
+                        <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">🎥</div>
+                        <h4 style="color: var(--color-error);">Contenido Multimedia</h4>
+                        <p style="font-size: var(--text-sm);">No almacenar video, audio o documentos (imágenes). Solo datos líquidos en JSON</p>
+                    </div>
+                    
+                    <div style="background-color: rgba(239, 68, 68, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-error);">
+                        <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">🔗</div>
+                        <h4 style="color: var(--color-error);">Acceso Directo</h4>
+                        <p style="font-size: var(--text-sm);">No acceder directamente a la BD. Siempre a través del API de ingesta y API de consulta</p>
+                    </div>
+                    
+                    <div style="background-color: rgba(239, 68, 68, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-error);">
+                        <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">⚡</div>
+                        <h4 style="color: var(--color-error);">Uso Transaccional</h4>
+                        <p style="font-size: var(--text-sm);">No para uso transaccional síncrono. BDTL es servicio para reúso de información asíncrono</p>
+                    </div>
+                    
+                    <div style="background-color: rgba(239, 68, 68, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-error);">
+                        <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">🗄️</div>
+                        <h4 style="color: var(--color-error);">BD de Procesos</h4>
+                        <p style="font-size: var(--text-sm);">No es BD de los procesos. BDTL centraliza información líquida, cada proceso debe tener su BD</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diagramas -->
+        <div class="content-section">
+            <h2 style="text-align: center; margin-bottom: var(--spacing-xl);">📊 Diagramas del Sistema</h2>
+            
+            <div class="diagram-container">
+                <h3 style="margin-bottom: var(--spacing-lg);">Flujo de Procesamiento BDTL</h3>
+                <div class="diagram-placeholder">
+                    <div style="text-align: center;">
+                        <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-md); opacity: 0.7;">🔄</div>
+                        <p style="color: var(--color-text-muted); margin: 0;">
+                            [Imagen: flujo-procesamiento-bdtl.png]<br>
+                            Flujo completo del procesamiento de datos en BDTL
+                        </p>
+                    </div>
+                </div>
+                <p style="font-size: var(--text-sm); color: var(--color-text-muted); text-align: center; margin-top: var(--spacing-sm);">
+                    Incluye ingesta/actualización, consulta, transferencia a LZ cada hora y zona de resultados FCO
+                </p>
+            </div>
+
+            <div class="diagram-container">
+                <h3 style="margin-bottom: var(--spacing-lg);">Canales de Entrada y Salida BDTL</h3>
+                <div class="diagram-placeholder">
+                    <div style="text-align: center;">
+                        <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-md); opacity: 0.7;">🔄</div>
+                        <p style="color: var(--color-text-muted); margin: 0;">
+                            [Imagen: canales-entrada-salida-bdtl.png]<br>
+                            Contribuidores y consumidores del sistema
+                        </p>
+                    </div>
+                </div>
+                <p style="font-size: var(--text-sm); color: var(--color-text-muted); text-align: center; margin-top: var(--spacing-sm);">
+                    Muestra todos los canales, procesos y servicios que alimentan y consumen información de la BDTL
+                </p>
+            </div>
+        </div>
+
+        <!-- Contenido de la Bitácora -->
+        <div class="content-section">
+            <div class="card" style="background: linear-gradient(135deg, var(--color-accent) 0%, rgba(86, 68, 212, 0.8) 100%);">
+                <h2 style="color: white; text-align: center; margin-bottom: var(--spacing-xl);">📚 Contenido de esta Bitácora</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
+                    <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-md); border-radius: var(--radius-md); color: white;">
+                        <strong>1.</strong> ¿Qué es BDTL?
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-md); border-radius: var(--radius-md); color: white;">
+                        <strong>2.</strong> API's y Servicios
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-md); border-radius: var(--radius-md); color: white;">
+                        <strong>3.</strong> Flujo procesamiento BDTL
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-md); border-radius: var(--radius-md); color: white;">
+                        <strong>4.</strong> Canales de entrada y salida
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-md); border-radius: var(--radius-md); color: white;">
+                        <strong>5.</strong> Qué hace y qué no se debe hacer
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Función para toggle del menú móvil
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        // Marcar enlace activo basado en la página actual
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop() || 'introduccion.html';
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === currentPage) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

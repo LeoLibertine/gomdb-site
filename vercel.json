@@ -166,6 +166,10 @@
       "dest": "/clientes/bancolombia/voyageai.html"
     },
     {
+      "src": "/clientes/bancolombia/df/sizing(?:/.*)?$",
+      "dest": "/clientes/bancolombia/df/sizing.html"
+    },
+    {
       "src": "/lz/lz(?:/.*)?$",
       "dest": "/lz/lz.html"
     },

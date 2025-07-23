@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bancolombia - Transformación Digital con MongoDB</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: white;
+            background-color: #1a1a1a;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #3c3c3c 0%, #1a1a1a 100%);
+            color: white;
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-content {
+            text-align: center;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .logo::after {
+            content: " + MongoDB";
+            color: #00ED64;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        .subtitle span.highlight {
+            color: #F5B800;
+            font-weight: 600;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(60, 60, 60, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: #00ED64;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #F5B800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 4rem 0;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: white;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            font-weight: 600;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #00ED64, #F5B800);
+            border-radius: 2px;
+        }
+
+        /* Challenges Section */
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .challenge-card {
+            background: rgba(60, 60, 60, 0.9);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            border-left: 5px solid #3c3c3c;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(60, 60, 60, 0.3), transparent);
+            border-radius: 0 20px 0 100px;
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-left-color: #F5B800;
+            background: rgba(80, 80, 80, 0.95);
+        }
+
+        .challenge-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3c3c3c, #1a1a1a);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .challenge-title {
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .challenge-description {
+            color: #cccccc;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .challenge-projects {
+            background: linear-gradient(135deg, rgba(248, 230, 240, 0.15), rgba(240, 214, 232, 0.15));
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border: 1px solid rgba(214, 51, 132, 0.4);
+        }
+
+        .projects-label {
+            font-weight: 600;
+            color: #F5B800;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .projects-list {
+            font-size: 0.85rem;
+            color: #cccccc;
+            line-height: 1.5;
+        }
+
+        /* Solutions Section */
+        .solutions-section {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            padding: 4rem 0;
+            margin: 4rem 0;
+            border-radius: 30px;
+        }
+
+        .solutions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .solution-card {
+            background: rgba(60, 60, 60, 0.9);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            border-left: 5px solid #3c3c3c;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .solution-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(60, 60, 60, 0.3), transparent);
+            border-radius: 0 20px 0 100px;
+        }
+
+        .solution-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-left-color: #00ED64;
+            background: rgba(80, 80, 80, 0.95);
+        }
+
+        .solution-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3c3c3c, #1a1a1a);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .solution-title {
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .solution-description {
+            color: #cccccc;
+            line-height: 1.6;
+        }
+
+        .benefits-list {
+            background: linear-gradient(135deg, rgba(212, 237, 218, 0.15), rgba(195, 230, 203, 0.15));
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border: 1px solid rgba(40, 167, 69, 0.4);
+        }
+
+        .benefits-title {
+            font-weight: 600;
+            color: #00ED64;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .benefits-items {
+            font-size: 0.85rem;
+            color: #cccccc;
+            line-height: 1.5;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            border-radius: 30px;
+            margin: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .cta-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #2c2c2c;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Competitive Analysis Section */
+        .competitive-analysis {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .comparison-card {
+            background: rgba(70, 70, 70, 0.95);
+            border-radius: 25px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(100, 100, 100, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            border-color: #F5B800;
+            background: rgba(80, 80, 80, 0.95);
+        }
+
+        .highlight-card {
+            background: rgba(70, 70, 70, 0.95);
+            border: 2px solid #F5B800;
+        }
+
+        .competitor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(245, 184, 0, 0.3);
+        }
+
+        .competitor-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c2c2c;
+        }
+
+        .comparison-result {
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .comparison-result.winner {
+            background: linear-gradient(135d, #28a745, #20c997);
+            color: white;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .comparison-categories {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .category-comparison {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .category-comparison:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .category-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comparison-details {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .mongodb-advantage {
+            background: rgba(45, 45, 45, 0.95);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid #00ED64;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #ffffff;
+        }
+
+        .mongodb-advantage strong {
+            color: #00ED64;
+            font-weight: 700;
+        }
+
+        .competitor-disadvantage {
+            background: rgba(45, 45, 45, 0.95);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid #ff6b6b;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #ffffff;
+        }
+
+        .competitor-disadvantage strong {
+            color: #ff6b6b;
+            font-weight: 700;
+        }
+
+        .mongodb-advantage strong,
+        .competitor-disadvantage strong {
+            color: #2c2c2c;
+        }
+
+        /* Unified Benefits */
+        .unified-benefits {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .benefit-item:hover {
+            border-color: #28a745;
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .benefit-icon {
+            font-size: 2rem;
+            min-width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .benefit-text {
+            flex: 1;
+            line-height: 1.6;
+        }
+
+        .benefit-text strong {
+            color: #2c2c2c;
+            font-weight: 600;
+        }
+
+        /* Responsive for competitive analysis */
+        @media (max-width: 768px) {
+            .competitor-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .comparison-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .benefit-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Bancolombia</div>
+                <div class="subtitle">Una plataforma de datos unificada para eliminar la fricción tecnológica, optimizar costos y acelerar la innovación a la velocidad que el mercado exige.</div>
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">$5K</div>
+                        <div class="stat-label">Costo mensual DocumentDB</div>
+                        <div style="color: #dc3545; font-size: 0.8rem; margin-top: 0.5rem;">Sin alta disponibilidad incluida</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">75M</div>
+                        <div class="stat-label">Registros mensuales Plink</div>
+                        <div style="color: #dc3545; font-size: 0.8rem; margin-top: 0.5rem;">Agregaciones tardan decenas de segundos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">5,000 TPS</div>
+                        <div class="stat-label">Requerimiento no soportado</div>
+                        <div style="color: #dc3545; font-size: 0.8rem; margin-top: 0.5rem;">SQL Server no puede escalar</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">600ms</div>
+                        <div class="stat-label">Meta gestión de fraudes</div>
+                        <div style="color: #dc3545; font-size: 0.8rem; margin-top: 0.5rem;">Orquestaciones lentas actuales</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Challenges Section -->
+            <section class="section fade-in">
+                <h2 class="section-title">Desafíos y Retos Actuales</h2>
+                <div class="challenges-grid">
+                    <div class="challenge-card">
+                        <div class="challenge-icon">💰</div>
+                        <h3 class="challenge-title">Costos Elevados y Optimización</h3>
+                        <p class="challenge-description">
+                            Bancolombia enfrenta costos muy elevados con soluciones actuales, pagando alrededor de $5,000 USD por DocumentDB en AWS para una sola máquina sin alta disponibilidad. Necesidad urgente de reducir costos operativos y simplificar la infraestructura.
+                        </p>
+                        <div class="challenge-projects">
+                            <div class="projects-label">Proyectos Afectados:</div>
+                            <div class="projects-list">Réplica de saldos y movimientos, Migración CouchBase, Centralización de Repositorio, Vista, Reportería Inteligente, Evolución Digital</div>
+                        </div>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-icon">📈</div>
+                        <h3 class="challenge-title">Limitaciones de Escalabilidad</h3>
+                        <p class="challenge-description">
+                            Los sistemas actuales no cumplen estándares de alta disponibilidad. SQL Server presenta problemas con datos no estructurados. Demandas críticas: 2-3 millones de registros diarios, 5000 transacciones por segundo, 75 millones de registros mensuales.
+                        </p>
+                        <div class="challenge-projects">
+                            <div class="projects-label">Proyectos Afectados:</div>
+                            <div class="projects-list">Evolución Digital, Traza de proceso/NWL, Plink, Sucursal Bancaria, Centralización de Repositorio</div>
+                        </div>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-icon">⚡</div>
+                        <h3 class="challenge-title">Problemas de Rendimiento</h3>
+                        <p class="challenge-description">
+                            Altos tiempos de respuesta en consultas complejas. La gestión de fraudes requiere evaluación en 600-700 milisegundos. Agregaciones pesadas tardan decenas de segundos para grandes conjuntos de datos.
+                        </p>
+                        <div class="challenge-projects">
+                            <div class="projects-label">Proyectos Afectados:</div>
+                            <div class="projects-list">Enriquecimiento, Plink, Evolución Digital, Réplica de saldos y movimientos</div>
+                        </div>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-icon">🔗</div>
+                        <h3 class="challenge-title">Fragmentación de Datos</h3>
+                        <p class="challenge-description">
+                            Información descentralizada con múltiples "fuentes de verdad" afectando integridad. Los clientes enfrentan fricción al generar informes en varias plataformas. Necesidad crítica de centralización.
+                        </p>
+                        <div class="challenge-projects">
+                            <div class="projects-label">Proyectos Afectados:</div>
+                            <div class="projects-list">Centralización de Información, Enriquecimiento, Traza de proceso/NWL, Vista, Reportería Inteligente</div>
+                        </div>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-icon">🔧</div>
+                        <h3 class="challenge-title">Modelos de Datos Rígidos</h3>
+                        <p class="challenge-description">
+                            SQL Server tiene limitaciones para datos JSON y texto "líquido". Se requieren esquemas flexibles para categorías cambiantes y plantillas JSON personalizadas con parámetros variables.
+                        </p>
+                        <div class="challenge-projects">
+                            <div class="projects-label">Proyectos Afectados:</div>
+                            <div class="projects-list">Evolución Digital, Galatea: Sucursal Virtual Negocio, Plink, Vista, Reportería Inteligente</div>
+                        </div>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-icon">🛠️</div>
+                        <h3 class="challenge-title">Falta de Soporte</h3>
+                        <p class="challenge-description">
+                            Para soluciones open-source como CouchDB, la responsabilidad de rendimiento y soporte recae completamente en equipos internos, creando una carga significativa de mantenimiento.
+                        </p>
+                        <div class="challenge-projects">
+                            <div class="projects-label">Proyectos Afectados:</div>
+                            <div class="projects-list">Sucursal Bancaria - Migración CouchBase</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Solutions Section -->
+            <section class="solutions-section">
+                <div class="container">
+                    <h2 class="section-title">Cómo MongoDB Resuelve Estos Retos</h2>
+                    <div class="solutions-grid">
+                        <div class="solution-card">
+                            <div class="solution-icon">💸</div>
+                            <h3 class="solution-title">Optimización de Costos</h3>
+                            <p class="solution-description">
+                                MongoDB ofrece pagos mensuales menores con alta disponibilidad incluida. Eliminación de dependencias de hardware físico y mantenimiento. Sin cobros por consulta y modelado eficiente de datos.
+                            </p>
+                            <div class="benefits-list">
+                                <div class="benefits-title">Beneficios Clave:</div>
+                                <div class="benefits-items">• Reducción significativa de costos operativos<br>• Alta disponibilidad sin costos adicionales<br>• Mejor monitoreo integrado</div>
+                            </div>
+                        </div>
+
+                        <div class="solution-card">
+                            <div class="solution-icon">🚀</div>
+                            <h3 class="solution-title">Escalabilidad Horizontal</h3>
+                            <p class="solution-description">
+                                Soporte nativo para sharding permitiendo escalabilidad en escritura. Alta disponibilidad a través de replicación automática. Escalado eficiente de lecturas sin infraestructura rígida.
+                            </p>
+                            <div class="benefits-list">
+                                <div class="benefits-title">Capacidades:</div>
+                                <div class="benefits-items">• Sharding automático<br>• Replicación y clustering<br>• Crecimiento dinámico con la demanda</div>
+                            </div>
+                        </div>
+
+                        <div class="solution-card">
+                            <div class="solution-icon">⚡</div>
+                            <h3 class="solution-title">Alto Rendimiento</h3>
+                            <p class="solution-description">
+                                Mejor rendimiento de escritura comparado con DocumentDB. Consultas de menos de 1 milisegundo con pre-agregaciones. Experiencia en análisis y ajuste de rendimiento con Atlas.
+                            </p>
+                            <div class="benefits-list">
+                                <div class="benefits-title">Resultados:</div>
+                                <div class="benefits-items">• Consultas sub-milisegundo<br>• Generación rápida de informes<br>• Optimización continua</div>
+                            </div>
+                        </div>
+
+                        <div class="solution-card">
+                            <div class="solution-icon">🎯</div>
+                            <h3 class="solution-title">Centralización de Datos</h3>
+                            <p class="solution-description">
+                                Capacidad de centralizar información de diversas fuentes en un repositorio único. Gestión eficiente de datos "calientes" y "fríos". Integración de flujos en tiempo real.
+                            </p>
+                            <div class="benefits-list">
+                                <div class="benefits-title">Ventajas:</div>
+                                <div class="benefits-items">• Fuente única de verdad<br>• Gestión de ciclo de vida<br>• Integración en tiempo real</div>
+                            </div>
+                        </div>
+
+                        <div class="solution-card">
+                            <div class="solution-icon">🔄</div>
+                            <h3 class="solution-title">Esquema Flexible</h3>
+                            <p class="solution-description">
+                                Modelo de documentos con esquema flexible para plantillas JSON personalizadas. Diferentes documentos pueden tener diferentes atributos. Evolución del esquema sin actualizar documentos existentes.
+                            </p>
+                            <div class="benefits-list">
+                                <div class="benefits-title">Características:</div>
+                                <div class="benefits-items">• Documentos polimórficos<br>• Evolución sin migración<br>• Plantillas JSON nativas</div>
+                            </div>
+                        </div>
+
+                        <div class="solution-card">
+                            <div class="solution-icon">🎯</div>
+                            <h3 class="solution-title">Soporte Integral</h3>
+                            <p class="solution-description">
+                                MongoDB Atlas Pro ofrece soporte 24x7 con SLA de 2 horas. Servicios de asesoramiento y "champion" dedicado. Soporte telefónico directo y mejores prácticas.
+                            </p>
+                            <div class="benefits-list">
+                                <div class="benefits-title">Servicios:</div>
+                                <div class="benefits-items">• Soporte 24x7<br>• Asesoramiento especializado<br>• Champion dedicado para migración</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Competitive Analysis Section -->
+            <section class="section fade-in">
+                <h2 class="section-title">MongoDB vs. Alternativas del Mercado</h2>
+                <div class="competitive-analysis">
+                    
+                    <!-- DynamoDB Comparison -->
+                    <div class="comparison-card">
+                        <div class="competitor-header">
+                            <div class="competitor-name">MongoDB vs. DynamoDB</div>
+                            <div class="comparison-result winner">MongoDB Gana</div>
+                        </div>
+                        
+                        <div class="comparison-categories">
+                            <div class="category-comparison">
+                                <div class="category-title">💰 Costos</div>
+                                <div class="comparison-details">
+                                    <div class="mongodb-advantage">
+                                        <strong style="color: #00ED64 !important;">MongoDB:</strong> Costo predecible basado en tier del clúster (cómputo, almacenamiento e I/O incluidos). Motor de agregaciones integrado.
+                                    </div>
+                                    <div class="competitor-disadvantage">
+                                        <strong style="color: #ff69b4 !important;">DynamoDB:</strong> Modelo RCU/WCU complejo. Tráfico irregular genera sobrecostos. Requiere servicios adicionales (Lambda, Glue) para consultas complejas.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="category-comparison">
+                                <div class="category-title">📈 Escalabilidad</div>
+                                <div class="comparison-details">
+                                    <div class="mongodb-advantage">
+                                        <strong style="color: #00ED64 !important;">MongoDB:</strong> Sharding flexible no atado a patrones de consulta específicos. Nuevos índices sin re-arquitecturas.
+                                    </div>
+                                    <div class="competitor-disadvantage">
+                                        <strong style="color: #ff69b4 !important;">DynamoDB:</strong> Escalable solo para patrones predefinidos. Nuevas consultas requieren rediseño completo de tabla.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="category-comparison">
+                                <div class="category-title">⚡ Rendimiento</div>
+                                <div class="comparison-details">
+                                    <div class="mongodb-advantage">
+                                        <strong style="color: #00ED64 !important;">MongoDB:</strong> Aggregation Framework procesa datos complejos en milisegundos dentro de la DB.
+                                    </div>
+                                    <div class="competitor-disadvantage">
+                                        <strong style="color: #ff69b4 !important;">DynamoDB:</strong> Rápido para clave-valor simple. JOINs y agregaciones requieren procesamiento externo.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="category-comparison">
+                                <div class="category-title">🔍 Indexación</div>
+                                <div class="comparison-details">
+                                    <div class="mongodb-advantage">
+                                        <strong style="color: #00ED64 !important;">MongoDB:</strong> Índices sobre cualquier campo, incluso en arreglos y documentos anidados. Atlas Search integrado.
+                                    </div>
+                                    <div class="competitor-disadvantage">
+                                        <strong style="color: #ff69b4 !important;">DynamoDB:</strong> Número limitado de GSI. Patrones de consulta deben predefinirse.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SQL/RDS Comparison -->
+                    <div class="comparison-card">
+                        <div class="competitor-header">
+                            <div class="competitor-name">MongoDB vs. SQL/RDS</div>
+                            <div class="comparison-result winner">MongoDB Gana</div>
+                        </div>
+                        
+                        <div class="comparison-categories">
+                            <div class="category-comparison">
+                                <div class="category-title">💰 Costos</div>
+                                <div class="comparison-details">
+                                    <div class="mongodb-advantage">
+                                        <strong style="color: #00ED64 !important;">MongoDB:</strong> Escalamiento horizontal con máquinas económicas. Relación costo/rendimiento superior a largo plazo.
+                                    </div>
+                                    <div class="competitor-disadvantage">
+                                        <strong style="color: #ff69b4 !important;">SQL/RDS:</strong> Costos prohibitivos de licenciamiento (SQL Server). Escalamiento vertical costoso con techo limitado.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="category-comparison">
+                                <div class="category-title">📈 Escalabilidad</div>
+                                <div class="comparison-details">
+                                    <div class="mongodb-advantage">
+                                        <strong style="color: #00ED64 !important;">MongoDB:</strong> Sharding automático y nativo. Maneja 75M transacciones (Plink) y 5K TPS sin problema.
+                                    </div>
+                                    <div class="competitor-disadvantage">
+                                        <strong style="color: #ff69b4 !important;">SQL/RDS:</strong> Master sigue siendo cuello de botella. Sharding manual, complejo y propenso a errores.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="category-comparison">
+                                <div class="category-title">⚡ Rendimiento</div>
+                                <div class="comparison-details">
+                                    <div class="mongodb-advantage">
+                                        <strong style="color: #00ED64 !important;">MongoDB:</strong> BSON nativo optimizado para datos semi-estructurados. Consultas JSON eficientes.
+                                    </div>
+                                    <div class="competitor-disadvantage">
+                                        <strong style="color: #ff69b4 !important;">SQL/RDS:</strong> Consultar dentro de campos JSON es ineficiente y lento. No optimizado para datos semi-estructurados.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="category-comparison">
+                                <div class="category-title">🔧 Flexibilidad</div>
+                                <div class="comparison-details">
+                                    <div class="mongodb-advantage">
+                                        <strong style="color: #00ED64 !important;">MongoDB:</strong> Esquema flexible. Aplicación y modelo de datos evolucionan juntos sin fricción.
+                                    </div>
+                                    <div class="competitor-disadvantage">
+                                        <strong style="color: #ff69b4 !important;">SQL/RDS:</strong> ALTER TABLE en sistemas transaccionales es operación de alto riesgo. Requiere ventanas de mantenimiento.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="category-comparison">
+                                <div class="category-title">🗂️ Purga de Datos</div>
+                                <div class="comparison-details">
+                                    <div class="mongodb-advantage">
+                                        <strong style="color: #00ED64 !important;">MongoDB:</strong> Índices TTL nativos, elegantes y de bajo impacto.
+                                    </div>
+                                    <div class="competitor-disadvantage">
+                                        <strong style="color: #ff69b4 !important;">SQL/RDS:</strong> Sin TTL nativo. Requiere cron jobs manuales que generan picos de carga.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Support Comparison -->
+                    <div class="comparison-card">
+                        <div class="competitor-header">
+                            <div class="competitor-name">Soporte y Ownership</div>
+                            <div class="comparison-result winner">MongoDB Líder</div>
+                        </div>
+                        
+                        <div class="comparison-categories">
+                            <div class="category-comparison">
+                                <div class="category-title">🎯 Expertise</div>
+                                <div class="comparison-details">
+                                    <div class="mongodb-advantage">
+                                        <strong style="color: #00ED64 !important;">MongoDB Atlas:</strong> Soporte experto para el producto. Asesoría en diseño de esquemas, optimización de consultas y mejores prácticas.
+                                    </div>
+                                    <div class="competitor-disadvantage">
+                                        <strong style="color: #ff69b4 !important;">AWS/Cloud:</strong> Soporte para infraestructura, no para la aplicación específica.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="category-comparison">
+                                <div class="category-title">☁️ Multi-Cloud</div>
+                                <div class="comparison-details">
+                                    <div class="mongodb-advantage">
+                                        <strong style="color: #00ED64 !important;">MongoDB:</strong> Multi-cloud con mismo nivel de soporte. Evita vendor lock-in.
+                                    </div>
+                                    <div class="competitor-disadvantage">
+                                        <strong style="color: #ff69b4 !important;">Cloud Vendors:</strong> Atado a un proveedor específico. Migración compleja entre clouds.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Unified Data Repository -->
+                    <div class="comparison-card highlight-card">
+                        <div class="competitor-header">
+                            <div class="competitor-name">Repositorio Central Unificado</div>
+                            <div class="comparison-result winner">Solo MongoDB</div>
+                        </div>
+                        
+                        <div class="unified-benefits">
+                            <div class="benefit-item">
+                                <div class="benefit-icon">🎯</div>
+                                <div class="benefit-text">
+                                    <strong>Vista 360°:</strong> Datos de diferentes fuentes y estructuras coexisten y se consultan holísticamente
+                                </div>
+                            </div>
+                            <div class="benefit-item">
+                                <div class="benefit-icon">🔗</div>
+                                <div class="benefit-text">
+                                    <strong>Atlas Data Federation:</strong> Consulta datos en S3 como si estuvieran en MongoDB, unificando lago de datos con DB operacional
+                                </div>
+                            </div>
+                            <div class="benefit-item">
+                                <div class="benefit-icon">🚀</div>
+                                <div class="benefit-text">
+                                    <strong>Esquema Híbrido:</strong> Validación parcial permite flexibilidad total para plantillas JSON personalizadas
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="cta-section">
+                <div class="container">
+                    <div class="cta-content">
+                        <h2 class="cta-title">Transforme su Infraestructura de Datos</h2>
+                        <p class="cta-subtitle">MongoDB está listo para impulsar la próxima generación de servicios bancarios digitales de Bancolombia</p>
+                        <a href="#" class="cta-button">Iniciar Migración</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Smooth scroll animations
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', animateOnScroll);
+        
+        // Initial animation
+        animateOnScroll();
+
+        // Interactive hover effects
+        document.querySelectorAll('.challenge-card, .solution-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Statistics counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            counters.forEach(counter => {
+                const target = counter.textContent;
+                const isNumber = !isNaN(target.replace(/[^\d]/g, ''));
+                
+                if (isNumber) {
+                    const finalNumber = parseInt(target.replace(/[^\d]/g, ''));
+                    const prefix = target.replace(/[\d]/g, '');
+                    const suffix = target.replace(/[\d]/g, '').replace(prefix, '');
+                    
+                    let current = 0;
+                    const increment = finalNumber / 50;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= finalNumber) {
+                            counter.textContent = target;
+                            clearInterval(timer);
+                        } else {
+                            counter.textContent = prefix + Math.floor(current) + suffix;
+                        }
+                    }, 30);
+                }
+            });
+        }
+
+        // Start counter animation when page loads
+        window.addEventListener('load', () => {
+            setTimeout(animateCounters, 500);
+        });
+    </script>
+</body>
+</html>
