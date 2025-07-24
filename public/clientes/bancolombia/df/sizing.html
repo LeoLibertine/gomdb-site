@@ -192,6 +192,21 @@
             box-shadow: var(--shadow-xl);
         }
         
+        /* Estilos para iframe de diagrama HTML */
+        .diagram-iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+            border-radius: var(--radius-md);
+            background-color: white;
+            transition: all var(--transition-base);
+        }
+        
+        .diagram-iframe:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-xl);
+        }
+        
         .highlight-box {
             background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent-light) 100%);
             border-left: 4px solid var(--color-primary);
@@ -483,7 +498,7 @@
                     <span class="stat-label">Registros en 3 meses</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">500+</span>
+                    <span class="stat-number">1000</span>
                     <span class="stat-label">TPS promedio</span>
                 </div>
                 <div class="stat-card">
@@ -541,15 +556,56 @@
                     <li>• <strong>Sobrecarga por Entrada:</strong> ~16 bytes por entrada</li>
                 </ul>
 
+                <div class="highlight-box">
+                    <h4 class="text-primary mb-2">¿Qué es la Sobrecarga por Entrada?</h4>
+                    <p class="mb-2">
+                        Piensa en la <strong>"Sobrecarga por Entrada"</strong> como el "costo administrativo" que tiene MongoDB 
+                        para poder organizar la información y encontrarla rápidamente.
+                    </p>
+                    <p class="mb-2">
+                        Como el índice de un libro: no solo contiene la palabra "Fraude", sino que necesita espacio adicional 
+                        para el número de página y la estructura interna que mantiene el orden.
+                    </p>
+                    <p>
+                        <strong>En resumen:</strong> No es parte de tus datos, sino el pequeño espacio adicional que MongoDB 
+                        necesita para ser rápido y organizado.
+                    </p>
+                </div>
+
                 <h4 class="mb-3">Cálculo por Índice:</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div class="spec-item">
-                        <span class="spec-value">56.4 GB</span>
-                        <span class="spec-label">Índice Principal (Cliente + Fecha)</span>
+                <div class="calculation-section">
+                    <h5 class="text-primary mb-3">Índice Principal (Cliente + Fecha): { tipo_documento, numero_documento, fecha }</h5>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="spec-item">
+                            <span class="spec-value">Cálculo detallado:</span>
+                            <div class="text-secondary text-sm mt-2">
+                                <p>• Tamaño por entrada: 8 + 15 + 8 + 16 = 47 bytes</p>
+                                <p>• Total de documentos: 1,200,000,000</p>
+                                <p>• Tamaño total: 1.2B × 47 bytes = 56.4 GB</p>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-value">56.4 GB</span>
+                            <span class="spec-label">Tamaño Total del Índice</span>
+                        </div>
                     </div>
-                    <div class="spec-item">
-                        <span class="spec-value">38.4 GB</span>
-                        <span class="spec-label">Índice ID Transacción</span>
+                </div>
+                
+                <div class="calculation-section">
+                    <h5 class="text-primary mb-3">Índice de Transacción: { id_transaccion }</h5>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="spec-item">
+                            <span class="spec-value">Cálculo detallado:</span>
+                            <div class="text-secondary text-sm mt-2">
+                                <p>• Tamaño por entrada: 16 + 16 = 32 bytes</p>
+                                <p>• Total de documentos: 1,200,000,000</p>
+                                <p>• Tamaño total: 1.2B × 32 bytes = 38.4 GB</p>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-value">38.4 GB</span>
+                            <span class="spec-label">Tamaño Total del Índice</span>
+                        </div>
                     </div>
                 </div>
 
@@ -619,7 +675,7 @@
                         <img src="../../../img/2shards.svg" 
                              alt="Diagrama de Arquitectura con 2 Shards" 
                              class="diagram-image"
-                             onerror="this.parentElement.innerHTML='<div class=diagram-placeholder><p>⚠️ Imagen no encontrada: ./images/diagrama-escenario-a.png</p><p>Verifica que la imagen esté en la carpeta correcta</p></div>'">
+                             onerror="this.parentElement.innerHTML='<div class=diagram-placeholder><p>⚠️ Imagen no encontrada: ../../../img/2shards.svg</p><p>Verifica que la imagen esté en la carpeta correcta</p></div>'">
                     </div>
                 </div>
             </div>
@@ -671,8 +727,12 @@
                 <!-- Sección para Diagrama -->
                 <div class="diagram-section">
                     <h4>📐 Diagrama de Arquitectura - Escenario B</h4>
-                    <div class="diagram-container" style="padding: 0; height: 1000px;">
-                        <iframe src="../../../img/3shards.html" width="100%" height="100%" style="border: none; border-radius: var(--radius-md); box-shadow: var(--shadow-lg);"></iframe>
+                    <div class="diagram-container">
+                        <iframe src="../../../img/3shards.html" 
+                                class="diagram-iframe"
+                                title="Diagrama de Arquitectura con 3 Shards"
+                                onerror="this.parentElement.innerHTML='<div class=diagram-placeholder><p>⚠️ Archivo no encontrado: ../../../img/3shards.html</p><p>Verifica que el archivo esté en la carpeta correcta</p></div>'">
+                        </iframe>
                     </div>
                 </div>
             </div>
@@ -689,29 +749,29 @@
                     <thead>
                         <tr>
                             <th>Característica</th>
-                            <th>Escenario A (2x M80)</th>
-                            <th>Escenario B (3x M80) - Recomendado</th>
+                            <th>Escenario A (2x M80) - Recomendado</th>
+                            <th>Escenario B (3x M80)</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><strong>Costo</strong></td>
-                            <td>Menor</td>
+                            <td style="color: var(--color-success);">Menor</td>
                             <td style="color: var(--color-warning);">Más elevado</td>
                         </tr>
                         <tr>
                             <td><strong>Rendimiento Escritura</strong></td>
-                            <td>Bueno</td>
+                            <td style="color: var(--color-success);">Excelente (capacidad garantizada desde día 1)</td>
                             <td style="color: var(--color-success);">Excelente (distribuye la carga en más nodos)</td>
                         </tr>
                         <tr>
                             <td><strong>Escalabilidad Futura</strong></td>
-                            <td>Buena</td>
+                            <td style="color: var(--color-success);">Buena (flexible hacia arriba o abajo)</td>
                             <td style="color: var(--color-success);">Superior (más fácil añadir capacidad)</td>
                         </tr>
                         <tr>
                             <td><strong>Ajuste a Requisitos RAM</strong></td>
-                            <td>Excelente y eficiente</td>
+                            <td style="color: var(--color-success);">Excelente y eficiente</td>
                             <td style="color: var(--color-success);">Holgado, con margen para crecimiento</td>
                         </tr>
                     </tbody>
@@ -721,27 +781,27 @@
             <div class="highlight-box">
                 <h3 class="text-primary mb-4">🎯 Recomendación Final</h3>
                 <p class="mb-4">
-                    La alta carga de escritura (500+ TPS) es el factor más desafiante de este proyecto. 
-                    Aunque la arquitectura de 2 shards (Escenario A) es más económica y cumple con los 
-                    requisitos de RAM de forma muy eficiente, <strong>la arquitectura de 3 shards (Escenario B) 
-                    sigue siendo la recomendación principal.</strong>
+                    La alta carga de escritura (1000 TPS) es el factor más desafiante de este proyecto. 
+                    Se recomienda <strong>comenzar con 2 shards de M80</strong> como estrategia de 
+                    "Seguridad Primero, Luego Optimizar".
                 </p>
                 
                 <h4 class="text-primary mb-3">Razón:</h4>
                 <p class="mb-4">
-                    Distribuir la intensa carga de transacciones entre tres nodos en lugar de dos reduce 
-                    significativamente el riesgo de cuellos de botella y proporciona un rendimiento de 
-                    escritura superior y más consistente, lo cual es crítico para la estabilidad del sistema. 
-                    Este beneficio en rendimiento y la mayor facilidad para escalar a futuro justifican 
-                    la diferencia en costo.
+                    Iniciar con M80 garantiza la capacidad necesaria para manejar la carga desde el primer día, 
+                    eliminando riesgos de rendimiento durante el lanzamiento. Una vez estabilizado el sistema, 
+                    se puede evaluar el escalamiento basándose en datos reales de producción.
                 </p>
                 
                 <div class="card card-bordered">
-                    <h4 class="text-primary mb-3">📋 Próximo Paso:</h4>
-                    <p class="text-center">
-                        Validar la arquitectura recomendada (3 shards M80) mediante pruebas de carga 
-                        para confirmar su comportamiento bajo los picos de transacciones esperados.
+                    <h4 class="text-primary mb-3">📋 Estrategia Recomendada:</h4>
+                    <p class="text-center mb-3">
+                        Se recomienda <strong>comenzar con 2 shards de M80</strong> y a partir de ahí:
                     </p>
+                    <ul class="text-secondary space-y-2">
+                        <li>• <strong>Aumentar shards</strong> si se requiere mayor capacidad</li>
+                        <li>• <strong>Reducir el tamaño del cluster a M60</strong> si la carga que recibe el cluster es mínima</li>
+                    </ul>
                 </div>
             </div>
         </div>

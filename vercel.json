@@ -170,6 +170,10 @@
       "dest": "/clientes/bancolombia/df/sizing.html"
     },
     {
+      "src": "/clientes/bancolombia/df/costos(?:/.*)?$",
+      "dest": "/clientes/bancolombia/df/costos.html"
+    },
+    {
       "src": "/lz/lz(?:/.*)?$",
       "dest": "/lz/lz.html"
     },

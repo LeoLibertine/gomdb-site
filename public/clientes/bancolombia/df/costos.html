@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB - Propuestas de Precios y Estrategias</title>
+    <link rel="stylesheet" href="../../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para la página de precios */
+        .pricing-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin: var(--spacing-xl) 0;
+            border: 2px solid transparent;
+            transition: all var(--transition-base);
+            position: relative;
+        }
+        
+        .pricing-card.recommended {
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .pricing-card.recommended::before {
+            content: "RECOMENDADO";
+            position: absolute;
+            top: -12px;
+            right: var(--spacing-xl);
+            background-color: var(--color-primary);
+            color: var(--color-text-dark);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 700;
+        }
+        
+        .environment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .environment-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            text-align: center;
+            transition: all var(--transition-base);
+        }
+        
+        .environment-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .env-label {
+            display: inline-block;
+            background-color: var(--color-accent);
+            color: var(--color-text-primary);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .env-label.production {
+            background-color: var(--color-primary);
+            color: var(--color-text-dark);
+        }
+        
+        .env-label.qa {
+            background-color: var(--color-info);
+        }
+        
+        .env-label.dev {
+            background-color: var(--color-warning);
+        }
+        
+        .tier-name {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .tier-specs {
+            color: var(--color-text-secondary);
+            font-size: var(--text-sm);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .tier-price {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .tier-price-monthly {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .price-breakdown {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+        }
+        
+        .price-period {
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+            font-weight: 500;
+        }
+        
+        .total-cost {
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent-light) 100%);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            text-align: center;
+            margin-top: var(--spacing-lg);
+        }
+        
+        .total-amount {
+            font-size: var(--text-4xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .strategy-section {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin: var(--spacing-2xl) 0;
+            border-left: 4px solid var(--color-primary);
+        }
+        
+        .strategy-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-lg) 0;
+            transition: all var(--transition-base);
+        }
+        
+        .strategy-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .strategy-recommended {
+            border: 2px solid var(--color-primary);
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, rgba(0, 237, 100, 0.1) 100%);
+        }
+        
+        .strategy-title {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .strategy-direction {
+            font-size: var(--text-2xl);
+        }
+        
+        .pros-cons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .pros-section, .cons-section {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+        }
+        
+        .pros-title, .cons-title {
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .pros-title {
+            color: var(--color-success);
+        }
+        
+        .cons-title {
+            color: var(--color-warning);
+        }
+        
+        .pros-cons-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .pros-cons-list li {
+            margin-bottom: var(--spacing-sm);
+            padding-left: var(--spacing-lg);
+            position: relative;
+            color: var(--color-text-secondary);
+        }
+        
+        .pros-cons-list li::before {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        
+        .pros-section li::before {
+            content: "✓";
+            color: var(--color-success);
+            font-weight: 700;
+        }
+        
+        .cons-section li::before {
+            content: "⚠";
+            color: var(--color-warning);
+        }
+        
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .process-step {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            text-align: center;
+            position: relative;
+        }
+        
+        .step-number {
+            background-color: var(--color-primary);
+            color: var(--color-text-dark);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: var(--text-sm);
+            margin: 0 auto var(--spacing-sm);
+        }
+        
+        .recommendation-box {
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent-light) 100%);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .recommendation-title {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-md);
+            text-align: center;
+        }
+        
+        .final-recommendation {
+            background: linear-gradient(135deg, var(--color-warning) 0%, var(--color-primary) 100%);
+            color: black;
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin: var(--spacing-2xl) 0;
+            text-align: center;
+            box-shadow: var(--shadow-xl);
+        }
+        .final-recommendation p {
+            color: black;
+        }
+        
+        .final-recommendation h3 {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-text-dark);
+        }
+        
+        .strategy-highlight {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            border: 3px solid var(--color-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin: var(--spacing-2xl) 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .strategy-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 50%, var(--color-primary) 100%);
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        .strategy-highlight-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-md);
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-lg);
+            text-align: center;
+        }
+        
+        .strategy-highlight-icon {
+            font-size: var(--text-3xl);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .strategy-highlight-content {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            border-left: 4px solid var(--color-primary);
+        }
+        
+        .strategy-highlight-text {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--color-text-primary);
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .strategy-highlight-subtitle {
+            font-size: var(--text-base);
+            color: var(--color-text-secondary);
+            text-align: center;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <div class="navbar-logo">
+                <span class="text-gradient">MongoDB</span>
+            </div>
+            <div class="navbar-links">
+                <a href="#scenarios" class="navbar-link">Escenarios</a>
+                <a href="#strategies" class="navbar-link">Estrategias</a>
+                <a href="#recommendation" class="navbar-link">Recomendación</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        <div class="container">
+            <div class="text-center">
+                <div class="badge badge-primary mb-4">
+                    <span>💰</span>
+                    Propuestas de Precios MongoDB Atlas
+                </div>
+                <h1 class="text-gradient mb-4">
+                    Bancolombia Monitoreo de Fraudes <p>Escenarios de Costos</p> 
+                </h1>
+                <p class="text-xl text-secondary mb-6">
+                    Análisis de costos y estrategias de escalamiento para Bancolombia
+                </p>
+                <div class="badge badge-secondary">
+                    Optimización de infraestructura MongoDB Atlas
+                </div>
+            </div>
+            
+            <!-- Nota Final de Recomendación -->
+            <div class="final-recommendation">
+                <h3>⚠️ Recomendación Final por Criticidad del Proyecto</h3>
+                <p>
+                    Debido al riesgo inherente y la criticidad del proyecto de monitoreo de fraude, 
+                    se recomienda <strong>iniciar con la Estrategia 1 (Downgrade M80 → M60)</strong> 
+                    para garantizar la estabilidad operacional desde el primer día.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Escenarios de Precios -->
+    <section id="scenarios" class="section">
+        <div class="container">
+            <h2 class="text-center mb-6">Propuestas de Escenarios</h2>
+
+            <!-- Escenario Recomendado: M80 -->
+            <div class="pricing-card recommended">
+                <h3 class="text-primary mb-4">🏆 Escenario Recomendado: M80</h3>
+                
+                <div class="environment-grid">
+                    <!-- Producción -->
+                    <div class="environment-card">
+                        <div class="env-label production">PRODUCTION</div>
+                        <div class="tier-name">M80</div>
+                        <div class="tier-specs">
+                            Cluster size: M80<br>
+                            Starting date: This month<br>
+                            Region: US EAST 1
+                        </div>
+                        <div class="tier-price">$175,910</div>
+                        <div class="price-period">Anual</div>
+                        <div class="tier-price-monthly">$14,659</div>
+                        <div class="price-period">Mensual</div>
+                        <div class="price-breakdown">
+                            Cluster: $159,713 | Network: $11,180 | Backup: $5,018
+                        </div>
+                    </div>
+
+                    <!-- QA -->
+                    <div class="environment-card">
+                        <div class="env-label qa">QA</div>
+                        <div class="tier-name">M50</div>
+                        <div class="tier-specs">
+                            2 Shards - 3 nodes 32 GB<br>
+                            Ram 1200 GB pero node<br>
+                            Paused 48 hours
+                        </div>
+                        <div class="tier-price">$42,077</div>
+                        <div class="price-period">Anual</div>
+                        <div class="tier-price-monthly">$3,506</div>
+                        <div class="price-period">Mensual</div>
+                        <div class="price-breakdown">
+                            Cluster: $39,324 | Network: $2,753 | Backup: $0
+                        </div>
+                    </div>
+
+                    <!-- Desarrollo -->
+                    <div class="environment-card">
+                        <div class="env-label dev">DEV</div>
+                        <div class="tier-name">M30</div>
+                        <div class="tier-specs">
+                            2 Shards - 3 nodes 8 GB<br>
+                            Ram 512 GB pero node<br>
+                            Paused 48 hour
+                        </div>
+                        <div class="tier-price">$12,285</div>
+                        <div class="price-period">Anual</div>
+                        <div class="tier-price-monthly">$1,024</div>
+                        <div class="price-period">Mensual</div>
+                        <div class="price-breakdown">
+                            Cluster: $11,481 | Network: $804 | Backup: $0
+                        </div>
+                    </div>
+                </div>
+
+                <div class="total-cost">
+                    <div class="total-amount">$230,272</div>
+                    <div class="text-secondary">Costo Total Anual</div>
+                    <div class="tier-price-monthly mt-2">$19,189</div>
+                    <div class="text-secondary">Costo Total Mensual</div>
+                </div>
+            </div>
+
+            <!-- Escenario Alternativo: M60 -->
+            <div class="pricing-card">
+                <h3 class="text-primary mb-4">⚡ Escenario Alternativo: M60</h3>
+                
+                <div class="environment-grid">
+                    <!-- Producción -->
+                    <div class="environment-card">
+                        <div class="env-label production">PRODUCTION</div>
+                        <div class="tier-name">M60</div>
+                        <div class="tier-specs">
+                            2 Shards - 3 nodes 64 GB<br>
+                            Ram - Storage 3500 GB<br>
+                            pero node
+                        </div>
+                        <div class="tier-price">$113,991</div>
+                        <div class="price-period">Anual</div>
+                        <div class="tier-price-monthly">$9,499</div>
+                        <div class="price-period">Mensual</div>
+                        <div class="price-breakdown">
+                            Cluster: $101,844 | Network: $7,129 | Backup: $5,018
+                        </div>
+                    </div>
+
+                    <!-- QA -->
+                    <div class="environment-card">
+                        <div class="env-label qa">QA</div>
+                        <div class="tier-name">M50</div>
+                        <div class="tier-specs">
+                            2 Shards - 3 nodes 32 GB<br>
+                            Ram, Storage 1200 GB<br>
+                            pero node Paused 48 hours
+                        </div>
+                        <div class="tier-price">$42,077</div>
+                        <div class="price-period">Anual</div>
+                        <div class="tier-price-monthly">$3,506</div>
+                        <div class="price-period">Mensual</div>
+                        <div class="price-breakdown">
+                            Cluster: $39,324 | Network: $2,753 | Backup: $0
+                        </div>
+                    </div>
+
+                    <!-- Desarrollo -->
+                    <div class="environment-card">
+                        <div class="env-label dev">DEV</div>
+                        <div class="tier-name">M30</div>
+                        <div class="tier-specs">
+                            2 Shards - 3 nodes 8 GB<br>
+                            Ram - Storage 512 GB<br>
+                            pero node Paused 48 hour
+                        </div>
+                        <div class="tier-price">$12,285</div>
+                        <div class="price-period">Anual</div>
+                        <div class="tier-price-monthly">$1,024</div>
+                        <div class="price-period">Mensual</div>
+                        <div class="price-breakdown">
+                            Cluster: $11,481 | Network: $804 | Backup: $0
+                        </div>
+                    </div>
+                </div>
+
+                <div class="total-cost">
+                    <div class="total-amount">$168,353</div>
+                    <div class="text-secondary">Costo Total Anual</div>
+                    <div class="tier-price-monthly mt-2">$14,029</div>
+                    <div class="text-secondary">Costo Total Mensual</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Estrategias de Escalamiento -->
+    <section id="strategies" class="section">
+        <div class="container">
+            <h2 class="text-center mb-6">Estrategias de Escalamiento</h2>
+
+            <!-- Estrategia Downgrade -->
+            <div class="strategy-section">
+                <h3 class="text-center text-primary mb-6">Estrategia 1: Downgrade (M80 → M60)</h3>
+                
+                <div class="strategy-card strategy-recommended">
+                    <div class="strategy-title">
+                        <span class="strategy-direction">📉</span>
+                        Seguridad Primero, Luego Optimizar
+                        <span class="badge badge-primary">RECOMENDADA</span>
+                    </div>
+
+                    <h4 class="text-primary mb-3">Proceso Técnico:</h4>
+                    <div class="process-steps">
+                        <div class="process-step">
+                            <div class="step-number">1</div>
+                            <h5>Inicias el Cambio</h5>
+                            <p class="text-secondary">Desde Atlas, seleccionas el nuevo Tier inferior (M60)</p>
+                        </div>
+                        <div class="process-step">
+                            <div class="step-number">2</div>
+                            <h5>Atlas Orquesta</h5>
+                            <p class="text-secondary">Rolling update seguro, nodo por nodo</p>
+                        </div>
+                        <div class="process-step">
+                            <div class="step-number">3</div>
+                            <h5>Cero Downtime</h5>
+                            <p class="text-secondary">Solo breve reconexión durante cambio de primario</p>
+                        </div>
+                    </div>
+
+                    <div class="pros-cons-grid">
+                        <div class="pros-section">
+                            <div class="pros-title">
+                                <span>👍</span> Ventajas
+                            </div>
+                            <ul class="pros-cons-list">
+                                <li>Lanzamiento Seguro: Capacidad M80 soportará la carga pico de 1,000 TPS desde el primer día</li>
+                                <li>Decisión Basada en Datos Reales: Análisis del uso real de CPU y RAM después de semanas en producción</li>
+                                <li>Optimización de Costos a Futuro: Reducción de costos operativos una vez estabilizado el sistema</li>
+                            </ul>
+                        </div>
+                        <div class="cons-section">
+                            <div class="cons-title">
+                                <span>👎</span> Riesgos
+                            </div>
+                            <ul class="pros-cons-list">
+                                <li>Costo Inicial Más Alto: El costo durante los primeros meses será mayor pagando por Tier M80</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="recommendation-box">
+                        <div class="recommendation-title">✅ Conclusión</div>
+                        <p class="text-center">
+                            Estrategia <strong>perfectamente viable y muy recomendable</strong>. Prioriza la estabilidad 
+                            y el éxito del lanzamiento, permitiendo optimizar costos basándose en evidencia real. 
+                            Es un enfoque de bajo riesgo y alta seguridad.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estrategia Upgrade -->
+            <div class="strategy-section">
+                <h3 class="text-center text-primary mb-6">Estrategia 2: Upgrade (M60 → M80)</h3>
+                
+                <div class="strategy-card">
+                    <div class="strategy-title">
+                        <span class="strategy-direction">📈</span>
+                        Pay-as-you-grow
+                    </div>
+
+                    <h4 class="text-primary mb-3">Proceso Técnico:</h4>
+                    <div class="process-steps">
+                        <div class="process-step">
+                            <div class="step-number">1</div>
+                            <h5>Editas Configuración</h5>
+                            <p class="text-secondary">Desde Atlas, seleccionas el nuevo Tier (M80)</p>
+                        </div>
+                        <div class="process-step">
+                            <div class="step-number">2</div>
+                            <h5>Rolling Update</h5>
+                            <p class="text-secondary">Actualiza un nodo secundario a la vez</p>
+                        </div>
+                        <div class="process-step">
+                            <div class="step-number">3</div>
+                            <h5>Impacto Mínimo</h5>
+                            <p class="text-secondary">Solo breve desconexión de segundos durante cambio</p>
+                        </div>
+                    </div>
+
+                    <div class="pros-cons-grid">
+                        <div class="pros-section">
+                            <div class="pros-title">
+                                <span>👍</span> Ventajas
+                            </div>
+                            <ul class="pros-cons-list">
+                                <li>Control de Costos: Tier M60 es significativamente más económico</li>
+                                <li>Flexibilidad: Alinear el costo con el uso real durante desarrollo y pruebas</li>
+                                <li>Ruta de Crecimiento Clara: Escalamiento sencillo y probado de M60 a M80</li>
+                            </ul>
+                        </div>
+                        <div class="cons-section">
+                            <div class="cons-title">
+                                <span>👎</span> Riesgos
+                            </div>
+                            <ul class="pros-cons-list">
+                                <li>Riesgo de rendimiento que debe ser mitigado de forma proactiva</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recomendación Final -->
+    <section id="recommendation" class="section">
+        <div class="container">
+            <div class="strategy-section">
+                <h2 class="text-center text-primary mb-6">🎯 Recomendación Final para Estrategia Upgrade</h2>
+                
+                <div class="recommendation-box">
+                    <div class="recommendation-title">Plan Recomendado</div>
+                    <div class="process-steps">
+                        <div class="process-step">
+                            <div class="step-number">1</div>
+                            <h5>Iniciar con 2 Shards M80</h5>
+                            <p class="text-secondary">Para ambiente productivo opcion mas segura</p>
+                        </div>
+                        <div class="process-step">
+                            <div class="step-number">2</div>
+                            <h5>Pruebas de Carga Exhaustivas</h5>
+                            <p class="text-secondary">CRÍTICO: Simular carga pico de 1,000 TPS sostenida</p>
+                        </div>
+                        <div class="process-step">
+                            <div class="step-number">3</div>
+                            <h5>Decisión Basada en Datos</h5>
+                            <p class="text-secondary">Optimización de Costos a Futuro: Reducción de costos operativos una vez estabilizado el sistema</p>
+                    </div>
+                </div>
+
+                <div class="card card-bordered mt-4">
+                    <h4 class="text-primary mb-3 text-center">✅ Enfoque Recomendado</h4>
+                    <p class="text-center text-lg">
+                        Estrategia perfectamente viable y muy recomendable. <strong>la estabilidad y el éxito del lanzamiento</strong>, permitiendo optimizar costos basándose en evidencia real. Es un enfoque de <strong>riesgo y alta seguridad.</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Efecto de scroll para la navbar
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Animaciones de aparición
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeIn');
+                }
+            });
+        }, observerOptions);
+
+        // Observar elementos para animación
+        document.querySelectorAll('.pricing-card, .strategy-card, .environment-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
