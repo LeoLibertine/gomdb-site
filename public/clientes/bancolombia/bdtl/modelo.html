@@ -289,6 +289,42 @@
             font-weight: bold;
             color: var(--color-primary);
         }
+         /* Estilos para submenús */
+         .menu-section {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .submenu {
+            margin-left: var(--spacing-lg);
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+            padding-left: var(--spacing-md);
+            margin-top: var(--spacing-xs);
+        }
+
+        .submenu-item {
+            display: block;
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-xs);
+            border-radius: var(--radius-md);
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+            font-size: var(--text-sm);
+        }
+
+        .submenu-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+            transform: translateX(4px);
+        }
+
+        .submenu-item.active {
+            background-color: rgba(0, 237, 100, 0.1);
+            color: var(--color-primary);
+            border-left: 2px solid var(--color-primary);
+            padding-left: calc(var(--spacing-md) - 2px);
+        }
     </style>
 </head>
 <body>
@@ -307,43 +343,66 @@
     </header>
 
     <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-content">
-                <nav>
-                    <a href="introduccion.html" class="menu-item">
-                        📚 Introducción al Proyecto BDTL
-                    </a>
-                    <a href="arquitectura.html" class="menu-item">
-                        🏗️ Arquitectura del Sistema
-                    </a>
-                    <a href="evolucion.html" class="menu-item">
-                        📈 Evolución de la Arquitectura
-                    </a>
-                    <a href="ventajas.html" class="menu-item">
-                        ⚡ Ventajas de MongoDB como BDTL
-                    </a>
-                    <a href="tablas.html" class="menu-item">
-                        📋 Descripción Tablas y Campos
-                    </a>
-                    <a href="procedures.html" class="menu-item">
-                        ⚙️ Store Procedures
-                    </a>
-                    <a href="modelo.html" class="menu-item active">
-                        🗃️ Modelo de Datos
-                    </a>
-                    <a href="servicios.html" class="menu-item">
-                        🔌 Servicios y APIs
-                    </a>
-                    <a href="logica.html" class="menu-item">
-                        🧠 Lógica de Negocio
-                    </a>
-                    <a href="guias.html" class="menu-item">
-                        📖 Guías y Mejores Prácticas
-                    </a>
-                </nav>
-            </div>
-        </aside>
+              <!-- Sidebar -->
+              <aside class="sidebar" id="sidebar">
+                <div class="sidebar-content">
+                    <nav>
+                        <a href="bdtl.html" class="menu-item">
+                            📚 Introducción al Proyecto BDTL
+                        </a>
+                        <a href="arquitectura.html" class="menu-item">
+                            🏗️ Arquitectura del Sistema
+                        </a>
+                        <a href="evolucion.html" class="menu-item">
+                            📈 Evolución de la Arquitectura
+                        </a>
+                        <a href="ventajas.html" class="menu-item">
+                            ⚡ Ventajas de MongoDB como BDTL
+                        </a>
+                        <a href="tabla.html" class="menu-item">
+                            📋 Descripción Tablas y Campos
+                        </a>
+                        
+                        <!-- Store Procedures con submenús -->
+                        <div class="menu-section">
+                            <a href="procedures.html" class="menu-item">
+                                ⚙️ Store Procedures
+                            </a>
+                            <div class="submenu">
+                                <a href="spsinsert.html" class="submenu-item">
+                                    📝 SPs de ingesta y actualización
+                                </a>
+                                <a href="spsconsulta.html" class="submenu-item">
+                                    🔍 SPs Lambda Consulta
+                                </a>
+                                <a href="spscarga.html" class="submenu-item">
+                                    📦 SPs Lambda Carga Batch
+                                </a>
+                                <a href="jobsdepuracion.html" class="submenu-item">
+                                    🗑️ Jobs Depuración
+                                </a>
+                                <a href="frombdtl.html" class="submenu-item">
+                                    🔄 From BDTL
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <a href="modeloactual.html" class="menu-item">
+                            🔌 Modelo de Datos Actual
+                        </a>
+    
+                        <a href="modelo.html" class="menu-item">
+                            🗃️ Evolución del Modelo de Datos
+                        </a>
+                        <a href="indices.html" class="menu-item active">
+                            🔍 Estrategia de Indexación
+                        </a>
+                        <a href="guias.html" class="menu-item">
+                            📖 Guías y Mejores Prácticas
+                        </a>
+                    </nav>
+                </div>
+            </aside>
 
         <!-- Main Content -->
         <main class="main-content">
@@ -388,24 +447,46 @@
                         
                         <h4 style="color: var(--color-warning); margin-bottom: var(--spacing-md);">Ejemplo (Fragmento):</h4>
                         <div class="json-example">{
-  "_id": ObjectId("..."),
-  "IdDocumento": 8822310,
-  "EntidadId": 21,
-  "EntidadValor": "Bancolombia",
-  "Proceso": "Actualizar información de clientes",
-  "TipoDocumento": "Cedula de ciudadania",
-  "CanalDocumentoId": 22,
-  "CanalDocumentoValor": "CORREO ELECTRONICO",
-  "TecnologiaExtraccionId": 15,
-  "TecnologiaExtraccionValor": "APPIAN",
-  "FechaCambioEstado": ISODate("2024-06-02T07:30:00Z"),
-  "DatosLiquidos": {
+"_id": ObjectId("64a5e4b2d3f4e1a2b3c4d5e6"),
+"IdDocumento": 8822310,
+"EntidadId": 21,
+"EntidadValor": "Bancolombia",
+"Proceso": "Actualizar información de clientes",
+"TipoDocumento": "Cedula de ciudadania",
+"CanalDocumentoId": 22,
+"CanalDocumentoValor": "CORREO ELECTRONICO",
+"TecnologiaExtraccionId": 15,
+"TecnologiaExtraccionValor": "APPIAN",
+"FechaCambioEstado": ISODate("2024-06-02T07:30:00Z"),
+"UsuarioCambioEstado": "HESCALLO",
+"RazonCambioEstado": "Validacion BPO",
+"FechaKofax": ISODate("2024-05-31T09:45:00Z"),
+"FechaBDTL": ISODate("2024-05-31T09:48:36Z"),
+"FechaExpedicion": ISODate("2024-05-31T05:00:00Z"),
+"FechaVigencia": ISODate("2074-05-19T05:00:00Z"),
+"DatosLiquidos": {
     "cedula": "12345678",
-    "nombre": "Juan Perez"
-  },
-  "IdEstadoDocumentoId": 2,
-  "IdEstadoDocumentoDescripcion": "Actualizado"
-  // ... más campos
+    "nombre": "Juan David",
+    "salario": "200000",
+    "confidence": 100
+},
+"CaseRef": "AFD243010000276",
+"IdNumeroRadicado": "12345678",
+"IDProceso": "T051009",
+"OracleID": "STG-126544",
+"NumDiasVigencia": 18250,
+"VersionFirma": "v2",
+"FechaFirma": ISODate("2024-05-31T09:48:36Z"),
+"FechaDepuracion": ISODate("2024-11-30T09:48:36Z"),
+"DatosLiquidosDetalle": {
+    "numeroPagina": "1 de 1",
+    "formato": "PDF"
+},
+"IdEstadoDocumentoId": 2,
+"IdEstadoDocumentoDescripcion": "Actualizado",
+"CuentaSeguridad": "SEG_CLIENTES_VIP",
+"CodigoArea": "2888",
+"FechaFin": ISODate("2024-05-31T09:47:00Z")
 }</div>
                         <div style="background: rgba(245, 158, 11, 0.1); padding: var(--spacing-md); border-radius: var(--radius-sm); margin-top: var(--spacing-md);">
                             <strong style="color: var(--color-warning);">⚠️ Limitaciones:</strong> Menos legible, difícil de mantener, nombres de campos repetitivos
@@ -824,207 +905,10 @@ db.registros_bdtl.updateMany(
                 </div>
             </div>
 
-            <!-- Proceso de Actualización -->
-            <div class="content-section">
-                <h2 style="color: var(--color-warning); margin-bottom: var(--spacing-xl);">🔄 Proceso de Actualización de Datos Incrustados</h2>
-                
-                <p style="margin-bottom: var(--spacing-lg);">
-                    La actualización de datos maestros es una operación <strong>poco frecuente</strong>. Se maneja con un proceso asíncrono que no impacta el rendimiento de operaciones en tiempo real.
-                </p>
+            
 
-                <div class="advantages-grid">
-                    <div class="advantage-card" style="border-left: 4px solid var(--color-primary);">
-                        <h4 style="color: var(--color-primary);">Paso 1: Actualizar Documento Maestro</h4>
-                        <p style="margin: 0; color: var(--color-text-secondary);">
-                            Se actualiza el registro directamente en la colección maestra. Por ejemplo, en la colección <code>canales</code>.
-                        </p>
-                    </div>
-
-                    <div class="advantage-card" style="border-left: 4px solid var(--color-accent);">
-                        <h4 style="color: var(--color-accent);">Paso 2: Propagar el Cambio (Batch)</h4>
-                        <p style="margin: 0; color: var(--color-text-secondary);">
-                            Script programado (nocturno) ejecuta una operación <code>updateMany()</code> en MongoDB para actualizar todos los documentos.
-                        </p>
-                    </div>
-                </div>
-
-                <h3 style="color: var(--color-primary); margin: var(--spacing-xl) 0 var(--spacing-lg) 0;">Ejemplo de Script de Actualización:</h3>
-                <div class="code-snippet">
-<span style="color: var(--color-success);">// Script de actualización para el cambio en el canal con id 23</span>
-
-<span style="color: var(--color-success);">// 1. Obtener el nuevo valor desde la colección maestra</span>
-<span style="color: var(--color-primary);">const</span> canalActualizado = db.canales.findOne({ <span style="color: var(--color-warning);">"id"</span>: <span style="color: var(--color-info);">23</span> }); 
-<span style="color: var(--color-success);">// canalActualizado = { id: 23, nombre: "CARPETA COMPARTIDA-NUEVO" }</span>
-
-<span style="color: var(--color-success);">// 2. Ejecutar la actualización masiva en la colección principal</span>
-db.registros_bdtl.updateMany(
-  { <span style="color: var(--color-warning);">"canal.id"</span>: <span style="color: var(--color-info);">23</span> }, <span style="color: var(--color-success);">// Filtro: encuentra todos los documentos con ese ID de canal</span>
-  { 
-    <span style="color: var(--color-accent);">$set</span>: { <span style="color: var(--color-warning);">"canal.nombre"</span>: canalActualizado.nombre } <span style="color: var(--color-success);">// Actualización: establece el nuevo nombre</span>
-  }
-);
-                </div>
-            </div>
-
-            <!-- Trade-off de la Desnormalización -->
-            <div class="content-section">
-                <div class="card" style="border-left: 4px solid var(--color-warning);">
-                    <h2 style="color: var(--color-warning);">⚖️ Trade-off de la Desnormalización</h2>
-                    <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-lg);">
-                        <strong>Optimización elegida:</strong> Velocidad de lectura (operación más frecuente y crítica) a cambio de añadir un paso adicional y asíncrono para actualizaciones de datos maestros.
-                    </p>
-                    
-                    <div class="vs-grid">
-                        <div style="background: rgba(0, 237, 100, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-primary);">
-                            <h4 style="color: var(--color-primary);">✅ Ventaja</h4>
-                            <ul style="margin: 0; padding-left: var(--spacing-lg);">
-                                <li>Consultas ultra-rápidas (operación más frecuente)</li>
-                                <li>Sin JOINs ni complejidad en tiempo real</li>
-                                <li>Rendimiento predecible y escalable</li>
-                            </ul>
-                        </div>
-                        <div class="vs-divider">⚖️</div>
-                        <div style="background: rgba(245, 158, 11, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-warning);">
-                            <h4 style="color: var(--color-warning);">⚠️ Costo</h4>
-                            <ul style="margin: 0; padding-left: var(--spacing-lg);">
-                                <li>Proceso batch adicional para actualizaciones</li>
-                                <li>Complejidad en la gestión de datos maestros</li>
-                                <li>Consistencia eventual (no inmediata)</li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div style="background: rgba(0, 237, 100, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-lg); margin-top: var(--spacing-lg); text-align: center;">
-                        <p style="margin: 0; font-weight: 600; color: var(--color-primary);">
-                            🎯 <strong>Conclusión:</strong> Dado que las actualizaciones de datos maestros son raras, esta optimización vale totalmente la pena para el rendimiento general del sistema.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Beneficios Cuantificables -->
-            <div class="content-section">
-                <div class="card" style="background: linear-gradient(135deg, var(--color-primary) 0%, rgba(0, 237, 100, 0.8) 100%);">
-                    <h2 style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-xl);">📊 Beneficios Cuantificables del Nuevo Modelo</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
-                        <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
-                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">1</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">Operación de Lectura</h4>
-                            <p style="font-size: var(--text-sm); margin: 0;">vs múltiples JOINs en SQL</p>
-                        </div>
-                        <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
-                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">90%</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">Reducción</h4>
-                            <p style="font-size: var(--text-sm); margin: 0;">en tiempo de respuesta estimado</p>
-                        </div>
-                        <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
-                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">0</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">JOINs</h4>
-                            <p style="font-size: var(--text-sm); margin: 0;">en consultas de lectura</p>
-                        </div>
-                        <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
-                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">100%</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">Atomicidad</h4>
-                            <p style="font-size: var(--text-sm); margin: 0;">en actualizaciones de registro</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Consideraciones de Implementación -->
-            <div class="content-section">
-                <h2 style="color: var(--color-info); margin-bottom: var(--spacing-xl);">🛠️ Consideraciones de Implementación</h2>
-                
-                <div class="advantages-grid">
-                    <div class="advantage-card" style="border: 2px solid var(--color-info);">
-                        <div class="advantage-icon" style="color: var(--color-info);">💾</div>
-                        <h4 class="advantage-title" style="color: var(--color-info);">Gestión de Caché</h4>
-                        <p style="margin: 0; color: var(--color-text-secondary);">
-                            Implementar caché en memoria para colecciones maestras durante la ingesta, reduciendo consultas a MongoDB en operaciones frecuentes.
-                        </p>
-                    </div>
-
-                    <div class="advantage-card" style="border: 2px solid var(--color-warning);">
-                        <div class="advantage-icon" style="color: var(--color-warning);">⏰</div>
-                        <h4 class="advantage-title" style="color: var(--color-warning);">Programación de Batch</h4>
-                        <p style="margin: 0; color: var(--color-text-secondary);">
-                            Configurar procesos batch durante ventanas de menor actividad (madrugada) para minimizar impacto en rendimiento.
-                        </p>
-                    </div>
-
-                    <div class="advantage-card" style="border: 2px solid var(--color-success);">
-                        <div class="advantage-icon" style="color: var(--color-success);">🔍</div>
-                        <h4 class="advantage-title" style="color: var(--color-success);">Índices Estratégicos</h4>
-                        <p style="margin: 0; color: var(--color-text-secondary);">
-                            Crear índices compuestos en campos frequently consultados: idRegistro, timestamps.ingesta, entidad.id, proceso.codigo.
-                        </p>
-                    </div>
-
-                    <div class="advantage-card" style="border: 2px solid var(--color-accent);">
-                        <div class="advantage-icon" style="color: var(--color-accent);">📈</div>
-                        <h4 class="advantage-title" style="color: var(--color-accent);">Monitoreo de Logs</h4>
-                        <p style="margin: 0; color: var(--color-text-secondary);">
-                            Implementar TTL (Time To Live) en la colección auditoria_logs para mantener solo logs relevantes y controlar el crecimiento.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Plan de Migración -->
-            <div class="content-section">
-                <div class="card" style="background: linear-gradient(135deg, var(--color-accent) 0%, rgba(86, 68, 212, 0.8) 100%);">
-                    <h2 style="color: white; text-align: center; margin-bottom: var(--spacing-xl);">🚀 Plan de Migración Recomendado</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
-                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white;">
-                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
-                                <div style="background: var(--color-primary); color: var(--color-text-dark); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
-                                <h4 style="margin: 0;">Fase de Diseño</h4>
-                            </div>
-                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--text-sm);">
-                                <li>Definir estructura de documentos</li>
-                                <li>Mapear campos de SQL a MongoDB</li>
-                                <li>Diseñar estrategia de índices</li>
-                            </ul>
-                        </div>
-                        
-                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white;">
-                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
-                                <div style="background: var(--color-primary); color: var(--color-text-dark); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
-                                <h4 style="margin: 0;">Migración Datos</h4>
-                            </div>
-                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--text-sm);">
-                                <li>Migrar colecciones maestras</li>
-                                <li>ETL de datos históricos</li>
-                                <li>Validar integridad de datos</li>
-                            </ul>
-                        </div>
-                        
-                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white;">
-                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
-                                <div style="background: var(--color-primary); color: var(--color-text-dark); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
-                                <h4 style="margin: 0;">Adaptar APIs</h4>
-                            </div>
-                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--text-sm);">
-                                <li>Modificar microservicios</li>
-                                <li>Implementar batch updates</li>
-                                <li>Pruebas de rendimiento</li>
-                            </ul>
-                        </div>
-                        
-                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white;">
-                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
-                                <div style="background: var(--color-primary); color: var(--color-text-dark); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">4</div>
-                                <h4 style="margin: 0;">Go Live</h4>
-                            </div>
-                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--text-sm);">
-                                <li>Switchover gradual</li>
-                                <li>Monitoreo intensivo</li>
-                                <li>Optimización continua</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+           
+          
 
             <!-- Resumen Final -->
             <div class="content-section">

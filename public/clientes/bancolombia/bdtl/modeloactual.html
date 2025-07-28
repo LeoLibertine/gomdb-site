@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelo de Datos Actual - BDTL</title>
+    <link rel="stylesheet" href="../../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para la aplicación */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--color-bg-secondary);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: var(--spacing-md) var(--spacing-xl);
+            z-index: var(--z-fixed);
+            height: 70px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--color-text-dark);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 300px;
+            height: calc(100vh - 70px);
+            background-color: var(--color-bg-secondary);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            z-index: var(--z-sticky);
+        }
+
+        .sidebar-content {
+            padding: var(--spacing-xl);
+        }
+
+        .menu-item {
+            display: block;
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+            border-radius: var(--radius-lg);
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+        }
+
+        .menu-item.active {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            border-left: 3px solid var(--color-primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            margin-top: 70px;
+            padding: var(--spacing-2xl);
+            flex: 1;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform var(--transition-slow);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text-primary);
+            font-size: var(--text-xl);
+            cursor: pointer;
+        }
+
+        /* Estilos específicos para modelo de datos actual */
+        .content-section {
+            margin: var(--spacing-3xl) 0;
+        }
+
+        .characteristics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .characteristic-card {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .characteristic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .characteristic-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .characteristic-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xl);
+            color: white;
+        }
+
+        .characteristic-title {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .strengths-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .strength-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+        }
+
+        .strength-icon {
+            font-size: var(--text-2xl);
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .strength-title {
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 700;
+        }
+
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .challenge-card {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .challenge-icon {
+            font-size: var(--text-2xl);
+            color: var(--color-error);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .challenge-title {
+            color: var(--color-error);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 700;
+        }
+
+        .diagram-container {
+            background-color: var(--color-bg-tertiary);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin: var(--spacing-xl) 0;
+            border: 2px dashed var(--color-primary);
+            text-align: center;
+        }
+
+        .diagram-placeholder {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-3xl);
+            margin: var(--spacing-lg) 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-types-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .data-type-card {
+            background: var(--color-bg-card);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .data-type-number {
+            position: absolute;
+            top: -10px;
+            left: var(--spacing-lg);
+            background: var(--color-accent);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: var(--text-sm);
+        }
+
+        .data-type-title {
+            color: var(--color-accent);
+            margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+            font-weight: 700;
+        }
+
+        .analysis-summary {
+            background: linear-gradient(135deg, var(--color-accent) 0%, rgba(86, 68, 212, 0.8) 100%);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            color: white;
+            margin: var(--spacing-xl) 0;
+        }
+
+        .recommendation-card {
+            background: linear-gradient(135deg, var(--color-primary) 0%, rgba(0, 237, 100, 0.8) 100%);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            color: var(--color-text-dark);
+            margin: var(--spacing-xl) 0;
+        }
+                /* Estilos para submenús */
+                .menu-section {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .submenu {
+            margin-left: var(--spacing-lg);
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+            padding-left: var(--spacing-md);
+            margin-top: var(--spacing-xs);
+        }
+
+        .submenu-item {
+            display: block;
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-xs);
+            border-radius: var(--radius-md);
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+            font-size: var(--text-sm);
+        }
+
+        .submenu-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+            transform: translateX(4px);
+        }
+
+        .submenu-item.active {
+            background-color: rgba(0, 237, 100, 0.1);
+            color: var(--color-primary);
+            border-left: 2px solid var(--color-primary);
+            padding-left: calc(var(--spacing-md) - 2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">B</div>
+                <div>
+                    <h2 style="margin-bottom: 0; font-size: var(--text-xl);">Bitácora Digital BDTL</h2>
+                    <p style="margin-bottom: 0; font-size: var(--text-sm); color: var(--color-text-muted);">Bancolombia MongoDB Architecture</p>
+                </div>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </header>
+
+    <div class="app-container">
+          <!-- Sidebar -->
+          <aside class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <nav>
+                    <a href="bdtl.html" class="menu-item">
+                        📚 Introducción al Proyecto BDTL
+                    </a>
+                    <a href="arquitectura.html" class="menu-item">
+                        🏗️ Arquitectura del Sistema
+                    </a>
+                    <a href="evolucion.html" class="menu-item">
+                        📈 Evolución de la Arquitectura
+                    </a>
+                    <a href="ventajas.html" class="menu-item">
+                        ⚡ Ventajas de MongoDB como BDTL
+                    </a>
+                    <a href="tabla.html" class="menu-item">
+                        📋 Descripción Tablas y Campos
+                    </a>
+                    
+                    <!-- Store Procedures con submenús -->
+                    <div class="menu-section">
+                        <a href="procedures.html" class="menu-item">
+                            ⚙️ Store Procedures
+                        </a>
+                        <div class="submenu">
+                            <a href="spsinsert.html" class="submenu-item">
+                                📝 SPs de ingesta y actualización
+                            </a>
+                            <a href="spsconsulta.html" class="submenu-item">
+                                🔍 SPs Lambda Consulta
+                            </a>
+                            <a href="spscarga.html" class="submenu-item">
+                                📦 SPs Lambda Carga Batch
+                            </a>
+                            <a href="jobsdepuracion.html" class="submenu-item">
+                                🗑️ Jobs Depuración
+                            </a>
+                            <a href="frombdtl.html" class="submenu-item">
+                                🔄 From BDTL
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <a href="modeloactual.html" class="menu-item">
+                        🔌 Modelo de Datos Actual
+                    </a>
+
+                    <a href="modelo.html" class="menu-item">
+                        🗃️ Evolución del Modelo de Datos
+                    </a>
+                    <a href="indices.html" class="menu-item active">
+                        🔍 Estrategia de Indexación
+                    </a>
+                    <a href="guias.html" class="menu-item">
+                        📖 Guías y Mejores Prácticas
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="text-gradient">Modelo de Datos Actual - BDTL</h1>
+            <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-2xl);">
+                Análisis detallado del modelo de datos actual implementado en <strong>Microsoft SQL Server</strong>, evaluando su estructura, fortalezas y desafíos para los requerimientos actuales del sistema.
+            </p>
+
+            <!-- Introducción -->
+            <div class="content-section">
+                <div class="card" style="background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%); border: 2px solid var(--color-info);">
+                    <h2 style="color: var(--color-info); margin-bottom: var(--spacing-lg);">📍 Contexto del Análisis</h2>
+                    <p style="font-size: var(--text-lg);">
+                        El presente análisis evalúa la estructura del modelo de datos actual del sistema BDTL, implementado en Microsoft SQL Server. El objetivo es evaluar la estructura, identificar sus características fundamentales, reconocer sus fortalezas en el contexto original y señalar los desafíos que presenta para los requerimientos actuales y futuros del sistema.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Diagrama del Modelo Actual -->
+            <div class="content-section">
+                <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-xl);">📊 Diagrama Entidad-Relación Actual</h2>
+                
+                <div class="diagram-container">
+                    <h3 style="margin-bottom: var(--spacing-lg);">Modelo de Base de Datos SQL Server</h3>
+                    <div style="background: white; border-radius: var(--radius-lg); padding: var(--spacing-sm); border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <iframe 
+                            src="der.html" 
+                            width="100%" 
+                            height="1200px" 
+                            style="border: none; border-radius: var(--radius-md);"
+                            title="Diagrama Entidad-Relación BDTL">
+                        </iframe>
+                    </div>
+                    <p style="font-size: var(--text-sm); color: var(--color-text-muted); text-align: center; margin-top: var(--spacing-sm);">
+                        Incluye tabla transaccional central [dbo].[DatosLiquidos] y tablas maestras de consulta
+                    </p>
+                </div>
+            </div>
+
+            <!-- Características Fundamentales -->
+            <div class="content-section">
+                <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-xl);">🔍 Características Fundamentales del Modelo Actual</h2>
+                
+                <div class="characteristics-grid">
+                    <!-- Modelo Normalizado -->
+                    <div class="characteristic-card" style="border: 2px solid var(--color-primary);">
+                        <div class="characteristic-header">
+                            <div class="characteristic-icon" style="background: var(--color-primary);">📐</div>
+                            <div>
+                                <h3 class="characteristic-title">Modelo Altamente Normalizado</h3>
+                                <p style="margin: 0; color: var(--color-text-muted);">Tercera Forma Normal (3NF)</p>
+                            </div>
+                        </div>
+                        <p style="margin-bottom: var(--spacing-lg);">
+                            La arquitectura se adhiere estrictamente a las formas normales. Se observa una tabla transaccional central <code>[dbo].[DatosLiquidos]</code> que contiene los datos operativos, mientras que los atributos descriptivos se almacenan en tablas de consulta separadas.
+                        </p>
+                        <div style="background: rgba(0, 237, 100, 0.1); padding: var(--spacing-md); border-radius: var(--radius-sm);">
+                            <strong>Tablas principales:</strong><br>
+                            • [API].[Entity] - Entidades<br>
+                            • [API].[Channel] - Canales<br>
+                            • [API].[Estados] - Estados<br>
+                            • Relación mediante llaves foráneas
+                        </div>
+                    </div>
+
+                    <!-- Separación de Datos -->
+                    <div class="characteristic-card" style="border: 2px solid var(--color-accent);">
+                        <div class="characteristic-header">
+                            <div class="characteristic-icon" style="background: var(--color-accent);">🗂️</div>
+                            <div>
+                                <h3 class="characteristic-title">Separación Clara de Datos y Metadatos</h3>
+                                <p style="margin: 0; color: var(--color-text-muted);">Clasificación por tipo de información</p>
+                            </div>
+                        </div>
+                        <p style="margin-bottom: var(--spacing-lg);">
+                            El modelo distingue eficazmente entre diferentes tipos de información, manteniendo una separación clara que facilita el mantenimiento y la integridad de los datos.
+                        </p>
+                        
+                        <div class="data-types-grid">
+                            <div class="data-type-card">
+                                <div class="data-type-number">1</div>
+                                <h4 class="data-type-title">Datos Transaccionales</h4>
+                                <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">
+                                    La información principal en DatosLiquidos
+                                </p>
+                            </div>
+                            <div class="data-type-card">
+                                <div class="data-type-number">2</div>
+                                <h4 class="data-type-title">Metadatos Descriptivos</h4>
+                                <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">
+                                    Tablas maestras (Entity, Technology)
+                                </p>
+                            </div>
+                            <div class="data-type-card">
+                                <div class="data-type-number">3</div>
+                                <h4 class="data-type-title">Metadatos de Configuración</h4>
+                                <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">
+                                    [PS].[TParametros], [dbo].[DiasVigenciaTipoDocumento]
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lógica de Negocio -->
+                    <div class="characteristic-card" style="border: 2px solid var(--color-warning);">
+                        <div class="characteristic-header">
+                            <div class="characteristic-icon" style="background: var(--color-warning);">⚙️</div>
+                            <div>
+                                <h3 class="characteristic-title">Lógica de Negocio Centralizada</h3>
+                                <p style="margin: 0; color: var(--color-text-muted);">Stored Procedures y Triggers</p>
+                            </div>
+                        </div>
+                        <p style="margin-bottom: var(--spacing-lg);">
+                            Una porción significativa de la lógica de negocio del sistema reside directamente en la base de datos en forma de Stored Procedures y Triggers. Estos artefactos ejecutan validaciones, cálculos, transformaciones y lógica de mantenimiento físico.
+                        </p>
+                        <div style="background: rgba(245, 158, 11, 0.1); padding: var(--spacing-md); border-radius: var(--radius-sm);">
+                            <strong>Funciones principales:</strong><br>
+                            • Validaciones de datos<br>
+                            • Cálculos y transformaciones<br>
+                            • Mantenimiento físico de BD<br>
+                            • Lógica de negocio compleja
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fortalezas del Modelo -->
+            <div class="content-section">
+                <h2 style="color: var(--color-success); margin-bottom: var(--spacing-xl);">✅ Fortalezas del Modelo en su Contexto Original</h2>
+                <p style="margin-bottom: var(--spacing-lg);">
+                    Es importante reconocer que este modelo relacional fue una elección de diseño sólida y estándar para el momento de su concepción.
+                </p>
+                
+                <div class="strengths-grid">
+                    <div class="strength-card">
+                        <div class="strength-icon">🔒</div>
+                        <h4 class="strength-title">Máxima Consistencia e Integridad de Datos</h4>
+                        <p style="margin: 0; color: var(--color-text-secondary);">
+                            La normalización y el uso de llaves foráneas garantizan la integridad referencial. Es imposible registrar un dato con un ChannelId o EntityId que no exista en las tablas maestras, previniendo la corrupción de datos.
+                        </p>
+                    </div>
+
+                    <div class="strength-card">
+                        <div class="strength-icon">💾</div>
+                        <h4 class="strength-title">Eficiencia de Almacenamiento</h4>
+                        <p style="margin: 0; color: var(--color-text-secondary);">
+                            Al no repetir datos descriptivos (como el nombre completo de un canal en cada fila), el modelo minimiza la redundancia y optimiza el uso del espacio en disco.
+                        </p>
+                    </div>
+
+                    <div class="strength-card">
+                        <div class="strength-icon">📐</div>
+                        <h4 class="strength-title">Estructura Predecible y Rígida</h4>
+                        <p style="margin: 0; color: var(--color-text-secondary);">
+                            Un esquema relacional bien definido proporciona una estructura de datos estable y predecible, ideal para aplicaciones con requerimientos que cambian con poca frecuencia.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desafíos y Puntos de Fricción -->
+            <div class="content-section">
+                <h2 style="color: var(--color-error); margin-bottom: var(--spacing-xl);">⚠️ Desafíos y Puntos de Fricción para el Caso de Uso de BDTL</h2>
+                <p style="margin-bottom: var(--spacing-lg);">
+                    A pesar de sus fortalezas, el modelo relacional presenta desafíos fundamentales que limitan el rendimiento, la agilidad y la escalabilidad del sistema BDTL.
+                </p>
+                
+                <div class="challenges-grid">
+                    <div class="challenge-card">
+                        <div class="challenge-icon">🔗</div>
+                        <h4 class="challenge-title">Sobrecarga de JOINs en las Lecturas</h4>
+                        <p style="margin: 0; color: var(--color-text-secondary);">
+                            <strong>Principal Cuello de Botella:</strong> Para construir una respuesta completa para la API de consulta, la base de datos debe ejecutar múltiples operaciones de JOIN entre DatosLiquidos y todas las tablas maestras. A medida que el volumen de datos crece, el costo computacional de estos JOINs se convierte en el principal cuello de botella de rendimiento.
+                        </p>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-icon">📄</div>
+                        <h4 class="challenge-title">Ineficiencia Crítica en el Manejo de Datos JSON</h4>
+                        <p style="margin: 0; color: var(--color-text-secondary);">
+                            El dato más importante de BDTL, el campo DatosLiquidos, es un objeto JSON almacenado en un campo de texto (NVARCHAR(MAX)). SQL Server no está diseñado para consultar eficientemente el contenido de un campo de texto, obligando a utilizar Stored Procedures extremadamente complejos que simulan esta funcionalidad.
+                        </p>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-icon">🔧</div>
+                        <h4 class="challenge-title">Rigidez y Falta de Agilidad</h4>
+                        <p style="margin: 0; color: var(--color-text-secondary);">
+                            El esquema fijo dificulta la evolución. Si un nuevo proceso de negocio requiere añadir un nuevo metadato filtrable, se necesita un ALTER TABLE, una operación que conlleva riesgo y tiempo de inactividad en producción.
+                        </p>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-icon">⚙️</div>
+                        <h4 class="challenge-title">Alto Acoplamiento de la Lógica de Negocio</h4>
+                        <p style="margin: 0; color: var(--color-text-secondary);">
+                            Centralizar la lógica en Stored Procedures (T-SQL) ata el sistema al proveedor de la base de datos, dificulta las pruebas unitarias automatizadas y crea una barrera para los desarrolladores de aplicaciones. Escalar la lógica implica escalar el costoso clúster de la base de datos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análisis de Conclusión -->
+            <div class="content-section">
+                <div class="analysis-summary">
+                    <h2 style="color: white; text-align: center; margin-bottom: var(--spacing-xl);">📊 Conclusión del Análisis</h2>
+                    <p style="color: white; text-align: center; margin-bottom: var(--spacing-lg); font-size: var(--text-lg);">
+                        El modelo de datos actual de BDTL en SQL Server es un diseño relacional clásico y bien ejecutado que prioriza la integridad y la consistencia de los datos. Sin embargo, está fundamentalmente desalineado con los requerimientos de rendimiento y flexibilidad del caso de uso principal del sistema.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
+                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center;">
+                            <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">🎯</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Caso de Uso Principal</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Almacenamiento y consulta de alta velocidad de datos semi-estructurados en formato JSON</p>
+                        </div>
+                        
+                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center;">
+                            <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">⚡</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Limitación Principal</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Rendimiento limitado por JOINs e ineficiencia en consultas dentro de campos JSON</p>
+                        </div>
+                        
+                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center;">
+                            <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">🔧</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Complejidad</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Stored Procedures complejos como consecuencia de forzar herramienta relacional para tareas no diseñadas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recomendación -->
+            <div class="content-section">
+                <div class="recommendation-card">
+                    <h2 style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-xl);">🎯 Recomendación de Arquitecto de Datos</h2>
+                    <p style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-lg); font-size: var(--text-lg);">
+                        La complejidad de los Stored Procedures no es síntoma de una mala implementación, sino la consecuencia inevitable de forzar a una herramienta relacional a realizar tareas para las que no fue diseñada.
+                    </p>
+                    
+                    <div style

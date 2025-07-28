@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobs Depuración - BDTL</title>
+    <link rel="stylesheet" href="../../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para la aplicación */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--color-bg-secondary);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: var(--spacing-md) var(--spacing-xl);
+            z-index: var(--z-fixed);
+            height: 70px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--color-text-dark);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 300px;
+            height: calc(100vh - 70px);
+            background-color: var(--color-bg-secondary);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            z-index: var(--z-sticky);
+        }
+
+        .sidebar-content {
+            padding: var(--spacing-xl);
+        }
+
+        .menu-item {
+            display: block;
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+            border-radius: var(--radius-lg);
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+        }
+
+        .menu-item.active {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            border-left: 3px solid var(--color-primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            margin-top: 70px;
+            padding: var(--spacing-2xl);
+            flex: 1;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform var(--transition-slow);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text-primary);
+            font-size: var(--text-xl);
+            cursor: pointer;
+        }
+
+        /* Estilos específicos para submenús */
+        .menu-section {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .submenu {
+            margin-left: var(--spacing-lg);
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+            padding-left: var(--spacing-md);
+            margin-top: var(--spacing-xs);
+        }
+
+        .submenu-item {
+            display: block;
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-xs);
+            border-radius: var(--radius-md);
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+            font-size: var(--text-sm);
+        }
+
+        .submenu-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+            transform: translateX(4px);
+        }
+
+        .submenu-item.active {
+            background-color: rgba(0, 237, 100, 0.1);
+            color: var(--color-primary);
+            border-left: 2px solid var(--color-primary);
+            padding-left: calc(var(--spacing-md) - 2px);
+        }
+
+        /* Estilos específicos para jobs de depuración */
+        .content-section {
+            margin: var(--spacing-3xl) 0;
+        }
+
+        .job-card {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-base);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .job-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .job-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .job-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xl);
+            color: white;
+        }
+
+        .job-name {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .step-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .step-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -10px;
+            left: var(--spacing-lg);
+            background: var(--color-warning);
+            color: var(--color-text-dark);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: var(--text-sm);
+        }
+
+        .step-title {
+            color: var(--color-warning);
+            margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+            font-weight: 700;
+        }
+
+        .step-description {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .code-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            color: var(--color-text-muted);
+        }
+
+        .transformation-table {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .table-header {
+            font-weight: 700;
+            color: var(--color-warning);
+            background: rgba(245, 158, 11, 0.1);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-sm);
+        }
+
+        .obsolete-card {
+            background: linear-gradient(135deg, var(--color-error) 0%, rgba(239, 68, 68, 0.8) 100%);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            color: white;
+            margin: var(--spacing-xl) 0;
+        }
+
+        .ttl-solution {
+            background: linear-gradient(135deg, var(--color-primary) 0%, rgba(0, 237, 100, 0.8) 100%);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            color: var(--color-text-dark);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .code-snippet {
+            background: var(--color-bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            font-family: var(--font-mono);
+            overflow-x: auto;
+            margin: var(--spacing-md) 0;
+            font-size: var(--text-sm);
+        }
+
+        .legacy-badge {
+            background: var(--color-error);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            font-weight: bold;
+            display: inline-block;
+            margin-left: var(--spacing-sm);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: var(--spacing-xl);
+            align-items: center;
+            margin: var(--spacing-xl) 0;
+        }
+
+        .vs-column {
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+        }
+
+        .vs-left {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--color-error);
+        }
+
+        .vs-right {
+            background: rgba(0, 237, 100, 0.2);
+            border: 1px solid var(--color-primary);
+        }
+
+        .vs-divider {
+            font-size: var(--text-3xl);
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .benefit-item {
+            background: rgba(0,0,0,0.1);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .benefit-icon {
+            font-size: var(--text-3xl);
+            margin-bottom: var(--spacing-sm);
+        }
+         /* Estilos para submenús */
+         .menu-section {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .submenu {
+            margin-left: var(--spacing-lg);
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+            padding-left: var(--spacing-md);
+            margin-top: var(--spacing-xs);
+        }
+
+        .submenu-item {
+            display: block;
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-xs);
+            border-radius: var(--radius-md);
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+            font-size: var(--text-sm);
+        }
+
+        .submenu-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+            transform: translateX(4px);
+        }
+
+        .submenu-item.active {
+            background-color: rgba(0, 237, 100, 0.1);
+            color: var(--color-primary);
+            border-left: 2px solid var(--color-primary);
+            padding-left: calc(var(--spacing-md) - 2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">B</div>
+                <div>
+                    <h2 style="margin-bottom: 0; font-size: var(--text-xl);">Bitácora Digital BDTL</h2>
+                    <p style="margin-bottom: 0; font-size: var(--text-sm); color: var(--color-text-muted);">Bancolombia MongoDB Architecture</p>
+                </div>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </header>
+
+    <div class="app-container">
+              <!-- Sidebar -->
+              <aside class="sidebar" id="sidebar">
+                <div class="sidebar-content">
+                    <nav>
+                        <a href="bdtl.html" class="menu-item">
+                            📚 Introducción al Proyecto BDTL
+                        </a>
+                        <a href="arquitectura.html" class="menu-item">
+                            🏗️ Arquitectura del Sistema
+                        </a>
+                        <a href="evolucion.html" class="menu-item">
+                            📈 Evolución de la Arquitectura
+                        </a>
+                        <a href="ventajas.html" class="menu-item">
+                            ⚡ Ventajas de MongoDB como BDTL
+                        </a>
+                        <a href="tabla.html" class="menu-item">
+                            📋 Descripción Tablas y Campos
+                        </a>
+                        
+                        <!-- Store Procedures con submenús -->
+                        <div class="menu-section">
+                            <a href="procedures.html" class="menu-item">
+                                ⚙️ Store Procedures
+                            </a>
+                            <div class="submenu">
+                                <a href="spsinsert.html" class="submenu-item">
+                                    📝 SPs de ingesta y actualización
+                                </a>
+                                <a href="spsconsulta.html" class="submenu-item">
+                                    🔍 SPs Lambda Consulta
+                                </a>
+                                <a href="spscarga.html" class="submenu-item">
+                                    📦 SPs Lambda Carga Batch
+                                </a>
+                                <a href="jobsdepuracion.html" class="submenu-item">
+                                    🗑️ Jobs Depuración
+                                </a>
+                                <a href="frombdtl.html" class="submenu-item">
+                                    🔄 From BDTL
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <a href="modeloactual.html" class="menu-item">
+                            🔌 Modelo de Datos Actual
+                        </a>
+    
+                        <a href="modelo.html" class="menu-item">
+                            🗃️ Evolución del Modelo de Datos
+                        </a>
+                        <a href="indices.html" class="menu-item active">
+                            🔍 Estrategia de Indexación
+                        </a>
+                        <a href="guias.html" class="menu-item">
+                            📖 Guías y Mejores Prácticas
+                        </a>
+                    </nav>
+                </div>
+            </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="text-gradient">Jobs Depuración</h1>
+            <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-2xl);">
+                Análisis de los jobs de depuración automática y su transformación a <strong>Índices TTL nativos</strong> en MongoDB para el mantenimiento automatizado de datos.
+            </p>
+
+            <!-- Introducción -->
+            <div class="content-section">
+                <div class="card" style="background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%); border: 2px solid var(--color-warning);">
+                    <h2 style="color: var(--color-warning); margin-bottom: var(--spacing-lg);">🗑️ Contexto de Depuración</h2>
+                    <p style="font-size: var(--text-lg);">
+                        Los jobs de depuración actuales son <strong>procesos de mantenimiento complejos</strong> diseñados para borrar registros antiguos de la BDTL. Su complejidad está directamente ligada a las limitaciones de la arquitectura física de SQL Server.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Job Principal: spDepuracionBDTL -->
+            <div class="content-section">
+                <div class="job-card" style="border: 2px solid var(--color-warning); box-shadow: 0 0 40px rgba(245, 158, 11, 0.3);">
+                    <div class="job-header">
+                        <div class="job-icon" style="background: var(--color-warning);">🗑️</div>
+                        <div>
+                            <h2 class="job-name">[PS].[spDepuracionBDTL]</h2>
+                            <p style="margin: 0; color: var(--color-text-muted);">Job de depuración automática</p>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-bottom: var(--spacing-lg); font-size: var(--text-lg);">
+                        Este SP es el <strong>"Job de Depuración"</strong> principal. Su complejidad está directamente ligada a las limitaciones de la arquitectura física de SQL Server. Su lógica se divide en <strong>tres partes principales</strong>:
+                    </p>
+
+                    <div class="step-grid">
+                        <div class="step-card">
+                            <div class="step-number">1</div>
+                            <h4 class="step-title">Identificación y Borrado en Lotes</h4>
+                            <p class="step-description">
+                                Identifica todos los registros cuya FechaDepuracion es anterior o igual a la fecha actual. Luego, entra en un bucle WHILE para borrar los registros en lotes de 20,000 filas para evitar bloqueos de tabla.
+                            </p>
+                            <div class="code-section">
+                                <strong>Técnica:</strong> Bucle WHILE con DELETE TOP(20000) para manejo de eliminaciones masivas
+                            </div>
+                        </div>
+
+                        <div class="step-card">
+                            <div class="step-number">2</div>
+                            <h4 class="step-title">Borrado en Tablas Relacionadas</h4>
+                            <p class="step-description">
+                                Antes de borrar de DatosLiquidos, también borra los registros correspondientes de la tabla EXPORT_DATA, que era parte de la integración legada con Kofax.
+                            </p>
+                            <div class="code-section">
+                                <strong>Dependencias:</strong> Limpieza en EXPORT_DATA antes del borrado principal
+                            </div>
+                        </div>
+
+                        <div class="step-card">
+                            <div class="step-number">3</div>
+                            <h4 class="step-title">Mantenimiento de Particiones Físicas</h4>
+                            <p class="step-description">
+                                La parte más compleja y específica de SQL Server. Ejecuta un bucle para ejecutar ALTER PARTITION FUNCTION ... MERGE RANGE, eliminando las particiones físicas del disco que ahora están vacías.
+                            </p>
+                            <div class="code-section">
+                                <strong>SQL Server:</strong> Mantenimiento manual de particiones físicas vacías
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Manual: spDepuracionBDTLbyDate -->
+            <div class="content-section">
+                <div class="job-card" style="border: 2px solid var(--color-accent);">
+                    <div class="job-header">
+                        <div class="job-icon" style="background: var(--color-accent);">📅</div>
+                        <div>
+                            <h2 class="job-name">[PS].[spDepuracionBDTLbyDate]</h2>
+                            <p style="margin: 0; color: var(--color-text-muted);">Depuración manual por fecha</p>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-bottom: var(--spacing-lg);">
+                        Este SP es <strong>casi una copia exacta</strong> del anterior. La única diferencia es que en lugar de usar la fecha actual (GETDATE()), acepta un parámetro de fecha (@FechaDepuracion). Es una versión del job que puede ser ejecutada manualmente para borrar datos hasta una fecha específica.
+                    </p>
+                    
+                    <div style="background: rgba(86, 68, 212, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-lg); border: 1px solid var(--color-accent);">
+                        <h4 style="color: var(--color-accent); margin-bottom: var(--spacing-sm);">🎯 Propósito</h4>
+                        <p style="margin: 0;">Permite la depuración manual hasta una fecha específica, útil para tareas de mantenimiento excepcionales o limpieza dirigida de datos.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transformación a MongoDB -->
+            <div class="content-section">
+                <h2 style="color: var(--color-warning); margin-bottom: var(--spacing-xl);">🔄 Transformación a la Arquitectura de MongoDB</h2>
+                <p style="margin-bottom: var(--spacing-lg);">
+                    <strong>Toda la lógica de estos Stored Procedures se reemplaza</strong> por una única y simple característica nativa de MongoDB: los <strong>Índices TTL (Time-To-Live)</strong>.
+                </p>
+                
+                <div class="transformation-table">
+                    <div class="table-row">
+                        <div class="table-header">Lógica en el Stored Procedure (SQL Server)</div>
+                        <div class="table-header">Cómo se Maneja en el Microservicio (MongoDB)</div>
+                    </div>
+                    <div class="table-row">
+                        <div style="font-weight: 600; color: var(--color-warning);">1. Borrado en Lotes (WHILE loop)</div>
+                        <div><strong>Reemplazado por el proceso de fondo de TTL.</strong> MongoDB tiene un proceso automático en segundo plano que busca y elimina documentos expirados de manera eficiente sin necesidad de lotes manuales.</div>
+                    </div>
+                    <div class="table-row">
+                        <div style="font-weight: 600; color: var(--color-error);">2. Mantenimiento de Particiones (MERGE RANGE)</div>
+                        <div><strong>Eliminado.</strong> Este concepto no existe en MongoDB. La gestión del espacio en disco es automática.</div>
+                    </div>
+                    <div class="table-row">
+                        <div style="font-weight: 600; color: var(--color-accent);">3. Job Externo (SQL Agent)</div>
+                        <div><strong>Eliminado.</strong> No se necesita un job externo para ejecutar el borrado. El índice TTL es una característica "siempre activa" de la base de datos.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- La Solución: Índices TTL -->
+            <div class="content-section">
+                <div class="ttl-solution">
+                    <h2 style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-xl);">⏰ La Solución: Índices TTL (Time-To-Live)</h2>
+                    <p style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-lg);">
+                        Un índice TTL es una característica especial de MongoDB <strong>diseñada para este caso de uso exacto</strong>: borrar automáticamente documentos después de un cierto tiempo.
+                    </p>
+                    
+                    <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-xl); border-radius: var(--radius-lg); margin: var(--spacing-lg) 0;">
+                        <h3 style="color: var(--color-text-dark); margin-bottom: var(--spacing-lg);">🔧 ¿Cómo funciona?</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
+                            <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-md); border-radius: var(--radius-md); color: var(--color-text-dark);">
+                                <strong>1.</strong> Se crea un índice especial en un campo de fecha
+                            </div>
+                            <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-md); border-radius: var(--radius-md); color: var(--color-text-dark);">
+                                <strong>2.</strong> Se configura la expiración en el campo FechaDepuracion
+                            </div>
+                            <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-md); border-radius: var(--radius-md); color: var(--color-text-dark);">
+                                <strong>3.</strong> MongoDB borra automáticamente documentos expirados
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="color: var(--color-text-dark); margin: var(--spacing-lg) 0;">💻 ¿Cómo se implementaría?</h3>
+                    <p style="color: var(--color-text-dark); margin-bottom: var(--spacing-md);">
+                        Se ejecutaría un <strong>único comando</strong> en la colección registros_bdtl, <strong>una sola vez</strong>:
+                    </p>
+                </div>
+            </div>
+
+            <!-- Código de Implementación -->
+            <div class="content-section">
+                <div class="card" style="border-left: 4px solid var(--color-primary);">
+                    <h3 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">📝 Implementación del Índice TTL</h3>
+                    <div class="code-snippet">
+<span style="color: var(--color-success);">// Crear el índice TTL en el campo FechaDepuracion</span>
+db.collection(<span style="color: var(--color-warning);">'registros_bdtl'</span>).createIndex(
+    { <span style="color: var(--color-warning);">"FechaDepuracion"</span>: <span style="color: var(--color-info);">1</span> }, <span style="color: var(--color-success);">// El campo de fecha</span>
+    { <span style="color: var(--color-accent);">expireAfterSeconds</span>: <span style="color: var(--color-info);">0</span> } <span style="color: var(--color-success);">// Expira 0 segundos después de la fecha indicada en el campo</span>
+);
+                    </div>
+                    <div style="background: rgba(0, 237, 100, 0.1); padding: var(--spacing-md); border-radius: var(--radius-sm); margin-top: var(--spacing-md);">
+                        <p style="margin: 0; color: var(--color-primary); font-weight: 600;">
+                            🎯 <strong>¡Y eso es todo!</strong> MongoDB se encargará de borrar los documentos de forma automática y eficiente una vez que la fecha en el campo FechaDepuracion haya pasado.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caso de Uso Manual -->
+            <div class="content-section">
+                <div class="card" style="border-left: 4px solid var(--color-accent);">
+                    <h2 style="color: var(--color-accent);">📅 Para la Depuración Manual (Caso Excepcional)</h2>
+                    <p style="margin-bottom: var(--spacing-lg);">
+                        Si en alguna situación excepcional un administrador necesitara borrar manualmente los registros hasta una fecha específica, no se necesitaría un SP complejo.
+                    </p>
+                    
+                    <div style="background: rgba(86, 68, 212, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
+                        <h4 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">🔧 Nuevo Enfoque: Microservicio de Administración</h4>
+                        <p style="margin-bottom: var(--spacing-md);">
+                            Un <strong>Microservicio de Administración (AWS Lambda)</strong> expondría un endpoint seguro que, al ser llamado con una fecha, ejecutaría un único y simple comando en MongoDB:
+                        </p>
+                        
+                        <div class="code-snippet">
+<span style="color: var(--color-success);">// Comando para borrar manualmente todos los documentos hasta una fecha específica</span>
+<span style="color: var(--color-primary);">const</span> fechaManual = <span style="color: var(--color-primary);">new</span> <span style="color: var(--color-accent);">Date</span>(<span style="color: var(--color-warning);">"2025-01-15T00:00:00Z"</span>);
+
+<span style="color: var(--color-primary);">await</span> db.collection(<span style="color: var(--color-warning);">'registros_bdtl'</span>).deleteMany({
+    <span style="color: var(--color-warning);">"FechaDepuracion"</span>: { <span style="color: var(--color-accent);">"$lte"</span>: fechaManual }
+});
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparación Visual -->
+            <div class="content-section">
+                <div class="card" style="background: linear-gradient(135deg, var(--color-accent) 0%, rgba(86, 68, 212, 0.8) 100%);">
+                    <h2 style="color: white; text-align: center; margin-bottom: var(--spacing-xl);">⚖️ SQL Server vs MongoDB: Gestión de Depuración</h2>
+                    <div class="comparison-grid">
+                        <div class="vs-column vs-left">
+                            <h3 style="color: var(--color-error); text-align: center; margin-bottom: var(--spacing-lg);">❌ SQL Server (Actual)</h3>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); color: white;">
+                                <li>SP complejo de +100 líneas</li>
+                                <li>Bucles WHILE para borrado en lotes</li>
+                                <li>Mantenimiento manual de particiones</li>
+                                <li>Job externo programado (SQL Agent)</li>
+                                <li>Borrado en tablas relacionadas</li>
+                                <li>Gestión de bloqueos de tabla</li>
+                            </ul>
+                        </div>
+                        <div class="vs-divider">VS</div>
+                        <div class="vs-column vs-right">
+                            <h3 style="color: var(--color-primary); text-align: center; margin-bottom: var(--spacing-lg);">✅ MongoDB (Nuevo)</h3>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); color: white;">
+                                <li>Un único comando de configuración</li>
+                                <li>Proceso automático en segundo plano</li>
+                                <li>Sin mantenimiento de particiones</li>
+                                <li>Característica "siempre activa"</li>
+                                <li>Sin dependencias de tablas</li>
+                                <li>Sin riesgo de bloqueos</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Beneficios del Cambio -->
+            <div class="content-section">
+                <div class="card" style="border-left: 4px solid var(--color-primary);">
+                    <h2 style="color: var(--color-primary);">🚀 Beneficios de la Transformación</h2>
+                    <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-lg);">
+                        La migración de jobs complejos a índices TTL nativos representa una <strong>simplificación dramática</strong> del mantenimiento de datos.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
+                        <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
+                            <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">🔄</div>
+                            <h4 style="color: var(--color-primary);">Automatización Total</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Eliminación completa de jobs programados y mantenimiento manual</p>
+                        </div>
+                        <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
+                            <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">⚡</div>
+                            <h4 style="color: var(--color-primary);">Eficiencia Nativa</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Proceso optimizado por MongoDB sin impacto en rendimiento</p>
+                        </div>
+                        <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
+                            <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">🛡️</div>
+                            <h4 style="color: var(--color-primary);">Sin Riesgos</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Eliminación de bloqueos de tabla y problemas de concurrencia</p>
+                        </div>
+                        <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
+                            <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">🔧</div>
+                            <h4 style="color: var(--color-primary);">Mantenimiento Cero</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">No requiere intervención administrativa periódica</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Obsolescencia Completa -->
+            <div class="content-section">
+                <div class="obsolete-card">
+                    <h2 style="color: white; text-align: center; margin-bottom: var(--spacing-xl);">🗑️ Jobs Completamente Obsoletos</h2>
+                    <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-xl); border-radius: var(--radius-lg);">
+                        <h3 style="margin-bottom: var(--spacing-lg); text-align: center;">📋 Resumen de la Transformación</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
+                            <div style="text-align: center;">
+                                <h4 style="margin-bottom: var(--spacing-sm);">🚫 spDepuracionBDTL</h4>
+                                <p style="font-size: var(--text-sm); margin: 0;">Job automático → <strong>Índice TTL</strong></p>
+                            </div>
+                            <div style="text-align: center;">
+                                <h4 style="margin-bottom: var(--spacing-sm);">🚫 spDepuracionBDTLbyDate</h4>
+                                <p style="font-size: var(--text-sm); margin: 0;">Job manual → <strong>deleteMany() simple</strong></p>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); margin-top: var(--spacing-lg); text-align: center;">
+                            <p style="margin: 0; font-weight: 600;">
+                                ⚠️ <strong>Funcionalidad de estos SPs:</strong> Una tarea de mantenimiento manual y compleja en SQL Server se reemplaza por completo. La necesidad de un borrado diario se automatiza con los Índices TTL.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métricas de Simplificación -->
+            <div class="content-section">
+                <div class="ttl-solution">
+                    <h2 style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-xl);">📊 Simplificación Cuantificada</h2>
+                    <div class="benefits-grid">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">📝</div>
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold; color: var(--color-text-dark);">100+</div>
+                            <h4 style="margin-bottom: var(--spacing-sm); color: var(--color-text-dark);">Líneas de Código</h4>
+                            <p style="font-size: var(--text-sm); margin: 0; color: var(--color-text-dark);">reemplazadas por 1 comando</p>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">⏰</div>
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold; color: var(--color-text-dark);">0</div>
+                            <h4 style="margin-bottom: var(--spacing-sm); color: var(--color-text-dark);">Jobs Programados</h4>
+                            <p style="font-size: var(--text-sm); margin: 0; color: var(--color-text-dark);">vs múltiples SQL Agent jobs</p>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🔧</div>
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold; color: var(--color-text-dark);">0</div>
+                            <h4 style="margin-bottom: var(--spacing-sm); color: var(--color-text-dark);">Mantenimiento Manual</h4>
+                            <p style="font-size: var(--text-sm); margin: 0; color: var(--color-text-dark);">de particiones físicas</p>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🚀</div>
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold; color: var(--color-text-dark);">100%</div>
+                            <h4 style="margin-bottom: var(--spacing-sm); color: var(--color-text-dark);">Automatización</h4>
+                            <p style="font-size: var(--text-sm); margin: 0; color: var(--color-text-dark);">nativa en MongoDB</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conclusión Final -->
+            <div class="content-section">
+                <div class="card" style="border-left: 4px solid var(--color-success);">
+                    <h2 style="color: var(--color-success);">🎯 Conclusión sobre Jobs de Depuración</h2>
+                    <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-lg);">
+                        Un <strong>Stored Procedure complejo de más de 100 líneas</strong>, que requiere un job externo para ejecutarse y realiza un mantenimiento físico manual, se reemplaza por un <strong>único comando de configuración</strong> en MongoDB.
+                    </p>
+                    
+                    <div style="background: rgba(34, 197, 94, 0.1); padding: var(--spacing-xl); border-radius: var(--radius-lg); text-align: center;">
+                        <h3 style="color: var(--color-success); margin-bottom: var(--spacing-lg);">🌟 Resultado Final</h3>
+                        <p style="margin: 0; font-weight: 600; color: var(--color-success); font-size: var(--text-lg);">
+                            A partir de ese momento, la depuración de datos se vuelve <strong>completamente automática, más eficiente y no requiere ninguna lógica en la capa de aplicación</strong>.
+                        </p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg); margin-top: var(--spacing-lg);">
+                        <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
+                            <h4 style="color: var(--color-success);">🔄 Depuración Automática (99%)</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Índice TTL maneja el borrado diario de forma automática y eficiente</p>
+                        </div>
+                        <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
+                            <h4 style="color: var(--color-accent);">📅 Depuración Manual (1%)</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Microservicio de Administración con simple deleteMany() para casos excepcionales</p>
+                        </div>
+                        <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
+                            <h4 style="color: var(--color-primary);">✨ Beneficio Neto</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">MongoDB resuelve la depuración de manera <strong>nativa, automática y más eficiente</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Función para toggle del menú móvil
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        // Marcar enlace activo basado en la página actual
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop() || 'jobs-depuracion.html';
+            const menuItems = document.querySelectorAll('.menu-item');
+            const submenuItems = document.querySelectorAll('.submenu-item');
+            
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === currentPage) {
+                    item.classList.add('active');
+                }
+            });
+
+            submenuItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === currentPage) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

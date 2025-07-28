@@ -192,6 +192,43 @@
                 transform: rotate(90deg);
             }
         }
+
+        /* Estilos para submenús */
+        .menu-section {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .submenu {
+            margin-left: var(--spacing-lg);
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+            padding-left: var(--spacing-md);
+            margin-top: var(--spacing-xs);
+        }
+
+        .submenu-item {
+            display: block;
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-xs);
+            border-radius: var(--radius-md);
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+            font-size: var(--text-sm);
+        }
+
+        .submenu-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+            transform: translateX(4px);
+        }
+
+        .submenu-item.active {
+            background-color: rgba(0, 237, 100, 0.1);
+            color: var(--color-primary);
+            border-left: 2px solid var(--color-primary);
+            padding-left: calc(var(--spacing-md) - 2px);
+        }
     </style>
 </head>
 <body>
@@ -210,11 +247,11 @@
     </header>
 
     <div class="app-container">
-        <!-- Sidebar -->
+       <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-content">
                 <nav>
-                    <a href="bdtl.html" class="menu-item active">
+                    <a href="bdtl.html" class="menu-item">
                         📚 Introducción al Proyecto BDTL
                     </a>
                     <a href="arquitectura.html" class="menu-item">
@@ -229,17 +266,40 @@
                     <a href="tabla.html" class="menu-item">
                         📋 Descripción Tablas y Campos
                     </a>
-                    <a href="procedures.html" class="menu-item">
-                        ⚙️ Store Procedures
+                    
+                    <!-- Store Procedures con submenús -->
+                    <div class="menu-section">
+                        <a href="procedures.html" class="menu-item">
+                            ⚙️ Store Procedures
+                        </a>
+                        <div class="submenu">
+                            <a href="spsinsert.html" class="submenu-item">
+                                📝 SPs de ingesta y actualización
+                            </a>
+                            <a href="spsconsulta.html" class="submenu-item">
+                                🔍 SPs Lambda Consulta
+                            </a>
+                            <a href="spscarga.html" class="submenu-item">
+                                📦 SPs Lambda Carga Batch
+                            </a>
+                            <a href="jobsdepuracion.html" class="submenu-item">
+                                🗑️ Jobs Depuración
+                            </a>
+                            <a href="frombdtl.html" class="submenu-item">
+                                🔄 From BDTL
+                            </a>
+                        </div>
+                    </div>
+                    <a href="modeloactual.html" class="menu-item">
+                        🔌 Modelo de Datos Actual
                     </a>
+
                     <a href="modelo.html" class="menu-item">
-                        🗃️ Modelo de Datos
+                        🗃️ Evolución del Modelo de Datos
                     </a>
-                    <a href="servicios.html" class="menu-item">
-                        🔌 Servicios y APIs
-                    </a>
-                    <a href="logica.html" class="menu-item">
-                        🧠 Lógica de Negocio
+                  
+                    <a href="indices.html" class="menu-item active">
+                        🔍 Estrategia de Indexación
                     </a>
                     <a href="guias.html" class="menu-item">
                         📖 Guías y Mejores Prácticas
@@ -485,30 +545,22 @@
             
             <div class="diagram-container">
                 <h3 style="margin-bottom: var(--spacing-lg);">Flujo de Procesamiento BDTL</h3>
-                <div class="diagram-placeholder">
-                    <div style="text-align: center;">
-                        <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-md); opacity: 0.7;">🔄</div>
-                        <p style="color: var(--color-text-muted); margin: 0;">
-                            [Imagen: flujo-procesamiento-bdtl.png]<br>
-                            Flujo completo del procesamiento de datos en BDTL
-                        </p>
-                    </div>
+                <div class="diagram-placeholder" style="padding: 0; min-height: auto;">
+                    <img src="img/flujo1.png" 
+                         alt="Flujo completo del procesamiento de datos en BDTL" 
+                         style="width: 100%; height: auto; border-radius: var(--radius-lg);">
                 </div>
                 <p style="font-size: var(--text-sm); color: var(--color-text-muted); text-align: center; margin-top: var(--spacing-sm);">
-                    Incluye ingesta/actualización, consulta, transferencia a LZ cada hora y zona de resultados FCO
+                    Flujo completo del procesamiento de datos en BDTL
                 </p>
             </div>
 
             <div class="diagram-container">
                 <h3 style="margin-bottom: var(--spacing-lg);">Canales de Entrada y Salida BDTL</h3>
-                <div class="diagram-placeholder">
-                    <div style="text-align: center;">
-                        <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-md); opacity: 0.7;">🔄</div>
-                        <p style="color: var(--color-text-muted); margin: 0;">
-                            [Imagen: canales-entrada-salida-bdtl.png]<br>
-                            Contribuidores y consumidores del sistema
-                        </p>
-                    </div>
+                <div class="diagram-placeholder" style="padding: 0; min-height: auto;">
+                    <img src="img/flujo2.png" 
+                         alt="Canales de Entrada y Salida BDTL - Contribuidores y consumidores del sistema" 
+                         style="width: 100%; height: auto; border-radius: var(--radius-lg);">
                 </div>
                 <p style="font-size: var(--text-sm); color: var(--color-text-muted); text-align: center; margin-top: var(--spacing-sm);">
                     Muestra todos los canales, procesos y servicios que alimentan y consumen información de la BDTL

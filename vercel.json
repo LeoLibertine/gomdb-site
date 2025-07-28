@@ -174,6 +174,50 @@
       "dest": "/clientes/bancolombia/df/costos.html"
     },
     {
+      "src": "/clientes/bancolombia/bdtl/bdtl(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bdtl/bdtl.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bdtl/frombdtl(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bdtl/frombdtl.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bdtl/indices(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bdtl/indices.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bdtl/jobsdepuracion(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bdtl/jobsdepuracion.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bdtl/modelo(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bdtl/modelo.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bdtl/modeloactual(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bdtl/modeloactual.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bdtl/spscarga(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bdtl/spscarga.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bdtl/spsconsulta(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bdtl/spsconsulta.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bdtl/spsinsert(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bdtl/spsinsert.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bdtl/tabla(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bdtl/tabla.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bdtl/ventajas(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bdtl/ventajas.html"
+    },
+    {
       "src": "/lz/lz(?:/.*)?$",
       "dest": "/lz/lz.html"
     },
