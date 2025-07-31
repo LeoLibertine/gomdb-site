@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB SA Strategy - QBR H2 FY26</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --mongo-green: #00ED64;
+            --mongo-dark-green: #00A35C;
+            --mongo-dark: #001E2B;
+            --mongo-darker: #003549;
+            --mongo-light: #E3FCF7;
+            --mongo-medium: #B8E3D3;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(ellipse at top right, rgba(0, 237, 100, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at bottom left, rgba(0, 163, 92, 0.1) 0%, transparent 50%),
+                        #0a0a0a;
+        }
+        
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            padding: 0 20px;
+            max-width: 1000px;
+        }
+        
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--mongo-green) 0%, var(--mongo-dark-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .hero .subtitle {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: #888;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+        
+        .hero .metrics {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 50px;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+        
+        .metric-card {
+            background: rgba(0, 30, 43, 0.5);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            padding: 25px 40px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.2);
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--mongo-green);
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 20px 0;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .nav.visible {
+            transform: translateY(0);
+        }
+        
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--mongo-green);
+        }
+        
+        /* Section Base */
+        .section {
+            padding: 100px 0;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            margin-bottom: 60px;
+            text-align: center;
+            background: linear-gradient(135deg, white 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Strategy Pillars */
+        .strategy-section {
+            background: linear-gradient(to bottom, #0a0a0a 0%, #0f0f0f 100%);
+        }
+        
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+        
+        .pillar {
+            background: linear-gradient(135deg, rgba(0, 30, 43, 0.8) 0%, rgba(0, 30, 43, 0.4) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .pillar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--mongo-green) 0%, var(--mongo-dark-green) 100%);
+        }
+        
+        .pillar:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 237, 100, 0.2);
+        }
+        
+        .pillar-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: var(--mongo-green);
+            color: var(--mongo-dark);
+            border-radius: 50%;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .pillar h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .pillar-description {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        /* Roadmap Section */
+        .roadmap-section {
+            background: #0f0f0f;
+        }
+        
+        .roadmap-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            background: rgba(0, 30, 43, 0.5);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .tab-button.active {
+            background: var(--mongo-green);
+            color: var(--mongo-dark);
+            border-color: var(--mongo-green);
+        }
+        
+        .tab-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 237, 100, 0.3);
+        }
+        
+        .roadmap-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .roadmap-content.active {
+            display: block;
+        }
+        
+        .account-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        
+        .account-card {
+            background: rgba(0, 30, 43, 0.5);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .account-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.2);
+            border-color: var(--mongo-green);
+        }
+        
+        .account-name {
+            font-size: 1.5rem;
+            color: var(--mongo-green);
+            margin-bottom: 15px;
+        }
+        
+        .account-status {
+            display: inline-block;
+            background: rgba(0, 237, 100, 0.2);
+            color: var(--mongo-green);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        
+        .action-list {
+            list-style: none;
+        }
+        
+        .action-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #ccc;
+            line-height: 1.6;
+        }
+        
+        .action-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--mongo-green);
+            font-weight: bold;
+        }
+        
+        /* Champion Building */
+        .champions-section {
+            background: linear-gradient(to bottom, #0f0f0f 0%, #0a0a0a 100%);
+        }
+        
+        .champion-framework {
+            background: linear-gradient(135deg, var(--mongo-dark) 0%, var(--mongo-darker) 100%);
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .champion-framework::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.1) 0%, transparent 70%);
+        }
+        
+        .framework-stages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stage {
+            text-align: center;
+            position: relative;
+        }
+        
+        .stage-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 237, 100, 0.2);
+            border: 2px solid var(--mongo-green);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--mongo-green);
+            transition: all 0.3s ease;
+        }
+        
+        .stage:hover .stage-icon {
+            background: var(--mongo-green);
+            color: var(--mongo-dark);
+            transform: scale(1.1);
+        }
+        
+        .stage h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        .stage p {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .champion-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+        
+        .champion-card {
+            background: rgba(0, 30, 43, 0.6);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: 20px;
+            padding: 35px;
+            transition: all 0.3s ease;
+        }
+        
+        .champion-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 237, 100, 0.3);
+        }
+        
+        .champion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 25px;
+        }
+        
+        .champion-info h3 {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 5px;
+        }
+        
+        .champion-company {
+            color: var(--mongo-green);
+            font-size: 1.1rem;
+        }
+        
+        .champion-goal {
+            background: rgba(0, 237, 100, 0.2);
+            color: var(--mongo-green);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        
+        .champion-actions {
+            margin-top: 25px;
+        }
+        
+        .champion-actions h4 {
+            color: var(--mongo-green);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .action-item {
+            background: rgba(0, 237, 100, 0.05);
+            border-left: 3px solid var(--mongo-green);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            color: #ccc;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        /* Services Strategy */
+        .services-section {
+            background: linear-gradient(135deg, rgba(0, 30, 43, 0.8) 0%, rgba(0, 53, 73, 0.4) 100%);
+            border-radius: 30px;
+            padding: 60px;
+            margin: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .services-section::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.1) 0%, transparent 60%);
+        }
+        
+        .services-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .service-package {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .service-package:hover {
+            transform: translateY(-5px);
+            border-color: var(--mongo-green);
+            background: rgba(0, 237, 100, 0.05);
+        }
+        
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--mongo-green);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--mongo-dark);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 50px 0;
+            color: #666;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Interactive particles */
+        .particles-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--mongo-green);
+            border-radius: 50%;
+            opacity: 0;
+            animation: particle 15s infinite;
+        }
+        
+        @keyframes particle {
+            0% {
+                opacity: 0;
+                transform: translate(0, 0);
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--end-x), var(--end-y));
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero .metrics {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .champion-framework {
+                padding: 30px 20px;
+            }
+            
+            .services-section {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles Background -->
+    <div class="particles-bg" id="particlesBg"></div>
+    
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-content">
+            <div class="logo">
+                <svg width="120" height="30" viewBox="0 0 120 30">
+                    <rect width="120" height="30" rx="5" fill="var(--mongo-green)"/>
+                    <text x="60" y="20" text-anchor="middle" fill="white" font-weight="bold" font-size="16">MongoDB</text>
+                </svg>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#strategy">Estrategia</a></li>
+                <li><a href="#roadmap">Roadmap</a></li>
+                <li><a href="#champions">Champions</a></li>
+                <li><a href="#services">Servicios PS</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Estrategia cuentas Santi - Leo MongoDB</h1>
+            <p class="subtitle">H2 FY26 - Arquitecto de Soluciones</p>
+            
+            <div class="metrics">
+                <div class="metric-card">
+                    <div class="metric-value">158%</div>
+                    <div class="metric-label">Cuota Q2 Alcanzada</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">109%</div>
+                    <div class="metric-label">Cuota H1 Alcanzada</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">$67K</div>
+                    <div class="metric-label">Meta PS Q3</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Strategy Section -->
+    <section class="section strategy-section" id="strategy">
+        <div class="container">
+            <h2 class="section-title">Estrategia de Tres Pilares</h2>
+            
+            <div class="pillars-grid">
+                <div class="pillar">
+                    <div class="pillar-number">1</div>
+                    <h3>Consolidación y Graduación</h3>
+                    <p class="pillar-description">
+                        Convertir las cuentas de alto potencial (Siigo, Sistecredito) en fortalezas estratégicas inexpugnables y graduarlas a un modelo de gestión superior (POD account).
+                    </p>
+                    <div class="pillar-focus">
+                        <h4 style="color: var(--mongo-green); margin: 20px 0 10px;">Enfoque Q3:</h4>
+                        <ul class="action-list">
+                            <li>Activar Workload "Pasarela Migración" en Sistecredito</li>
+                            <li>Expandir relación multi-thread en Siigo</li>
+                            <li>Preparar casos de éxito públicos</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="pillar">
+                    <div class="pillar-number">2</div>
+                    <h3>Expansión y Diversificación</h3>
+                    <p class="pillar-description">
+                        Replicar el modelo de éxito en nuevas cuentas, con enfoque en sector financiero (Bolívar, Porvenir) y sector público (MEF, SUNAT) para diversificar riesgo e ingreso.
+                    </p>
+                    <div class="pillar-focus">
+                        <h4 style="color: var(--mongo-green); margin: 20px 0 10px;">Enfoque Q3:</h4>
+                        <ul class="action-list">
+                            <li>Asegurar RFP de MEF ($100K NARR + $30K PS)</li>
+                            <li>Avanzar descubrimientos técnicos en Bolívar</li>
+                            <li>Cumplir meta de 8 NBMs</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="pillar">
+                    <div class="pillar-number">3</div>
+                    <h3>Venta de Valor con Servicios</h3>
+                    <p class="pillar-description">
+                        Integrar la venta de Servicios Profesionales (PS) en cada etapa del ciclo de ventas para acelerar adopción, reducir riesgos y cumplir con la cuota PS.
+                    </p>
+                    <div class="pillar-focus">
+                        <h4 style="color: var(--mongo-green); margin: 20px 0 10px;">Enfoque Q3:</h4>
+                        <ul class="action-list">
+                            <li>Cerrar $67K en PS (MEF, SUNAT, PriceSmart)</li>
+                            <li>Adjuntar PS a cada nueva workload</li>
+                            <li>Desarrollar playbooks de servicios</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Roadmap Section -->
+    <section class="section roadmap-section" id="roadmap">
+        <div class="container">
+            <h2 class="section-title">Roadmap Táctico por Cuenta</h2>
+            
+            <div class="roadmap-tabs">
+                <button class="tab-button active" onclick="showTab('consolidation')">Consolidación</button>
+                <button class="tab-button" onclick="showTab('expansion')">Expansión</button>
+                <button class="tab-button" onclick="showTab('public-sector')">Sector Público</button>
+            </div>
+            
+            <div id="consolidation" class="roadmap-content active">
+                <div class="account-cards">
+                    <div class="account-card">
+                        <h3 class="account-name">Sistecredito</h3>
+                        <span class="account-status">Cuenta Estratégica</span>
+                        
+                        <h4 style="color: var(--mongo-green); margin-bottom: 15px;">Acciones Q3:</h4>
+                        <ul class="action-list">
+                            <li><strong>Activar Workload "Pasarela Migración":</strong> Ejecutar plan de "decoupling" con apoyo del CSM y SA antes de temporada alta</li>
+                            <li><strong>Planificar siguiente carga crítica:</strong> Identificar próximo gran proyecto a migrar</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--mongo-green); margin: 25px 0 15px;">Acciones Q4:</h4>
+                        <ul class="action-list">
+                            <li><strong>Iniciar proceso de graduación a POD:</strong> Trabajar con liderazgo para definir criterios y comenzar transición</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="account-card">
+                        <h3 class="account-name">Siigo</h3>
+                        <span class="account-status">Relación a Largo Plazo</span>
+                        
+                        <h4 style="color: var(--mongo-green); margin-bottom: 15px;">Acciones Q3:</h4>
+                        <ul class="action-list">
+                            <li><strong>Expandir relación "Multi-thread":</strong> Mapear organización para identificar nuevos DMs y áreas de negocio</li>
+                            <li><strong>Identificar nuevas iniciativas:</strong> Buscar oportunidades donde MongoDB sea la plataforma</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--mongo-green); margin: 25px 0 15px;">Acciones Q4:</h4>
+                        <ul class="action-list">
+                            <li><strong>Caso de éxito público:</strong> Convertir logros en caso de estudio para atraer clientes del sector</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="expansion" class="roadmap-content">
+                <div class="account-cards">
+                    <div class="account-card">
+                        <h3 class="account-name">Bolívar</h3>
+                        <span class="account-status">Evaluación Técnica</span>
+                        
+                        <h4 style="color: var(--mongo-green); margin-bottom: 15px;">Acciones Q3:</h4>
+                        <ul class="action-list">
+                            <li><strong>Avanzar descubrimiento técnico:</strong> Ejecutar evaluación de Elastic Search con Ricardo Gomez</li>
+                            <li><strong>Traer SME (Subject Matter Expert):</strong> Demostración técnica profunda</li>
+                            <li><strong>Obtener validación técnica:</strong> Preparar terreno para cierre en Q4</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--mongo-green); margin: 25px 0 15px;">Acciones Q4:</h4>
+                        <ul class="action-list">
+                            <li><strong>Cerrar deal proyectado:</strong> Convertir validación técnica en compromiso firme</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="account-card">
+                        <h3 class="account-name">Porvenir</h3>
+                        <span class="account-status">Nuevo Dimensionamiento</span>
+                        
+                        <h4 style="color: var(--mongo-green); margin-bottom: 15px;">Acciones Q3:</h4>
+                        <ul class="action-list">
+                            <li><strong>Completar nuevo sizing para CCM:</strong> Trabajar con Edwin Gomez</li>
+                            <li><strong>Construir caso de negocio:</strong> Posicionar como inversión para crecimiento</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--mongo-green); margin: 25px 0 15px;">Acciones Q4:</h4>
+                        <ul class="action-list">
+                            <li><strong>Propuesta con PS incluido:</strong> Acelerar time-to-market</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="public-sector" class="roadmap-content">
+                <div class="account-cards">
+                    <div class="account-card">
+                        <h3 class="account-name">MEF</h3>
+                        <span class="account-status">RFP en Agosto</span>
+                        
+                        <h4 style="color: var(--mongo-green); margin-bottom: 15px;">Acciones Q3:</h4>
+                        <ul class="action-list">
+                            <li><strong>Asegurar RFP de $100K NARR + $30K PS:</strong> Prioridad máxima con propuesta impecable</li>
+                            <li><strong>Facilitar proceso a Robbin Nieto:</strong> Proporcionar toda documentación de seguridad y casos de éxito</li>
+                            <li><strong>Apoyo ejecutivo:</strong> Solicitar participación de líder de ventas MongoDB</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--mongo-green); margin: 25px 0 15px;">Acciones Q4:</h4>
+                        <ul class="action-list">
+                            <li><strong>Plan de implementación exitoso:</strong> Asegurar que sirva de referencia para sector público</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="account-card">
+                        <h3 class="account-name">SUNAT</h3>
+                        <span class="account-status">Oportunidad PS</span>
+                        
+                        <h4 style="color: var(--mongo-green); margin-bottom: 15px;">Acciones Q3:</h4>
+                        <ul class="action-list">
+                            <li><strong>Cerrar deal de PS de $21K:</strong> Parte crítica de la cuota trimestral</li>
+                            <li><strong>Posicionar como seguro de éxito:</strong> Garantía de entrega a tiempo</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--mongo-green); margin: 25px 0 15px;">Acciones Q4:</h4>
+                        <ul class="action-list">
+                            <li><strong>Expandir relación:</strong> Identificar nuevas oportunidades post-implementación</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Champion Building Section -->
+    <section class="section champions-section" id="champions">
+        <div class="container">
+            <h2 class="section-title">Champion Building Strategy</h2>
+            
+            <div class="champion-framework">
+                <h3 style="color: var(--mongo-green); font-size: 2rem; margin-bottom: 20px; text-align: center;">
+                    Framework: De Contacto a Campeón
+                </h3>
+                
+                <div class="framework-stages">
+                    <div class="stage">
+                        <div class="stage-icon">1</div>
+                        <h4>Contacto Informado</h4>
+                        <p>Conoce la tecnología y lo que hace</p>
+                    </div>
+                    
+                    <div class="stage">
+                        <div class="stage-icon">2</div>
+                        <h4>Influenciador Técnico</h4>
+                        <p>Confía en la tecnología para resolver problemas específicos</p>
+                    </div>
+                    
+                    <div class="stage">
+                        <div class="stage-icon">3</div>
+                        <h4>Defensor del Negocio</h4>
+                        <p>Articula el impacto de MongoDB en objetivos de negocio</p>
+                    </div>
+                    
+                    <div class="stage">
+                        <div class="stage-icon">4</div>
+                        <h4>Campeón Estratégico</h4>
+                        <p>Vende activamente por ti dentro de su organización</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 style="text-align: center; margin: 60px 0 40px; color: white;">
+                Playbook Táctico por Stakeholder
+            </h3>
+            
+            <div class="champion-cards">
+                <div class="champion-card">
+                    <div class="champion-header">
+                        <div class="champion-info">
+                            <h3>Ricardo Gomez</h3>
+                            <div class="champion-company">Bolívar</div>
+                        </div>
+                        <span class="champion-goal">→ Influenciador Técnico</span>
+                    </div>
+                    
+                    <div class="champion-actions">
+                        <h4>Plan de Acción:</h4>
+                        <div class="action-item">
+                            <strong>Hacerlo el Héroe:</strong> Traer SME para trabajar CON Ricardo, posicionándolo como líder que encontró la solución
+                        </div>
+                        <div class="action-item">
+                            <strong>WIIFM:</strong> Cuantificar impacto del proyecto (costos Elastic, performance) para justificar ante jefatura
+                        </div>
+                        <div class="action-item">
+                            <strong>Valor Proactivo:</strong> Enviar caso de estudio de otra aseguradora con migración similar
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="champion-card">
+                    <div class="champion-header">
+                        <div class="champion-info">
+                            <h3>Edwin Gomez</h3>
+                            <div class="champion-company">Porvenir</div>
+                        </div>
+                        <span class="champion-goal">→ Defensor del Negocio</span>
+                    </div>
+                    
+                    <div class="champion-actions">
+                        <h4>Plan de Acción:</h4>
+                        <div class="action-item">
+                            <strong>Más allá del Sizing:</strong> Explicar por qué es óptimo, cómo habilita crecimiento futuro y comparar TCO
+                        </div>
+                        <div class="action-item">
+                            <strong>WIIFM:</strong> Construir caso de negocio - sizing como inversión para soportar crecimiento proyectado
+                        </div>
+                        <div class="action-item">
+                            <strong>Relación:</strong> Post-sizing, llamada de 15 min para preguntar sobre otros desafíos
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="champion-card">
+                    <div class="champion-header">
+                        <div class="champion-info">
+                            <h3>Robbin Nieto</h3>
+                            <div class="champion-company">MEF</div>
+                        </div>
+                        <span class="champion-goal">→ Defensor del Negocio</span>
+                    </div>
+                    
+                    <div class="champion-actions">
+                        <h4>Plan de Acción:</h4>
+                        <div class="action-item">
+                            <strong>Facilitarle el Trabajo:</strong> Documentación impecable de seguridad y casos de éxito sector público
+                        </div>
+                        <div class="action-item">
+                            <strong>WIIFM:</strong> PS como "seguro para el éxito" - garantía de entrega a tiempo para sus directivos
+                        </div>
+                        <div class="action-item">
+                            <strong>Alineación Ejecutiva:</strong> Reunión con ejecutivo MongoDB para demostrar compromiso con MEF
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="champion-card">
+                    <div class="champion-header">
+                        <div class="champion-info">
+                            <h3>Juan Bejarano</h3>
+                            <div class="champion-company">Protección</div>
+                        </div>
+                        <span class="champion-goal">→ Influenciador Técnico</span>
+                    </div>
+                    
+                    <div class="champion-actions">
+                        <h4>Plan de Acción:</h4>
+                        <div class="action-item">
+                            <strong>Escuchar 80%, Hablar 20%:</strong> Primera reunión sobre SUS problemas, no productos
+                        </div>
+                        <div class="action-item">
+                            <strong>WIIFM:</strong> Resumir sus problemas y proponer siguiente paso concreto de bajo esfuerzo
+                        </div>
+                        <div class="action-item">
+                            <strong>Cumplir Rápido:</strong> Si prometiste algo, enviarlo en menos de 24 horas
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Professional Services Section -->
+    <section class="section" id="services">
+        <div class="container">
+            <div class="services-section">
+                <div class="services-content">
+                    <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; color: white;">
+                        Estrategia de Servicios Profesionales
+                    </h2>
+                    <p style="text-align: center; color: var(--mongo-green); font-size: 1.3rem; margin-bottom: 40px;">
+                        "Crear una Cultura de Venta de PS"
+                    </p>
+                    
+                    <div style="background: rgba(0, 237, 100, 0.1); border-left: 4px solid var(--mongo-green); padding: 25px; border-radius: 10px; margin-bottom: 40px;">
+                        <h3 style="color: var(--mongo-green); margin-bottom: 15px;">Meta Q3: $67K en PS</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; color: #ccc;">
+                            <div>
+                                <strong style="color: white;">MEF:</strong> $30K
+                            </div>
+                            <div>
+                                <strong style="color: white;">SUNAT:</strong> $21K
+                            </div>
+                            <div>
+                                <strong style="color: white;">PriceSmart:</strong> $15K
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="text-align: center; margin-bottom: 30px; color: white;">
+                        Paquetes de Servicios Estandarizados
+                    </h3>
+                    
+                    <div class="services-grid">
+                        <div class="service-package">
+                            <div class="service-icon">🚀</div>
+                            <h4 style="color: white; margin-bottom: 15px;">Quickstart Package</h4>
+                            <p style="color: #ccc; font-size: 0.95rem;">
+                                Implementación rápida para nuevas workloads. Ideal para acelerar time-to-market.
+                            </p>
+                        </div>
+                        
+                        <div class="service-package">
+                            <div class="service-icon">🔄</div>
+                            <h4 style="color: white; margin-bottom: 15px;">Migration Accelerator</h4>
+                            <p style="color: #ccc; font-size: 0.95rem;">
+                                Paquete especializado para migración desde RDBMS con reducción de riesgos.
+                            </p>
+                        </div>
+                        
+                        <div class="service-package">
+                            <div class="service-icon">⚡</div>
+                            <h4 style="color: white; margin-bottom: 15px;">Performance Optimization</h4>
+                            <p style="color: #ccc; font-size: 0.95rem;">
+                                Taller de optimización para maximizar el rendimiento de aplicaciones existentes.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 50px; text-align: center;">
+                        <h4 style="color: var(--mongo-green); margin-bottom: 20px;">Principio Clave</h4>
+                        <p style="color: #ccc; font-size: 1.1rem; max-width: 800px; margin: 0 auto;">
+                            "Adjuntar PS a cada Nueva Workload (NWL) - Por cada nueva carga de trabajo propuesta, presentar un paquete de PS como acelerador y mitigador de riesgos"
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>MongoDB Solutions Architecture - H2 FY26 Strategy</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Navigation visibility
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('nav');
+            if (window.pageYOffset > 100) {
+                nav.classList.add('visible');
+            } else {
+                nav.classList.remove('visible');
+            }
+        });
+        
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.roadmap-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+        
+        // Particles effect
+        const particlesBg = document.getElementById('particlesBg');
+        
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = Math.random() * window.innerHeight + 'px';
+            
+            const endX = (Math.random() - 0.5) * 300;
+            const endY = (Math.random() - 0.5) * 300;
+            particle.style.setProperty('--end-x', endX + 'px');
+            particle.style.setProperty('--end-y', endY + 'px');
+            
+            particlesBg.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 15000);
+        }
+        
+        // Create particles periodically
+        setInterval(createParticle, 1500);
+        
+        // Initial particles
+        for (let i = 0; i < 8; i++) {
+            setTimeout(createParticle, i * 300);
+        }
+        
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe elements
+        document.querySelectorAll('.pillar, .account-card, .champion-card, .service-package').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+        
+        // Add floating animation to metrics
+        document.querySelectorAll('.metric-card').forEach((card, index) => {
+            card.style.animation = `float ${3 + index * 0.5}s ease-in-out infinite`;
+        });
+    </script>
+</body>
+</html>

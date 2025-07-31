@@ -226,6 +226,14 @@
       "dest": "/index.html"
     },
     {
+      "src": "/clientes/cuentas/mayq3(?:/.*)?$",
+      "dest": "/clientes/cuentas/mayq3.html"
+    },
+    {
+      "src": "/clientes/cuentas/santiq3(?:/.*)?$",
+      "dest": "/clientes/cuentas/santiq3.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
