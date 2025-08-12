@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bancolombia - MongoDB con Voyage AI</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para la presentación de Bancolombia */
+        .bancolombia-header {
+            background: linear-gradient(135deg, var(--color-bg-primary) 0%, #FFD700 5%, var(--color-bg-primary) 15%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bancolombia-logo {
+            color: #FFD700;
+            font-weight: 700;
+            font-size: var(--text-xl);
+        }
+        
+        .hero-title {
+            font-size: clamp(var(--text-4xl), 6vw, var(--text-7xl));
+            background: linear-gradient(135deg, var(--color-primary) 0%, #FFD700 50%, var(--color-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .problem-section {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, var(--color-bg-secondary) 100%);
+            border-left: 4px solid var(--color-error);
+        }
+        
+        .solution-section {
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-bg-secondary) 100%);
+            border-left: 4px solid var(--color-primary);
+        }
+        
+        .workflow-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-2xl);
+        }
+        
+        .workflow-column {
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            position: relative;
+        }
+        
+        .workflow-before {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, var(--color-bg-tertiary) 100%);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .workflow-after {
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-bg-tertiary) 100%);
+            border: 2px solid var(--color-primary);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .step-item {
+            background: var(--color-bg-card);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-md);
+            border-left: 3px solid var(--color-accent);
+            transition: transform var(--transition-base);
+        }
+        
+        .step-item:hover {
+            transform: translateX(8px);
+        }
+        
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-2xl);
+        }
+        
+        .metric-card {
+            text-align: center;
+            padding: var(--spacing-xl);
+            background: var(--color-bg-card);
+            border-radius: var(--radius-xl);
+            transition: all var(--transition-base);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .metric-number {
+            font-size: var(--text-6xl);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .phase-timeline {
+            position: relative;
+            padding-left: var(--spacing-2xl);
+        }
+        
+        .phase-timeline::before {
+            content: '';
+            position: absolute;
+            left: var(--spacing-lg);
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--color-primary), var(--color-accent));
+        }
+        
+        .phase-item {
+            position: relative;
+            margin-bottom: var(--spacing-2xl);
+            padding: var(--spacing-xl);
+            background: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            margin-left: var(--spacing-xl);
+        }
+        
+        .phase-item::before {
+            content: '';
+            position: absolute;
+            left: calc(-1 * var(--spacing-xl) - 6px);
+            top: var(--spacing-xl);
+            width: 12px;
+            height: 12px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px var(--color-bg-primary);
+        }
+        
+        .integration-demo {
+            background: var(--color-bg-tertiary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-2xl);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+        }
+        
+        .code-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .code-block-demo {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-primary);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+            overflow-x: auto;
+        }
+        
+        .code-header {
+            background: var(--color-primary);
+            color: var(--color-text-dark);
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin: calc(-1 * var(--spacing-lg)) calc(-1 * var(--spacing-lg)) var(--spacing-md) calc(-1 * var(--spacing-lg));
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            font-weight: 600;
+        }
+        
+        .bancolombia-cta {
+            background: linear-gradient(135deg, var(--color-primary) 0%, #FFD700 50%, var(--color-accent) 100%);
+            padding: var(--spacing-4xl) 0;
+            text-align: center;
+            margin-top: var(--spacing-4xl);
+        }
+        
+        .cta-content {
+            background: rgba(0, 30, 43, 0.9);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            backdrop-filter: blur(10px);
+        }
+        
+        @media (max-width: 768px) {
+            .workflow-comparison {
+                grid-template-columns: 1fr;
+            }
+            
+            .code-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .floating-icon {
+            position: absolute;
+            opacity: 0.1;
+            font-size: var(--text-6xl);
+            color: var(--color-primary);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .icon-1 { top: 10%; left: 10%; animation-delay: 0s; }
+        .icon-2 { top: 20%; right: 15%; animation-delay: 2s; }
+        .icon-3 { bottom: 30%; left: 20%; animation-delay: 4s; }
+        .icon-4 { bottom: 10%; right: 10%; animation-delay: 1s; }
+    </style>
+</head>
+<body>
+    <!-- Header con branding Bancolombia -->
+    <header class="navbar bancolombia-header">
+        <div class="container navbar-container">
+            <div class="bancolombia-logo">🏦 Bancolombia</div>
+            <div class="navbar-links">
+                <a href="#problema" class="navbar-link">El Desafío</a>
+                <a href="#solucion" class="navbar-link">La Solución</a>
+                <a href="#integracion" class="navbar-link">Integración</a>
+                <a href="#roadmap" class="navbar-link">Roadmap</a>
+            </div>
+        </div>
+        <!-- Iconos flotantes -->
+        <div class="floating-icon icon-1">🤖</div>
+        <div class="floating-icon icon-2">📊</div>
+        <div class="floating-icon icon-3">⚡</div>
+        <div class="floating-icon icon-4">🔒</div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="text-center animate-fadeIn">
+                <div class="badge badge-primary mb-4">
+                    🚀 Revolución en Bases de Datos para IA
+                </div>
+                <h1 class="hero-title">
+                    MongoDB + Voyage AI
+                </h1>
+                <p class="text-xl text-secondary mb-5">
+                    Transformando la arquitectura de datos de Bancolombia con la integración más avanzada 
+                    de búsqueda semántica y recuperación inteligente del mercado
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a href="#solucion" class="btn btn-primary btn-lg">
+                        🎯 Ver la Solución
+                    </a>
+                    <a href="#integracion" class="btn btn-secondary btn-lg">
+                        ⚙️ Cómo Funciona
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección del Problema -->
+    <section id="problema" class="section">
+        <div class="container">
+            <div class="card problem-section animate-slideInLeft">
+                <h2 class="text-center mb-4">🚨 La Crisis de Confianza en IA Empresarial</h2>
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div>
+                        <h3 class="text-gradient mb-3">El Obstáculo Principal</h3>
+                        <p>La falta de confianza en los resultados de IA es el principal freno para la adopción empresarial. Los LLMs son propensos a "alucinaciones" - información falsa o inventada que puede tener consecuencias graves en sectores como el financiero.</p>
+                        
+                        <h4 class="text-primary mt-4 mb-2">Riesgos Críticos para Bancolombia:</h4>
+                        <ul class="text-secondary">
+                            <li>• Recomendaciones financieras incorrectas</li>
+                            <li>• Análisis de riesgo crediticio impreciso</li>
+                            <li>• Cumplimiento regulatorio comprometido</li>
+                            <li>• Experiencia del cliente deteriorada</li>
+                        </ul>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-number">70%</div>
+                        <div class="metric-label">de las empresas Fortune 100 usan MongoDB</div>
+                        <div class="metric-number mt-4" style="font-size: var(--text-4xl);">$220M</div>
+                        <div class="metric-label">Inversión en Voyage AI</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de la Solución -->
+    <section id="solucion" class="section">
+        <div class="container">
+            <div class="card solution-section animate-slideInRight">
+                <h2 class="text-center mb-4">✨ MongoDB + Voyage AI: La Respuesta Definitiva</h2>
+                
+                <div class="text-center mb-5">
+                    <p class="text-lg">RAG (Recuperación Aumentada por Generación) nativo y de alta fidelidad integrado directamente en MongoDB Atlas</p>
+                </div>
+
+dimiento en tareas especializadas</div>
+                    </div>
+                </div>
+
+                <!-- Comparación de flujos de trabajo -->
+                <h3 class="text-center mt-6 mb-4 text-gradient">Transformación del Flujo de Trabajo</h3>
+                <div class="workflow-comparison">
+                    <div class="workflow-column workflow-before">
+                        <h4 class="text-error mb-4">❌ Método Actual (Fragmentado)</h4>
+                        <div class="step-item">
+                            <strong>1. Gestión Compleja</strong><br>
+                            Múltiples APIs y credenciales
+                        </div>
+                        <div class="step-item">
+                            <strong>2. Código Personalizado</strong><br>
+                            Lógica de sincronización manual
+                        </div>
+                        <div class="step-item">
+                            <strong>3. Latencia de Red</strong><br>
+                            Múltiples llamadas externas
+                        </div>
+                        <div class="step-item">
+                            <strong>4. Puntos de Fallo</strong><br>
+                            Sistemas desconectados
+                        </div>
+                        <div class="step-item">
+                            <strong>5. Mantenimiento</strong><br>
+                            Sobrecarga operativa constante
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-column workflow-after">
+                        <h4 class="text-primary mb-4">✅ Con MongoDB + Voyage AI</h4>
+                        <div class="step-item">
+                            <strong>1. Conexión Única</strong><br>
+                            Solo MongoDB Atlas
+                        </div>
+                        <div class="step-item">
+                            <strong>2. Auto-Embedding</strong><br>
+                            Configuración declarativa
+                        </div>
+                        <div class="step-item">
+                            <strong>3. Búsqueda Nativa</strong><br>
+                            Un solo paso optimizado
+                        </div>
+                        <div class="step-item">
+                            <strong>4. Reranking Integrado</strong><br>
+                            Sin latencia adicional
+                        </div>
+                        <div class="step-item">
+                            <strong>5. Cero Mantenimiento</strong><br>
+                            Plataforma unificada
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demostración de Integración -->
+    <section id="integracion" class="section">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-5">⚙️ Integración Técnica Simplificada</h2>
+            
+            <div class="integration-demo">
+                <h3 class="text-center mb-4">Comparación de Código: Antes vs Después</h3>
+                
+                <div class="code-comparison">
+                    <div class="code-block-demo">
+                        <div class="code-header">❌ Método Actual - Múltiples Sistemas</div>
+                        <pre><code>// 1. Configurar múltiples APIs
+const openai = new OpenAI(apiKey);
+const mongodb = new MongoClient(uri);
+
+// 2. Generar embedding externamente
+const embedding = await openai.embeddings.create({
+  model: "text-embedding-ada-002",
+  input: userQuery
+});
+
+// 3. Buscar en MongoDB
+const results = await collection.aggregate([
+  {
+    $vectorSearch: {
+      index: "vector_index",
+      path: "embedding",
+      queryVector: embedding.data[0].embedding,
+      numCandidates: 100,
+      limit: 10
+    }
+  }
+]);
+
+// 4. Reranking manual (si disponible)
+const reranked = await rerankService.rerank(
+  userQuery, 
+  results
+);</code></pre>
+                    </div>
+                    
+                    <div class="code-block-demo">
+                        <div class="code-header">✅ Con Voyage AI Nativo</div>
+                        <pre><code>// 1. Una sola configuración
+const mongodb = new MongoClient(uri);
+
+// 2. Búsqueda semántica nativa con reranking
+const results = await collection.aggregate([
+  {
+    $semanticSearch: {
+      index: "voyage_semantic_index",
+      query: userQuery,
+      model: "voyage-3-large",
+      rerank: true,
+      limit: 10
+    }
+  }
+]);
+
+// ¡Eso es todo! 
+// Auto-embedding + búsqueda + reranking
+// Todo optimizado y nativo</code></pre>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <div class="badge badge-primary">
+                        💡 Reducción del 80% en líneas de código
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benchmarks de Rendimiento -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-5">📊 Benchmarks de Rendimiento y Eficiencia</h2>
+            
+            <div class="card">
+                <h3 class="text-center mb-4">Tabla 2: Métricas de Superioridad Técnica</h3>
+                <p class="text-center text-secondary mb-5">
+                    Justificación cuantitativa para arquitectos de datos - Cambiando la discusión de "es mejor" a 
+                    "es un 20% más preciso y 200 veces más eficiente"
+                </p>
+                
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: var(--color-bg-tertiary); border-radius: var(--radius-lg);">
+                        <thead>
+                            <tr style="background: var(--color-primary); color: var(--color-text-dark);">
+                                <th style="padding: var(--spacing-md); text-align: left; font-weight: 700;">Métrica</th>
+                                <th style="padding: var(--spacing-md); text-align: left; font-weight: 700;">Modelo Voyage AI</th>
+                                <th style="padding: var(--spacing-md); text-align: left; font-weight: 700;">Comparación (OpenAI, Cohere)</th>
+                                <th style="padding: var(--spacing-md); text-align: left; font-weight: 700;">Ventaja</th>
+                                <th style="padding: var(--spacing-md); text-align: left; font-weight: 700;">Fuente</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-md); font-weight: 600;">
+                                    <span style="color: var(--color-primary);">📈</span> Precisión de Recuperación General
+                                </td>
+                                <td style="padding: var(--spacing-md);">voyage-3-large</td>
+                                <td style="padding: var(--spacing-md); color: var(--color-text-secondary);">Modelos de producción líderes</td>
+                                <td style="padding: var(--spacing-md);">
+                                    <span style="color: var(--color-primary); font-weight: 700; font-size: var(--text-lg);">Hasta +20%</span>
+                                </td>
+                                <td style="padding: var(--spacing-md); color: var(--color-text-muted);">Ref. 6</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-md); font-weight: 600;">
+                                    <span style="color: var(--color-accent);">💻</span> Precisión de Recuperación de Código
+                                </td>
+                                <td style="padding: var(--spacing-md);">voyage-code-2</td>
+                                <td style="padding: var(--spacing-md); color: var(--color-text-secondary);">Modelos de propósito general</td>
+                                <td style="padding: var(--spacing-md);">
+                                    <span style="color: var(--color-primary); font-weight: 700; font-size: var(--text-lg);">Hasta +15%</span>
+                                </td>
+                                <td style="padding: var(--spacing-md); color: var(--color-text-muted);">Ref. 7</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: var(--spacing-md); font-weight: 600;">
+                                    <span style="color: var(--color-warning);">💾</span> Huella de Almacenamiento
+                                </td>
+                                <td style="padding: var(--spacing-md);">Embeddings cuantificados binarios</td>
+                                <td style="padding: var(--spacing-md); color: var(--color-text-secondary);">Embeddings flotantes completos</td>
+                                <td style="padding: var(--spacing-md);">
+                                    <span style="color: var(--color-primary); font-weight: 700; font-size: var(--text-lg);">200x menos</span>
+                                </td>
+                                <td style="padding: var(--spacing-md); color: var(--color-text-muted);">Ref. 6</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-5 p-4" style="background: var(--color-primary-light); border-radius: var(--radius-md); border-left: 4px solid var(--color-primary);">
+                    <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-sm);">💡 Impacto para Bancolombia</h4>
+                    <p class="mb-2">
+                        <strong>ROI Cuantificable:</strong> Estas métricas permiten construir un caso de negocio sólido basado en datos, 
+                        no en promesas de marketing.
+                    </p>
+                    <p>
+                        <strong>Reducción de Costos:</strong> 200x menos almacenamiento se traduce directamente en ahorro de costos 
+                        operativos en infraestructura cloud.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fundación para IA Confiable -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-5">🛡️ Fundación para IA Confiable y Digna de Confianza</h2>
+            
+            <div class="grid md:grid-cols-2 gap-5">
+                <div class="card">
+                    <h3 class="text-primary mb-3">🎯 Pilar 3: Confianza Empresarial</h3>
+                    <p class="mb-4">
+                        Los dos primeros pilares convergen en el objetivo final: <strong>construir aplicaciones de IA 
+                        en las que las empresas puedan confiar.</strong>
+                    </p>
+                    
+                    <h4 class="text-accent mb-2">La Lógica es Directa:</h4>
+                    <div class="step-item">
+                        <strong>Mayor precisión de recuperación</strong><br>
+                        Contexto de mayor calidad para el LLM
+                    </div>
+                    <div class="step-item">
+                        <strong>Contexto de alta calidad</strong><br>
+                        Defensa más eficaz contra alucinaciones
+                    </div>
+                    <div class="step-item">
+                        <strong>Resultado final</strong><br>
+                        Respuestas precisas, fiables y confiables
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="text-primary mb-3">🔄 El Círculo Virtuoso</h3>
+                    <p class="mb-4">
+                        Las ventajas no actúan de forma aislada, sino que crean un <strong>círculo virtuoso</strong> 
+                        que amplifica el valor con cada iteración.
+                    </p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                            <div style="background: var(--color-primary); color: var(--color-text-dark); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: 700;">1</div>
+                            <span>Experiencia simplificada → Desarrollo acelerado</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                            <div style="background: var(--color-accent); color: var(--color-text-primary); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: 700;">2</div>
+                            <span>Más aplicaciones → Precisión superior</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                            <div style="background: var(--color-warning); color: var(--color-text-dark); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: 700;">3</div>
+                            <span>Alta fiabilidad → Funciones más críticas</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                            <div style="background: var(--color-success); color: var(--color-text-dark); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: 700;">4</div>
+                            <span>Más datos → Consolidación de MongoDB</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 p-3" style="background: var(--color-accent-light); border-radius: var(--radius-md);">
+                        <strong style="color: var(--color-accent);">El todo es mayor que la suma de sus partes</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-5" style="background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, var(--color-bg-secondary) 100%); border: 2px solid var(--color-primary);">
+                <h3 class="text-center text-primary mb-3">🚀 Desbloqueando Casos de Uso Críticos</h3>
+                <p class="text-center mb-4">
+                    Esta mejora en fiabilidad finalmente desbloquea el uso de IA en casos empresariales de 
+                    <strong>misión crítica y alto riesgo</strong> que antes se consideraban demasiado peligrosos para automatizar.
+                </p>
+                
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="text-center">
+                        <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">🏥</div>
+                        <strong>Sanidad</strong><br>
+                        <span class="text-secondary">Diagnósticos asistidos</span>
+                    </div>
+                    <div class="text-center">
+                        <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">💰</div>
+                        <strong>Finanzas</strong><br>
+                        <span class="text-secondary">Análisis de riesgo crediticio</span>
+                    </div>
+                    <div class="text-center">
+                        <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">⚖️</div>
+                        <strong>Legal</strong><br>
+                        <span class="text-secondary">Asesoramiento regulatorio</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Panorama Competitivo -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-5">⚔️ Panorama Competitivo y Perspectivas Futuras</h2>
+            
+            <div class="card mb-5">
+                <h3 class="text-primary mb-4">🎯 Reposicionamiento en el Campo de Batalla</h3>
+                <p class="mb-4">
+                    La adquisición de Voyage AI no ocurre en el vacío. Es un <strong>movimiento calculado</strong> 
+                    que remodela el panorama competitivo y ofrece una visión del futuro de la infraestructura de datos para IA.
+                </p>
+                
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div>
+                        <h4 class="text-accent mb-3">✅ Ventajas Competitivas</h4>
+                        <div class="step-item">
+                            <strong>vs. Bases de Datos Tradicionales</strong><br>
+                            Ventaja significativa sobre proveedores que añaden IA superficialmente
+                        </div>
+                        <div class="step-item">
+                            <strong>vs. Bases de Datos Vectoriales</strong><br>
+                            Plataforma unificada que maneja datos operativos + vectoriales
+                        </div>
+                        <div class="step-item">
+                            <strong>vs. Soluciones Fragmentadas</strong><br>
+                            Eliminación de la necesidad de sistemas separados
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-accent mb-3">🛡️ Impacto Estratégico</h4>
+                        <div class="metric-card">
+                            <div class="metric-number" style="font-size: var(--text-4xl);">$220M</div>
+                            <div class="metric-label">Inversión que convierte un activo compartido en arma exclusiva</div>
+                        </div>
+                        
+                        <div class="mt-4 p-3" style="background: rgba(239, 68, 68, 0.1); border-radius: var(--radius-md); border-left: 3px solid var(--color-error);">
+                            <strong style="color: var(--color-error);">Impacto en Competidores:</strong><br>
+                            <span class="text-secondary">Snowflake y Databricks (inversores previos) pierden acceso al activo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" style="background: linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-bg-secondary) 100%); border: 2px solid var(--color-accent);">
+                <h3 class="text-accent mb-4">🏆 Consolidación de Ventaja Competitiva</h3>
+                <p class="mb-4">
+                    MongoDB ha convertido eficazmente un componente del ecosistema que podría haber sido compartido 
+                    en una <strong>arma competitiva exclusiva</strong>.
+                </p>
+                
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="text-center">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">🎯</div>
+                        <strong>Movimiento Ofensivo</strong><br>
+                        <span class="text-secondary">Ganar tecnología de vanguardia</span>
+                    </div>
+                    <div class="text-center">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">🛡️</div>
+                        <strong>Maniobra Defensiva</strong><br>
+                        <span class="text-secondary">Negar activo a rivales principales</span>
+                    </div>
+                    <div class="text-center">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">⚡</div>
+                        <strong>Presión Competitiva</strong><br>
+                        <span class="text-secondary">Fuerza a otros a buscar alternativas costosas</span>
+                    </div>
+                </div>
+                
+                <div class="mt-5 p-4" style="background: var(--color-bg-primary); border-radius: var(--radius-md);">
+                    <h4 style="color: var(--color-accent); margin-bottom: var(--spacing-sm);">🔮 Implicaciones Futuras</h4>
+                    <p>
+                        Los competidores ahora deben considerar si sus estrategias de asociación con terceros son suficientes 
+                        o si necesitan buscar sus propias integraciones profundas u objetivos de adquisición para mantenerse a la par.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap de Implementación -->
+    <section id="roadmap" class="section">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-5">🗺️ Roadmap de Implementación</h2>
+            
+            <div class="phase-timeline">
+                <div class="phase-item animate-fadeIn">
+                    <div class="badge badge-primary mb-3">Fase 1 - Inmediato</div>
+                    <h3>🛡️ Fortalecimiento Empresarial</h3>
+                    <p><strong>Objetivo:</strong> Preparar la infraestructura de Voyage AI para el entorno empresarial de Bancolombia</p>
+                    <ul class="mt-3 text-secondary">
+                        <li>• Escalabilidad mejorada para grandes volúmenes</li>
+                        <li>• Hardening de seguridad empresarial</li>
+                        <li>• Continuidad de APIs existentes</li>
+                        <li>• Disponibilidad en AWS/Azure marketplaces</li>
+                    </ul>
+                </div>
+                
+                <div class="phase-item animate-fadeIn">
+                    <div class="badge badge-primary mb-3">Fase 2 - Medio Plazo</div>
+                    <h3>🔄 Integración Nativa Profunda</h3>
+                    <p><strong>Objetivo:</strong> Implementar capacidades nativas en MongoDB Atlas</p>
+                    <ul class="mt-3 text-secondary">
+                        <li>• Servicio de Auto-Embedding automatizado</li>
+                        <li>• Reranking nativo sin latencia adicional</li>
+                        <li>• Modelos específicos para servicios financieros</li>
+                        <li>• Experiencia declarativa unificada</li>
+                    </ul>
+                </div>
+                
+                <div class="phase-item animate-fadeIn">
+                    <div class="badge badge-primary mb-3">Fase 3 - Largo Plazo</div>
+                    <h3>🚀 Expansión de Fronteras</h3>
+                    <p><strong>Objetivo:</strong> Capacidades de próxima generación</p>
+                    <ul class="mt-3 text-secondary">
+                        <li>• Soporte multimodal (imágenes, video, audio)</li>
+                        <li>• Modelos afinados por instrucciones</li>
+                        <li>• IA conversacional avanzada</li>
+                        <li>• Análisis predictivo integrado</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Final -->
+    <section class="bancolombia-cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="text-4xl mb-4">🎯 El Futuro de los Datos en Bancolombia</h2>
+                <p class="text-xl mb-5">
+                    MongoDB + Voyage AI no es solo una actualización tecnológica, 
+                    es la transformación hacia una arquitectura de datos inteligente que posicionará 
+                    a Bancolombia como líder en innovación financiera impulsada por IA.
+                </p>
+                
+                <div class="flex justify-center gap-4 mb-5">
+                    <div class="metric-card" style="display: inline-block; margin: 0 1rem;">
+                        <div class="metric-number" style="font-size: var(--text-3xl);">85%</div>
+                        <div class="metric-label">Reducción en tiempo de desarrollo</div>
+                    </div>
+                    <div class="metric-card" style="display: inline-block; margin: 0 1rem;">
+                        <div class="metric-number" style="font-size: var(--text-3xl);">99.9%</div>
+                        <div class="metric-label">Disponibilidad empresarial</div>
+                    </div>
+                    <div class="metric-card" style="display: inline-block; margin: 0 1rem;">
+                        <div class="metric-number" style="font-size: var(--text-3xl);">50%</div>
+                        <div class="metric-label">Reducción en costos operativos</div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center gap-4">
+                    <button class="btn btn-primary btn-lg">
+                        🚀 Iniciar Implementación
+                    </button>
+                    <button class="btn btn-secondary btn-lg">
+                        📊 Ver Demo Técnico
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Script para efectos interactivos -->
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer para animaciones
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observar elementos con animaciones
+        document.querySelectorAll('.animate-fadeIn, .animate-slideInLeft, .animate-slideInRight').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // Efecto hover en métricas
+        document.querySelectorAll('.metric-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-8px) scale(1.05)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

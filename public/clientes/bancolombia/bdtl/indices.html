@@ -128,176 +128,7 @@
             cursor: pointer;
         }
 
-        /* Estilos específicos para estrategia de indexación */
-        .content-section {
-            margin: var(--spacing-3xl) 0;
-        }
-
-        .index-card {
-            background: var(--color-bg-card);
-            backdrop-filter: blur(10px);
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-xl);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all var(--transition-base);
-            margin: var(--spacing-xl) 0;
-        }
-
-        .index-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .index-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .index-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: var(--text-xl);
-            color: white;
-        }
-
-        .index-name {
-            font-size: var(--text-2xl);
-            font-weight: 700;
-            color: var(--color-text-primary);
-            margin: 0;
-        }
-
-        .index-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: var(--spacing-xl);
-            margin: var(--spacing-xl) 0;
-        }
-
-        .collection-card {
-            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
-            padding: var(--spacing-xl);
-            border-radius: var(--radius-xl);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .collection-title {
-            color: var(--color-primary);
-            margin-bottom: var(--spacing-lg);
-            font-weight: 700;
-            font-size: var(--text-2xl);
-        }
-
-        .index-definition {
-            background: var(--color-bg-tertiary);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-md);
-            padding: var(--spacing-lg);
-            font-family: var(--font-mono);
-            font-size: var(--text-sm);
-            color: var(--color-text-secondary);
-            margin: var(--spacing-md) 0;
-            position: relative;
-        }
-
-        .code-badge {
-            position: absolute;
-            top: var(--spacing-sm);
-            right: var(--spacing-sm);
-            background: var(--color-primary);
-            color: var(--color-text-dark);
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--radius-sm);
-            font-size: var(--text-xs);
-            font-weight: bold;
-        }
-
-        .purpose-section {
-            background: rgba(0, 237, 100, 0.1);
-            padding: var(--spacing-lg);
-            border-radius: var(--radius-md);
-            margin: var(--spacing-md) 0;
-            border-left: 4px solid var(--color-primary);
-        }
-
-        .purpose-title {
-            color: var(--color-primary);
-            font-weight: 700;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .sp-reference {
-            background: rgba(86, 68, 212, 0.1);
-            padding: var(--spacing-md);
-            border-radius: var(--radius-sm);
-            margin: var(--spacing-sm) 0;
-            border: 1px solid var(--color-accent);
-        }
-
-        .sp-title {
-            color: var(--color-accent);
-            font-weight: 600;
-            font-size: var(--text-sm);
-            margin-bottom: var(--spacing-xs);
-        }
-
-        .ttl-badge {
-            background: var(--color-warning);
-            color: var(--color-text-dark);
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--radius-sm);
-            font-size: var(--text-xs);
-            font-weight: bold;
-            display: inline-block;
-            margin-left: var(--spacing-sm);
-        }
-
-        .critical-badge {
-            background: var(--color-error);
-            color: white;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--radius-sm);
-            font-size: var(--text-xs);
-            font-weight: bold;
-            display: inline-block;
-            margin-left: var(--spacing-sm);
-        }
-
-        .performance-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--spacing-lg);
-            margin: var(--spacing-xl) 0;
-        }
-
-        .performance-item {
-            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
-            padding: var(--spacing-lg);
-            border-radius: var(--radius-lg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
-
-        .performance-icon {
-            font-size: var(--text-3xl);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .performance-title {
-            color: var(--color-primary);
-            margin-bottom: var(--spacing-sm);
-            font-weight: 700;
-        }
-
-        /* Estilos para submenús */
+        /* Estilos específicos para submenús */
         .menu-section {
             margin-bottom: var(--spacing-sm);
         }
@@ -333,6 +164,198 @@
             border-left: 2px solid var(--color-primary);
             padding-left: calc(var(--spacing-md) - 2px);
         }
+
+        /* Estilos específicos para estrategia de indexación */
+        .content-section {
+            margin: var(--spacing-3xl) 0;
+        }
+
+        .strategy-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .carril-card {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carril-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .carril-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .carril-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xl);
+            color: white;
+        }
+
+        .carril-numero {
+            position: absolute;
+            top: -10px;
+            right: var(--spacing-lg);
+            background: var(--color-primary);
+            color: var(--color-text-dark);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: var(--text-lg);
+        }
+
+        .code-example {
+            background-color: var(--color-bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+            overflow-x: auto;
+            margin: var(--spacing-md) 0;
+            white-space: pre-wrap;
+        }
+
+        .comparison-table {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr 3fr;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .table-header {
+            font-weight: 700;
+            color: var(--color-primary);
+            background: rgba(0, 237, 100, 0.1);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-sm);
+        }
+
+        .implementation-phases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .phase-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .phase-number {
+            position: absolute;
+            top: -10px;
+            left: var(--spacing-lg);
+            background: var(--color-accent);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: var(--text-sm);
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .benefit-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .benefit-icon {
+            font-size: var(--text-3xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .benefit-title {
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 700;
+        }
+
+        .vs-comparison {
+            background: linear-gradient(135deg, var(--color-accent) 0%, rgba(86, 68, 212, 0.8) 100%);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            color: white;
+            margin: var(--spacing-xl) 0;
+        }
+
+        .vs-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: var(--spacing-xl);
+            align-items: center;
+            margin: var(--spacing-xl) 0;
+        }
+
+        .vs-column {
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+        }
+
+        .vs-left {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--color-error);
+        }
+
+        .vs-right {
+            background: rgba(0, 237, 100, 0.2);
+            border: 1px solid var(--color-primary);
+        }
+
+        .vs-divider {
+            font-size: var(--text-3xl);
+            font-weight: bold;
+            color: var(--color-primary);
+        }
     </style>
 </head>
 <body>
@@ -358,12 +381,7 @@
                     <a href="bdtl.html" class="menu-item">
                         📚 Introducción al Proyecto BDTL
                     </a>
-                    <a href="arquitectura.html" class="menu-item">
-                        🏗️ Arquitectura del Sistema
-                    </a>
-                    <a href="evolucion.html" class="menu-item">
-                        📈 Evolución de la Arquitectura
-                    </a>
+                  
                     <a href="ventajas.html" class="menu-item">
                         ⚡ Ventajas de MongoDB como BDTL
                     </a>
@@ -394,6 +412,7 @@
                             </a>
                         </div>
                     </div>
+                    
                     <a href="modeloactual.html" class="menu-item">
                         🔌 Modelo de Datos Actual
                     </a>
@@ -401,12 +420,10 @@
                     <a href="modelo.html" class="menu-item">
                         🗃️ Evolución del Modelo de Datos
                     </a>
-
                     <a href="indices.html" class="menu-item active">
                         🔍 Estrategia de Indexación
                     </a>
-                
-                    <a href="guias.html" class="menu-item">
+                    <a href="bp.html" class="menu-item">
                         📖 Guías y Mejores Prácticas
                     </a>
                 </nav>
@@ -415,300 +432,452 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 class="text-gradient">Estrategia de Indexación MongoDB</h1>
+            <h1 class="text-gradient">Estrategia de Indexación Definitiva</h1>
             <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-2xl);">
-                Una estrategia de indexación bien diseñada es el <strong>pilar del rendimiento</strong> en MongoDB. Basado en el análisis exhaustivo de los patrones de consulta de los Stored Procedures actuales y los requerimientos de mantenimiento del sistema.
+                Estrategia optimizada para la colección <strong>datos_liquidos</strong> con equilibrio entre rendimiento máximo, flexibilidad total y uso eficiente de recursos.
             </p>
 
-            <!-- Introducción -->
+            <!-- Resumen Ejecutivo -->
             <div class="content-section">
                 <div class="card" style="background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%); border: 2px solid var(--color-primary); box-shadow: var(--shadow-glow);">
                     <div style="display: flex; align-items: center; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
-                        <div style="width: 60px; height: 60px; background: var(--color-primary); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: var(--text-2xl);">🎯</div>
+                        <div style="width: 60px; height: 60px; background: var(--color-primary); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: var(--text-2xl);">📊</div>
                         <div>
-                            <h2 style="margin-bottom: 0; font-size: var(--text-3xl);">Objetivo de la Estrategia</h2>
-                            <p style="margin-bottom: 0; color: var(--color-text-muted);">Rendimiento y Escalabilidad Óptima</p>
+                            <h2 style="margin-bottom: 0; font-size: var(--text-3xl);">Resumen Ejecutivo</h2>
+                            <p style="margin-bottom: 0; color: var(--color-text-muted);">Arquitectura Multi-Carril para MongoDB</p>
                         </div>
                     </div>
                     <p style="font-size: var(--text-lg);">
-                        Garantizar que <strong style="color: var(--color-primary);">todas las consultas sean altamente eficientes</strong>, que las operaciones de mantenimiento se automaticen y que la base de datos escale de manera óptima.
+                        La estrategia se basa en un <strong style="color: var(--color-primary);">enfoque multi-carril</strong>, utilizando diferentes tipos de índices de MongoDB para diferentes tipos de consultas, en lugar de una solución única para todos. Esto permite lograr un equilibrio óptimo entre rendimiento máximo para las consultas más críticas, flexibilidad total para búsquedas ad-hoc y un uso eficiente de los recursos (memoria y disco).
                     </p>
                 </div>
             </div>
 
-            <!-- Colección Principal -->
+            <!-- Tabla de Estrategia Multi-Carril -->
             <div class="content-section">
-                <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-xl);">🗄️ Colección Principal: datos_liquidos</h2>
-                <p style="margin-bottom: var(--spacing-lg);">
-                    Esta es la colección más grande y la que recibirá la mayor carga de consultas. Por lo tanto, sus índices son críticos.
-                </p>
-
-                <!-- Índice TTL -->
-                <div class="index-card" style="border: 2px solid var(--color-warning); box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);">
-                    <div class="index-header">
-                        <div class="index-icon" style="background: var(--color-warning);">⏰</div>
-                        <div>
-                            <h3 class="index-name">Índice TTL (Time-To-Live) <span class="ttl-badge">AUTOMÁTICO</span></h3>
-                            <p style="margin: 0; color: var(--color-text-muted);">Para Depuración Automática</p>
-                        </div>
-                    </div>
-                    
-                    <p style="margin-bottom: var(--spacing-lg);">
-                        Este es el <strong style="color: var(--color-warning);">índice más importante desde el punto de vista operativo</strong>. Reemplaza por completo la lógica de los Stored Procedures <code>[PS].[spDepuracionBDTL]</code> y <code>[PS].[spDepuracionBDTLbyDate]</code>.
-                    </p>
-
-                    <div class="index-definition">
-                        <div class="code-badge">MongoDB</div>
-                        { "FechaDepuracion": 1 }
-                        
-                        Opción: expireAfterSeconds: 0
-                    </div>
-
-                    <div class="purpose-section">
-                        <div class="purpose-title">🎯 Propósito:</div>
-                        <p style="margin: 0;">
-                            Le indica a MongoDB que borre automáticamente cualquier documento 0 segundos después de que la fecha y hora almacenada en el campo <strong>FechaDepuracion</strong> haya pasado. Esto convierte el complejo job de depuración en un proceso de fondo, nativo y completamente automatizado de la base de datos.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Índices para APIs -->
-                <h3 style="color: var(--color-accent); margin: var(--spacing-xl) 0 var(--spacing-lg) 0;">🔌 Índices para Soportar las Consultas de las APIs</h3>
-                <p style="margin-bottom: var(--spacing-lg);">
-                    Estos índices están diseñados para acelerar las búsquedas realizadas por los Stored Procedures de consulta.
-                </p>
-
-                <div class="index-grid">
-                    <!-- Índice para Proceso y Fecha -->
-                    <div class="collection-card">
-                        <h4 class="collection-title">📅 Búsquedas por Proceso y Fecha</h4>
-                        
-                        <div class="sp-reference">
-                            <div class="sp-title">🔍 Cubre los SPs:</div>
-                            <p style="margin: 0; font-size: var(--text-sm);">spGetDataSubTypeDocumentByDateAndHours, spGetDatosLiquidosProcesoFechas</p>
-                        </div>
-
-                        <div class="index-definition">
-                            <div class="code-badge">Compuesto</div>
-                            { "Proceso": 1, "TipoDocumento": 1, "FechaKofax": -1 }
-                        </div>
-
-                        <div class="purpose-section">
-                            <div class="purpose-title">🎯 Propósito:</div>
-                            <p style="margin: 0; font-size: var(--text-sm);">
-                                Permite a MongoDB filtrar eficientemente por Proceso y Tipo de Documento, y luego usar el mismo índice para ordenar por la fecha (FechaKofax) sin necesidad de un paso de ordenamiento en memoria.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Índice para Cliente y Subtipo -->
-                    <div class="collection-card">
-                        <h4 class="collection-title">👤 Búsquedas por Cliente y Subtipo</h4>
-                        
-                        <div class="sp-reference">
-                            <div class="sp-title">🔍 Cubre los SPs:</div>
-                            <p style="margin: 0; font-size: var(--text-sm);">spObtenerDatosLiquidosClienteFechas, spObtenerDatosLiquidosClienteSubtipos</p>
-                        </div>
-
-                        <div class="index-definition">
-                            <div class="code-badge">Clave</div>
-                            { "DatosLiquidos.NumeroDocCliente": 1, "TipoDocumento": 1, "FechaKofax": -1 }
-                        </div>
-
-                        <div class="purpose-section">
-                            <div class="purpose-title">🎯 Propósito:</div>
-                            <p style="margin: 0; font-size: var(--text-sm);">
-                                Este es un índice clave. Permite encontrar rápidamente todos los documentos de un cliente específico (buscando dentro del JSON DatosLiquidos), filtrar por los tipos de documento solicitados y ordenarlos por fecha para encontrar el más reciente. Este índice es fundamental para reemplazar la lógica de bucle del SP spObtenerDatosLiquidosClienteSubtipos.
-                            </p>
-                        </div>
-
-                        <div style="background: rgba(245, 158, 11, 0.1); padding: var(--spacing-md); border-radius: var(--radius-sm); margin-top: var(--spacing-md);">
-                            <strong style="color: var(--color-warning);">⚠️ Nota:</strong> El campo DatosLiquidos.NumeroDocCliente es un ejemplo. Se debe crear un índice similar para cada campo de identificación de cliente que se utilice en las búsquedas (ej. DatosLiquidos.cedula).
-                        </div>
-                    </div>
-
-                    <!-- Índice por ID Legado -->
-                    <div class="collection-card">
-                        <h4 class="collection-title">🔑 Búsqueda por ID Legado</h4>
-
-                        <div class="index-definition">
-                            <div class="code-badge">Simple</div>
-                            { "IdDocumento": 1 }
-                        </div>
-
-                        <div class="purpose-section">
-                            <div class="purpose-title">🎯 Propósito:</div>
-                            <p style="margin: 0; font-size: var(--text-sm);">
-                                Asegura búsquedas instantáneas cuando se consulta un registro por su identificador único del sistema original.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Colección de Auditoría -->
-            <div class="content-section">
-                <h2 style="color: var(--color-accent); margin-bottom: var(--spacing-xl);">📋 Colección de Auditoría: auditoria_bdtl</h2>
-                <p style="margin-bottom: var(--spacing-lg);">
-                    Aunque esta colección es principalmente para escritura, necesitará índices para facilitar la investigación de problemas y la auditoría.
-                </p>
-
-                <div class="index-grid">
-                    <!-- Índice para Logs de Registro -->
-                    <div class="collection-card">
-                        <h4 class="collection-title">📝 Buscar Logs de un Registro Específico</h4>
-
-                        <div class="index-definition">
-                            <div class="code-badge">Simple</div>
-                            { "idRegistroBdtl": 1 }
-                        </div>
-
-                        <div class="purpose-section">
-                            <div class="purpose-title">🎯 Propósito:</div>
-                            <p style="margin: 0; font-size: var(--text-sm);">
-                                Permite encontrar de manera inmediata todos los eventos de log asociados a un IdDocumento particular de la colección principal.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Índice para Errores y Eventos -->
-                    <div class="collection-card">
-                        <h4 class="collection-title">🚨 Búsqueda de Errores y Eventos</h4>
-
-                        <div class="index-definition">
-                            <div class="code-badge">Compuesto</div>
-                            { "level": 1, "timestamp": -1 }
-                        </div>
-
-                        <div class="purpose-section">
-                            <div class="purpose-title">🎯 Propósito:</div>
-                            <p style="margin: 0; font-size: var(--text-sm);">
-                                Permite buscar rápidamente eventos por su tipo (ej. todos los "Error") y los ordena por fecha, lo cual es ideal para monitoreo y diagnóstico.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Colecciones Maestras -->
-            <div class="content-section">
-                <h2 style="color: var(--color-info); margin-bottom: var(--spacing-xl);">🏛️ Colecciones Maestras y de Parámetros</h2>
-                <p style="margin-bottom: var(--spacing-lg);">
-                    Colecciones como <strong>entidades</strong>, <strong>canales</strong>, <strong>parametros_configuracion</strong>, etc.
-                </p>
-
-                <div class="card" style="border-left: 4px solid var(--color-info);">
-                    <h3 style="color: var(--color-info);">📊 Estrategia</h3>
-                    <p style="margin-bottom: var(--spacing-lg);">
-                        Generalmente, estas colecciones serán pequeñas y las consultas serán simples (por ID o por nombre). El índice por defecto en <code>_id</code> suele ser suficiente. Sin embargo, para asegurar un rendimiento óptimo en el microservicio de ingesta (que las consultará para validar), se recomienda:
-                    </p>
-
-                    <div class="index-definition">
-                        <div class="code-badge">Recomendado</div>
-                        { "valor": 1 } // o el campo que contenga el nombre/descripción
-                    </div>
-
-                    <div class="purpose-section">
-                        <div class="purpose-title">🎯 Propósito:</div>
-                        <p style="margin: 0;">
-                            Acelera las búsquedas por el nombre del parámetro, que es como llegan los datos desde los sistemas de origen.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Beneficios de la Estrategia -->
-            <div class="content-section">
-                <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-xl);">⚡ Beneficios de la Estrategia</h2>
+                <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-xl);">🛣️ La Estrategia de Indexación Multi-Carril</h2>
                 
-                <div class="performance-grid">
-                    <div class="performance-item">
-                        <div class="performance-icon" style="color: var(--color-primary);">🚀</div>
-                        <h4 class="performance-title">Consultas Altamente Eficientes</h4>
+                <div class="comparison-table">
+                    <div class="table-row">
+                        <div class="table-header">Carril</div>
+                        <div class="table-header">Tipo de Índice</div>
+                        <div class="table-header">Caso de Uso</div>
+                    </div>
+                    <div class="table-row">
+                        <div style="font-weight: 600; color: var(--color-primary);">1. Carril de Ultra-Alta Velocidad</div>
+                        <div>Índices Compuestos Estándar</div>
+                        <div>Para las consultas más frecuentes y predecibles sobre metadatos y campos críticos conocidos dentro de DatosLiquidos.</div>
+                    </div>
+                    <div class="table-row">
+                        <div style="font-weight: 600; color: var(--color-warning);">2. Carril Flexible y Controlado</div>
+                        <div>Índices Wildcard Parciales</div>
+                        <div>Para búsquedas dinámicas dentro del JSON DatosLiquidos, pero aplicados solo a los tipos de documento que lo requieran, optimizando el uso de recursos.</div>
+                    </div>
+                    <div class="table-row">
+                        <div style="font-weight: 600; color: var(--color-accent);">3. Carril de Búsqueda Avanzada</div>
+                        <div>Índices de Atlas Search</div>
+                        <div>Para búsquedas de texto libre (tipo Google) y futuras capacidades analíticas.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carril 1: Ultra-Alta Velocidad -->
+            <div class="content-section">
+                <div class="strategy-overview">
+                    <div class="carril-card" style="border: 2px solid var(--color-primary); box-shadow: var(--shadow-glow);">
+                        <div class="carril-numero">1</div>
+                        <div class="carril-header">
+                            <div class="carril-icon" style="background: var(--color-primary);">🚀</div>
+                            <div>
+                                <h3 style="margin: 0; color: var(--color-text-primary);">Carril de Ultra-Alta Velocidad</h3>
+                                <p style="margin: 0; color: var(--color-text-muted);">Índices Compuestos Estándar</p>
+                            </div>
+                        </div>
+                        
+                        <p style="margin-bottom: var(--spacing-lg);">
+                            Este es el carril más rápido y debe usarse para las consultas más comunes de las APIs.
+                        </p>
+
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-md);">Índice para Búsquedas por Proceso y Fecha:</h4>
+                        <div class="code-example">db.datos_liquidos.createIndex({ 
+  "Proceso": 1, 
+  "TipoDocumento": 1, 
+  "FechaKofax": -1 
+})</div>
+                        <p style="margin-bottom: var(--spacing-lg); font-size: var(--text-sm); color: var(--color-text-secondary);">
+                            <strong>Justificación:</strong> Cubre las consultas generales por proceso y fecha, permitiendo filtrar y ordenar eficientemente.
+                        </p>
+
+                        <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-md);">Índice para Búsquedas por Cliente (Campo Conocido):</h4>
+                        <div class="code-example">db.datos_liquidos.createIndex({ 
+  "DatosLiquidos.NumeroDocCliente": 1, 
+  "TipoDocumento": 1 
+})</div>
+                        <p style="margin: 0; font-size: var(--text-sm); color: var(--color-text-secondary);">
+                            <strong>Justificación:</strong> Si sabemos que <code>NumeroDocCliente</code> es el identificador más común, creamos un índice específico para él. Esto garantiza la máxima velocidad para la consulta más crítica del negocio.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carril 2: Flexible y Controlado -->
+            <div class="content-section">
+                <div class="strategy-overview">
+                    <div class="carril-card" style="border: 2px solid var(--color-warning);">
+                        <div class="carril-numero" style="background: var(--color-warning);">2</div>
+                        <div class="carril-header">
+                            <div class="carril-icon" style="background: var(--color-warning);">🎯</div>
+                            <div>
+                                <h3 style="margin: 0; color: var(--color-text-primary);">Carril Flexible y Controlado</h3>
+                                <p style="margin: 0; color: var(--color-text-muted);">Índices Wildcard Parciales</p>
+                            </div>
+                        </div>
+
+                        <p style="margin-bottom: var(--spacing-lg);">
+                            Esta es la solución al desafío principal: cómo indexar el JSON dinámico sin sobrecargar la base de datos. En lugar de un índice Wildcard masivo, creamos varios índices Wildcard pequeños y específicos.
+                        </p>
+
+                        <h4 style="color: var(--color-warning); margin-bottom: var(--spacing-md);">Índice Wildcard solo para "Crédito Vehicular":</h4>
+                        <div class="code-example">db.datos_liquidos.createIndex(
+  { "DatosLiquidos.$**": 1 },
+  { 
+    name: "idx_wildcard_credito_vehicular",
+    partialFilterExpression: { 
+      "TipoDocumento": "Solicitud de Crédito" 
+    },
+    background: true
+  }
+)</div>
+                        <p style="margin-bottom: var(--spacing-lg); font-size: var(--text-sm); color: var(--color-text-secondary);">
+                            <strong>Justificación:</strong> Este índice solo incluirá documentos de "Solicitud de Crédito". Permite buscar por cualquier campo dentro de su JSON (por ejemplo, <code>vehiculo.placa</code>, <code>credito.monto</code>), de forma eficiente, sin consumir recursos para millones de documentos de otros tipos.
+                        </p>
+
+                        <h4 style="color: var(--color-warning); margin-bottom: var(--spacing-md);">Índice Wildcard solo para "Embargos":</h4>
+                        <div class="code-example">db.datos_liquidos.createIndex(
+  { "DatosLiquidos.$**": 1 },
+  { 
+    name: "idx_wildcard_embargos",
+    partialFilterExpression: { 
+      "TipoDocumento": "Embargos Genericos" 
+    },
+    background: true
+  }
+)</div>
+                        <p style="margin: 0; font-size: var(--text-sm); color: var(--color-text-secondary);">
+                            <strong>Justificación:</strong> Otra wildcard parcial, enfocada únicamente en documentos de embargos, para habilitar búsquedas flexibles en sus campos sin impactar al resto de la colección.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventajas del Enfoque -->
+            <div class="content-section">
+                <h2 style="color: var(--color-success); margin-bottom: var(--spacing-xl);">✅ Ventajas del Enfoque de Wildcard Parciales</h2>
+                
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon" style="color: var(--color-success);">🎛️</div>
+                        <h4 class="benefit-title">Control Total de Recursos</h4>
                         <p style="margin: 0; color: var(--color-text-secondary);">
-                            Todas las consultas identificadas en los SPs actuales serán optimizadas con índices específicos.
+                            Aborda directamente la preocupación sobre el uso de memoria. Los índices son mucho más pequeños porque solo contienen los documentos relevantes.
                         </p>
                     </div>
 
-                    <div class="performance-item">
-                        <div class="performance-icon" style="color: var(--color-warning);">⚙️</div>
-                        <h4 class="performance-title">Automatización Completa</h4>
+                    <div class="benefit-card">
+                        <div class="benefit-icon" style="color: var(--color-success);">⚡</div>
+                        <h4 class="benefit-title">Rendimiento Focalizado</h4>
                         <p style="margin: 0; color: var(--color-text-secondary);">
-                            Las operaciones de mantenimiento como la depuración se automatizan completamente.
+                            Las escrituras de documentos de "Vinculación" (que no tienen un índice Wildcard parcial) no se ven penalizadas, ya que no tienen que actualizar un índice complejo.
                         </p>
                     </div>
 
-                    <div class="performance-item">
-                        <div class="performance-icon" style="color: var(--color-success);">📈</div>
-                        <h4 class="performance-title">Escalabilidad Óptima</h4>
+                    <div class="benefit-card">
+                        <div class="benefit-icon" style="color: var(--color-success);">📈</div>
+                        <h4 class="benefit-title">Escalabilidad a Demanda</h4>
                         <p style="margin: 0; color: var(--color-text-secondary);">
-                            La base de datos escala de manera predecible sin degradación de rendimiento.
+                            Responde a la necesidad de "indexación a demanda" de una manera segura. Si un nuevo TipoDocumento requiere búsquedas flexibles, simplemente se añade un nuevo índice Wildcard parcial.
                         </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carril 3: Búsqueda Avanzada -->
+            <div class="content-section">
+                <div class="strategy-overview">
+                    <div class="carril-card" style="border: 2px solid var(--color-accent);">
+                        <div class="carril-numero" style="background: var(--color-accent);">3</div>
+                        <div class="carril-header">
+                            <div class="carril-icon" style="background: var(--color-accent);">🔍</div>
+                            <div>
+                                <h3 style="margin: 0; color: var(--color-text-primary);">Carril de Búsqueda Avanzada</h3>
+                                <p style="margin: 0; color: var(--color-text-muted);">Atlas Search</p>
+                            </div>
+                        </div>
+                        
+                        <p style="margin-bottom: var(--spacing-lg);">
+                            Este carril habilita capacidades que van más allá de las búsquedas por valor exacto.
+                        </p>
+
+                        <h4 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Definición del Índice (en la UI de Atlas):</h4>
+                        <div class="code-example">{
+  "name": "idx_search_datosliquidos",
+  "mappings": { "dynamic": true }
+}</div>
+
+                        <h4 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">Consulta de Ejemplo:</h4>
+                        <div class="code-example">db.datos_liquidos.aggregate([
+  { 
+    $search: { 
+      "text": { 
+        "query": "Comercializadora Global", 
+        "path": { "wildcard": "DatosLiquidos.**" } 
+      } 
+    } 
+  }
+])</div>
+                        <p style="margin: 0; font-size: var(--text-sm); color: var(--color-text-secondary);">
+                            <strong>Justificación:</strong> Permite realizar búsquedas de texto libre (tipo Google) en todo el contenido de DatosLiquidos, ideal para encontrar información en campos de texto largos o para casos de uso de auditoría y descubrimiento de datos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recomendación Estratégica de Implementación -->
+            <div class="content-section">
+                <h2 style="color: var(--color-accent); margin-bottom: var(--spacing-xl);">🚀 Recomendación Estratégica de Implementación</h2>
+                <p style="margin-bottom: var(--spacing-lg);">
+                    Para asegurar una implementación ágil y costo-eficiente, se recomienda el siguiente enfoque para la activación de los carriles de indexación:
+                </p>
+                
+                <div class="implementation-phases">
+                    <div class="phase-card">
+                        <div class="phase-number">1</div>
+                        <h4 style="color: var(--color-primary); margin-top: var(--spacing-lg); margin-bottom: var(--spacing-sm);">Fase 1: Lanzamiento Inicial</h4>
+                        <p style="margin-bottom: var(--spacing-md); color: var(--color-text-secondary);">
+                            Implementar los <strong>Carriles 1 y 2</strong>. Los índices compuestos estándar y los Wildcard parciales cubrirán el 100% de los requerimientos de consulta actuales del sistema, garantizando un rendimiento superior desde el primer día.
+                        </p>
+                        <div style="background: rgba(0, 237, 100, 0.1); padding: var(--spacing-sm); border-radius: var(--radius-sm);">
+                            <strong style="color: var(--color-primary);">Incluye:</strong> Índices compuestos + Wildcard parciales
+                        </div>
                     </div>
 
-                    <div class="performance-item">
-                        <div class="performance-icon" style="color: var(--color-accent);">🔧</div>
-                        <h4 class="performance-title">Reducción de Complejidad</h4>
-                        <p style="margin: 0; color: var(--color-text-secondary);">
-                            Elimina la necesidad de múltiples jobs y stored procedures de mantenimiento.
+                    <div class="phase-card">
+                        <div class="phase-number">2</div>
+                        <h4 style="color: var(--color-accent); margin-top: var(--spacing-lg); margin-bottom: var(--spacing-sm);">Fase 2: Bajo Demanda</h4>
+                        <p style="margin-bottom: var(--spacing-md); color: var(--color-text-secondary);">
+                            Mantener el <strong>Carril 3 (Atlas Search)</strong> como una capacidad estratégica a futuro. El índice de Search no se debe crear en el despliegue inicial. Se activará únicamente cuando surja un nuevo caso de uso de negocio que lo requiera explícitamente.
                         </p>
+                        <div style="background: rgba(86, 68, 212, 0.1); padding: var(--spacing-sm); border-radius: var(--radius-sm);">
+                            <strong style="color: var(--color-accent);">Ejemplo:</strong> Nueva aplicación con barra de búsqueda de texto libre
+                        </div>
                     </div>
+                </div>
+
+                <div style="background: rgba(0, 237, 100, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-lg); margin-top: var(--spacing-lg); text-align: center;">
+                    <p style="margin: 0; font-weight: 600; color: var(--color-primary);">
+                        💡 <strong>Beneficio:</strong> Este enfoque por fases permite que BDTL se beneficie inmediatamente de la nueva arquitectura sin incurrir en los costos de almacenamiento y recursos de un índice de Search hasta que su valor de negocio esté claramente justificado.
+                    </p>
                 </div>
             </div>
 
             <!-- Conclusión -->
             <div class="content-section">
                 <div class="card" style="background: linear-gradient(135deg, var(--color-primary) 0%, rgba(0, 237, 100, 0.8) 100%);">
-                    <h2 style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-xl);">🎯 Conclusión</h2>
-                    <p style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-lg); font-size: var(--text-lg);">
-                        Esta estrategia de indexación está directamente alineada con los patrones de uso identificados en el sistema BDTL.
+                    <h2 style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-xl);">🎯 Conclusión de la Estrategia</h2>
+                    <p style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-lg);">
+                        Esta estrategia multi-carril, con un énfasis en los <strong>Índices Wildcard Parciales</strong>, es la solución de arquitectura más robusta y eficiente para BDTL.
                     </p>
                     
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
                         <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
-                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">⚡</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">Más Rápido</h4>
-                            <p style="font-size: var(--text-sm); margin: 0;">Significativamente más rápida que la arquitectura actual</p>
+                            <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">⚡</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Rendimiento Predecible</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">para las consultas críticas</p>
                         </div>
                         <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
-                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">🤖</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">Automatizado</h4>
-                            <p style="font-size: var(--text-sm); margin: 0;">Tareas de mantenimiento críticas automatizadas</p>
+                            <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">🎯</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Flexibilidad Controlada</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">para búsquedas dinámicas</p>
                         </div>
                         <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
-                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">🔧</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">Simple</h4>
-                            <p style="font-size: var(--text-sm); margin: 0;">Reduciendo la complejidad operativa</p>
+                            <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">💾</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Uso Optimizado</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">de recursos de la base de datos</p>
                         </div>
                         <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
-                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">📈</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">Escalable</h4>
-                            <p style="font-size: var(--text-sm); margin: 0;">Asegurando escalabilidad a largo plazo</p>
+                            <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">📈</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Escalabilidad</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">adaptable a necesidades futuras</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Implementación Recomendada -->
+            <!-- Comparación: Enfoque Tradicional vs Multi-Carril -->
             <div class="content-section">
-                <div class="card" style="border-left: 4px solid var(--color-accent);">
-                    <h2 style="color: var(--color-accent);">🛠️ Implementación Recomendada</h2>
+                <div class="vs-comparison">
+                    <h2 style="color: white; text-align: center; margin-bottom: var(--spacing-xl);">⚖️ Enfoque Tradicional vs Estrategia Multi-Carril</h2>
+                    <div class="vs-grid">
+                        <div class="vs-column vs-left">
+                            <h3 style="color: var(--color-error); text-align: center; margin-bottom: var(--spacing-lg);">❌ Enfoque Tradicional</h3>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); color: white;">
+                                <li>Índice Wildcard masivo para toda la colección</li>
+                                <li>Alto consumo de memoria y disco</li>
+                                <li>Degradación del rendimiento en escrituras</li>
+                                <li>Solución única para todos los casos</li>
+                                <li>Escalabilidad limitada</li>
+                            </ul>
+                        </div>
+                        <div class="vs-divider">VS</div>
+                        <div class="vs-column vs-right">
+                            <h3 style="color: var(--color-primary); text-align: center; margin-bottom: var(--spacing-lg);">✅ Estrategia Multi-Carril</h3>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); color: white;">
+                                <li>Índices Wildcard parciales y focalizados</li>
+                                <li>Uso eficiente y controlado de recursos</li>
+                                <li>Rendimiento optimizado por tipo de consulta</li>
+                                <li>Soluciones específicas por carril</li>
+                                <li>Escalabilidad a demanda</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Implementación Técnica -->
+            <div class="content-section">
+                <h2 style="color: var(--color-info); margin-bottom: var(--spacing-xl);">🛠️ Implementación Técnica Recomendada</h2>
+                
+                <div class="card" style="border-left: 4px solid var(--color-info);">
+                    <h3 style="color: var(--color-info);">Script de Implementación Completo</h3>
+                    <p style="margin-bottom: var(--spacing-lg);">
+                        A continuación se presenta el script completo para implementar la estrategia de indexación en la colección <code>datos_liquidos</code>:
+                    </p>
+
+                    <div class="code-example">// ========================================
+// FASE 1: CARRIL 1 - ULTRA-ALTA VELOCIDAD
+// ========================================
+
+// Índice para consultas por proceso y fecha
+db.datos_liquidos.createIndex({ 
+  "Proceso": 1, 
+  "TipoDocumento": 1, 
+  "FechaKofax": -1 
+}, { 
+  name: "idx_proceso_fecha",
+  background: true 
+});
+
+// Índice para consultas por cliente
+db.datos_liquidos.createIndex({ 
+  "DatosLiquidos.NumeroDocCliente": 1, 
+  "TipoDocumento": 1 
+}, { 
+  name: "idx_cliente_tipo",
+  background: true 
+});
+
+// ========================================
+// FASE 1: CARRIL 2 - FLEXIBLE Y CONTROLADO
+// ========================================
+
+// Índice Wildcard para Crédito Vehicular
+db.datos_liquidos.createIndex(
+  { "DatosLiquidos.$**": 1 },
+  { 
+    name: "idx_wildcard_credito_vehicular",
+    partialFilterExpression: { 
+      "TipoDocumento": "Solicitud de Crédito" 
+    },
+    background: true
+  }
+);
+
+// Índice Wildcard para Embargos
+db.datos_liquidos.createIndex(
+  { "DatosLiquidos.$**": 1 },
+  { 
+    name: "idx_wildcard_embargos",
+    partialFilterExpression: { 
+      "TipoDocumento": "Embargos Genericos" 
+    },
+    background: true
+  }
+);
+
+// ========================================
+// VERIFICACIÓN DE ÍNDICES
+// ========================================
+
+// Listar todos los índices creados
+db.datos_liquidos.getIndexes();
+
+// Verificar estadísticas de uso
+db.datos_liquidos.aggregate([
+  { $indexStats: {} }
+]);</div>
+                </div>
+            </div>
+
+            <!-- Monitoreo y Métricas -->
+            <div class="content-section">
+                <h2 style="color: var(--color-warning); margin-bottom: var(--spacing-xl);">📊 Monitoreo y Métricas de Rendimiento</h2>
+                
+                <div class="benefits-grid">
+                    <div class="benefit-card" style="border: 2px solid var(--color-warning);">
+                        <div class="benefit-icon" style="color: var(--color-warning);">📈</div>
+                        <h4 class="benefit-title" style="color: var(--color-warning);">Métricas Clave</h4>
+                        <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-text-secondary); font-size: var(--text-sm);">
+                            <li>Tiempo de respuesta por carril</li>
+                            <li>Uso de memoria por índice</li>
+                            <li>Frecuencia de uso de cada índice</li>
+                            <li>Eficiencia de consultas Wildcard</li>
+                        </ul>
+                    </div>
+
+                    <div class="benefit-card" style="border: 2px solid var(--color-info);">
+                        <div class="benefit-icon" style="color: var(--color-info);">🔍</div>
+                        <h4 class="benefit-title" style="color: var(--color-info);">Herramientas de Monitoreo</h4>
+                        <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-text-secondary); font-size: var(--text-sm);">
+                            <li>MongoDB Compass para análisis visual</li>
+                            <li>Atlas Performance Advisor</li>
+                            <li>Profiler para consultas lentas</li>
+                            <li>$indexStats para estadísticas de uso</li>
+                        </ul>
+                    </div>
+
+                    <div class="benefit-card" style="border: 2px solid var(--color-success);">
+                        <div class="benefit-icon" style="color: var(--color-success);">⚡</div>
+                        <h4 class="benefit-title" style="color: var(--color-success);">Optimización Continua</h4>
+                        <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-text-secondary); font-size: var(--text-sm);">
+                            <li>Revisión mensual de métricas</li>
+                            <li>Ajuste de índices según patrones</li>
+                            <li>Evaluación de nuevos TipoDocumento</li>
+                            <li>Activación del Carril 3 si es necesario</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen Final -->
+            <div class="content-section">
+                <div class="card" style="border-left: 4px solid var(--color-primary);">
+                    <h2 style="color: var(--color-primary);">🎯 Resumen de la Estrategia de Indexación</h2>
                     <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-lg);">
-                        Al implementar esta estrategia, Bancolombia no solo garantizará que la nueva arquitectura sea significativamente más rápida que la actual, sino que también automatizará tareas de mantenimiento críticas, reduciendo la complejidad operativa y asegurando la escalabilidad a largo plazo.
+                        La estrategia multi-carril para la indexación de la colección <strong>datos_liquidos</strong> representa un enfoque arquitectónico maduro que equilibra perfectamente rendimiento, flexibilidad y eficiencia de recursos.
                     </p>
                     
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg); margin-top: var(--spacing-lg);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg); margin-top: var(--spacing-lg);">
                         <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
-                            <h4 style="color: var(--color-primary);">🎯 Alineación Directa</h4>
-                            <p style="font-size: var(--text-sm); margin: 0;">Con los patrones de uso identificados en el sistema BDTL actual.</p>
+                            <h4 style="color: var(--color-primary);">🚀 Carril 1: Ultra-Alta Velocidad</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Índices compuestos estándar para las consultas más frecuentes y críticas del negocio.</p>
                         </div>
                         <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
-                            <h4 style="color: var(--color-success);">⚡ Rendimiento Superior</h4>
-                            <p style="font-size: var(--text-sm); margin: 0;">Garantiza una arquitectura significativamente más rápida.</p>
+                            <h4 style="color: var(--color-warning);">🎯 Carril 2: Flexible y Controlado</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Índices Wildcard parciales que proporcionan flexibilidad sin comprometer recursos.</p>
                         </div>
                         <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
-                            <h4 style="color: var(--color-warning);">🤖 Automatización Total</h4>
-                            <p style="font-size: var(--text-sm); margin: 0;">Automatiza tareas críticas de mantenimiento del sistema.</p>
+                            <h4 style="color: var(--color-accent);">🔍 Carril 3: Búsqueda Avanzada</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Atlas Search preparado para futuras necesidades de búsqueda de texto libre.</p>
                         </div>
                     </div>
                 </div>
@@ -725,7 +894,7 @@
 
         // Marcar enlace activo basado en la página actual
         document.addEventListener('DOMContentLoaded', function() {
-            const currentPage = window.location.pathname.split('/').pop() || 'indices.html';
+            const currentPage = window.location.pathname.split('/').pop() || 'indexacion.html';
             const menuItems = document.querySelectorAll('.menu-item');
             
             menuItems.forEach(item => {
@@ -737,4 +906,3 @@
         });
     </script>
 </body>
-</html>

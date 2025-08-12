@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Atlas - Propuesta de Arquitectura para Kushki</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para esta propuesta */
+        .hero-kushki {
+            background: linear-gradient(135deg, #001E2B 0%, #0D2A3D 50%, #112331 100%);
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-kushki::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #00ED64 0%, transparent 70%);
+            opacity: 0.1;
+            top: -200px;
+            right: -100px;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        .hero-kushki::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #5644D4 0%, transparent 70%);
+            opacity: 0.1;
+            bottom: -150px;
+            left: -100px;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .architecture-card {
+            background: linear-gradient(135deg, rgba(13, 42, 61, 0.9) 0%, rgba(17, 35, 49, 0.7) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .architecture-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00ED64 0%, #5644D4 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .architecture-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 237, 100, 0.2);
+            border-color: rgba(0, 237, 100, 0.5);
+        }
+
+        .architecture-card:hover::before {
+            opacity: 1;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .spec-item {
+            background: rgba(0, 30, 43, 0.5);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .spec-item:hover {
+            background: rgba(0, 30, 43, 0.8);
+            border-color: rgba(0, 237, 100, 0.3);
+            transform: scale(1.02);
+        }
+
+        .spec-label {
+            color: #718096;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .spec-value {
+            color: #00ED64;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+            background: rgba(13, 42, 61, 0.3);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #00ED64 0%, #00D757 100%);
+            color: #001E2B;
+            padding: 1.5rem;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .comparison-table td {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #B8C4CE;
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(0, 237, 100, 0.05);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #00ED64 0%, #5644D4 100%);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-icon:hover {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .sharding-diagram {
+            background: rgba(0, 30, 43, 0.8);
+            border: 2px solid rgba(0, 237, 100, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .shard-box {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(86, 68, 212, 0.1) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.5);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .shard-box:hover {
+            transform: translateX(10px);
+            box-shadow: 0 0 30px rgba(0, 237, 100, 0.3);
+        }
+
+        .timeline-section {
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-section::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #00ED64 0%, #5644D4 100%);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -7px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            background: #00ED64;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(0, 237, 100, 0.6);
+        }
+
+        .cost-calculator {
+            background: linear-gradient(135deg, rgba(86, 68, 212, 0.1) 0%, rgba(0, 237, 100, 0.1) 100%);
+            border: 2px solid rgba(86, 68, 212, 0.3);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .animated-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00ED64 0%, #5644D4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pulse-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #00ED64;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 237, 100, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 237, 100, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 237, 100, 0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-kushki">
+        <div class="container">
+            <div class="animate-fadeIn" style="text-align: center;">
+                <div class="badge badge-primary mb-4" style="display: inline-flex;">
+                    <i class="fas fa-database"></i>
+                    Propuesta de Arquitectura MongoDB Atlas
+                </div>
+                <h1 class="text-gradient mb-4">Migración OpenSearch → MongoDB</h1>
+                <p class="text-2xl mb-6" style="color: #B8C4CE; max-width: 800px; margin: 0 auto;">
+                    Solución empresarial optimizada para Kushki con alta disponibilidad, 
+                    rendimiento superior y capacidades avanzadas de búsqueda y análisis en tiempo real
+                </p>
+                <div class="flex justify-center gap-4 mb-6">
+                    <a href="#arquitectura" class="btn btn-primary btn-lg">
+                        <i class="fas fa-rocket"></i>
+                        Ver Arquitectura Propuesta
+                    </a>
+                    <a href="#comparacion" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-chart-line"></i>
+                        Análisis Comparativo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Current Infrastructure Overview -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Estado Actual en OpenSearch</h2>
+            
+            <div class="architecture-card">
+                <h3 class="mb-4">
+                    <i class="fas fa-server" style="color: #F59E0B;"></i>
+                    Infraestructura OpenSearch Actual
+                </h3>
+                
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <div class="spec-label">Nodos de Datos</div>
+                        <div class="spec-value">9 × r6g.4xlarge</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Almacenamiento</div>
+                        <div class="spec-value">1.2TB EBS gp3</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">IOPS</div>
+                        <div class="spec-value">3,900</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Throughput</div>
+                        <div class="spec-value">250 MiB/s</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Nodos Maestros</div>
+                        <div class="spec-value">3 × m7g.medium</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Disponibilidad</div>
+                        <div class="spec-value">3 AZ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommended Architecture -->
+    <section class="section" id="arquitectura">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Arquitectura MongoDB Atlas Recomendada</h2>
+            
+            <!-- Architecture Option 1: 1 Shard M80 + Search -->
+            <div class="architecture-card">
+                <div class="badge badge-secondary mb-3">Escenario 1: Inicio Modular</div>
+                <h3 class="mb-4">
+                    <i class="fas fa-rocket" style="color: #3B82F6;"></i>
+                    1 Shard M80 + 6 Search Nodes S80
+                </h3>
+                
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <div class="spec-label">Configuración</div>
+                        <div class="spec-value">1 Shard × 3 Réplicas</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Nodos de Datos</div>
+                        <div class="spec-value">3 × M80 Low CPU</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Search Nodes</div>
+                        <div class="spec-value">6 × S80 (128GB RAM)</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Capacidad Total</div>
+                        <div class="spec-value">3.5 TB Útiles</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">IOPS Search</div>
+                        <div class="spec-value">215K Read / 90K Write</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Ideal Para</div>
+                        <div class="spec-value">Fase inicial y POC</div>
+                    </div>
+                </div>
+
+                <div class="mt-4" style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(59, 130, 246, 0.3);">
+                    <p style="margin: 0;">
+                        <i class="fas fa-lightbulb" style="color: #3B82F6;"></i>
+                        <strong>Ventaja:</strong> Arquitectura modular perfecta para pruebas de rendimiento y migración progresiva. 
+                        Los nodos S80 de búsqueda ofrecen máxima capacidad de RAM para queries complejas.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Architecture Option 2: 2 Shards M80 + Search -->
+            <div class="architecture-card">
+                <div class="badge badge-secondary mb-3">Escenario 2: Crecimiento Intermedio</div>
+                <h3 class="mb-4">
+                    <i class="fas fa-layer-group" style="color: #F59E0B;"></i>
+                    2 Shards M80 + 6 Search Nodes S80
+                </h3>
+                
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <div class="spec-label">Configuración</div>
+                        <div class="spec-value">2 Shards × 3 Réplicas</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Nodos de Datos</div>
+                        <div class="spec-value">6 × M80 Low CPU</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Search Nodes</div>
+                        <div class="spec-value">6 × S80 (128GB RAM)</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Capacidad Total</div>
+                        <div class="spec-value">7 TB Útiles</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Distribución Carga</div>
+                        <div class="spec-value">Balanceada 50/50</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Escalabilidad</div>
+                        <div class="spec-value">Lista para 3er shard</div>
+                    </div>
+                </div>
+
+                <div class="mt-4" style="background: rgba(245, 158, 11, 0.1); padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(245, 158, 11, 0.3);">
+                    <p style="margin: 0;">
+                        <i class="fas fa-chart-line" style="color: #F59E0B;"></i>
+                        <strong>Balance técnico:</strong> Excelente punto medio entre capacidad y rendimiento. 
+                        La distribución en 2 shards mejora el paralelismo en operaciones de agregación.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Architecture Option 3: M80 Low CPU 3 Shards -->
+            <div class="architecture-card">
+                <div class="badge badge-primary mb-3">Escenario 3: Capacidad Completa</div>
+                <h3 class="mb-4">
+                    <i class="fas fa-crown" style="color: #00ED64;"></i>
+                    3 Shards M80 Low CPU Multi-Región
+                </h3>
+                
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <div class="spec-label">Configuración</div>
+                        <div class="spec-value">3 Shards × 3 Réplicas</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Tipo de Nodo</div>
+                        <div class="spec-value">M80 Low CPU</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">vCPUs por Nodo</div>
+                        <div class="spec-value">16 vCPUs</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">RAM por Nodo</div>
+                        <div class="spec-value">128 GB</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Almacenamiento</div>
+                        <div class="spec-value">3.5 TB por Nodo</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Capacidad Total</div>
+                        <div class="spec-value">10.5 TB Útiles</div>
+                    </div>
+                </div>
+
+                <div class="sharding-diagram mt-5">
+                    <h4 class="mb-4">Distribución Multi-Región</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="shard-box">
+                            <h5 style="color: #00ED64;">
+                                <i class="fas fa-map-marker-alt"></i> N. Virginia (us-east-1)
+                            </h5>
+                            <p>Región Primaria</p>
+                            <ul style="list-style: none; padding: 0;">
+                                <li><i class="fas fa-check" style="color: #00ED64;"></i> Alta prioridad</li>
+                                <li><i class="fas fa-check" style="color: #00ED64;"></i> Menor latencia</li>
+                            </ul>
+                        </div>
+                        <div class="shard-box">
+                            <h5 style="color: #5644D4;">
+                                <i class="fas fa-map-marker-alt"></i> Ohio (us-east-2)
+                            </h5>
+                            <p>Backup Regional Este</p>
+                            <ul style="list-style: none; padding: 0;">
+                                <li><i class="fas fa-check" style="color: #5644D4;"></i> Media prioridad</li>
+                                <li><i class="fas fa-check" style="color: #5644D4;"></i> Failover automático</li>
+                            </ul>
+                        </div>
+                        <div class="shard-box">
+                            <h5 style="color: #F59E0B;">
+                                <i class="fas fa-map-marker-alt"></i> Oregon (us-west-2)
+                            </h5>
+                            <p>Aislamiento Geográfico</p>
+                            <ul style="list-style: none; padding: 0;">
+                                <li><i class="fas fa-check" style="color: #F59E0B;"></i> Media prioridad</li>
+                                <li><i class="fas fa-check" style="color: #F59E0B;"></i> Disaster recovery</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Architecture Option 4: M60 + Search Nodes -->
+            <div class="architecture-card">
+                <div class="badge badge-secondary mb-3">Escenario 4: Optimizado Costo-Beneficio</div>
+                <h3 class="mb-4">
+                    <i class="fas fa-balance-scale" style="color: #5644D4;"></i>
+                    3 Shards M60 Low CPU + 6 Search Nodes S50
+                </h3>
+                
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <div class="spec-label">Nodos de Datos</div>
+                        <div class="spec-value">9 × M60 Low CPU</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Search Nodes</div>
+                        <div class="spec-value">6 × S50 (32GB RAM)</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">RAM Total Datos</div>
+                        <div class="spec-value">192 GB (3×64GB)</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">IOPS Search</div>
+                        <div class="spec-value">215K Read / 90K Write</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Red</div>
+                        <div class="spec-value">Hasta 10 Gbps</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Balance</div>
+                        <div class="spec-value">Óptimo precio/rendimiento</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sharding Strategy -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Estrategias de Sharding - Análisis Profundo</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Transactional Collections -->
+                <div class="architecture-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h3>Colecciones Transaccionales</h3>
+                    <p class="mb-4">Para datos de pagos y transacciones financieras</p>
+                    
+                    <div class="code-block">
+                        <pre><code>// Llave de shard recomendada
+{ "clienteId": 1, "fecha": 1 }
+
+// Implementación
+sh.shardCollection(
+  "kushki_db.pagos", 
+  { "clienteId": 1, "fecha": 1 }
+)</code></pre>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5 style="color: #00ED64;">Justificación Técnica Detallada:</h5>
+                        <ul style="color: #B8C4CE;">
+                            <li class="mb-3">
+                                <i class="fas fa-database" style="color: #00ED64;"></i>
+                                <strong>Localidad de datos:</strong> El prefijo "clienteId" garantiza que todas las transacciones 
+                                de un cliente residan en el mismo shard, permitiendo consultas dirigidas (targeted queries) que 
+                                solo tocan un shard. Esto es crucial para queries como 
+                                <code style="color: #00ED64;">db.pagos.find({clienteId: "ABC123"})</code>
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-chart-line" style="color: #00ED64;"></i>
+                                <strong>Distribución uniforme:</strong> El sufijo "fecha" evita el "hotspotting". 
+                                Sin él, todos los nuevos clientes irían al último shard. Con fecha, las transacciones 
+                                se distribuyen temporalmente, balanceando la carga de escritura.
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-tachometer-alt" style="color: #00ED64;"></i>
+                                <strong>Cardinalidad óptima:</strong> La combinación clienteId+fecha crea millones 
+                                de valores únicos, permitiendo que el balanceador mueva chunks de ~64MB entre shards 
+                                de manera granular.
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-search" style="color: #00ED64;"></i>
+                                <strong>Patrones de consulta:</strong> Optimizado para queries comunes como:
+                                <br>• Historial por cliente: <code>O(1)</code> - un solo shard
+                                <br>• Transacciones por rango de fecha: <code>O(n)</code> - paralelo en todos los shards
+                                <br>• Agregaciones por cliente: extremadamente eficientes
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-4" style="background: rgba(0, 237, 100, 0.1); padding: 1.5rem; border-radius: 1rem;">
+                        <h5 style="color: #00ED64;">Métricas de Rendimiento Esperadas:</h5>
+                        <ul style="color: #B8C4CE; margin: 0;">
+                            <li>• Latencia de escritura: <strong>&lt;5ms</strong> p99</li>
+                            <li>• Throughput: <strong>50,000+ escrituras/seg</strong> con 3 shards</li>
+                            <li>• Consultas por cliente: <strong>&lt;10ms</strong> incluso con billones de documentos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Time Series Collections -->
+                <div class="architecture-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Series Temporales (Logs)</h3>
+                    <p class="mb-4">Para logs de integraciones y monitoreo</p>
+                    
+                    <div class="code-block">
+                        <pre><code>// Crear colección time series
+db.createCollection("logs_integraciones", {
+  timeseries: {
+    timeField: "timestamp",
+    metaField: "metadata",
+    granularity: "minutes"
+  }
+})
+
+// Llave de shard
+{ "metadata.proveedor": 1 }</code></pre>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5 style="color: #5644D4;">Optimización Profunda de Time Series:</h5>
+                        <ul style="color: #B8C4CE;">
+                            <li class="mb-3">
+                                <i class="fas fa-compress" style="color: #5644D4;"></i>
+                                <strong>Compresión columnar:</strong> MongoDB agrupa automáticamente los logs en 
+                                "buckets" de 1 hora (configurable). Dentro de cada bucket, los datos se almacenan 
+                                en formato columnar, logrando ratios de compresión de <strong>10:1 a 20:1</strong> 
+                                comparado con documentos individuales.
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-cubes" style="color: #5644D4;"></i>
+                                <strong>Bucketing inteligente:</strong> El parámetro <code>granularity: "minutes"</code> 
+                                optimiza para datos que llegan cada minuto. MongoDB pre-asigna buckets del tamaño 
+                                correcto, minimizando la fragmentación.
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-filter" style="color: #5644D4;"></i>
+                                <strong>Sharding por metadatos:</strong> Usar <code>metadata.proveedor</code> como 
+                                shard key agrupa todos los logs del mismo proveedor, maximizando la compresión 
+                                (datos similares se comprimen mejor) y permitiendo queries eficientes por proveedor.
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-rocket" style="color: #5644D4;"></i>
+                                <strong>Optimizaciones automáticas:</strong>
+                                <br>• Índice automático en timeField (sin costo adicional)
+                                <br>• Eliminación automática con TTL
+                                <br>• Estadísticas pre-calculadas (min, max, count)
+                                <br>• Pushdown de predicados a nivel de bucket
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-4" style="background: rgba(86, 68, 212, 0.1); padding: 1.5rem; border-radius: 1rem;">
+                        <h5 style="color: #5644D4;">Comparación de Almacenamiento:</h5>
+                        <table style="width: 100%; color: #B8C4CE;">
+                            <tr>
+                                <td>Colección regular:</td>
+                                <td><strong>1TB</strong> para 1B de logs</td>
+                            </tr>
+                            <tr>
+                                <td>Time Series Collection:</td>
+                                <td><strong>50-100GB</strong> para 1B de logs</td>
+                            </tr>
+                            <tr>
+                                <td>Velocidad de consulta:</td>
+                                <td><strong>100x más rápido</strong> para rangos temporales</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Sharding Best Practices -->
+            <div class="architecture-card mt-5">
+                <h3 class="mb-4">
+                    <i class="fas fa-lightbulb" style="color: #F59E0B;"></i>
+                    Mejores Prácticas de Sharding para Kushki
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <h4 style="color: #00ED64;">Para Prevención de Fraude:</h4>
+                        <div class="code-block">
+                            <pre><code>// Shard key para análisis de fraude
+{ "merchantId": 1, "riskScore": 1 }
+
+// Permite queries eficientes como:
+db.transacciones.find({
+  merchantId: "M123",
+  riskScore: { $gte: 80 }
+})</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #5644D4;">Para Compliance/Auditoría:</h4>
+                        <div class="code-block">
+                            <pre><code>// Shard key para auditoría
+{ "pais": 1, "fechaCreacion": 1 }
+
+// Facilita reportes regulatorios:
+db.audit.aggregate([
+  { $match: { pais: "EC" } },
+  { $group: { _id: "$tipo" } }
+])</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="architecture-card mt-5" style="max-width: 720px; margin: 2rem auto;">
+            <h4 style="color: #5644D4; margin-bottom: 1rem;">Beneficios Técnicos de Time Series:</h4>
+            <ul style="color: #B8C4CE; padding-left: 1.5rem;">
+                <li class="mb-2">
+                    <i class="fas fa-check" style="color: #5644D4;"></i> Compresión columnar automática
+                </li>
+                <li class="mb-2">
+                    <i class="fas fa-check" style="color: #5644D4;"></i> Agrupación por bloques temporales
+                </li>
+                <li class="mb-2">
+                    <i class="fas fa-check" style="color: #5644D4;"></i> Reducción 10x en almacenamiento
+                </li>
+            </ul>
+        </div>
+
+    <!-- Indexing Strategy -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Índices Optimizados</h2>
+            
+            <div class="architecture-card">
+                <h3 class="mb-4">
+                    <i class="fas fa-search"></i>
+                    Atlas Search - Reemplazo de OpenSearch
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <h4 style="color: #00ED64;">Índice para Búsqueda de Pagos</h4>
+                        <div class="code-block">
+                            <pre><code>{
+  "mappings": {
+    "dynamic": false,
+    "fields": {
+      "clienteId": { 
+        "type": "string", 
+        "analyzer": "lucene.keyword" 
+      },
+      "emailCliente": { 
+        "type": "string", 
+        "analyzer": "lucene.keyword" 
+      },
+      "resumen": { 
+        "type": "string", 
+        "analyzer": "lucene.spanish" 
+      },
+      "monto": { 
+        "type": "number" 
+      }
+    }
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #5644D4;">Consulta de Ejemplo</h4>
+                        <div class="code-block">
+                            <pre><code>// Buscar transacciones sospechosas > $5000
+db.pagos.aggregate([
+  {
+    "$search": {
+      "compound": {
+        "must": [{
+          "text": {
+            "query": "sospechoso",
+            "path": "resumen"
+          }
+        }],
+        "filter": [{
+          "range": {
+            "path": "monto",
+            "gte": 5000
+          }
+        }]
+      }
+    }
+  }
+])</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4" style="background: rgba(0, 237, 100, 0.1); padding: 1.5rem; border-radius: 1rem;">
+                    <p style="margin: 0;">
+                        <i class="fas fa-info-circle" style="color: #00ED64;"></i>
+                        <strong>Ventaja clave:</strong> Atlas Search está integrado nativamente, sin necesidad de 
+                        sincronización ETL como en OpenSearch/Elasticsearch.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-time Visualization -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Visualización y Monitoreo en Tiempo Real - Análisis Detallado</h2>
+            
+            <!-- Atlas Charts Deep Dive -->
+            <div class="architecture-card mb-5">
+                <h3 class="mb-4">
+                    <i class="fas fa-chart-pie" style="color: #00ED64;"></i>
+                    Atlas Charts - Reemplazo Nativo de Kibana
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <h4 style="color: #00ED64;">Capacidades Principales</h4>
+                        <ul style="color: #B8C4CE;">
+                            <li class="mb-3">
+                                <i class="fas fa-sync" style="color: #00ED64;"></i>
+                                <strong>Actualización en tiempo real:</strong> Los dashboards se actualizan 
+                                automáticamente sin ETL. Los datos escritos en MongoDB aparecen en Charts 
+                                en menos de 1 segundo.
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-code" style="color: #00ED64;"></i>
+                                <strong>Embedding SDK:</strong> Integre gráficos directamente en sus aplicaciones 
+                                con autenticación JWT. Perfecto para dashboards de clientes.
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-globe" style="color: #00ED64;"></i>
+                                <strong>Mapas geoespaciales:</strong> Visualice transacciones fraudulentas 
+                                en mapas de calor con índices 2dsphere nativos.
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-bell" style="color: #00ED64;"></i>
+                                <strong>Alertas inteligentes:</strong> Configure triggers basados en umbrales 
+                                o anomalías detectadas por ML.
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #5644D4;">Tipos de Visualización para Kushki</h4>
+                        <div style="background: rgba(0, 30, 43, 0.5); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                            <h5 style="color: #00ED64; font-size: 1rem;">FinOps/Compliance:</h5>
+                            <ul style="font-size: 0.875rem; margin: 0;">
+                                <li>• Gráficos de cascada para flujo de fondos</li>
+                                <li>• Tablas pivote para conciliación diaria</li>
+                                <li>• Heatmaps de actividad por hora/región</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: rgba(0, 30, 43, 0.5); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                            <h5 style="color: #EF4444; font-size: 1rem;">Prevención de Fraude:</h5>
+                            <ul style="font-size: 0.875rem; margin: 0;">
+                                <li>• Scatter plots: monto vs velocidad</li>
+                                <li>• Mapas 3D de transacciones sospechosas</li>
+                                <li>• Grafos de red para detectar patterns</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: rgba(0, 30, 43, 0.5); padding: 1rem; border-radius: 0.5rem;">
+                            <h5 style="color: #5644D4; font-size: 1rem;">Integraciones:</h5>
+                            <ul style="font-size: 0.875rem; margin: 0;">
+                                <li>• Time series de latencia por API</li>
+                                <li>• Gauges de disponibilidad en vivo</li>
+                                <li>• Funnels de éxito de integración</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-block mt-4">
+                    <pre><code>// Ejemplo: Embedding de Chart en aplicación
+const chart = new ChartsEmbedSDK({
+  baseUrl: 'https://charts.mongodb.com/charts-kushki-prod',
+  chartId: 'fraud-detection-heatmap',
+  getUserToken: async () => {
+    return await fetch('/api/charts-token').then(r => r.text());
+  }
+});
+
+// Filtro dinámico por cliente
+chart.setFilter({ clienteId: currentUser.id });
+chart.render(document.getElementById('fraud-dashboard'));</code></pre>
+                </div>
+            </div>
+
+            <!-- Grafana Integration -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="architecture-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <h3>Integración Grafana</h3>
+                    <h4 style="color: #5644D4; font-size: 1rem; margin-top: 1rem;">Plugin Oficial MongoDB</h4>
+                    
+                    <ul style="color: #B8C4CE; list-style: none; padding: 0;">
+                        <li class="mb-2">
+                            <i class="fas fa-check" style="color: #5644D4;"></i>
+                            <strong>Conexión directa:</strong> Sin proxy ni ETL
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check" style="color: #5644D4;"></i>
+                            <strong>Queries nativas:</strong> Usa agregaciones MongoDB
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check" style="color: #5644D4;"></i>
+                            <strong>Variables dinámicas:</strong> Dashboards parametrizados
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check" style="color: #5644D4;"></i>
+                            <strong>Alerting unificado:</strong> Con PagerDuty/Slack
+                        </li>
+                    </ul>
+
+                    <div class="code-block mt-3" style="font-size: 0.75rem;">
+                        <pre><code>// Query Grafana para métricas
+[
+  { $match: { 
+    timestamp: { $gte: $__timeFrom }
+  }},
+  { $group: {
+    _id: { $dateToString: {
+      format: "%Y-%m-%d %H:00",
+      date: "$timestamp"
+    }},
+    avg_latency: { $avg: "$latency" },
+    error_rate: { $avg: "$isError" }
+  }}
+]</code></pre>
+                    </div>
+                </div>
+
+                <!-- Power BI -->
+                <div class="architecture-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Power BI / Tableau</h3>
+                    <h4 style="color: #F59E0B; font-size: 1rem; margin-top: 1rem;">Atlas SQL Interface</h4>
+                    
+                    <ul style="color: #B8C4CE; list-style: none; padding: 0;">
+                        <li class="mb-2">
+                            <i class="fas fa-check" style="color: #F59E0B;"></i>
+                            <strong>ODBC/JDBC:</strong> Conectores nativos
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check" style="color: #F59E0B;"></i>
+                            <strong>SQL estándar:</strong> Sin aprender MQL
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check" style="color: #F59E0B;"></i>
+                            <strong>Materialized views:</strong> Para queries pesadas
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check" style="color: #F59E0B;"></i>
+                            <strong>Row-level security:</strong> Por tenant/cliente
+                        </li>
+                    </ul>
+
+                    <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
+                        <p style="margin: 0; font-size: 0.875rem;">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Tip:</strong> Use Atlas Data Lake para 
+                            queries analíticas sobre datos archivados en S3.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Custom Dashboards -->
+                <div class="architecture-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Dashboards Custom</h3>
+                    <h4 style="color: #00ED64; font-size: 1rem; margin-top: 1rem;">React + D3.js + WebSockets</h4>
+                    
+                    <ul style="color: #B8C4CE; list-style: none; padding: 0;">
+                        <li class="mb-2">
+                            <i class="fas fa-check" style="color: #00ED64;"></i>
+                            <strong>Change Streams:</strong> Updates en vivo
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check" style="color: #00ED64;"></i>
+                            <strong>Realm SDK:</strong> Sync automático
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check" style="color: #00ED64;"></i>
+                            <strong>GraphQL API:</strong> Queries flexibles
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check" style="color: #00ED64;"></i>
+                            <strong>Aggregation Pipeline:</strong> Cálculos server-side
+                        </li>
+                    </ul>
+
+                    <div class="code-block mt-3" style="font-size: 0.75rem;">
+                        <pre><code>// Change Stream para dashboard en vivo
+const changeStream = db.pagos.watch([
+  { $match: { 
+    'fullDocument.monto': { $gte: 1000 }
+  }}
+]);
+
+changeStream.on('change', (change) => {
+  socket.emit('high-value-transaction', 
+    change.fullDocument
+  );
+});</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison with Kibana -->
+            <div class="architecture-card mt-5">
+                <h3 class="mb-4">
+                    <i class="fas fa-exchange-alt" style="color: #00ED64;"></i>
+                    Comparación: Kibana vs Ecosistema MongoDB
+                </h3>
+                
+                <div style="max-width: 900px; margin: 0 auto;">
+                  <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: rgba(0, 237, 100, 0.1);">
+                            <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #00ED64;">Característica</th>
+                            <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #00ED64;">Kibana (OpenSearch)</th>
+                            <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #00ED64;">MongoDB Atlas Ecosystem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">Latencia de datos</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #B8C4CE;">Requiere indexación (1-5 min)</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #00ED64;">Tiempo real (&lt;1 seg)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">Tipos de visualización</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #B8C4CE;">~20 tipos estándar</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #00ED64;">30+ tipos + custom con D3.js</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">Embedding</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #B8C4CE;">iFrame básico</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #00ED64;">SDK completo con auth JWT</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">Integraciones BI</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #B8C4CE;">Limitadas</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #00ED64;">Power BI, Tableau, Looker, Qlik</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">Machine Learning</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #B8C4CE;">Anomaly detection básica</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #00ED64;">ML integrado + Vector Search</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1rem;">Costo de licencia</td>
+                            <td style="padding: 1rem; color: #B8C4CE;">Open source (soporte pagado)</td>
+                            <td style="padding: 1rem; color: #00ED64;">Incluido en Atlas</td>
+                        </tr>
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Implementation -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Implementación por Caso de Uso</h2>
+            
+            <div class="grid grid-cols-1 gap-5">
+                <!-- FinOps/Compliance -->
+                <div class="architecture-card">
+                    <h3 class="mb-4">
+                        <i class="fas fa-balance-scale" style="color: #00ED64;"></i>
+                        FinOps y Compliance
+                    </h3>
+                    
+                    <div class="timeline-section">
+                        <div class="timeline-dot"></div>
+                        <h4>Capacidades Implementadas</h4>
+                        <ul style="color: #B8C4CE;">
+                            <li>Auditoría completa con Change Streams para tracking en tiempo real</li>
+                            <li>Agregaciones financieras optimizadas con índices compuestos</li>
+                            <li>Reportes regulatorios automatizados vía Atlas Charts</li>
+                            <li>Retención de datos configurable por colección (TTL indexes)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Fraud Prevention -->
+                <div class="architecture-card">
+                    <h3 class="mb-4">
+                        <i class="fas fa-shield-alt" style="color: #EF4444;"></i>
+                        Prevención de Fraude
+                    </h3>
+                    
+                    <div class="timeline-section">
+                        <div class="timeline-dot" style="background: #EF4444;"></div>
+                        <h4>Soluciones Anti-Fraude</h4>
+                        <ul style="color: #B8C4CE;">
+                            <li>Análisis geoespacial en tiempo real con índices 2dsphere</li>
+                            <li>Machine Learning integrado para detección de anomalías</li>
+                            <li>Alertas instantáneas con triggers y webhooks</li>
+                            <li>Correlación de patrones con agregaciones en ventanas temporales</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Integrations/Development -->
+                <div class="architecture-card">
+                    <h3 class="mb-4">
+                        <i class="fas fa-code-branch" style="color: #5644D4;"></i>
+                        Integraciones y Desarrollo
+                    </h3>
+                    
+                    <div class="timeline-section">
+                        <div class="timeline-dot" style="background: #5644D4;"></div>
+                        <h4>Herramientas para Developers</h4>
+                        <ul style="color: #B8C4CE;">
+                            <li>APIs nativas REST con Data API de Atlas</li>
+                            <li>GraphQL endpoint automático para queries flexibles</li>
+                            <li>SDKs oficiales para todos los lenguajes principales</li>
+                            <li>Monitoreo de performance con Atlas Performance Advisor</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section class="section" id="comparacion">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Comparación Detallada: OpenSearch vs MongoDB Atlas</h2>
+            
+            <div style="overflow-x: auto;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Amazon OpenSearch</th>
+                            <th>MongoDB Atlas + Atlas Search</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Tipo de sistema</strong></td>
+                            <td>Motor de búsqueda distribuido (Lucene-based)</td>
+                            <td>Base de datos documental con búsqueda embebida (Lucene-based también)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Modelo de datos</strong></td>
+                            <td>JSON plano, sin soporte fuerte para estructuras anidadas o arrays complejos</td>
+                            <td>BSON flexible, soporta documentos complejos, arrays y subdocumentos</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Base de datos integrada</strong></td>
+                            <td>❌ No. Necesita otra base para CRUD (ej: DynamoDB, PostgreSQL, etc.)</td>
+                            <td>✅ Sí. CRUD y búsqueda en el mismo motor</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Escritura transaccional (ACID)</strong></td>
+                            <td>❌ No. Escrituras son eventualmente consistentes</td>
+                            <td>✅ Sí. Soporte de transacciones multi-documento</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Indexación</strong></td>
+                            <td>Obligatoria para acceder a datos</td>
+                            <td>Opcional. $search crea índices dedicados sin afectar transaccionalidad</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Búsqueda full-text</strong></td>
+                            <td>✅ Muy poderosa (Lucene DSL)</td>
+                            <td>✅ Poderosa, con sintaxis MongoDB ($search, $searchMeta)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Búsqueda vectorial (AI)</strong></td>
+                            <td>✅ KNN plugin (manual y limitado)</td>
+                            <td>✅ Nativa con $vectorSearch y soporte de embeddings (OpenAI, Cohere, etc.)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Operación y mantenimiento</strong></td>
+                            <td>Requiere tuning manual: shards, ILM, heap, snapshots</td>
+                            <td>Administrado por Atlas, con autoscaling, failover y backups automáticos</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Almacenamiento escalable</strong></td>
+                            <td>Sí, pero puede requerir reindexado y rebalanceo manual</td>
+                            <td>Sí, vía sharding horizontal sin downtime</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Actualizaciones</strong></td>
+                            <td>Costosas. Implica borrar e indexar de nuevo</td>
+                            <td>Eficientes. Update directo sobre documento</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Visualización nativa</strong></td>
+                            <td>✅ Kibana (integrado)</td>
+                            <td>✅ MongoDB Charts (embebible) o integración con Grafana, PowerBI, etc.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Durabilidad de datos</strong></td>
+                            <td>Medio-baja (índices pueden regenerarse; no es base duradera)</td>
+                            <td>Alta. MongoDB es el <strong>source of truth</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Escenarios típicos</strong></td>
+                            <td>Logs, APM, trazas, dashboards temporales</td>
+                            <td>Aplicaciones transaccionales + búsqueda (banca, e-commerce, IoT, etc.)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Licenciamiento</strong></td>
+                            <td>Open source (con limitaciones), gestionado por AWS</td>
+                            <td>Licencia SSPL. Administrado por MongoDB Atlas</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Integración con IA</strong></td>
+                            <td>Limitada, requiere custom pipelines</td>
+                            <td>Nativa con vector search y retención de contexto</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Series Temporales</strong></td>
+                            <td>Índices estándar, sin optimización especial</td>
+                            <td>Colecciones optimizadas con compresión 10-20x</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Alta Disponibilidad</strong></td>
+                            <td>3 AZ en 1 región</td>
+                            <td>Multi-región con failover automático global</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Visualización</strong></td>
+                            <td>Kibana</td>
+                            <td>Atlas Charts + Grafana + BI</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Escalabilidad</strong></td>
+                            <td>Manual, compleja</td>
+                            <td>Auto-scaling configurado</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Alta Disponibilidad</strong></td>
+                            <td>3 AZ en 1 región</td>
+                            <td>3 regiones completas</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mantenimiento</strong></td>
+                            <td>Manual</td>
+                            <td>Totalmente gestionado</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Costo Operativo</strong></td>
+                            <td>Alto (requiere equipo)</td>
+                            <td>Bajo (fully managed) <span style="color: #00ED64;">-70% OpEx</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decision Matrix -->
+            <div class="architecture-card mt-5" style="max-width: 900px; margin: 6rem auto;">
+                <h3 class="mb-4">
+                    <i class="fas fa-balance-scale" style="color: #00ED64;"></i>
+                    Matriz de Decisión
+                </h3>
+                
+                <table style="width: 100%; border-collapse: collapse; border-radius: 1rem; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 237, 100, 0.1);">
+                    <thead>
+                        <tr style="background: rgba(0, 237, 100, 0.1);">
+                            <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #00ED64;">Necesidad</th>
+                            <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #00ED64;">Recomendación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">Solo búsqueda en logs/APM/metrics</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #F59E0B;"><strong>OpenSearch</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">CRUD + búsqueda + transacciones</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #00ED64;"><strong>MongoDB Atlas + Atlas Search</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">Búsqueda vectorial + IA integrada</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #00ED64;"><strong>MongoDB Atlas</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">Arquitectura simplificada</td>
+                            <td style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); color: #00ED64;"><strong>MongoDB Atlas</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1rem;">Alta personalización del motor Lucene</td>
+                            <td style="padding: 1rem; color: #F59E0B;"><strong>OpenSearch</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top: 3rem;"></div>
+        </div>
+    </section>
+   
+
+    <!-- Cost Analysis -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Análisis de Beneficios y ROI</h2>
+            
+            <div class="cost-calculator">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="mb-4">
+                            <i class="fas fa-chart-line"></i>
+                            Beneficios Operacionales
+                        </h3>
+                        
+                        <div class="spec-grid">
+                            <div class="spec-item">
+                                <div class="spec-label">Reducción en Complejidad</div>
+                                <div class="animated-number">-85%</div>
+                                <p style="font-size: 0.875rem; color: #B8C4CE;">Una sola plataforma vs múltiples sistemas</p>
+                            </div>
+                            <div class="spec-item">
+                                <div class="spec-label">Tiempo de Desarrollo</div>
+                                <div class="animated-number">2x más rápido</div>
+                                <p style="font-size: 0.875rem; color: #B8C4CE;">Sin ETL ni sincronización</p>
+                            </div>
+                            <div class="spec-item">
+                                <div class="spec-label">Disponibilidad SLA</div>
+                                <div class="animated-number">99.995%</div>
+                                <p style="font-size: 0.875rem; color: #B8C4CE;">Garantizado por MongoDB</p>
+                            </div>
+                            <div class="spec-item">
+                                <div class="spec-label">Mantenimiento</div>
+                                <div class="animated-number">0 horas</div>
+                                <p style="font-size: 0.875rem; color: #B8C4CE;">Totalmente gestionado</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="mb-4">
+                            <i class="fas fa-rocket"></i>
+                            Beneficios Técnicos
+                        </h3>
+                        
+                        <ul style="color: #B8C4CE; list-style: none; padding: 0;">
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle" style="color: #00ED64;"></i>
+                                <strong>Escalabilidad infinita:</strong> Auto-scaling horizontal y vertical sin downtime
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle" style="color: #00ED64;"></i>
+                                <strong>Búsqueda integrada:</strong> Sin latencia de sincronización, datos siempre frescos
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle" style="color: #00ED64;"></i>
+                                <strong>Multi-región activo:</strong> Escrituras locales con consistencia global
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle" style="color: #00ED64;"></i>
+                                <strong>Backups continuos:</strong> Point-in-time recovery hasta 35 días
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle" style="color: #00ED64;"></i>
+                                <strong>Encriptación completa:</strong> At-rest y in-transit con gestión de claves
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-check-circle" style="color: #00ED64;"></i>
+                                <strong>Compliance ready:</strong> SOC2, PCI-DSS, HIPAA, ISO 27001
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Migration Timeline -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Plan de Migración Detallado</h2>
+            
+            <div class="architecture-card">
+                <h3 class="mb-5">
+                    <i class="fas fa-road"></i>
+                    Roadmap de Implementación - 7 Semanas
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="timeline-section">
+                        <div class="timeline-dot"></div>
+                        <h4 style="color: #00ED64;">Fase 1: Análisis</h4>
+                        <p class="text-sm" style="color: #B8C4CE;">Semanas 1-2</p>
+                        <ul style="color: #B8C4CE; font-size: 0.875rem;">
+                            <li>• Auditoría completa de OpenSearch</li>
+                            <li>• Mapeo de índices a colecciones</li>
+                            <li>• Análisis de queries críticas</li>
+                            <li>• Dimensionamiento de arquitectura</li>
+                            <li>• POC con datos de muestra</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="timeline-section">
+                        <div class="timeline-dot" style="background: #5644D4;"></div>
+                        <h4 style="color: #5644D4;">Fase 2: Preparación</h4>
+                        <p class="text-sm" style="color: #B8C4CE;">Semanas 3-4</p>
+                        <ul style="color: #B8C4CE; font-size: 0.875rem;">
+                            <li>• Provisioning del clúster Atlas</li>
+                            <li>• Configuración de sharding</li>
+                            <li>• Creación de índices y Search</li>
+                            <li>• Setup de Time Series</li>
+                            <li>• Configuración de seguridad</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="timeline-section">
+                        <div class="timeline-dot" style="background: #F59E0B;"></div>
+                        <h4 style="color: #F59E0B;">Fase 3: Migración</h4>
+                        <p class="text-sm" style="color: #B8C4CE;">Semanas 5-6</p>
+                        <ul style="color: #B8C4CE; font-size: 0.875rem;">
+                            <li>• Migración histórica batch</li>
+                            <li>• Sincronización dual-write</li>
+                            <li>• Validación de integridad</li>
+                            <li>• Testing de rendimiento</li>
+                            <li>• Ajustes de optimización</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="timeline-section">
+                        <div class="timeline-dot" style="background: #00ED64;"></div>
+                        <h4 style="color: #00ED64;">Fase 4: Go-Live</h4>
+                        <p class="text-sm" style="color: #B8C4CE;">Semana 7</p>
+                        <ul style="color: #B8C4CE; font-size: 0.875rem;">
+                            <li>• Cutover planificado</li>
+                            <li>• Monitoreo intensivo 24/7</li>
+                            <li>• Rollback plan activo</li>
+                            <li>• Optimización post-go-live</li>
+                            <li>• Knowledge transfer</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Migration Tools -->
+                <div class="mt-5" style="background: rgba(0, 237, 100, 0.1); padding: 2rem; border-radius: 1rem;">
+                    <h4 style="color: #00ED64;">Herramientas de Migración Disponibles</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                        <div style="background: rgba(0, 30, 43, 0.5); padding: 1rem; border-radius: 0.5rem;">
+                            <h5 style="color: #00ED64;">MongoDB Connector</h5>
+                            <p style="font-size: 0.875rem; color: #B8C4CE;">
+                                Sincronización en tiempo real desde OpenSearch a MongoDB durante la fase de transición
+                            </p>
+                        </div>
+                        <div style="background: rgba(0, 30, 43, 0.5); padding: 1rem; border-radius: 0.5rem;">
+                            <h5 style="color: #5644D4;">Atlas Live Migration</h5>
+                            <p style="font-size: 0.875rem; color: #B8C4CE;">
+                                Migración sin downtime con replicación continua y validación automática
+                            </p>
+                        </div>
+                        <div style="background: rgba(0, 30, 43, 0.5); padding: 1rem; border-radius: 0.5rem;">
+                            <h5 style="color: #F59E0B;">Schema Transformer</h5>
+                            <p style="font-size: 0.875rem; color: #B8C4CE;">
+                                Conversión automática de mappings de OpenSearch a esquemas MongoDB optimizados
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Benefits Summary -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Beneficios Clave para Kushki</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="metric text-center">
+                    <div class="metric-value">10.5 TB</div>
+                    <div class="metric-label">Capacidad Total Escalable</div>
+                </div>
+                <div class="metric text-center">
+                    <div class="metric-value">99.995%</div>
+                    <div class="metric-label">Disponibilidad SLA</div>
+                </div>
+                <div class="metric text-center">
+                    <div class="metric-value">3 Regiones</div>
+                    <div class="metric-label">Alta Disponibilidad Global</div>
+                </div>
+                <div class="metric text-center">
+                    <div class="metric-value">10-20x</div>
+                    <div class="metric-label">Compresión Time Series</div>
+                </div>
+            </div>
+
+            <!-- Additional Technical Benefits -->
+            <div class="architecture-card mt-5">
+                <h3 class="text-center mb-4">Ventajas Técnicas Específicas para Kushki</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="text-center">
+                        <div class="feature-icon mx-auto mb-3">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4 style="color: #00ED64;">Seguridad Financiera</h4>
+                        <ul style="text-align: left; color: #B8C4CE; font-size: 0.875rem;">
+                            <li>• Encriptación field-level</li>
+                            <li>• Auditoría completa CRUD</li>
+                            <li>• RBAC granular</li>
+                            <li>• Compliance PCI-DSS</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="feature-icon mx-auto mb-3">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <h4 style="color: #5644D4;">Performance Garantizado</h4>
+                        <ul style="text-align: left; color: #B8C4CE; font-size: 0.875rem;">
+                            <li>• &lt;10ms latencia p99</li>
+                            <li>• 1M+ ops/segundo</li>
+                            <li>• Auto-scaling predictivo</li>
+                            <li>• Caching inteligente</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="feature-icon mx-auto mb-3">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4 style="color: #F59E0B;">IA y Analytics</h4>
+                        <ul style="text-align: left; color: #B8C4CE; font-size: 0.875rem;">
+                            <li>• Vector search nativo</li>
+                            <li>• ML pipelines integrados</li>
+                            <li>• Spark connector</li>
+                            <li>• Real-time analytics</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section" style="background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(86, 68, 212, 0.1) 100%);">
+        <div class="container text-center">
+            <h2 class="text-gradient mb-4">¿Listos para Transformar su Infraestructura?</h2>
+            <p class="text-xl mb-6" style="color: #B8C4CE; max-width: 800px; margin: 0 auto;">
+                MongoDB Atlas ofrece una solución empresarial completa que no solo reemplaza OpenSearch, 
+                sino que unifica toda su arquitectura de datos con capacidades superiores de búsqueda, 
+                análisis y visualización en tiempo real.
+            </p>
+            
+            <div class="flex justify-center gap-4 flex-wrap">
+                <a href="#" class="btn btn-primary btn-lg">
+                    <i class="fas fa-calendar"></i>
+                    Agendar Workshop Técnico
+                </a>
+                <a href="#" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-download"></i>
+                    Descargar Whitepaper
+                </a>
+                <a href="#" class="btn btn-ghost btn-lg">
+                    <i class="fas fa-phone"></i>
+                    Hablar con un Arquitecto
+                </a>
+            </div>
+            
+            <div class="mt-6">
+                <p style="color: #718096;">
+                    <i class="fas fa-lock"></i>
+                    Propuesta personalizada para Kushki - Confidencial
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: #001E2B; padding: 2rem 0; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="container text-center">
+            <p style="color: #718096; margin: 0;">
+                © 2025 MongoDB Atlas | Arquitectura de Próxima Generación para Kushki
+                <span class="pulse-dot"></span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Animate numbers on scroll
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'none';
+                    setTimeout(() => {
+                        entry.target.style.animation = '';
+                    }, 10);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animated-number').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add parallax effect to hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.hero-kushki');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    </script>
+</body>
+</html>

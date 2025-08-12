@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Migración para Porvenir: CCM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .diagram-container {
+            position: relative;
+        }
+        .line {
+            position: absolute;
+            background-color: #4b5563; /* gray-600 */
+            z-index: 0;
+        }
+        .arrow {
+            position: absolute;
+            border: solid #4b5563;
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 3px;
+        }
+        .arrow.down {
+            transform: rotate(45deg);
+        }
+        .arrow.right {
+            transform: rotate(-45deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-white">Análisis de Migración para Porvenir</h1>
+            <p class="text-lg text-cyan-400">De DocumentDB a MongoDB Atlas</p>
+        </header>
+
+        <!-- Current Architecture Section -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold text-white border-b-2 border-cyan-500 pb-2 mb-8">Arquitectura Actual: Customer Communication Manager (CCM)</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                
+                <!-- Left Column: Functionality -->
+                <div class="space-y-6">
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                        <div class="flex items-center mb-3">
+                             <svg class="w-8 h-8 text-cyan-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <h3 class="text-xl font-bold text-white">Gestión de Comunicación</h3>
+                        </div>
+                        <p class="text-gray-300">Envío de comunicaciones dirigidas (Email, SMS) a afiliados y empleadores.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                        <div class="flex items-center mb-3">
+                             <svg class="w-8 h-8 text-cyan-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            <h3 class="text-xl font-bold text-white">API-Driven</h3>
+                        </div>
+                        <p class="text-gray-300">Expone APIs para que otros sistemas internos integren y automaticen envíos de forma eficiente.</p>
+                    </div>
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                        <div class="flex items-center mb-3">
+                            <svg class="w-8 h-8 text-cyan-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <h3 class="text-xl font-bold text-white">Gestión de Plantillas y Gobernanza</h3>
+                        </div>
+                        <p class="text-gray-300">Interfaz web para crear y administrar plantillas, asegurando el cumplimiento de estándares.</p>
+                    </div>
+                </div>
+
+                <!-- Right Column: Detailed Visual Diagram -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg h-full flex flex-col justify-center items-center">
+                    <div class="w-full flex justify-around mb-8">
+                        <div class="text-center bg-gray-700 p-3 rounded-md w-48" id="business-areas">
+                            <p class="font-semibold">Áreas de Negocio</p>
+                        </div>
+                        <div class="text-center bg-gray-700 p-3 rounded-md w-48" id="batch-systems">
+                            <p class="font-semibold">Sistemas Batch</p>
+                        </div>
+                    </div>
+
+                    <div class="w-full border-2 border-dashed border-cyan-500 rounded-lg p-4 relative diagram-container" style="min-height: 350px;">
+                        <p class="absolute -top-4 left-4 bg-gray-800 px-2 text-cyan-400 font-semibold">Plataforma CCM en AWS</p>
+                        
+                        <div class="absolute top-8 left-1/2 -translate-x-1/2 w-64 flex flex-col items-center">
+                             <div class="text-center bg-cyan-800 p-3 rounded-md w-full" id="web-ui">
+                                <p class="font-semibold">Web Interface</p>
+                                <p class="text-xs">(Gestión de Plantillas)</p>
+                            </div>
+                            <div class="line" style="height: 20px; width: 2px; top: 68px; left: 50%;"></div>
+                            <div class="arrow down" style="top: 88px; left: calc(50% - 4px);"></div>
+                        </div>
+
+                        <div class="absolute top-32 left-1/2 -translate-x-1/2 w-64 text-center bg-cyan-600 text-white p-4 rounded-lg shadow-md" id="ccm-app">
+                            <p class="font-bold text-lg">Aplicación CCM</p>
+                            <p class="text-sm">(Lógica de Negocio y APIs)</p>
+                        </div>
+
+                        <div class="absolute bottom-4 flex justify-around w-full">
+                             <div class="text-center bg-blue-900 p-3 rounded-md w-52" id="rds">
+                                <p class="font-semibold">Amazon RDS</p>
+                                <p class="text-sm text-blue-300">(MySQL - Datos de Clientes)</p>
+                            </div>
+                            <div class="text-center bg-red-900 p-3 rounded-md w-52 border-2 border-red-500 animate-pulse" id="docdb">
+                                <p class="font-semibold">Amazon DocumentDB</p>
+                                <p class="text-sm text-red-300">(Logs y Trazabilidad - El Problema)</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Connectors -->
+                        <div id="connectors"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Evaluation & Drivers Section -->
+        <section>
+            <h2 class="text-2xl font-semibold text-white border-b-2 border-cyan-500 pb-2 mb-8">Evaluación y Propuesta de Valor</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                
+                <!-- Evaluation Process -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-bold text-white mb-4">Proceso de Evaluación</h3>
+                    <ul class="space-y-3 text-gray-300">
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-green-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>Enfoque en **mejoras de rendimiento** y **reducción de costos** operativos.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-green-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>**Comparativa directa** de las limitaciones de DocumentDB frente a las capacidades nativas de MongoDB Atlas.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Value Drivers -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-bold text-white mb-4">Value Drivers Clave</h3>
+                    <ul class="space-y-3 text-gray-300">
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01"></path><path d="M12 18H6a2 2 0 01-2-2V8a2 2 0 012-2h12a2 2 0 012 2v2M12 12h6" stroke-width="1.5"></path></svg>
+                            <span>**Reducir Costos:** Optimizar la infraestructura y pagar solo por los recursos necesarios, evitando el sobreaprovisionamiento.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-6 h-6 text-yellow-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            <span>**Mejorar Rendimiento:** Atacar la lentitud de los reportes (de 20 min a <10 min) y mejorar la escalabilidad general de la plataforma.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </div>
+    <script>
+        // This script dynamically draws the connector lines for the diagram
+        function drawConnectors() {
+            const container = document.querySelector('.diagram-container');
+            const connectorsDiv = document.getElementById('connectors');
+            connectorsDiv.innerHTML = ''; // Clear existing lines
+
+            const businessAreas = document.getElementById('business-areas');
+            const batchSystems = document.getElementById('batch-systems');
+            const webUi = document.getElementById('web-ui');
+            const ccmApp = document.getElementById('ccm-app');
+            const rds = document.getElementById('rds');
+            const docdb = document.getElementById('docdb');
+
+            // Line from Business Areas to Web UI
+            createLine(businessAreas, webUi, connectorsDiv, 'down');
+            
+            // Line from Batch Systems to CCM App (API)
+            createLine(batchSystems, ccmApp, connectorsDiv, 'down');
+
+            // Line from CCM App to RDS
+            createLine(ccmApp, rds, connectorsDiv, 'down');
+
+            // Line from CCM App to DocumentDB
+            createLine(ccmApp, docdb, connectorsDiv, 'down');
+        }
+
+        function createLine(startEl, endEl, container, direction) {
+            const startRect = startEl.getBoundingClientRect();
+            const endRect = endEl.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+
+            const startX = startRect.left + startRect.width / 2 - containerRect.left;
+            const startY = startRect.bottom - containerRect.top;
+            const endX = endRect.left + endRect.width / 2 - containerRect.left;
+            const endY = endRect.top - containerRect.top;
+
+            const midY = startY + (endY - startY) / 2;
+
+            // Vertical line part 1
+            const line1 = document.createElement('div');
+            line1.className = 'line';
+            line1.style.left = `${startX - 1}px`;
+            line1.style.top = `${startY}px`;
+            line1.style.width = '2px';
+            line1.style.height = `${midY - startY}px`;
+            container.appendChild(line1);
+
+            // Horizontal line
+            const line2 = document.createElement('div');
+            line2.className = 'line';
+            line2.style.left = `${Math.min(startX, endX)}px`;
+            line2.style.top = `${midY - 1}px`;
+            line2.style.width = `${Math.abs(startX - endX)}px`;
+            line2.style.height = '2px';
+            container.appendChild(line2);
+
+            // Vertical line part 2
+            const line3 = document.createElement('div');
+            line3.className = 'line';
+            line3.style.left = `${endX - 1}px`;
+            line3.style.top = `${midY}px`;
+            line3.style.width = '2px';
+            line3.style.height = `${endY - midY}px`;
+            container.appendChild(line3);
+            
+            // Arrow
+            const arrow = document.createElement('div');
+            arrow.className = 'arrow down';
+            arrow.style.left = `${endX - 4}px`;
+            arrow.style.top = `${endY - 8}px`;
+            container.appendChild(arrow);
+        }
+
+        window.addEventListener('load', drawConnectors);
+        window.addEventListener('resize', drawConnectors);
+
+    </script>
+</body>
+</html>

@@ -218,6 +218,10 @@
       "dest": "/clientes/bancolombia/bdtl/ventajas.html"
     },
     {
+      "src": "/clientes/bancolombia/bdtl/bp(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bdtl/bp.html"
+    },
+    {
       "src": "/lz/lz(?:/.*)?$",
       "dest": "/lz/lz.html"
     },

@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Decision Matrix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #001E2B 0%, #00684A 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #00684A, #001E2B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 300;
+        }
+
+        .decision-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .flow-section {
+            position: relative;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 16px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .flow-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #001E2B;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .reporting-icon { background: linear-gradient(135deg, #4285F4, #34A853); }
+        .transactional-icon { background: linear-gradient(135deg, #FF6B35, #F7931E); }
+        .streaming-icon { background: linear-gradient(135deg, #8E44AD, #E74C3C); }
+        .factors-icon { background: linear-gradient(135deg, #00684A, #001E2B); }
+
+        .scenarios {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .scenario {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #00684A;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .scenario:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .scenario-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+
+        .scenario-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #001E2B;
+            flex: 1;
+        }
+
+        .recommendation-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .sql-badge {
+            background: linear-gradient(135deg, #4285F4, #1976D2);
+            color: white;
+        }
+
+        .nosql-badge {
+            background: linear-gradient(135deg, #00684A, #004D40);
+            color: white;
+        }
+
+        .mixed-badge {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+        }
+
+        .factors {
+            margin: 15px 0;
+        }
+
+        .factor-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .factor-bullet {
+            width: 6px;
+            height: 6px;
+            background: #00684A;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .why-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 3px solid #00684A;
+        }
+
+        .why-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #00684A;
+            margin-bottom: 8px;
+        }
+
+        .why-content {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .flow-arrow {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .arrow-down {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid #00684A;
+            opacity: 0.6;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        /* Interactive Quiz Styles */
+        .quiz-section {
+            margin-top: 60px;
+            padding: 40px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 20px;
+            border: 2px solid #e9ecef;
+            color: #001E2B;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .quiz-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00684A, #001E2B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .quiz-header p {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .question {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 2px solid #e9ecef;
+            display: none;
+        }
+
+        .question.active {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #001E2B;
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #001E2B;
+            font-size: 0.95rem;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            border-color: #00684A;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 104, 74, 0.15);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #00684A, #004D40);
+            border-color: #00684A;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0, 104, 74, 0.3);
+        }
+
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .quiz-btn {
+            background: linear-gradient(135deg, #00684A, #004D40);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 104, 74, 0.3);
+        }
+
+        .quiz-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 104, 74, 0.4);
+        }
+
+        .quiz-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            background: #ccc;
+            box-shadow: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00684A, #004D40);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .result-section {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 2px solid #e9ecef;
+        }
+
+        .result-section.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #001E2B;
+        }
+
+        .result-recommendation {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 16px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .mongodb-result {
+            background: linear-gradient(135deg, #00684A 0%, #004D40 100%);
+        }
+
+        .sql-result {
+            background: linear-gradient(135deg, #4285F4 0%, #3367D6 100%);
+        }
+
+        .sqldw-result {
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+        }
+
+        .evaluate-result {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+        }
+
+        .result-explanation {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin: 20px 0;
+            opacity: 0.9;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #00684A, #004D40);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 104, 74, 0.3);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 104, 74, 0.4);
+        }
+
+        /* Chart Styles */
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .score-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .score-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .score-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-label {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .score-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .score-percentage {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .mongodb-color { color: #00ED64; }
+        .sql-color { color: #4285F4; }
+        .sqldw-color { color: #FF6B35; }
+        .evaluate-color { color: #FF9800; }
+
+        #chartCanvas {
+            filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.3));
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .scenarios {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .legend {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Yape Decision Matrix</h1>
+            <p>Guía visual para elegir entre SQL y NoSQL según tu caso de uso</p>
+        </div>
+        <div class="svg-container" style="
+                margin: 30px auto;
+                text-align: center;
+                max-width: 100%;
+                overflow-x: auto;
+                ">
+                    <img src="../../sql-nosql.svg" alt="Diagrama de decisión MongoDB vs SQL" style="
+                        max-width: 100%;
+                        height: auto;
+                        filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.15));
+                    ">
+                </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color sql-badge"></div>
+                <span>Recomendado: SQL</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color nosql-badge"></div>
+                <span>Recomendado: NoSQL/MongoDB</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color mixed-badge"></div>
+                <span>Podría ser MongoDB</span>
+            </div>
+        </div>
+
+        <div class="decision-flow">
+            <!-- Reporting Section -->
+            <div class="flow-section">
+                <div class="section-title">
+                    <div class="section-icon reporting-icon">📊</div>
+                    Reportes y Análisis (Batch/Reporting)
+                </div>
+                
+                <div class="scenarios">
+                    <div class="scenario">
+                        <div class="scenario-header">
+                            <div class="scenario-title">Proyectos Pequeños/Medianos (GB - Pocos TB)</div>
+                            <div class="recommendation-badge sql-badge">SQL</div>
+                        </div>
+                        <div class="factors">
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Costo de plataforma:</strong> Optimizar presupuesto cloud inicial</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Modelo de datos:</strong> Estructura tabular bien definida y normalizada</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Casos típicos:</strong> Postgres, MySQL, SQL Server</div>
+                            </div>
+                        </div>
+                        <div class="why-section">
+                            <div class="why-title">¿Por qué SQL es la mejor opción?</div>
+                            <div class="why-content">Perfecto para reportes estándar y datos bien estructurados donde las relaciones son complejas y requieren JOINs frecuentes. Son más económicos para proyectos iniciales, ampliamente conocidos por los equipos, y ofrecen excelente rendimiento para cargas de trabajo analíticas tradicionales. MongoDB no es ideal cuando el modelo es altamente normalizado con múltiples tablas relacionadas.</div>
+                        </div>
+                    </div>
+
+                    <div class="scenario">
+                        <div class="scenario-header">
+                            <div class="scenario-title">Data Warehouse Masivo (Multi-TB)</div>
+                            <div class="recommendation-badge sql-badge">SQL DW</div>
+                        </div>
+                        <div class="factors">
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Escalabilidad:</strong> Miles de usuarios concurrentes</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Portabilidad:</strong> Migración fácil entre sistemas y proveedores</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Análisis OLAP:</strong> Consultas pesadas y agregaciones complejas</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>SQL Avanzado:</strong> Lógica compleja sobre múltiples tablas</div>
+                            </div>
+                        </div>
+                        <div class="why-section">
+                            <div class="why-title">¿Por qué SQL Data Warehouse?</div>
+                            <div class="why-content">Snowflake, DataBricks y soluciones similares están específicamente diseñadas para analizar cantidades masivas de datos estructurados, realizar procesamientos OLAP pesados, crear cubos analíticos y ejecutar transformaciones complejas sobre cientos de tablas. Ofrecen optimizaciones columnares, paralelización masiva y elasticidad automática. MongoDB no está optimizado para este tipo de cargas analíticas pesadas y estructuradas.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flow-arrow">
+                <div class="arrow-down"></div>
+            </div>
+
+            <!-- Transactional Section -->
+            <div class="flow-section">
+                <div class="section-title">
+                    <div class="section-icon transactional-icon">⚡</div>
+                    Operaciones Transaccionales (OLTP)
+                </div>
+                
+                <div class="scenarios">
+                    <div class="scenario">
+                        <div class="scenario-header">
+                            <div class="scenario-title">Necesidades Tácticas y Estables</div>
+                            <div class="recommendation-badge sql-badge">SQL</div>
+                        </div>
+                        <div class="factors">
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Estabilidad:</strong> Datos que cambian poco o lentamente</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Alcance limitado:</strong> Scope bien definido y acotado</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Estructura rígida:</strong> Modelo tabular normalizado con reglas claras</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Escalabilidad vertical:</strong> Crecimiento moderado y predecible</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Consultas complejas:</strong> JOINs pesados y lógica SQL avanzada constante</div>
+                            </div>
+                        </div>
+                        <div class="why-section">
+                            <div class="why-title">¿Por qué mantener SQL?</div>
+                            <div class="why-content">Extremadamente confiables para datos bien ordenados donde las reglas de negocio son estables y conocidas. Es preferible cuando el modelo de datos es muy tabular, requiere JOINs complejos frecuentes, el crecimiento es moderado y manejable verticalmente, y no necesitas replicación automática extensiva. Si el equipo domina exclusivamente SQL y tienes una estrategia de disaster recovery tradicional, también es un factor determinante.</div>
+                        </div>
+                    </div>
+
+                    <div class="scenario">
+                        <div class="scenario-header">
+                            <div class="scenario-title">Caso Indeciso - Necesidades Mixtas</div>
+                            <div class="recommendation-badge mixed-badge">Podría ser MongoDB</div>
+                        </div>
+                        <div class="factors">
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Factores combinados:</strong> Mezcla de requerimientos SQL y NoSQL</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Evolución del modelo:</strong> Datos que podrían cambiar de estructura</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Escalabilidad incierta:</strong> Necesidades futuras de disponibilidad</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Arquitectura híbrida:</strong> Posible combinación de tecnologías</div>
+                            </div>
+                        </div>
+                        <div class="why-section">
+                            <div class="why-title">¿Cómo decidir entre ambas opciones?</div>
+                            <div class="why-content">Si tu caso es complejo y los datos no son completamente rígidos, o si anticipas necesidades que van más allá de lo tradicional, NoSQL como MongoDB empieza a ser una opción viable. Evalúa cuidadosamente si las ventajas de flexibilidad, escalabilidad horizontal y disponibilidad automática de NoSQL justifican superar la familiaridad y experiencia existente del equipo con SQL. Considera también un enfoque híbrido o una migración gradual.</div>
+                        </div>
+                    </div>
+
+                    <div class="scenario">
+                        <div class="scenario-header">
+                            <div class="scenario-title">Necesidades Estratégicas y Avanzadas</div>
+                            <div class="recommendation-badge nosql-badge">MongoDB</div>
+                        </div>
+                        <div class="factors">
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Agilidad extrema:</strong> Cambios rápidos en datos semi-estructurados de múltiples fuentes</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Aplicación crítica:</strong> LOB o Enterprise App de alta importancia estratégica</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Escalabilidad masiva:</strong> Crecimiento global rápido con sharding automático</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Consultas directas:</strong> Búsquedas por ID o campos indexados sin JOINs complejos</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Alta disponibilidad:</strong> Replicación automática, failover, multi-región</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Arquitectura moderna:</strong> Microservicios, serverless, cloud-native</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Búsquedas avanzadas:</strong> Full-text search y búsquedas vectoriales integradas</div>
+                            </div>
+                        </div>
+                        <div class="why-section">
+                            <div class="why-title">¿Por qué MongoDB es la opción fuerte?</div>
+                            <div class="why-content">Extraordinariamente flexible para datos que cambian constantemente o no tienen estructura fija (JSON/BSON). Ideales para escalar globalmente de forma automática, arquitecturas de microservicios donde cada servicio maneja su propia base de datos desacoplada, y aplicaciones que requieren alta disponibilidad automática sin intervención manual. Excelente para consultas directas a documentos, búsquedas de texto completo integradas, y cuando quieres minimizar la gestión de infraestructura usando MongoDB Atlas como PaaS en la nube.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flow-arrow">
+                <div class="arrow-down"></div>
+            </div>
+
+            <!-- Streaming Section -->
+            <div class="flow-section">
+                <div class="section-title">
+                    <div class="section-icon streaming-icon">🚀</div>
+                    Análisis en Tiempo Real (Streaming)
+                </div>
+                
+                <div class="scenarios">
+                    <div class="scenario">
+                        <div class="scenario-header">
+                            <div class="scenario-title">Sistemas de Alta Concurrencia y Complejidad</div>
+                            <div class="recommendation-badge nosql-badge">MongoDB</div>
+                        </div>
+                        <div class="factors">
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Regionalidad y seguridad:</strong> Cumplimiento de privacidad y soberanía de datos</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Concurrencia extrema:</strong> Miles de operaciones por segundo simultáneas</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Workloads intensivos:</strong> Event Sourcing, CQRS, streaming de eventos</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Analítica operacional:</strong> BI embebido y conexiones directas a herramientas</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Ingestión masiva:</strong> Volúmenes exponenciales con crecimiento impredecible</div>
+                            </div>
+                        </div>
+                        <div class="why-section" style="font-family: Arial, sans-serif; background-color: #f5f5f5; border-radius: 8px; padding: 24px; line-height: 1.8;">
+                            <div class="why-title" style="font-size: 18px; font-weight: bold; color: #1a4d2e; margin-bottom: 12px;">¿Por qué MongoDB domina aquí?</div>
+                            <div class="why-content" style="margin-left: 10px;">
+                              <p>
+                                MongoDB está diseñado para entornos de alta velocidad, concurrencia masiva y arquitecturas distribuidas, lo que lo hace ideal para análisis en tiempo real y procesamiento de eventos.
+                              </p>
+                              <ol style="padding-left: 24px; margin-top: 12px;">
+                                <li style="margin-bottom: 10px;"><strong>Velocidad y concurrencia:</strong> MongoDB maneja miles de operaciones por segundo gracias a su modelo de documentos y motor de almacenamiento eficiente, lo que permite baja latencia incluso en escenarios de alta demanda.</li>
+                                <li style="margin-bottom: 10px;"><strong>Soporte para arquitecturas event-driven:</strong> Es compatible con patrones como Event Sourcing y CQRS, facilitando el procesamiento de eventos complejos sin estructuras rígidas.</li>
+                                <li style="margin-bottom: 10px;"><strong>Analítica operacional sin ETL:</strong> Permite realizar análisis directamente sobre los datos operacionales, integrándose con herramientas como MongoDB Charts, Kafka y Spark, reduciendo la latencia entre ingesta y visualización.</li>
+                                <li style="margin-bottom: 10px;"><strong>Escalabilidad geográfica y cumplimiento:</strong> Su arquitectura multi-región permite distribuir datos globalmente con baja latencia, cumpliendo con requisitos de soberanía y privacidad.</li>
+                                <li style="margin-bottom: 10px;"><strong>Ingesta masiva y flexibilidad:</strong> Admite altos volúmenes de datos con estructuras cambiantes, sin necesidad de redefinir esquemas ni interrumpir operaciones.</li>
+                              </ol>
+                              <p style="margin-top: 16px;"><strong>En resumen:</strong> MongoDB elimina la separación entre datos operacionales y analíticos, escala con facilidad y permite responder en tiempo real a cargas dinámicas y distribuidas.</p>
+                            </div>
+                          </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flow-arrow">
+                <div class="arrow-down"></div>
+            </div>
+
+            <!-- Additional Factors -->
+            <div class="flow-section">
+                <div class="section-title">
+                    <div class="section-icon factors-icon">🎯</div>
+                    Factores Transversales
+                </div>
+                
+                <div class="scenarios">
+                    <div class="scenario">
+                        <div class="scenario-header">
+                            <div class="scenario-title">Madurez y Capacidades del Equipo</div>
+                            <div class="recommendation-badge mixed-badge">Podría ser MongoDB</div>
+                        </div>
+                        <div class="factors">
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Conocimiento técnico:</strong> ¿El equipo domina MongoDB/NoSQL o está dispuesto a invertir en aprendizaje?</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Resistencia cultural:</strong> ¿Existe apertura al cambio tecnológico o hay inercia organizacional?</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Recursos de entrenamiento:</strong> ¿Hay tiempo y presupuesto para capacitación y ramp-up?</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Soporte disponible:</strong> ¿Existen consultores o expertos MongoDB accesibles?</div>
+                            </div>
+                        </div>
+                        <div class="why-section">
+                            <div class="why-title">Factor crítico de adopción</div>
+                            <div class="why-content">Un equipo reacio o sin experiencia en NoSQL puede hacer extremadamente difícil la adopción exitosa, incluso si MongoDB es técnicamente la opción superior para el caso de uso. La resistencia al cambio, falta de expertise, y curva de aprendizaje pueden generar implementaciones deficientes, bugs, y frustración. La apertura mental, inversión en capacitación y acompañamiento de expertos son absolutamente clave para el éxito.</div>
+                        </div>
+                    </div>
+
+                    <div class="scenario">
+                        <div class="scenario-header">
+                            <div class="scenario-title">Análisis de Costo Total de Propiedad (TCO)</div>
+                            <div class="recommendation-badge mixed-badge">Podría ser MongoDB</div>
+                        </div>
+                        <div class="factors">
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Minimizar administración:</strong> ¿Prefieres reducir costos de DBAs y gestión manual?</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Modelo PaaS:</strong> ¿Valoras costos predecibles y transparentes sin sorpresas?</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Infraestructura existente:</strong> ¿Ya tienes licencias SQL Server/Oracle y DBAs especializados?</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Escalabilidad de costos:</strong> ¿Cómo crecerán los gastos con el volumen de datos?</div>
+                            </div>
+                            <div class="factor-item">
+                                <div class="factor-bullet"></div>
+                                <div><strong>Costo de oportunidad:</strong> ¿Qué tiempo/recursos se liberan para innovación?</div>
+                            </div>
+                        </div>
+                        <div class="why-section">
+                            <div class="why-title">Análisis económico integral</div>
+                            <div class="why-content">Las soluciones NoSQL como MongoDB Atlas ofrecen modelos PaaS con costos claros, escalabilidad automática y menor carga administrativa, lo que puede reducir significativamente el TCO a largo plazo. Sin embargo, si ya tienes una inversión considerable en licencias SQL (Oracle, SQL Server) y personal especializado (DBAs expertos), el costo/beneficio debe analizarse cuidadosamente. Considera también el costo de oportunidad: tiempo liberado de administración puede destinarse a innovación y desarrollo de features.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Quiz Section -->
+        <div class="quiz-section">
+            <div class="quiz-header">
+                <h2>🎯 Evaluación Interactiva</h2>
+                <p>Responde estas preguntas para obtener una recomendación personalizada</p>
+            </div>
+
+            <div class="quiz-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <!-- Question 1 -->
+                <div class="question active" id="question1">
+                    <div class="question-number">Pregunta 1 de 8</div>
+                    <div class="question-title">¿Cuál es el propósito principal de tu aplicación?</div>
+                    <div class="options">
+                        <div class="option" data-value="reporting">📊 Generar reportes y análisis de datos (Batch/Reporting)</div>
+                        <div class="option" data-value="transactional">⚡ Operaciones diarias y transacciones (OLTP)</div>
+                        <div class="option" data-value="streaming">🚀 Análisis en tiempo real y streaming de datos</div>
+                        <div class="option" data-value="mixed">🔄 Una combinación de los anteriores</div>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="question" id="question2">
+                    <div class="question-number">Pregunta 2 de 8</div>
+                    <div class="question-title">¿Qué volumen de datos manejarás?</div>
+                    <div class="options">
+                        <div class="option" data-value="small">📁 Pequeño/Mediano (Gigabytes a pocos Terabytes)</div>
+                        <div class="option" data-value="large">📈 Grande (Múltiples Terabytes - Data Warehouse)</div>
+                        <div class="option" data-value="massive">🌊 Masivo con crecimiento exponencial</div>
+                        <div class="option" data-value="variable">📊 Variable, depende del crecimiento</div>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="question" id="question3">
+                    <div class="question-number">Pregunta 3 de 8</div>
+                    <div class="question-title">¿Cómo es la estructura de tus datos?</div>
+                    <div class="options">
+                        <div class="option" data-value="structured">🗂️ Altamente estructurados, modelo tabular normalizado</div>
+                        <div class="option" data-value="semi-structured">📝 Semi-estructurados, pueden evolucionar (JSON-like)</div>
+                        <div class="option" data-value="unstructured">🔀 No estructurados, múltiples fuentes y formatos</div>
+                        <div class="option" data-value="mixed-structure">🔄 Mixto, algunos estructurados y otros no</div>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="question" id="question4">
+                    <div class="question-number">Pregunta 4 de 8</div>
+                    <div class="question-title">¿Qué tipo de consultas realizarás principalmente?</div>
+                    <div class="options">
+                        <div class="option" data-value="complex-joins">🔗 JOINs complejos entre múltiples tablas</div>
+                        <div class="option" data-value="aggregations">📊 Agregaciones pesadas y análisis OLAP</div>
+                        <div class="option" data-value="simple-queries">🎯 Consultas directas por ID o campos indexados</div>
+                        <div class="option" data-value="text-search">🔍 Búsquedas de texto y consultas flexibles</div>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="question" id="question5">
+                    <div class="question-number">Pregunta 5 de 8</div>
+                    <div class="question-title">¿Qué nivel de escalabilidad necesitas?</div>
+                    <div class="options">
+                        <div class="option" data-value="vertical">⬆️ Vertical (agregar más poder al servidor)</div>
+                        <div class="option" data-value="moderate">📈 Moderada, crecimiento predecible</div>
+                        <div class="option" data-value="horizontal">↔️ Horizontal masiva (múltiples servidores, global)</div>
+                        <div class="option" data-value="auto-scale">🚀 Auto-escalamiento según demanda</div>
+                    </div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="question" id="question6">
+                    <div class="question-number">Pregunta 6 de 8</div>
+                    <div class="question-title">¿Con qué frecuencia cambian tus datos y esquemas?</div>
+                    <div class="options">
+                        <div class="option" data-value="rarely">🐌 Raramente, estructura muy estable</div>
+                        <div class="option" data-value="moderate">📅 Moderadamente, cambios planificados</div>
+                        <div class="option" data-value="frequently">⚡ Frecuentemente, agilidad requerida</div>
+                        <div class="option" data-value="real-time">🔄 En tiempo real, máxima flexibilidad</div>
+                    </div>
+                </div>
+
+                <!-- Question 7 -->
+                <div class="question" id="question7">
+                    <div class="question-number">Pregunta 7 de 8</div>
+                    <div class="question-title">¿Cuál es la experiencia de tu equipo?</div>
+                    <div class="options">
+                        <div class="option" data-value="sql-expert">💼 Expertos en SQL, poca experiencia NoSQL</div>
+                        <div class="option" data-value="mixed-skills">🎓 Conocimientos mixtos, dispuestos a aprender</div>
+                        <div class="option" data-value="nosql-friendly">🚀 Abiertos a NoSQL y tecnologías modernas</div>
+                        <div class="option" data-value="full-stack">🌟 Full-stack, experiencia en ambas tecnologías</div>
+                    </div>
+                </div>
+
+                <!-- Question 8 -->
+                <div class="question" id="question8">
+                    <div class="question-number">Pregunta 8 de 8</div>
+                    <div class="question-title">¿Cuáles son tus prioridades principales?</div>
+                    <div class="options">
+                        <div class="option" data-value="cost-efficiency">💰 Costo-eficiencia y presupuesto limitado</div>
+                        <div class="option" data-value="reliability">🛡️ Máxima confiabilidad y estabilidad</div>
+                        <div class="option" data-value="performance">⚡ Alto rendimiento y velocidad</div>
+                        <div class="option" data-value="flexibility">🔄 Flexibilidad y agilidad de desarrollo</div>
+                    </div>
+                </div>
+
+                <!-- Result Section -->
+                <div class="result-section" id="resultSection">
+                    <div class="result-title">Tu Recomendación Personalizada</div>
+                    <div class="result-recommendation" id="recommendation"></div>
+                    
+                    <!-- Chart Container -->
+                    <div class="chart-container">
+                        <div class="chart-wrapper">
+                            <canvas id="chartCanvas" width="300" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Score Details -->
+                    <div class="score-details" id="scoreDetails">
+                        <!-- Will be populated by JavaScript --Ba>
+                    </div>
+
+                    <div class="result-explanation" id="explanation"></div>
+                    <button class="restart-btn" onclick="restartQuiz()">🔄 Reiniciar Evaluación</button>
+                </div>
+
+                <div class="quiz-navigation">
+                    <button class="quiz-btn" id="prevBtn" onclick="previousQuestion()" disabled>⬅️ Anterior</button>
+                    <span id="questionCounter">1 / 8</span>
+                    <button class="quiz-btn" id="nextBtn" onclick="nextQuestion()" disabled>Siguiente ➡️</button>
+                </div>
+            </div>
+        </div>
+       
+    </body>
+  </html>
+        
+
+    

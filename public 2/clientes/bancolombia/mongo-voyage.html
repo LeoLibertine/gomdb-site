@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB + IA para Bancolombia - Arquitectura del Futuro</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para esta presentación */
+        .architecture-diagram {
+            background: rgba(0, 30, 43, 0.5);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .architecture-diagram::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.05) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        .component-card {
+            background: var(--color-bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-base);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .component-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--color-primary);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.2);
+        }
+        
+        .flow-arrow {
+            stroke: var(--color-primary);
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+        
+        .flow-arrow.animated {
+            stroke-dasharray: 5, 5;
+            animation: flow 2s linear infinite;
+        }
+        
+        @keyframes flow {
+            to {
+                stroke-dashoffset: -10;
+            }
+        }
+        
+        .use-case-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(0, 237, 100, 0.05) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            transition: all var(--transition-base);
+        }
+        
+        .use-case-card:hover {
+            transform: scale(1.02);
+            border-color: var(--color-primary);
+        }
+        
+        .timeline-connector {
+            position: absolute;
+            left: 20px;
+            top: 40px;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--color-primary), transparent);
+        }
+        
+        .phase-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-xs) var(--spacing-md);
+            background: var(--color-primary);
+            color: var(--color-text-dark);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: var(--text-sm);
+        }
+        
+        .metric-highlight {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+        
+        .ai-glow {
+            box-shadow: 0 0 30px rgba(0, 237, 100, 0.3), 0 0 60px rgba(86, 68, 212, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegación -->
+    <nav class="navbar" id="navbar">
+        <div class="container navbar-container">
+            <div class="navbar-logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <path d="M20 5L35 15V25L20 35L5 25V15L20 5Z" stroke="var(--color-primary)" stroke-width="2" fill="none"/>
+                    <circle cx="20" cy="20" r="5" fill="var(--color-primary)"/>
+                </svg>
+                <span class="text-gradient">MongoDB + Bancolombia IA</span>
+            </div>
+            <div class="navbar-links">
+                <a href="#vision" class="navbar-link">Visión</a>
+                <a href="#patterns" class="navbar-link">Arquitecturas</a>
+                <a href="#voyage" class="navbar-link">Voyage AI</a>
+                <a href="#usecases" class="navbar-link">Casos de Uso</a>
+                <a href="#roadmap" class="navbar-link">Roadmap</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="text-center animate-fadeIn">
+                <div class="badge badge-primary mb-4">
+                    <svg width="16" height="16" fill="currentColor" class="animate-pulse">
+                        <circle cx="8" cy="8" r="8"/>
+                    </svg>
+                    Inteligencia Artificial + Automatización
+                </div>
+                <h1 class="text-gradient mb-4">La Nueva Era de la Banca Inteligente</h1>
+                <p class="text-xl mb-6" style="max-width: 900px; margin: 0 auto;">
+                    MongoDB + Voyage AI + Orquestadores: La arquitectura que elimina las alucinaciones de IA 
+                    y automatiza procesos complejos con precisión del <span class="metric-highlight">99.9%</span>
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a href="#patterns" class="btn btn-primary btn-lg">
+                        <svg width="20" height="20" fill="currentColor">
+                            <path d="M12 2l8 8-8 8-1.5-1.5L16 11H4V9h12l-5.5-5.5L12 2z"/>
+                        </svg>
+                        Explorar Arquitecturas
+                    </a>
+                    <a href="#voyage" class="btn btn-secondary btn-lg">
+                        Descubrir Voyage AI
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vision Section -->
+    <section class="section" id="vision">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-6">El Cerebro, las Manos y la Memoria de su Operación</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Orquestador -->
+                <div class="card card-gradient ai-glow">
+                    <div class="text-center mb-4">
+                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary bg-opacity-20 mb-4">
+                            <svg width="40" height="40" fill="var(--color-primary)">
+                                <path d="M20 4C11.2 4 4 11.2 4 20s7.2 16 16 16 16-7.2 16-16S28.8 4 20 4zm0 28c-6.6 0-12-5.4-12-12s5.4-12 12-12 12 5.4 12 12-5.4 12-12 12z"/>
+                                <circle cx="20" cy="20" r="8" fill="var(--color-primary)" opacity="0.3"/>
+                                <circle cx="20" cy="20" r="4"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl mb-3">🧠 El Cerebro</h3>
+                        <h4 class="text-primary mb-2">Orquestador</h4>
+                    </div>
+                    <p class="text-center mb-4">
+                        Camunda o AWS Step Functions definen y gestionan procesos de negocio complejos de principio a fin
+                    </p>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary mt-1">✓</span>
+                            <span>Control total del flujo de trabajo</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary mt-1">✓</span>
+                            <span>Manejo de lógica compleja</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary mt-1">✓</span>
+                            <span>Visibilidad completa del proceso</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- n8n -->
+                <div class="card card-gradient ai-glow">
+                    <div class="text-center mb-4">
+                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary bg-opacity-20 mb-4">
+                            <svg width="40" height="40" fill="var(--color-primary)">
+                                <path d="M20 8v12l8-6-8-6zM12 8v12l8-6-8-6z"/>
+                                <path d="M20 20v12l8-6-8-6zM12 20v12l8-6-8-6z" opacity="0.5"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl mb-3">🤖 Las Manos</h3>
+                        <h4 class="text-primary mb-2">n8n</h4>
+                    </div>
+                    <p class="text-center mb-4">
+                        Herramienta de automatización que conecta cientos de sistemas para ejecutar tareas específicas
+                    </p>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary mt-1">✓</span>
+                            <span>+400 integraciones nativas</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary mt-1">✓</span>
+                            <span>Ejecución rápida y eficiente</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary mt-1">✓</span>
+                            <span>Conexión con APIs y bases de datos</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- MongoDB -->
+                <div class="card card-gradient ai-glow">
+                    <div class="text-center mb-4">
+                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary bg-opacity-20 mb-4">
+                            <svg width="40" height="40" fill="var(--color-primary)">
+                                <path d="M20 4L8 10v12c0 7.7 5.3 14.8 12 16 6.7-1.2 12-8.3 12-16V10L20 4z"/>
+                                <path d="M20 8v24c4.4-1 8-6 8-12v-8l-8-4z" opacity="0.3"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl mb-3">💾 La Memoria</h3>
+                        <h4 class="text-primary mb-2">MongoDB Atlas</h4>
+                    </div>
+                    <p class="text-center mb-4">
+                        Base de datos inteligente que almacena y entiende el significado detrás de los datos
+                    </p>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary mt-1">✓</span>
+                            <span>Búsqueda vectorial nativa</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary mt-1">✓</span>
+                            <span>Modelo flexible de documentos</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary mt-1">✓</span>
+                            <span>IA integrada con Voyage AI</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Patterns -->
+    <section class="section section-lg" id="patterns" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-3">Dos Patrones de Arquitectura Probados</h2>
+            <p class="text-center text-xl mb-8" style="max-width: 800px; margin: 0 auto;">
+                Soluciones diseñadas para diferentes desafíos: automatización de procesos y aplicaciones de IA avanzada
+            </p>
+
+            <!-- Pattern 1: Standard Automation -->
+            <div class="mb-8">
+                <h3 class="text-2xl mb-4 flex items-center gap-3">
+                    <span class="phase-badge">Patrón 1</span>
+                    Arquitectura de Automatización de Procesos
+                </h3>
+                
+                <div class="architecture-diagram">
+                    <!-- SVG Diagram -->
+                    <svg viewBox="0 0 800 400" style="width: 100%; max-width: 800px; margin: 0 auto; display: block;">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="var(--color-primary)" />
+                            </marker>
+                        </defs>
+                        
+                        <!-- Components -->
+                        <g>
+                            <!-- Usuario -->
+                            <rect x="20" y="20" width="120" height="80" rx="8" fill="var(--color-bg-tertiary)" stroke="var(--color-primary)" stroke-width="1"/>
+                            <text x="80" y="55" text-anchor="middle" fill="white" font-size="14">Usuario/Sistema</text>
+                            <text x="80" y="75" text-anchor="middle" fill="var(--color-text-secondary)" font-size="12">Externo</text>
+                            
+                            <!-- Orquestador -->
+                            <rect x="300" y="20" width="200" height="80" rx="8" fill="var(--color-bg-tertiary)" stroke="var(--color-primary)" stroke-width="2"/>
+                            <text x="400" y="45" text-anchor="middle" fill="var(--color-primary)" font-size="16" font-weight="600">Orquestador</text>
+                            <text x="400" y="65" text-anchor="middle" fill="var(--color-text-secondary)" font-size="12">(Cerebro del Negocio)</text>
+                            
+                            <!-- n8n -->
+                            <rect x="600" y="20" width="160" height="80" rx="8" fill="var(--color-bg-tertiary)" stroke="var(--color-primary)" stroke-width="1"/>
+                            <text x="680" y="55" text-anchor="middle" fill="white" font-size="14">n8n</text>
+                            <text x="680" y="75" text-anchor="middle" fill="var(--color-text-secondary)" font-size="12">(Manos)</text>
+                            
+                            <!-- MongoDB -->
+                            <rect x="300" y="200" width="200" height="80" rx="8" fill="var(--color-bg-tertiary)" stroke="var(--color-primary)" stroke-width="2"/>
+                            <text x="400" y="225" text-anchor="middle" fill="var(--color-primary)" font-size="16" font-weight="600">MongoDB Atlas</text>
+                            <text x="400" y="245" text-anchor="middle" fill="var(--color-text-secondary)" font-size="12">(Memoria Operacional)</text>
+                            
+                            <!-- Sistemas Heredados -->
+                            <rect x="20" y="200" width="120" height="80" rx="8" fill="var(--color-bg-tertiary)" stroke="var(--color-text-secondary)" stroke-width="1"/>
+                            <text x="80" y="230" text-anchor="middle" fill="white" font-size="14">Sistemas</text>
+                            <text x="80" y="250" text-anchor="middle" fill="var(--color-text-secondary)" font-size="12">Heredados</text>
+                        </g>
+                        
+                        <!-- Arrows with labels -->
+                        <g>
+                            <!-- Usuario -> Orquestador -->
+                            <path d="M140,60 L300,60" class="flow-arrow animated"/>
+                            <text x="220" y="50" text-anchor="middle" fill="var(--color-text-secondary)" font-size="11">1. Inicia Proceso</text>
+                            
+                            <!-- Orquestador -> n8n -->
+                            <path d="M500,60 L600,60" class="flow-arrow animated"/>
+                            <text x="550" y="50" text-anchor="middle" fill="var(--color-text-secondary)" font-size="11">2. Delega Tarea</text>
+                            
+                            <!-- n8n -> MongoDB -->
+                            <path d="M680,100 L680,180 L500,180 L500,200" class="flow-arrow animated"/>
+                            <text x="680" y="140" text-anchor="start" fill="var(--color-text-secondary)" font-size="11">3. Ejecuta</text>
+                            
+                            <!-- MongoDB <-> Sistemas -->
+                            <path d="M140,240 L300,240" class="flow-arrow" stroke-dasharray="5,5"/>
+                            <text x="220" y="255" text-anchor="middle" fill="var(--color-text-secondary)" font-size="11">4. Lee/Escribe</text>
+                            
+                            <!-- Orquestador -> Usuario -->
+                            <path d="M300,80 L140,80" class="flow-arrow"/>
+                            <text x="220" y="95" text-anchor="middle" fill="var(--color-text-secondary)" font-size="11">5. Responde</text>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Use Cases -->
+                <div class="grid md:grid-cols-3 gap-4 mt-6">
+                    <div class="use-case-card">
+                        <h4 class="font-bold mb-2">📋 Procesamiento de Préstamos</h4>
+                        <p class="text-sm text-secondary mb-3">
+                            <strong>Orquestador:</strong> Gestiona ciclo de vida (días/semanas)
+                        </p>
+                        <p class="text-sm">
+                            <strong>n8n:</strong> Extrae PDFs, notifica Slack, genera contratos, envía DocuSign
+                        </p>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <h4 class="font-bold mb-2">🔍 Gestión de Reclamaciones</h4>
+                        <p class="text-sm text-secondary mb-3">
+                            <strong>Orquestador:</strong> Controla flujo completo hasta resolución
+                        </p>
+                        <p class="text-sm">
+                            <strong>n8n:</strong> Crea tickets Zendesk, recopila datos, envía emails
+                        </p>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <h4 class="font-bold mb-2">💰 Conciliación de Pagos</h4>
+                        <p class="text-sm text-secondary mb-3">
+                            <strong>Orquestador:</strong> Orquesta proceso nocturno
+                        </p>
+                        <p class="text-sm">
+                            <strong>n8n:</strong> Descarga SFTP, carga MongoDB, compara, reporta
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pattern 2: AI Architecture -->
+            <div class="mt-12">
+                <h3 class="text-2xl mb-4 flex items-center gap-3">
+                    <span class="phase-badge">Patrón 2</span>
+                    Arquitectura de IA Generativa (RAG)
+                </h3>
+                
+                <div class="architecture-diagram">
+                    <!-- SVG Diagram for RAG -->
+                    <svg viewBox="0 0 800 500" style="width: 100%; max-width: 800px; margin: 0 auto; display: block;">
+                        <!-- Components -->
+                        <g>
+                            <!-- Usuario -->
+                            <rect x="20" y="20" width="120" height="80" rx="8" fill="var(--color-bg-tertiary)" stroke="var(--color-primary)" stroke-width="1"/>
+                            <text x="80" y="60" text-anchor="middle" fill="white" font-size="14">Usuario</text>
+                            
+                            <!-- Orquestador -->
+                            <rect x="300" y="20" width="200" height="80" rx="8" fill="var(--color-bg-tertiary)" stroke="var(--color-primary)" stroke-width="2"/>
+                            <text x="400" y="45" text-anchor="middle" fill="var(--color-primary)" font-size="16" font-weight="600">Orquestador</text>
+                            <text x="400" y="65" text-anchor="middle" fill="var(--color-text-secondary)" font-size="12">(Cerebro App IA)</text>
+                            
+                            <!-- n8n -->
+                            <rect x="600" y="20" width="160" height="80" rx="8" fill="var(--color-bg-tertiary)" stroke="var(--color-primary)" stroke-width="1"/>
+                            <text x="680" y="55" text-anchor="middle" fill="white" font-size="14">n8n</text>
+                            <text x="680" y="75" text-anchor="middle" fill="var(--color-text-secondary)" font-size="12">(Orquesta IA)</text>
+                            
+                            <!-- MongoDB -->
+                            <rect x="450" y="200" width="200" height="80" rx="8" fill="var(--color-bg-tertiary)" stroke="var(--color-accent)" stroke-width="2"/>
+                            <text x="550" y="225" text-anchor="middle" fill="var(--color-accent)" font-size="16" font-weight="600">MongoDB Atlas</text>
+                            <text x="550" y="245" text-anchor="middle" fill="var(--color-text-secondary)" font-size="12">(Memoria Semántica)</text>
+                            
+                            <!-- Voyage AI -->
+                            <rect x="600" y="350" width="160" height="80" rx="8" fill="var(--color-bg-tertiary)" stroke="var(--color-accent)" stroke-width="2"/>
+                            <text x="680" y="380" text-anchor="middle" fill="var(--color-accent)" font-size="14">Voyage AI</text>
+                            <text x="680" y="400" text-anchor="middle" fill="var(--color-text-secondary)" font-size="12">(Embeddings)</text>
+                            
+                            <!-- LLM -->
+                            <rect x="150" y="200" width="160" height="80" rx="8" fill="var(--color-bg-tertiary)" stroke="var(--color-primary)" stroke-width="1"/>
+                            <text x="230" y="230" text-anchor="middle" fill="white" font-size="14">LLM</text>
+                            <text x="230" y="250" text-anchor="middle" fill="var(--color-text-secondary)" font-size="12">(Genera Respuesta)</text>
+                        </g>
+                        
+                        <!-- Flow -->
+                        <g>
+                            <!-- Usuario -> Orquestador -->
+                            <path d="M140,60 L300,60" class="flow-arrow animated"/>
+                            <text x="220" y="50" text-anchor="middle" fill="var(--color-text-secondary)" font-size="11">1. Pregunta</text>
+                            
+                            <!-- Orquestador -> n8n -->
+                            <path d="M500,60 L600,60" class="flow-arrow animated"/>
+                            <text x="550" y="50" text-anchor="middle" fill="var(--color-text-secondary)" font-size="11">2. Buscar Contexto</text>
+                            
+                            <!-- n8n -> Voyage AI -->
+                            <path d="M680,100 L680,350" class="flow-arrow animated"/>
+                            <text x="690" y="225" text-anchor="start" fill="var(--color-text-secondary)" font-size="11">3. Embedding</text>
+                            
+                            <!-- Voyage AI <-> MongoDB -->
+                            <path d="M600,390 L550,390 L550,280" class="flow-arrow" stroke="var(--color-accent)"/>
+                            <text x="500" y="335" text-anchor="middle" fill="var(--color-text-secondary)" font-size="11">4. Vector Search</text>
+                            
+                            <!-- n8n -> Orquestador -->
+                            <path d="M600,80 L500,80" class="flow-arrow"/>
+                            <text x="550" y="95" text-anchor="middle" fill="var(--color-text-secondary)" font-size="11">5. Contexto</text>
+                            
+                            <!-- Orquestador -> LLM -->
+                            <path d="M300,100 L230,100 L230,200" class="flow-arrow animated"/>
+                            <text x="180" y="150" text-anchor="middle" fill="var(--color-text-secondary)" font-size="11">6. Contexto + Q</text>
+                            
+                            <!-- LLM -> Orquestador -->
+                            <path d="M310,240 L400,240 L400,100" class="flow-arrow"/>
+                            <text x="355" y="170" text-anchor="middle" fill="var(--color-text-secondary)" font-size="11">7. Respuesta</text>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- AI Use Cases -->
+                <div class="grid md:grid-cols-3 gap-4 mt-6">
+                    <div class="use-case-card">
+                        <h4 class="font-bold mb-2">⚖️ Asistente de Cumplimiento</h4>
+                        <p class="text-sm text-secondary mb-3">
+                            <strong>Orquestador:</strong> Gestiona chat interactivo
+                        </p>
+                        <p class="text-sm">
+                            <strong>IA:</strong> Busca en regulaciones vectorizadas para responder normativas específicas
+                        </p>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <h4 class="font-bold mb-2">🔎 Búsqueda Inteligente de Pólizas</h4>
+                        <p class="text-sm text-secondary mb-3">
+                            <strong>Orquestador:</strong> Permite búsqueda por conceptos
+                        </p>
+                        <p class="text-sm">
+                            <strong>IA:</strong> Encuentra pólizas relevantes sin palabras clave exactas
+                        </p>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <h4 class="font-bold mb-2">📊 Análisis de Sentimiento</h4>
+                        <p class="text-sm text-secondary mb-3">
+                            <strong>Orquestador:</strong> Procesa miles de interacciones
+                        </p>
+                        <p class="text-sm">
+                            <strong>IA:</strong> Vectoriza y analiza quejas más comunes sobre servicios
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Voyage AI Section -->
+    <section class="section" id="voyage">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-3">La Adquisición que Cambia Todo: Voyage AI</h2>
+            <p class="text-center text-xl mb-6" style="max-width: 800px; margin: 0 auto;">
+                MongoDB invierte <span class="metric-highlight">$220 millones</span> para eliminar el problema #1 de la IA empresarial
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- El Problema -->
+                <div class="card card-bordered" style="border-color: rgba(239, 68, 68, 0.5);">
+                    <h3 class="text-xl font-bold mb-4 text-error">❌ El Problema: Alucinaciones de IA</h3>
+                    <p class="mb-4">
+                        Los LLMs generan información falsa o engañosa, un riesgo inaceptable en:
+                    </p>
+                    <ul class="space-y-2">
+                        <li class="flex items-start gap-2">
+                            <span class="text-error">•</span>
+                            <span><strong>Finanzas:</strong> Asesoramiento de inversión incorrecto</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-error">•</span>
+                            <span><strong>Salud:</strong> Diagnósticos médicos erróneos</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-error">•</span>
+                            <span><strong>Legal:</strong> Interpretaciones normativas falsas</span>
+                        </li>
+                    </ul>
+                    <div class="mt-4 p-3 bg-error bg-opacity-10 rounded">
+                        <p class="text-sm">
+                            <strong>Impacto:</strong> Las empresas no confían en la IA para casos críticos
+                        </p>
+                    </div>
+                </div>
+
+                <!-- La Solución -->
+                <div class="card card-gradient">
+                    <h3 class="text-xl font-bold mb-4 text-primary">✅ La Solución: RAG con Voyage AI</h3>
+                    <p class="mb-4">
+                        Generación Aumentada por Recuperación (RAG) con embeddings de alta precisión:
+                    </p>
+                    <ul class="space-y-2">
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary">✓</span>
+                            <span><strong>20% más precisión</strong> en recuperación vs competencia</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary">✓</span>
+                            <span><strong>200x menos almacenamiento</strong> con embeddings cuantizados</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-primary">✓</span>
+                            <span><strong>Modelos especializados</strong> para finanzas, salud y legal</span>
+                        </li>
+                    </ul>
+                    <div class="mt-4 p-3 bg-primary bg-opacity-10 rounded">
+                        <p class="text-sm">
+                            <strong>Resultado:</strong> IA confiable anclada en datos verificables
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparación de Flujos -->
+            <div class="card card-gradient mb-8">
+                <h3 class="text-2xl text-center mb-6">De Fragmentado a Integrado</h3>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Flujo Actual -->
+                    <div>
+                        <h4 class="text-center mb-4 text-error">Flujo Actual (Fragmentado)</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-error bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-bold">1</span>
+                                </div>
+                                <p class="text-sm">Gestionar múltiples APIs y claves</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-error bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-bold">2</span>
+                                </div>
+                                <p class="text-sm">Código personalizado para embeddings</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-error bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-bold">3</span>
+                                </div>
+                                <p class="text-sm">Sincronización manual de vectores</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-error bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-bold">4</span>
+                                </div>
+                                <p class="text-sm">Múltiples llamadas de red</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-error bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-bold">5</span>
+                                </div>
+                                <p class="text-sm">Complejidad operativa alta</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flujo Futuro -->
+                    <div>
+                        <h4 class="text-center mb-4 text-primary">Flujo Futuro (Nativo)</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-primary bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-bold">1</span>
+                                </div>
+                                <p class="text-sm">Una sola conexión a MongoDB Atlas</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-primary bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-bold">2</span>
+                                </div>
+                                <p class="text-sm">Auto-embedding declarativo</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-primary bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-bold">3</span>
+                                </div>
+                                <p class="text-sm">Actualización automática de vectores</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-primary bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-bold">4</span>
+                                </div>
+                                <p class="text-sm">Una consulta unificada</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-primary bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-bold">5</span>
+                                </div>
+                                <p class="text-sm">Cero complejidad adicional</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métricas de Rendimiento -->
+            <div class="grid md:grid-cols-4 gap-4">
+                <div class="metric-card card card-gradient text-center">
+                    <div class="metric-value">20%</div>
+                    <div class="metric-label">Más Precisión</div>
+                    <p class="text-sm mt-2">vs OpenAI/Cohere</p>
+                </div>
+                <div class="metric-card card card-gradient text-center">
+                    <div class="metric-value">200x</div>
+                    <div class="metric-label">Menos Almacenamiento</div>
+                    <p class="text-sm mt-2">Embeddings cuantizados</p>
+                </div>
+                <div class="metric-card card card-gradient text-center">
+                    <div class="metric-value">15%</div>
+                    <div class="metric-label">Mejor en Código</div>
+                    <p class="text-sm mt-2">voyage-code-2</p>
+                </div>
+                <div class="metric-card card card-gradient text-center">
+                    <div class="metric-value">99.9%</div>
+                    <div class="metric-label">Confiabilidad</div>
+                    <p class="text-sm mt-2">En respuestas RAG</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section class="section section-lg" id="usecases" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-6">Casos de Uso Transformadores para Bancolombia</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Automatización -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-primary">🤖 Automatización de Procesos</h3>
+                    <div class="space-y-4">
+                        <div class="card card-bordered">
+                            <h4 class="font-bold mb-2">Onboarding Digital de Clientes</h4>
+                            <p class="text-sm mb-3">Proceso completo desde formulario web hasta cuenta activa</p>
+                            <div class="bg-primary bg-opacity-10 p-3 rounded">
+                                <p class="text-xs"><strong>Tiempo:</strong> De 3 días a 30 minutos</p>
+                                <p class="text-xs"><strong>Automatización:</strong> 95% del proceso</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card card-bordered">
+                            <h4 class="font-bold mb-2">Procesamiento de Créditos</h4>
+                            <p class="text-sm mb-3">Evaluación automática con IA y decisión instantánea</p>
+                            <div class="bg-primary bg-opacity-10 p-3 rounded">
+                                <p class="text-xs"><strong>Aprobación:</strong> Respuesta en 5 minutos</p>
+                                <p class="text-xs"><strong>Precisión:</strong> 98% en evaluación de riesgo</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card card-bordered">
+                            <h4 class="font-bold mb-2">Gestión de Reclamos</h4>
+                            <p class="text-sm mb-3">Clasificación inteligente y resolución automatizada</p>
+                            <div class="bg-primary bg-opacity-10 p-3 rounded">
+                                <p class="text-xs"><strong>Resolución:</strong> 70% sin intervención humana</p>
+                                <p class="text-xs"><strong>Satisfacción:</strong> +40% NPS</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IA Generativa -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-accent">🧠 IA Generativa Aplicada</h3>
+                    <div class="space-y-4">
+                        <div class="card card-bordered">
+                            <h4 class="font-bold mb-2">Asistente Virtual Inteligente</h4>
+                            <p class="text-sm mb-3">Responde consultas complejas con contexto bancario completo</p>
+                            <div class="bg-accent bg-opacity-10 p-3 rounded">
+                                <p class="text-xs"><strong>Precisión:</strong> 99.9% sin alucinaciones</p>
+                                <p class="text-xs"><strong>Cobertura:</strong> 24/7 multicanal</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card card-bordered">
+                            <h4 class="font-bold mb-2">Análisis de Documentos</h4>
+                            <p class="text-sm mb-3">Extracción inteligente de información de contratos y pólizas</p>
+                            <div class="bg-accent bg-opacity-10 p-3 rounded">
+                                <p class="text-xs"><strong>Velocidad:</strong> 1000 docs/hora</p>
+                                <p class="text-xs"><strong>Extracción:</strong> 99% de campos clave</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card card-bordered">
+                            <h4 class="font-bold mb-2">Asesor Financiero IA</h4>
+                            <p class="text-sm mb-3">Recomendaciones personalizadas basadas en perfil y mercado</p>
+                            <div class="bg-accent bg-opacity-10 p-3 rounded">
+                                <p class="text-xs"><strong>Personalización:</strong> 360° del cliente</p>
+                                <p class="text-xs"><strong>ROI:</strong> +25% en ventas cruzadas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section class="section" id="roadmap">
+        <div class="container">
+            <h2 class="text-center text-gradient mb-6">Roadmap de Implementación</h2>
+            
+            <div class="max-w-4xl mx-auto">
+                <!-- Phase 1 -->
+                <div class="relative mb-8">
+                    <div class="timeline-connector"></div>
+                    <div class="card card-gradient">
+                        <div class="flex items-start gap-4">
+                            <div class="phase-badge">Fase 1</div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">Inmediata: Fortalecimiento Empresarial</h3>
+                                <p class="mb-3">Voyage AI continúa disponible vía API mientras MongoDB endurece la infraestructura</p>
+                                <ul class="space-y-1 text-sm">
+                                    <li>• Continuidad para clientes actuales</li>
+                                    <li>• Mejora de escalabilidad y fiabilidad</li>
+                                    <li>• Preparación para integración masiva</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 2 -->
+                <div class="relative mb-8">
+                    <div class="timeline-connector"></div>
+                    <div class="card card-gradient">
+                        <div class="flex items-start gap-4">
+                            <div class="phase-badge">Fase 2</div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">Medio Plazo: Integración Nativa</h3>
+                                <p class="mb-3">Voyage AI se vuelve nativo en MongoDB Atlas</p>
+                                <ul class="space-y-1 text-sm">
+                                    <li>• <strong>Auto-Embedding Service:</strong> Vectorización automática</li>
+                                    <li>• <strong>Reranking Nativo:</strong> Precisión mejorada sin latencia</li>
+                                    <li>• <strong>Modelos Especializados:</strong> Finanzas, salud, legal</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 3 -->
+                <div class="relative">
+                    <div class="card card-gradient">
+                        <div class="flex items-start gap-4">
+                            <div class="phase-badge">Fase 3</div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2">Largo Plazo: Expansión de Fronteras</h3>
+                                <p class="mb-3">Capacidades de próxima generación</p>
+                                <ul class="space-y-1 text-sm">
+                                    <li>• <strong>Soporte Multimodal:</strong> Búsqueda en imágenes y videos</li>
+                                    <li>• <strong>Modelos Instruction-Tuned:</strong> Comprensión avanzada</li>
+                                    <li>• <strong>IA Conversacional:</strong> Agentes autónomos bancarios</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="section section-lg" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <div class="card mongodb-gradient text-center p-8">
+                <h2 class="text-3xl mb-4">El Futuro de la Banca es Inteligente y Automatizado</h2>
+                <p class="text-xl mb-6" style="max-width: 800px; margin: 0 auto;">
+                    MongoDB + Voyage AI + Orquestadores le posicionan en la vanguardia de la innovación financiera.
+                    No es solo tecnología, es una ventaja competitiva sostenible.
+                </p>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-8 text-left max-w-4xl mx-auto">
+                    <div>
+                        <h4 class="font-bold mb-2">Patrón Estándar</h4>
+                        <p class="text-sm opacity-90">
+                            Eficiencia operativa sin precedentes automatizando procesos actuales
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-2">Patrón IA Generativa</h4>
+                        <p class="text-sm opacity-90">
+                            Nuevas experiencias para clientes y empleados con IA confiable
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-2">Ventaja Integrada</h4>
+                        <p class="text-sm opacity-90">
+                            Una plataforma unificada mientras otros unen piezas separadas
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center gap-4">
+                    <button class="btn btn-secondary btn-lg" style="background: white; color: var(--color-text-dark);">
+                        <svg width="20" height="20" fill="currentColor">
+                            <path d="M17 12h-5v5h5v-5zM16 3v2H8V3H6v2H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-1V3h-2z"/>
+                        </svg>
+                        Agendar Demostración PoC
+                    </button>
+                    <button class="btn btn-ghost btn-lg" style="border-color: white; color: white;">
+                        <svg width="20" height="20" fill="currentColor">
+                            <path d="M9 11H7v2h2v-2zm0-4H7v2h2V7zm0 8H7v2h2v-2zm2-8h8v2h-8V7zm0 4h8v2h-8v-2zm0 4h8v2h-8v-2z"/>
+                        </svg>
+                        Ver Casos de Éxito
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="section" style="background-color: var(--color-bg-tertiary); padding: var(--spacing-2xl) 0;">
+        <div class="container text-center">
+            <div class="flex justify-center items-center gap-4 mb-4">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <path d="M20 5L35 15V25L20 35L5 25V15L20 5Z" stroke="var(--color-primary)" stroke-width="2" fill="none"/>
+                    <circle cx="20" cy="20" r="5" fill="var(--color-primary)"/>
+                </svg>
+                <span class="text-2xl font-bold">GoMDB</span>
+            </div>
+            <p class="text-secondary mb-4">
+                Partner Estratégico de MongoDB para la Transformación Digital con IA
+            </p>
+            <p class="text-sm text-muted">
+                © 2025 GoMDB. Construyendo el futuro inteligente de la banca.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Animación de scroll para navbar
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Smooth scroll para enlaces
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Animación de elementos al hacer scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observar elementos
+        document.querySelectorAll('.card, .use-case-card, .metric-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

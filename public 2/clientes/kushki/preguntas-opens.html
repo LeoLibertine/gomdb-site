@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario de Dimensionamiento: Atlas Search para Kushki</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0F172A; /* MongoDB Dark Background */
+            color: #E2E8F0;
+        }
+        .mongodb-green {
+            color: #00ED64;
+        }
+        .mongodb-green-bg {
+            background-color: #00ED64;
+        }
+        .mongodb-dark-card {
+            background-color: #1E293B;
+        }
+        .mongodb-border {
+            border-color: #334155;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        .textarea-custom {
+            background-color: #0F172A;
+            border-color: #334155;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .textarea-custom:focus {
+            outline: none;
+            border-color: #00ED64;
+            box-shadow: 0 0 0 2px rgba(0, 237, 100, 0.3);
+        }
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+        .transition-transform {
+            transition: transform 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mx-auto px-4 py-8 md:py-16 max-w-4xl">
+
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <div class="flex justify-center items-center gap-4 mb-4">
+              
+                <span class="text-3xl font-bold text-white">MongoDB</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-white leading-tight">Cuestionario de Dimensionamiento</h1>
+            <h2 class="text-2xl md:text-3xl font-bold mongodb-green">Atlas Search</h2>
+            <p class="text-lg text-slate-400 mt-4">Preparado para <span class="font-bold text-white">Kushki</span>.</p>
+        </header>
+
+        <!-- Questionnaire Sections -->
+        <div class="space-y-4" id="questionnaire-form">
+            
+            <!-- Section 1 -->
+            <div class="mongodb-dark-card rounded-lg border mongodb-border overflow-hidden">
+                <button class="w-full text-left p-6 flex justify-between items-center accordion-toggle">
+                    <h3 class="text-xl font-bold text-white">Sección 1: Perfil de Datos y Contenido</h3>
+                    
+                </button>
+                <div class="accordion-content">
+                    <div class="p-6 pt-0 space-y-8">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Pregunta 1.1: Alcance y Naturaleza de los Datos a Indexar</h4>
+                            <p class="text-slate-400 mb-4">Para entender el tamaño del índice, necesitamos conocer en detalle qué vamos a indexar.</p>
+                            <ul class="list-disc list-inside space-y-2 text-slate-300 mb-4">
+                                <li>Del total de ~11 TB de datos, ¿qué porcentaje aproximado es texto que realmente necesita ser buscado?</li>
+                                <li>En un documento promedio, ¿cuántos campos se incluirán en el índice de búsqueda (ej. 5, 10, 50)?</li>
+                                <li>¿Cuál es la naturaleza de esos campos? (Ej. 70% IDs cortos, 30% texto largo como logs o descripciones).</li>
+                            </ul>
+                            <p class="text-sm text-slate-500 mb-4"><strong>Por qué es importante:</strong> Esto nos permite estimar el tamaño en disco y la memoria RAM que consumirán los índices de búsqueda, que es diferente al tamaño de la base de datos.</p>
+                            <textarea class="w-full h-32 p-3 rounded-md textarea-custom" placeholder="Respuesta del Cliente..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2 -->
+            <div class="mongodb-dark-card rounded-lg border mongodb-border overflow-hidden">
+                <button class="w-full text-left p-6 flex justify-between items-center accordion-toggle">
+                    <h3 class="text-xl font-bold text-white">Sección 2: Perfil de Consultas y Funcionalidad</h3>
+                    <svg class="w-6 h-6 mongodb-green transition-transform chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                </button>
+                <div class="accordion-content">
+                    <div class="p-6 pt-0 space-y-8">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Pregunta 2.1: Complejidad de las Consultas</h4>
+                            <p class="text-slate-400 mb-4">No todas las búsquedas son iguales. Necesitamos saber qué tan "pesado" es el trabajo que realizarán los nodos.</p>
+                             <ul class="list-disc list-inside space-y-2 text-slate-300 mb-4">
+                                <li>¿Cuáles son las 3 a 5 consultas de búsqueda más frecuentes y críticas que ejecutan hoy en Kibana?</li>
+                                <li>¿Qué tan complejas son? ¿Usan muchos filtros (facetas), rangos de fechas, agregaciones, o son búsquedas simples?</li>
+                            </ul>
+                            <p class="text-sm text-slate-500 mb-4"><strong>Por qué es importante:</strong> Consultas complejas con múltiples etapas requieren más CPU. Analizar ejemplos reales nos permite anticipar la carga computacional.</p>
+                            <textarea class="w-full h-32 p-3 rounded-md textarea-custom" placeholder="Respuesta del Cliente..."></textarea>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Pregunta 2.2: Funcionalidades Avanzadas de Búsqueda</h4>
+                            <p class="text-slate-400 mb-2">¿Necesitan funcionalidades avanzadas como autocompletado, búsqueda "fuzzy" (con tolerancia a errores), resaltado de resultados o manejo de sinónimos?</p>
+                            <p class="text-sm text-slate-500 mb-4"><strong>Por qué es importante:</strong> Estas funcionalidades añaden carga computacional y pueden requerir configuraciones de índice específicas. Es vital saberlo para dimensionar correctamente.</p>
+                            <textarea class="w-full h-24 p-3 rounded-md textarea-custom" placeholder="Respuesta del Cliente..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3 -->
+            <div class="mongodb-dark-card rounded-lg border mongodb-border overflow-hidden">
+                 <button class="w-full text-left p-6 flex justify-between items-center accordion-toggle">
+                    <h3 class="text-xl font-bold text-white">Sección 3: Perfil de Carga y Rendimiento (SLAs)</h3>
+                    <svg class="w-6 h-6 mongodb-green transition-transform chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                </button>
+                <div class="accordion-content">
+                    <div class="p-6 pt-0 space-y-8">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Pregunta 3.1: Volumen de Consultas (QPS)</h4>
+                            <p class="text-slate-400 mb-2">¿Cuál es el número estimado de consultas de búsqueda por segundo (QPS) que esperan durante las horas pico?</p>
+                            <p class="text-sm text-slate-500 mb-4"><strong>Por qué es importante:</strong> El QPS es la métrica principal para determinar el número de nodos de búsqueda necesarios para mantener la concurrencia.</p>
+                            <textarea class="w-full h-24 p-3 rounded-md textarea-custom" placeholder="Respuesta del Cliente... (Ej: 10 QPS, 100 QPS, 1000 QPS)"></textarea>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Pregunta 3.2: Requerimientos de Latencia</h4>
+                            <p class="text-slate-400 mb-2">¿Cuál es el tiempo de respuesta máximo aceptable para las búsquedas? (Ej. el 95% de las consultas deben responder en menos de 200ms).</p>
+                             <p class="text-sm text-slate-500 mb-4"><strong>Por qué es importante:</strong> Un SLA de latencia estricto requiere nodos más potentes (con más RAM), impactando la elección del "tier" de los nodos.</p>
+                            <textarea class="w-full h-24 p-3 rounded-md textarea-custom" placeholder="Respuesta del Cliente..."></textarea>
+                        </div>
+                         <div>
+                            <h4 class="font-bold text-lg mb-2">Pregunta 3.3: Tasa de Ingesta/Actualización</h4>
+                            <p class="text-slate-400 mb-2">¿Con qué velocidad se escriben o actualizan los datos que deben ser indexados? (Documentos por segundo).</p>
+                             <p class="text-sm text-slate-500 mb-4"><strong>Por qué es importante:</strong> Una alta tasa de ingesta requiere poder de cómputo adicional en los nodos de búsqueda para que el índice se mantenga sincronizado.</p>
+                            <textarea class="w-full h-24 p-3 rounded-md textarea-custom" placeholder="Respuesta del Cliente..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4 -->
+            <div class="mongodb-dark-card rounded-lg border mongodb-border overflow-hidden">
+                 <button class="w-full text-left p-6 flex justify-between items-center accordion-toggle">
+                    <h3 class="text-xl font-bold text-white">Sección 4: Contexto de Negocio y Crecimiento</h3>
+                    <svg class="w-6 h-6 mongodb-green transition-transform chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                </button>
+                <div class="accordion-content">
+                    <div class="p-6 pt-0 space-y-8">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Pregunta 4.1: Criticidad del Servicio</h4>
+                            <p class="text-slate-400 mb-2">Si la funcionalidad de búsqueda se degrada, ¿cuál es el impacto para el negocio? (Alto, Medio, Bajo).</p>
+                             <p class="text-sm text-slate-500 mb-4"><strong>Por qué es importante:</strong> La criticidad define el nivel de redundancia y la estrategia de escalado para garantizar la alta disponibilidad.</p>
+                            <textarea class="w-full h-24 p-3 rounded-md textarea-custom" placeholder="Respuesta del Cliente... (Ej: Alto - los clientes no pueden comprar; Medio - operación interna se retrasa)"></textarea>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Pregunta 4.2: Proyección de Crecimiento</h4>
+                            <p class="text-slate-400 mb-2">¿Cuál es la tasa de crecimiento de datos y de usuarios que proyectan para los próximos 12 meses?</p>
+                            <p class="text-sm text-slate-500 mb-4"><strong>Por qué es importante:</strong> Nos permite proponer una arquitectura que funcione hoy y pueda escalar fácilmente para soportar el crecimiento futuro.</p>
+                            <textarea class="w-full h-24 p-3 rounded-md textarea-custom" placeholder="Respuesta del Cliente..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12">
+            <button id="submit-button" class="mongodb-green-bg text-slate-900 font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition-all">
+                Enviar Respuestas
+            </button>
+            <p class="text-slate-500 text-sm mt-4">Gracias por su tiempo. Sus respuestas nos permitirán diseñar la mejor solución para Kushki.</p>
+        </footer>
+        <div id="confirmation-message" class="hidden mt-4 text-center p-4 rounded-md mongodb-green-bg text-slate-900 font-bold">
+            ¡Gracias! Hemos recibido sus respuestas.
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const accordions = document.querySelectorAll('.accordion-toggle');
+            accordions.forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.nextElementSibling;
+                    const chevron = button.querySelector('.chevron');
+                    
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                        chevron.classList.remove('rotate-180');
+                    } else {
+                        accordions.forEach(otherButton => {
+                            if (otherButton !== button) {
+                                otherButton.nextElementSibling.style.maxHeight = null;
+                                otherButton.querySelector('.chevron').classList.remove('rotate-180');
+                            }
+                        });
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        chevron.classList.add('rotate-180');
+                    }
+                });
+            });
+
+            const submitButton = document.getElementById('submit-button');
+            const confirmationMessage = document.getElementById('confirmation-message');
+            const form = document.getElementById('questionnaire-form');
+
+            submitButton.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent actual form submission for this demo
+                // Here you would typically gather the data from textareas and send it to a server.
+                // For this demo, we'll just show a confirmation message.
+                form.style.display = 'none';
+                submitButton.style.display = 'none';
+                confirmationMessage.style.display = 'block';
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+        });
+    </script>
+
+</body>
+</html>

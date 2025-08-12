@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitácora Digital BDTL - Bancolombia</title>
+    <link rel="stylesheet" href="../../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para la aplicación */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--color-bg-secondary);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: var(--spacing-md) var(--spacing-xl);
+            z-index: var(--z-fixed);
+            height: 70px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--color-text-dark);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 300px;
+            height: calc(100vh - 70px);
+            background-color: var(--color-bg-secondary);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            z-index: var(--z-sticky);
+        }
+
+        .sidebar-content {
+            padding: var(--spacing-xl);
+        }
+
+        .menu-item {
+            display: block;
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+            border-radius: var(--radius-lg);
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+        }
+
+        .menu-item.active {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            border-left: 3px solid var(--color-primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            margin-top: 70px;
+            padding: var(--spacing-2xl);
+            flex: 1;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform var(--transition-slow);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text-primary);
+            font-size: var(--text-xl);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">B</div>
+                <div>
+                    <h2 style="margin-bottom: 0; font-size: var(--text-xl);">Bitácora Digital BDTL</h2>
+                    <p style="margin-bottom: 0; font-size: var(--text-sm); color: var(--color-text-muted);">Bancolombia MongoDB Architecture</p>
+                </div>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <nav>
+                    <a href="bdtl.html" class="menu-item active">
+                        📚 Introducción al Proyecto BDTL
+                    </a>
+                    <a href="arquitectura.html" class="menu-item">
+                        🏗️ Arquitectura del Sistema
+                    </a>
+                    <a href="evolucion.html" class="menu-item">
+                        📈 Evolución de la Arquitectura
+                    </a>
+                    <a href="ventajas.html" class="menu-item">
+                        ⚡ Ventajas de MongoDB como BDTL
+                    </a>
+                    <a href="tablas.html" class="menu-item">
+                        📋 Descripción Tablas y Campos
+                    </a>
+                    <a href="procedures.html" class="menu-item">
+                        ⚙️ Store Procedures
+                    </a>
+                    <a href="modelo.html" class="menu-item">
+                        🗃️ Modelo de Datos
+                    </a>
+                    <a href="servicios.html" class="menu-item">
+                        🔌 Servicios y APIs
+                    </a>
+                    <a href="logica.html" class="menu-item">
+                        🧠 Lógica de Negocio
+                    </a>
+                    <a href="guias.html" class="menu-item">
+                        📖 Guías y Mejores Prácticas
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div style="text-align: center; padding: var(--spacing-4xl);">
+                <h1 class="text-gradient">Bitácora Digital BDTL</h1>
+                <p style="font-size: var(--text-xl); color: var(--color-text-secondary);">Selecciona una sección del menú lateral para navegar</p>
+                
+                <div class="card" style="margin-top: var(--spacing-2xl);">
+                    <h3>Navegación</h3>
+                    <p>Utiliza el menú lateral para acceder a las diferentes secciones de la bitácora digital del proyecto BDTL.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Función para toggle del menú móvil
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        // Marcar enlace activo basado en la página actual
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop() || 'introduccion.html';
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === currentPage) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

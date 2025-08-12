@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Licenciamiento MongoDB Enterprise - ETB</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        .server-visual {
+            background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-tertiary));
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .server-visual::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 237, 100, 0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        
+        .ram-bar {
+            background: linear-gradient(to right, var(--color-primary), var(--color-accent));
+            height: 20px;
+            border-radius: var(--radius-full);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ram-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: slide 2s infinite;
+        }
+        
+        @keyframes slide {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .license-counter {
+            font-size: var(--text-6xl);
+            font-weight: 900;
+            color: var(--color-primary);
+            text-shadow: 0 0 20px rgba(0, 237, 100, 0.5);
+        }
+        
+        .math-formula {
+            background: var(--color-bg-tertiary);
+            border: 1px solid var(--color-primary);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            font-family: var(--font-mono);
+            font-size: var(--text-lg);
+            text-align: center;
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .deficit-highlight {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            color: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+        }
+        
+        .option-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary), rgba(13, 42, 61, 0.8));
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-glow);
+            border-color: var(--color-primary-hover);
+        }
+        
+        .step-indicator {
+            background: var(--color-primary);
+            color: var(--color-text-dark);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-2xl);
+            font-weight: 900;
+            margin: 0 auto var(--spacing-lg);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .interactive-chart {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin: var(--spacing-2xl) 0;
+        }
+        
+        .hero-etb {
+            background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 50%, var(--color-accent) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .floating-element {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-2xl);
+            margin: var(--spacing-4xl) 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegación -->
+    <nav class="navbar navbar-scrolled">
+        <div class="container navbar-container">
+            <div class="navbar-logo">
+                <span class="text-gradient">GoMDB</span>
+                <span>MongoDB Experts</span>
+            </div>
+            <div class="navbar-links">
+                <a href="#overview" class="navbar-link">Resumen</a>
+                <a href="#calculation" class="navbar-link">Cálculo</a>
+                <a href="#options" class="navbar-link">Opciones</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero hero-etb">
+        <div class="floating-elements">
+            <div class="floating-element" style="top: 10%; left: 5%; font-size: 3rem;">🔧</div>
+            <div class="floating-element" style="top: 20%; right: 10%; font-size: 2rem;">📊</div>
+            <div class="floating-element" style="bottom: 20%; left: 15%; font-size: 2.5rem;">⚡</div>
+            <div class="floating-element" style="bottom: 10%; right: 20%; font-size: 3rem;">🚀</div>
+        </div>
+        
+        <div class="container">
+            <div class="text-center animate-fadeIn">
+                <div class="badge badge-primary mb-4">
+                    <span>📋</span>
+                    Análisis Técnico Especializado
+                </div>
+                <h1 class="text-gradient mb-4">
+                    Análisis de Licenciamiento<br>
+                    MongoDB Enterprise Advanced
+                </h1>
+                <p class="text-xl mb-6" style="max-width: 800px; margin: 0 auto;">
+                    Evaluación completa del licenciamiento para tu clúster MongoDB en <strong>ETB</strong>
+                    <br>Cálculo preciso basado en la configuración actual de tus 6 servidores
+                </p>
+                <div class="flex justify-center gap-4 flex-wrap">
+                    <a href="#calculation" class="btn btn-primary btn-lg">
+                        <span>📊</span>
+                        Ver Cálculo Detallado
+                    </a>
+                    <a href="#options" class="btn btn-secondary btn-lg">
+                        <span>🎯</span>
+                        Ver Opciones
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resumen Ejecutivo -->
+    <section id="overview" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <div class="step-indicator">1</div>
+                <h2 class="text-gradient">Tu Configuración Actual</h2>
+                <p class="text-xl">6 servidores distribuidos en 2 shards con diferentes capacidades de RAM</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <!-- Shard 1 -->
+                <div class="card card-gradient animate-slideInLeft">
+                    <div class="text-center mb-4">
+                        <h3 class="text-2xl text-gradient">Shard 1</h3>
+                        <div class="badge badge-primary">Alta Performance</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-3 mb-4">
+                        <div class="server-visual text-center">
+                            <div class="text-3xl mb-2">🖥️</div>
+                            <div class="text-sm font-bold">Servidor 1</div>
+                            <div class="text-primary font-bold">425 GB RAM</div>
+                        </div>
+                        <div class="server-visual text-center">
+                            <div class="text-3xl mb-2">🖥️</div>
+                            <div class="text-sm font-bold">Servidor 2</div>
+                            <div class="text-primary font-bold">425 GB RAM</div>
+                        </div>
+                        <div class="server-visual text-center">
+                            <div class="text-3xl mb-2">🖥️</div>
+                            <div class="text-sm font-bold">Servidor 3</div>
+                            <div class="text-primary font-bold">425 GB RAM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="metric-value">1,275 GB</div>
+                        <div class="metric-label">RAM Total del Shard</div>
+                    </div>
+                </div>
+
+                <!-- Shard 2 -->
+                <div class="card card-gradient animate-slideInRight">
+                    <div class="text-center mb-4">
+                        <h3 class="text-2xl text-gradient">Shard 2</h3>
+                        <div class="badge badge-secondary">Performance Estándar</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-3 mb-4">
+                        <div class="server-visual text-center">
+                            <div class="text-3xl mb-2">🖥️</div>
+                            <div class="text-sm font-bold">Servidor 4</div>
+                            <div class="text-accent font-bold">250 GB RAM</div>
+                        </div>
+                        <div class="server-visual text-center">
+                            <div class="text-3xl mb-2">🖥️</div>
+                            <div class="text-sm font-bold">Servidor 5</div>
+                            <div class="text-accent font-bold">250 GB RAM</div>
+                        </div>
+                        <div class="server-visual text-center">
+                            <div class="text-3xl mb-2">🖥️</div>
+                            <div class="text-sm font-bold">Servidor 6</div>
+                            <div class="text-accent font-bold">250 GB RAM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="metric-value">750 GB</div>
+                        <div class="metric-label">RAM Total del Shard</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regla de Licenciamiento -->
+            <div class="card card-bordered text-center">
+                <div class="step-indicator">2</div>
+                <h3 class="text-2xl text-gradient mb-4">La Regla del Licenciamiento MongoDB</h3>
+                <div class="grid md:grid-cols-3 gap-4 items-center">
+                    <div>
+                        <div class="text-4xl mb-2">📏</div>
+                        <h4>Unidad Base</h4>
+                        <p><strong>256 GB RAM</strong> por licencia</p>
+                    </div>
+                    <div>
+                        <div class="text-4xl mb-2">🔢</div>
+                        <h4>Cálculo Individual</h4>
+                        <p>Por <strong>cada servidor</strong> independientemente</p>
+                    </div>
+                    <div>
+                        <div class="text-4xl mb-2">⬆️</div>
+                        <h4>Redondeo</h4>
+                        <p>Siempre <strong>hacia arriba</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cálculo Detallado -->
+    <section id="calculation" class="section" style="background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-primary) 100%);">
+        <div class="container">
+            <div class="text-center mb-6">
+                <div class="step-indicator">3</div>
+                <h2 class="text-gradient">Cálculo Detallado por Shard</h2>
+                <p class="text-xl">Aplicando la fórmula: ⌈RAM del Servidor ÷ 256⌉</p>
+            </div>
+
+            <!-- Cálculo Shard 1 -->
+            <div class="card card-gradient mb-8 animate-fadeIn">
+                <h3 class="text-3xl text-center mb-6">
+                    <span class="text-gradient">Cálculo para Shard 1</span>
+                    <span class="badge badge-primary ml-4">425 GB por servidor</span>
+                </h3>
+                
+                <div class="math-formula">
+                    <div class="text-2xl mb-4">📊 Fórmula por servidor:</div>
+                    <div class="text-primary text-3xl">⌈425 GB ÷ 256⌉ = ⌈1.66⌉ = <strong>2 licencias</strong></div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4 text-center">
+                    <div class="card">
+                        <div class="text-4xl mb-2">🖥️</div>
+                        <h4>Servidor 1</h4>
+                        <div class="ram-bar mb-2" style="width: 100%;"></div>
+                        <p>425 GB → <span class="text-primary font-bold">2 licencias</span></p>
+                    </div>
+                    <div class="card">
+                        <div class="text-4xl mb-2">🖥️</div>
+                        <h4>Servidor 2</h4>
+                        <div class="ram-bar mb-2" style="width: 100%;"></div>
+                        <p>425 GB → <span class="text-primary font-bold">2 licencias</span></p>
+                    </div>
+                    <div class="card">
+                        <div class="text-4xl mb-2">🖥️</div>
+                        <h4>Servidor 3</h4>
+                        <div class="ram-bar mb-2" style="width: 100%;"></div>
+                        <p>425 GB → <span class="text-primary font-bold">2 licencias</span></p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-6">
+                    <div class="license-counter pulse-animation">6</div>
+                    <p class="text-xl">licencias requeridas para Shard 1</p>
+                    <p class="text-sm text-muted">(3 servidores × 2 licencias cada uno)</p>
+                </div>
+            </div>
+
+            <!-- Cálculo Shard 2 -->
+            <div class="card card-gradient mb-8 animate-fadeIn">
+                <h3 class="text-3xl text-center mb-6">
+                    <span class="text-gradient">Cálculo para Shard 2</span>
+                    <span class="badge badge-secondary ml-4">250 GB por servidor</span>
+                </h3>
+                
+                <div class="math-formula">
+                    <div class="text-2xl mb-4">📊 Fórmula por servidor:</div>
+                    <div class="text-accent text-3xl">⌈250 GB ÷ 256⌉ = ⌈0.97⌉ = <strong>1 licencia</strong></div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4 text-center">
+                    <div class="card">
+                        <div class="text-4xl mb-2">🖥️</div>
+                        <h4>Servidor 4</h4>
+                        <div class="ram-bar mb-2" style="width: 97.6%; background: linear-gradient(to right, var(--color-accent), var(--color-accent));"></div>
+                        <p>250 GB → <span class="text-accent font-bold">1 licencia</span></p>
+                    </div>
+                    <div class="card">
+                        <div class="text-4xl mb-2">🖥️</div>
+                        <h4>Servidor 5</h4>
+                        <div class="ram-bar mb-2" style="width: 97.6%; background: linear-gradient(to right, var(--color-accent), var(--color-accent));"></div>
+                        <p>250 GB → <span class="text-accent font-bold">1 licencia</span></p>
+                    </div>
+                    <div class="card">
+                        <div class="text-4xl mb-2">🖥️</div>
+                        <h4>Servidor 6</h4>
+                        <div class="ram-bar mb-2" style="width: 97.6%; background: linear-gradient(to right, var(--color-accent), var(--color-accent));"></div>
+                        <p>250 GB → <span class="text-accent font-bold">1 licencia</span></p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-6">
+                    <div class="license-counter pulse-animation" style="color: var(--color-accent);">3</div>
+                    <p class="text-xl">licencias requeridas para Shard 2</p>
+                    <p class="text-sm text-muted">(3 servidores × 1 licencia cada uno)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resultado Final -->
+    <section class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <div class="step-indicator">4</div>
+                <h2 class="text-gradient">Resultado Final del Análisis</h2>
+            </div>
+
+            <div class="summary-grid">
+                <div class="card card-gradient text-center">
+                    <h3 class="text-2xl mb-4">📊 Resumen por Shard</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="text-4xl text-primary font-bold">6</div>
+                            <p>Licencias Shard 1</p>
+                        </div>
+                        <div>
+                            <div class="text-4xl text-accent font-bold">3</div>
+                            <p>Licencias Shard 2</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-gradient text-center">
+                    <h3 class="text-2xl mb-4">🎯 Total Requerido</h3>
+                    <div class="license-counter">9</div>
+                    <p class="text-xl">licencias necesarias</p>
+                    <p class="text-sm text-muted">Para cumplir con el licenciamiento</p>
+                </div>
+            </div>
+
+            <!-- Déficit Alert -->
+            <div class="deficit-highlight animate-pulse mt-8">
+                <h3 class="text-3xl mb-4">⚠️ Situación Actual Detectada</h3>
+                <p class="text-xl mb-4">
+                    Si actualmente estás pagando por <strong>6 licencias</strong> (una por servidor):
+                </p>
+                <div class="text-4xl font-bold">
+                    Déficit: <span class="text-yellow-300">3 licencias adicionales</span>
+                </div>
+                <p class="text-lg mt-4">
+                    Los servidores del Shard 1 requieren <strong>2 licencias cada uno</strong> debido a su RAM superior a 256 GB
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Opciones de Solución -->
+    <section id="options" class="section" style="background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-tertiary) 100%);">
+        <div class="container">
+            <div class="text-center mb-6">
+                <div class="step-indicator">5</div>
+                <h2 class="text-gradient">Opciones de Solución</h2>
+                <p class="text-xl">Dos caminos para regularizar tu licenciamiento</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Opción A -->
+                <div class="option-card">
+                    <div class="text-center mb-6">
+                        <div class="text-6xl mb-4">💰</div>
+                        <h3 class="text-3xl text-gradient">Opción A</h3>
+                        <div class="badge badge-primary">Recomendada</div>
+                    </div>
+                    
+                    <h4 class="text-2xl mb-4">Adquirir Licencias Adicionales</h4>
+                    
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span>Licencias actuales:</span>
+                            <span class="font-bold">6</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span>Licencias necesarias:</span>
+                            <span class="font-bold text-primary">9</span>
+                        </div>
+                        <hr style="border-color: var(--color-primary);">
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-xl font-bold">Licencias a comprar:</span>
+                            <span class="text-3xl font-bold text-primary">3</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h5 class="text-lg font-bold mb-2">✅ Ventajas:</h5>
+                        <ul class="space-y-2">
+                            <li>• Mantienes toda la capacidad de RAM actual</li>
+                            <li>• No requiere cambios en hardware</li>
+                            <li>• Cumplimiento inmediato del licenciamiento</li>
+                            <li>• Preservas el rendimiento óptimo</li>
+                        </ul>
+                    </div>
+
+                    <div class="btn btn-primary w-full">
+                        <span>🚀</span>
+                        Solución Empresarial
+                    </div>
+                </div>
+
+                <!-- Opción B -->
+                <div class="option-card">
+                    <div class="text-center mb-6">
+                        <div class="text-6xl mb-4">🔧</div>
+                        <h3 class="text-3xl text-gradient">Opción B</h3>
+                        <div class="badge badge-secondary">Alternativa</div>
+                    </div>
+                    
+                    <h4 class="text-2xl mb-4">Ajustar Hardware</h4>
+                    
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span>RAM actual Shard 1:</span>
+                            <span class="font-bold">425 GB/servidor</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span>RAM objetivo:</span>
+                            <span class="font-bold text-accent">≤ 256 GB/servidor</span>
+                        </div>
+                        <hr style="border-color: var(--color-accent);">
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-xl font-bold">Reducción necesaria:</span>
+                            <span class="text-3xl font-bold text-accent">169 GB</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h5 class="text-lg font-bold mb-2">⚠️ Consideraciones:</h5>
+                        <ul class="space-y-2">
+                            <li>• Reducción significativa de performance</li>
+                            <li>• Requiere intervención en hardware</li>
+                            <li>• Posible impacto en aplicaciones</li>
+                            <li>• Tiempo de implementación</li>
+                        </ul>
+                    </div>
+
+                    <div class="btn btn-ghost w-full">
+                        <span>⚙️</span>
+                        Solución de Ajuste
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recomendación Final -->
+            <div class="card mongodb-gradient text-center mt-8">
+                <h3 class="text-3xl mb-4" style="color: var(--color-text-dark);">
+                    🎯 Recomendación del Arquitecto
+                </h3>
+                <p class="text-xl mb-4" style="color: var(--color-text-dark);">
+                    Basado en 15+ años de experiencia con MongoDB Enterprise en entornos críticos:
+                </p>
+                <div class="text-2xl font-bold" style="color: var(--color-text-dark);">
+                    La <strong>Opción A</strong> es la más viable para ETB
+                </div>
+                <p class="text-lg mt-4" style="color: var(--color-text-dark);">
+                    Mantiene el rendimiento óptimo y asegura el cumplimiento normativo sin afectar operaciones críticas
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="section" style="background: var(--color-bg-tertiary); padding: var(--spacing-2xl) 0;">
+        <div class="container text-center">
+            <div class="text-3xl text-gradient mb-4">GoMDB</div>
+            <p class="text-lg mb-4">MongoDB Architecture Excellence for Latin America</p>
+            <p class="text-sm text-muted">
+                Análisis técnico realizado por arquitectos certificados MongoDB con más de 15 años de experiencia
+            </p>
+            <div class="mt-4">
+                <div class="badge badge-primary">MongoDB Partner</div>
+                <div class="badge badge-secondary ml-2">Enterprise Certified</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Efecto de navegación al hacer scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Animaciones al hacer scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observar elementos animables
+        document.querySelectorAll('.animate-fadeIn, .animate-slideInLeft, .animate-slideInRight').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            observer.observe(el);
+        });
+
+        // Smooth scrolling para los enlaces de navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Efecto de pulso en contadores
+        setInterval(() => {
+            document.querySelectorAll('.license-counter').forEach(counter => {
+                counter.classList.remove('pulse-animation');
+                void counter.offsetWidth; // Trigger reflow
+                counter.classList.add('pulse-animation');
+            });
+        }, 3000);
+    </script>
+</body>
+</html>

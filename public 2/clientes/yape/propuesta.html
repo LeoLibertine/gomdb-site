@@ -1,0 +1,1547 @@
+.summary-section {
+    margin-top: var(--spacing-4xl);
+    text-align: center;
+  }
+  
+  .summary-card {
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, <!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yape MongoDB Atlas - Dimensionamiento Inteligente</title>
+<style>
+/* =============================================
+   GoMDB - Sistema de Diseño Global
+   Arquitectura MongoDB para Latinoamérica
+   ============================================= */
+
+/* ============================================= 
+   1. VARIABLES CSS (Custom Properties)
+   ============================================= */
+   :root {
+    /* Colores Primarios - Basados en MongoDB */
+    --color-primary: #00ED64;           /* Verde MongoDB */
+    --color-primary-hover: #00D757;     /* Verde hover */
+    --color-primary-light: #00ED6420;   /* Verde con transparencia */
+    
+    /* Colores de Fondo */
+    --color-bg-primary: #001E2B;        /* Azul oscuro principal */
+    --color-bg-secondary: #0D2A3D;      /* Azul medio */
+    --color-bg-tertiary: #112331;       /* Azul alternativo */
+    --color-bg-card: #0D2A3D80;         /* Fondo de cards con transparencia */
+    
+    /* Colores de Acento */
+    --color-accent: #5644D4;            /* Púrpura */
+    --color-accent-light: #5644D420;    /* Púrpura con transparencia */
+    
+    /* Colores de Texto */
+    --color-text-primary: #FFFFFF;      /* Blanco */
+    --color-text-secondary: #B8C4CE;    /* Gris claro */
+    --color-text-muted: #718096;        /* Gris medio */
+    --color-text-dark: #001E2B;         /* Para texto sobre fondos claros */
+    
+    /* Colores de Estado */
+    --color-success: #00ED64;
+    --color-warning: #F59E0B;
+    --color-error: #EF4444;
+    --color-info: #3B82F6;
+    
+    /* Espaciado */
+    --spacing-xs: 0.25rem;    /* 4px */
+    --spacing-sm: 0.5rem;     /* 8px */
+    --spacing-md: 1rem;       /* 16px */
+    --spacing-lg: 1.5rem;     /* 24px */
+    --spacing-xl: 2rem;       /* 32px */
+    --spacing-2xl: 3rem;      /* 48px */
+    --spacing-3xl: 4rem;      /* 64px */
+    --spacing-4xl: 6rem;      /* 96px */
+    
+    /* Tipografía */
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+    
+    /* Tamaños de Fuente */
+    --text-xs: 0.75rem;       /* 12px */
+    --text-sm: 0.875rem;      /* 14px */
+    --text-base: 1rem;        /* 16px */
+    --text-lg: 1.125rem;      /* 18px */
+    --text-xl: 1.25rem;       /* 20px */
+    --text-2xl: 1.5rem;       /* 24px */
+    --text-3xl: 2rem;         /* 32px */
+    --text-4xl: 2.5rem;       /* 40px */
+    --text-5xl: 3rem;         /* 48px */
+    --text-6xl: 4rem;         /* 64px */
+    --text-7xl: 5rem;         /* 80px */
+    --text-8xl: 6rem;         /* 96px */
+    
+    /* Bordes y Radios */
+    --radius-sm: 0.25rem;     /* 4px */
+    --radius-md: 0.5rem;      /* 8px */
+    --radius-lg: 1rem;        /* 16px */
+    --radius-xl: 1.5rem;      /* 24px */
+    --radius-full: 9999px;    /* Circular */
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+    --shadow-glow: 0 0 40px rgba(0, 237, 100, 0.3);
+    
+    /* Transiciones */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+    
+    /* Z-Index */
+    --z-base: 1;
+    --z-dropdown: 10;
+    --z-sticky: 20;
+    --z-fixed: 30;
+    --z-modal-backdrop: 40;
+    --z-modal: 50;
+    --z-popover: 60;
+    --z-tooltip: 70;
+  }
+  
+  /* Base styles */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  
+  /* Layout */
+  .container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+  }
+  
+  .section {
+    padding: var(--spacing-4xl) 0;
+  }
+  
+  /* Navbar */
+  .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: var(--z-fixed);
+    background-color: rgba(0, 30, 43, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+  }
+  
+  .navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+  
+  .yape-logo {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #741D7F 0%, #E91E63 100%);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  /* Hero Section */
+  .hero {
+    position: relative;
+    padding-top: calc(80px + var(--spacing-4xl));
+    padding-bottom: var(--spacing-4xl);
+    overflow: hidden;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+  
+  .hero-background {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 50%, var(--color-bg-primary) 100%);
+    z-index: -2;
+  }
+  
+  .hero-blur {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.2;
+    z-index: -1;
+  }
+  
+  .hero-blur-primary {
+    width: 400px;
+    height: 400px;
+    background-color: var(--color-primary);
+    top: 10%;
+    left: 5%;
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .hero-blur-accent {
+    width: 500px;
+    height: 500px;
+    background-color: var(--color-accent);
+    bottom: 10%;
+    right: 10%;
+    animation: float 8s ease-in-out infinite reverse;
+  }
+  
+  .hero-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .hero-title {
+    font-size: clamp(var(--text-4xl), 8vw, var(--text-7xl));
+    font-weight: 700;
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .hero-subtitle {
+    font-size: var(--text-xl);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-2xl);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Cards Grid - Optimized for horizontal space */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-4xl);
+  }
+  
+  @media (max-width: 1200px) {
+    .cards-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .cards-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .card {
+    background-color: var(--color-bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    transition: all var(--transition-base);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+  }
+  
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .card:hover::before {
+    opacity: 1;
+  }
+  
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .card-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+  
+  .environment-badge {
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+  
+  .badge-production {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .badge-staging {
+    background-color: var(--color-warning);
+    color: var(--color-text-dark);
+  }
+  
+  .badge-development {
+    background-color: var(--color-info);
+    color: var(--color-text-primary);
+  }
+  
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  @media (min-width: 768px) {
+    .specs-grid {
+      grid-template-columns: repeat(6, 1fr);
+      gap: var(--spacing-xs);
+    }
+  }
+  
+  .spec-item {
+    text-align: center;
+    padding: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .spec-value {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--color-primary);
+    display: block;
+  }
+  
+  @media (min-width: 768px) {
+    .spec-value {
+      font-size: var(--text-xl);
+    }
+  }
+  
+  .spec-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    margin-top: var(--spacing-xs);
+    line-height: 1.1;
+  }
+  
+  .spec-item {
+    text-align: center;
+  }
+  
+  .spec-value {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    display: block;
+  }
+  
+  .spec-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin-top: var(--spacing-xs);
+  }
+  
+  .pricing-section {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .pricing-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .pricing-option {
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    background-color: rgba(255, 255, 255, 0.05);
+    text-align: center;
+  }
+  
+  .pricing-title {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .pricing-value {
+    font-size: var(--text-md);
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+  
+  .savings-highlight {
+    background: linear-gradient(135deg, var(--color-success) 0%, rgba(0, 237, 100, 0.2) 100%);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    text-align: center;
+    margin-top: var(--spacing-md);
+  }
+  
+  .savings-amount {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text-dark);
+  }
+  
+  .savings-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-dark);
+    opacity: 0.8;
+  }
+  
+  /* Interactive Elements */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-weight: 600;
+    font-size: var(--text-base);
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    text-decoration: none;
+  }
+  
+  .btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  /* Summary Section */
+  .summary-section {
+    margin-top: var(--spacing-4xl);
+    text-align: center;
+  }
+  
+  .summary-card {
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-2xl);
+    margin-top: var(--spacing-2xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .technical-summary-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: left;
+  }
+  
+  .summary-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+  }
+  
+  @media (min-width: 768px) {
+    .summary-stats {
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-xs);
+    }
+  }
+  
+  .summary-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--spacing-xs);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-sm);
+  }
+  
+  .summary-stat-value {
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  @media (min-width: 768px) {
+    .summary-stat-value {
+      font-size: var(--text-lg);
+    }
+  }
+  
+  .summary-stat-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    line-height: 1.2;
+  }
+  
+  .summary-title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .total-savings {
+    font-size: var(--text-6xl);
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .savings-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  /* Animations */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+  
+  /* Technical Stats */
+  .technical-stats {
+    margin-top: var(--spacing-2xl);
+    margin-bottom: var(--spacing-2xl);
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-lg);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .stat-item {
+    text-align: center;
+    padding: var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all var(--transition-base);
+  }
+  
+  .stat-item:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 20px rgba(0, 237, 100, 0.2);
+  }
+  
+  .stat-value {
+    display: block;
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .stat-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.2;
+  }
+    .specs-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .pricing-comparison {
+      grid-template-columns: 1fr;
+    }
+    
+    .cards-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .hero-title {
+      font-size: var(--text-4xl);
+    }
+  }
+</style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar">
+<div class="container">
+    <div class="navbar-container">
+        <div class="navbar-logo">
+            <div class="yape-logo">Y</div>
+            <span>Yape + MongoDB Atlas</span>
+        </div>
+        <div>
+            <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">
+                Solución de Dimensionamiento Inteligente
+            </span>
+        </div>
+    </div>
+</div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+<div class="hero-background"></div>
+<div class="hero-blur hero-blur-primary"></div>
+<div class="hero-blur hero-blur-accent"></div>
+
+<div class="container">
+    <div class="hero-content">
+        <h1 class="hero-title">
+            Dimensionamiento 
+            <span class="text-gradient">MongoDB Atlas</span>
+            para Yape
+        </h1>
+        <p class="hero-subtitle">
+            Arquitectura optimizada para billetera electrónica con 2.68B documentos y 1M+ transacciones diarias. 
+            Reduce tiempo de respuesta de 30s a 3s con la potencia de MongoDB Atlas.
+        </p>
+        
+        <!-- Technical Stats Summary -->
+        <div class="technical-stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value">2.68B</span>
+                    <span class="stat-label">Documentos Totales</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">2.5TB</span>
+                    <span class="stat-label">Datos Sin Comprimir</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">10K</span>
+                    <span class="stat-label">Lecturas/seg</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">5K</span>
+                    <span class="stat-label">Escrituras/seg</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Environment Cards -->
+        <div class="cards-grid" id="environmentCards">
+            <!-- Cards will be populated by JavaScript -->
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- Summary Section -->
+<section class="summary-section">
+<div class="container">
+    <div class="summary-card">
+        <h2 class="summary-title">Resumen Técnico y Financiero</h2>
+        
+        <!-- Technical Summary Grid - Optimized Horizontal Layout -->
+        <div style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        ">
+            <div class="technical-summary-card">
+                <h3 style="color: var(--color-primary); margin-bottom: var(--spacing-md);">📊 Volumen de Datos</h3>
+                <div class="summary-stats">
+                    <div class="summary-stat">
+                        <span class="summary-stat-value">2.68B</span>
+                        <span class="summary-stat-label">Documentos totales</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="summary-stat-value">1KB</span>
+                        <span class="summary-stat-label">Tamaño promedio/doc</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="summary-stat-value">2.5TB</span>
+                        <span class="summary-stat-label">Datos sin comprimir</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="summary-stat-value">1.25TB</span>
+                        <span class="summary-stat-label">Con compresión 50%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="technical-summary-card">
+                <h3 style="color: var(--color-accent); margin-bottom: var(--spacing-md);">⚡ Rendimiento</h3>
+                <div class="summary-stats">
+                    <div class="summary-stat">
+                        <span class="summary-stat-value">10K</span>
+                        <span class="summary-stat-label">Lecturas/segundo</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="summary-stat-value">5K</span>
+                        <span class="summary-stat-label">Escrituras/segundo</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="summary-stat-value">347</span>
+                        <span class="summary-stat-label">Eliminaciones/segundo</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="summary-stat-value">30%</span>
+                        <span class="summary-stat-label">Datos frecuentemente accedidos</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="technical-summary-card">
+                <h3 style="color: var(--color-success); margin-bottom: var(--spacing-md);">🎯 Mejora de Rendimiento</h3>
+                <div class="summary-stats">
+                    <div class="summary-stat">
+                        <span class="summary-stat-value">30s → 3s</span>
+                        <span class="summary-stat-label">Tiempo de respuesta</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="summary-stat-value">10x</span>
+                        <span class="summary-stat-label">Mejora de velocidad</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="summary-stat-value">99.9%</span>
+                        <span class="summary-stat-label">Disponibilidad SLA</span>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="summary-stat-value">24/7</span>
+                        <span class="summary-stat-label">Soporte empresarial</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="total-savings" id="totalSavings">$119,010</div>
+        <p class="savings-description">
+            Ahorro anual total con el modelo de licenciamiento por nodo vs. RAM Pool. 
+            Incluye optimización de costos para los 3 ambientes requeridos.
+        </p>
+        <div style="display: flex; gap: var(--spacing-lg); justify-content: center; flex-wrap: wrap;">
+            <a href="#" class="btn btn-primary" onclick="downloadProposal()">
+                📄 Descargar Propuesta Técnica
+            </a>
+            <a href="#" class="btn btn-secondary" onclick="scheduleDemo()">
+                📅 Agendar Demo Técnica
+            </a>
+        </div>
+    </div>
+</div>
+</section>
+
+<script>
+// Environment data based on the Excel file with enhanced technical details
+const environments = [
+    {
+        name: "Productivo",
+        ram: 128,
+        vcpus: 36,
+        ssd: 3072,
+        nodes: 3,
+        ramPoolPrice: 163980, // From PDF: 1x SUB-EA256 + 1x SUB-EA128
+        nodePrice: 44970, // From PDF: 3 nodes x $14,990
+        badge: "production",
+        description: "Ambiente principal con alta disponibilidad y rendimiento máximo",
+        technicalSpecs: {
+            documents: "2.68B documentos",
+            dataSize: "2.5TB sin comprimir / 1.25TB comprimido",
+            operations: "10K lecturas/seg, 5K escrituras/seg",
+            workingSet: "~108GB (30% datos activos)",
+            compression: "50% ratio WiredTiger"
+        }
+    },
+    {
+        name: "Pre-Productivo",
+        ram: 64,
+        vcpus: 18,
+        ssd: 1536,
+        nodes: 3,
+        ramPoolPrice: 64490, // 1x SUB-EA128 for 192GB (3x64GB)
+        nodePrice: 22485, // Estimated proportional cost
+        badge: "staging",
+        description: "Ambiente de pruebas y validación pre-despliegue",
+        technicalSpecs: {
+            documents: "~1.34B documentos (50% prod)",
+            dataSize: "1.25TB sin comprimir / 625GB comprimido",
+            operations: "5K lecturas/seg, 2.5K escrituras/seg",
+            workingSet: "~54GB (30% datos activos)",
+            compression: "50% ratio WiredTiger"
+        }
+    },
+    {
+        name: "Desarrollo",
+        ram: 32,
+        vcpus: 9,
+        ssd: 768,
+        nodes: 3,
+        ramPoolPrice: 35990, // 1x SUB-EA64 for 96GB (3x32GB)
+        nodePrice: 11242.5, // Estimated proportional cost
+        badge: "development",
+        description: "Ambiente de desarrollo y testing interno",
+        technicalSpecs: {
+            documents: "~670M documentos (25% prod)",
+            dataSize: "625GB sin comprimir / 312GB comprimido",
+            operations: "2.5K lecturas/seg, 1.25K escrituras/seg",
+            workingSet: "~27GB (30% datos activos)",
+            compression: "50% ratio WiredTiger"
+        }
+    }
+];
+
+// Technical data from Excel analysis
+const technicalData = {
+    documents: {
+        averageSize: 1, // KB per document
+        totalDocuments: 2684354560, // 2.68B documents
+        totalDataUncompressed: 2.5, // TB
+        totalDataCompressed: 1.25, // TB
+        compressionRatio: 0.5
+    },
+    operations: {
+        insertsPerSecond: 5000,
+        deletesPerSecond: 347.2,
+        readsPerSecond: 10000,
+        updatesPerSecond: 5000,
+        peakMultiplier: 2 // 2x for peak loads
+    },
+    performance: {
+        dataFrequentlyAccessed: 30, // %
+        workingSetGB: 107.52, // GB (frequently accessed data + indexes)
+        totalDiskRequired: 2996, // GB
+        totalMemoryRequired: 210, // GB (~215040 MB)
+        compressionRatio: 0.5,
+        targetResponseTime: 3, // seconds
+        currentResponseTime: 30 // seconds (Oracle OCI)
+    }
+};
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(amount);
+}
+
+function createEnvironmentCard(env) {
+    const savings = env.ramPoolPrice - env.nodePrice;
+    const savingsPercentage = ((savings / env.ramPoolPrice) * 100).toFixed(1);
+    
+    return `
+        <div class="card animate-fade-in" style="animation-delay: ${environments.indexOf(env) * 0.2}s">
+            <div class="card-header">
+                <h3 class="card-title">${env.name}</h3>
+                <span class="environment-badge badge-${env.badge}">${env.name.toUpperCase()}</span>
+            </div>
+            
+            <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-lg); font-size: var(--text-sm);">
+                ${env.description}
+            </p>
+            
+            <!-- Cluster Configuration Highlight -->
+            <div style="
+                background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+                padding: var(--spacing-md);
+                border-radius: var(--radius-md);
+                margin-bottom: var(--spacing-lg);
+                text-align: center;
+            ">
+                <div style="
+                    color: var(--color-text-dark);
+                    font-weight: 700;
+                    font-size: var(--text-lg);
+                    margin-bottom: var(--spacing-xs);
+                ">
+                    🏛️ Cluster de ${env.nodes} Nodos
+                </div>
+                <div style="
+                    color: var(--color-text-dark);
+                    font-size: var(--text-sm);
+                    opacity: 0.9;
+                ">
+                    Configuración de Alta Disponibilidad con Replica Set
+                </div>
+            </div>
+            
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <span class="spec-value">${env.nodes}</span>
+                    <div class="spec-label">Nodos</div>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-value">${env.ram}</span>
+                    <div class="spec-label">GB RAM/nodo</div>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-value">${env.vcpus}</span>
+                    <div class="spec-label">vCPUs/nodo</div>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-value">${(env.ssd / 1024).toFixed(1)}</span>
+                    <div class="spec-label">TB SSD/nodo</div>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-value">${env.ram * env.nodes}</span>
+                    <div class="spec-label">GB RAM Total</div>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-value">${env.vcpus * env.nodes}</span>
+                    <div class="spec-label">vCPUs Total</div>
+                </div>
+            </div>
+            
+            <!-- Technical Specifications Section - Compact Horizontal Layout -->
+            <div class="technical-details" style="
+                margin: var(--spacing-lg) 0;
+                padding: var(--spacing-md);
+                background: rgba(255, 255, 255, 0.03);
+                border-radius: var(--radius-md);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            ">
+                <h4 style="
+                    color: var(--color-primary);
+                    font-size: var(--text-sm);
+                    font-weight: 600;
+                    margin-bottom: var(--spacing-sm);
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    text-align: center;
+                ">Especificaciones Técnicas</h4>
+                
+                <div style="
+                    display: grid; 
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: var(--spacing-xs) var(--spacing-md); 
+                    font-size: var(--text-xs);
+                ">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-secondary);">🏗️ Arquitectura:</span>
+                        <span style="color: var(--color-text-primary); font-weight: 500;">${env.nodes} nodos × ${env.ram}GB</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-secondary);">📄 Documentos:</span>
+                        <span style="color: var(--color-text-primary); font-weight: 500;">${env.technicalSpecs.documents}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-secondary);">💾 Datos:</span>
+                        <span style="color: var(--color-text-primary); font-weight: 500;">${env.technicalSpecs.dataSize.split('/')[0]}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-secondary);">⚡ Ops/seg:</span>
+                        <span style="color: var(--color-text-primary); font-weight: 500;">${env.technicalSpecs.operations}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-secondary);">🎯 Working Set:</span>
+                        <span style="color: var(--color-text-primary); font-weight: 500;">${env.technicalSpecs.workingSet}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-secondary);">🗜️ Compresión:</span>
+                        <span style="color: var(--color-text-primary); font-weight: 500;">${env.technicalSpecs.compression}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pricing-section">
+                <div class="pricing-comparison">
+                    <div class="pricing-option">
+                        <div class="pricing-title">RAM Pool</div>
+                        <div class="pricing-value">${formatCurrency(env.ramPoolPrice)}</div>
+                    </div>
+                    <div class="pricing-option">
+                        <div class="pricing-title">Por Nodo</div>
+                        <div class="pricing-value">${formatCurrency(env.nodePrice)}</div>
+                    </div>
+                </div>
+                
+                <div class="savings-highlight">
+                    <div class="savings-amount">${formatCurrency(savings)} ahorrados</div>
+                    <div class="savings-label">${savingsPercentage}% de ahorro vs RAM Pool</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function initializePage() {
+    const cardsContainer = document.getElementById('environmentCards');
+    cardsContainer.innerHTML = environments.map(createEnvironmentCard).join('');
+    
+    // Calculate total savings
+    const totalSavings = environments.reduce((total, env) => {
+        return total + (env.ramPoolPrice - env.nodePrice);
+    }, 0);
+    
+    document.getElementById('totalSavings').textContent = formatCurrency(totalSavings);
+    
+    // Add scroll animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+            }
+        });
+    });
+    
+    document.querySelectorAll('.animate-fade-in').forEach(el => {
+        el.style.animationPlayState = 'paused';
+        observer.observe(el);
+    });
+}
+
+function downloadProposal() {
+    // Enhanced proposal with all technical details
+    const link = document.createElement('a');
+    const proposalContent = `
+PROPUESTA TÉCNICA MONGODB ATLAS PARA YAPE BOLIVIA
+================================================
+
+INFORMACIÓN DEL PROYECTO
+-----------------------
+Cliente: Yape Bolivia
+Proyecto: Billetera Electrónica
+Fecha: ${new Date().toLocaleDateString('es-ES')}
+Estado Actual: Oracle OCI con tiempos de respuesta de 30 segundos
+
+OBJETIVOS DEL PROYECTO
+---------------------
+✓ Reducir tiempo de respuesta de 30s a 3s (mejora 10x)
+✓ Soportar 1M+ transacciones diarias
+✓ Optimizar costos de licenciamiento
+✓ Implementar alta disponibilidad nativa
+✓ Facilitar escalabilidad automática
+
+ANÁLISIS TÉCNICO DETALLADO
+--------------------------
+
+VOLUMEN DE DATOS:
+• Total de documentos: 2,684,354,560 (2.68 mil millones)
+• Tamaño promedio por documento: 1 KB
+• Datos sin comprimir: 2.5 TB
+• Datos con compresión WiredTiger (50%): 1.25 TB
+• Working Set (datos frecuentemente accedidos 30%): ~108 GB
+
+OPERACIONES POR SEGUNDO:
+• Lecturas: 10,000/seg (pico: 15,000/seg)
+• Escrituras (inserts): 5,000/seg (pico: 10,000/seg)
+• Actualizaciones: 5,000/seg
+• Eliminaciones: 347/seg
+• Nota: Se consideran picos de 2x para manejo de carga
+
+ÍNDICES Y OPTIMIZACIÓN:
+• Índice _id: 0.1 KB por entrada
+• Índice secundario: 0.3 KB por entrada
+• Compresión WiredTiger: 50% de reducción
+• Estrategia de particionado: Por fecha/región
+
+DIMENSIONAMIENTO RECOMENDADO
+===========================
+
+${environments.map(env => `
+${env.name.toUpperCase()}:
+${'='.repeat(env.name.length + 1)}
+• Configuración: ${env.nodes} nodos de ${env.ram}GB RAM cada uno
+• vCPUs: ${env.vcpus} cores por nodo (total: ${env.vcpus * env.nodes})
+• Almacenamiento SSD: ${(env.ssd / 1024).toFixed(1)} TB por nodo
+• Especificaciones técnicas:
+- ${env.technicalSpecs.documents}
+- ${env.technicalSpecs.dataSize}
+- ${env.technicalSpecs.operations}
+- ${env.technicalSpecs.workingSet}
+- ${env.technicalSpecs.compression}
+• Costo anual RAM Pool: ${formatCurrency(env.ramPoolPrice)}
+• Costo anual Por Nodo: ${formatCurrency(env.nodePrice)}
+• AHORRO: ${formatCurrency(env.ramPoolPrice - env.nodePrice)} (${((env.ramPoolPrice - env.nodePrice) / env.ramPoolPrice * 100).toFixed(1)}%)
+`).join('')}
+
+RESUMEN FINANCIERO
+==================
+Total ahorro anual con modelo por nodo: ${formatCurrency(environments.reduce((total, env) => total + (env.ramPoolPrice - env.nodePrice), 0))}
+Porcentaje de ahorro promedio: ${(environments.reduce((total, env) => total + ((env.ramPoolPrice - env.nodePrice) / env.ramPoolPrice * 100), 0) / environments.length).toFixed(1)}%
+
+BENEFICIOS TÉCNICOS CLAVE
+=========================
+✓ Rendimiento 10x superior (30s → 3s)
+✓ Escalabilidad automática horizontal y vertical
+✓ Alta disponibilidad 99.9% SLA
+✓ Backup automático y recuperación punto en tiempo
+✓ Seguridad empresarial (encriptación, RBAC, auditoría)
+✓ Soporte 24/7/365 con MongoDB
+✓ Migración asistida desde Oracle OCI
+✓ Monitoreo y alertas en tiempo real
+✓ Compresión automática WiredTiger
+✓ Optimización automática de consultas
+
+ARQUITECTURA RECOMENDADA
+========================
+• Cluster de 3 nodos con replica set
+• Configuración multi-región para DR
+• Sharding automático por volumen
+• Índices optimizados para consultas frecuentes
+• Cache inteligente para working set
+• Compresión de datos y índices
+
+SIGUIENTE PASOS
+===============
+1. Demo técnica personalizada (1-2 horas)
+2. Prueba de concepto con datos reales (2 semanas)
+3. Plan de migración detallado (1 semana)
+4. Implementación por fases (4-6 semanas)
+5. Capacitación del equipo técnico (1 semana)
+
+CONTACTO
+========
+MongoDB Solutions Architecture Team
+Email: solutions@mongodb.com
+Teléfono: +1-855-MONGODB
+Portal de soporte: https://support.mongodb.com
+
+---
+Documento generado automáticamente el ${new Date().toLocaleString('es-ES')}
+© 2025 MongoDB, Inc. Todos los derechos reservados.
+    `;
+    
+    link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(proposalContent);
+    link.download = `Yape_MongoDB_Atlas_Propuesta_Tecnica_${new Date().toISOString().split('T')[0]}.txt`;
+    link.click();
+}
+
+function scheduleDemo() {
+    // Create a more interactive demo scheduler
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 30, 43, 0.95);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    modal.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.9) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        ">
+            <h3 style="color: var(--color-text-primary); margin-bottom: var(--spacing-lg); font-size: var(--text-2xl);">
+                🚀 Agendar Demo Personalizada
+            </h3>
+            <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-xl);">
+                Descubre cómo MongoDB Atlas puede transformar tu arquitectura de pagos con una demo en vivo.
+            </p>
+            
+            <div style="display: grid; gap: var(--spacing-md); margin-bottom: var(--spacing-xl);">
+                <input type="text" placeholder="Nombre completo" style="
+                    padding: var(--spacing-md);
+                    border-radius: var(--radius-md);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    background: rgba(255, 255, 255, 0.1);
+                    color: var(--color-text-primary);
+                    font-size: var(--text-base);
+                ">
+                <input type="email" placeholder="Email corporativo" style="
+                    padding: var(--spacing-md);
+                    border-radius: var(--radius-md);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    background: rgba(255, 255, 255, 0.1);
+                    color: var(--color-text-primary);
+                    font-size: var(--text-base);
+                ">
+                <select style="
+                    padding: var(--spacing-md);
+                    border-radius: var(--radius-md);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    background: rgba(255, 255, 255, 0.1);
+                    color: var(--color-text-primary);
+                    font-size: var(--text-base);
+                ">
+                    <option value="">Horario preferido</option>
+                    <option value="morning">Mañana (9:00 - 12:00)</option>
+                    <option value="afternoon">Tarde (14:00 - 17:00)</option>
+                    <option value="flexible">Horario flexible</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: var(--spacing-md); justify-content: center;">
+                <button onclick="confirmDemo()" class="btn btn-primary">
+                    📅 Confirmar Demo
+                </button>
+                <button onclick="closeModal()" class="btn btn-secondary">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    window.currentModal = modal;
+}
+
+function confirmDemo() {
+    const modal = window.currentModal;
+    modal.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, var(--color-success) 0%, rgba(0, 237, 100, 0.9) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            color: var(--color-text-dark);
+        ">
+            <div style="font-size: var(--text-6xl); margin-bottom: var(--spacing-lg);">✅</div>
+            <h3 style="margin-bottom: var(--spacing-md); font-size: var(--text-2xl);">
+                ¡Demo Agendada!
+            </h3>
+            <p style="margin-bottom: var(--spacing-lg); opacity: 0.8;">
+                Te contactaremos en las próximas 24 horas para coordinar la sesión.
+            </p>
+            <button onclick="closeModal()" style="
+                background: var(--color-text-dark);
+                color: var(--color-success);
+                border: none;
+                padding: var(--spacing-md) var(--spacing-xl);
+                border-radius: var(--radius-full);
+                font-weight: 600;
+                cursor: pointer;
+            ">
+                Perfecto
+            </button>
+        </div>
+    `;
+    
+    setTimeout(closeModal, 3000);
+}
+
+function closeModal() {
+    if (window.currentModal) {
+        window.currentModal.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+            document.body.removeChild(window.currentModal);
+            window.currentModal = null;
+        }, 300);
+    }
+}
+
+// Enhanced interactivity
+function addInteractiveFeatures() {
+    // Add hover effects to cards
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-12px) scale(1.02)';
+            card.style.boxShadow = '0 25px 50px rgba(0, 237, 100, 0.15)';
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(-8px) scale(1)';
+            card.style.boxShadow = 'var(--shadow-xl)';
+        });
+
+        // Add click effect for mobile
+        card.addEventListener('click', () => {
+            card.style.transform = 'translateY(-8px) scale(0.98)';
+            setTimeout(() => {
+                card.style.transform = 'translateY(-8px) scale(1)';
+            }, 150);
+        });
+    });
+
+    // Add floating elements animation
+    const floatingElements = document.querySelectorAll('.hero-blur');
+    floatingElements.forEach(element => {
+        element.addEventListener('mouseenter', () => {
+            element.style.transform = 'scale(1.1)';
+            element.style.opacity = '0.3';
+        });
+        
+        element.addEventListener('mouseleave', () => {
+            element.style.transform = 'scale(1)';
+            element.style.opacity = '0.2';
+        });
+    });
+
+    // Add scroll progress indicator
+    const progressBar = document.createElement('div');
+    progressBar.style.cssText = `
+        position: fixed;
+        top: 80px;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+        z-index: 1000;
+        transition: width 0.3s ease;
+    `;
+    document.body.appendChild(progressBar);
+
+    window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        progressBar.style.width = scrolled + "%";
+    });
+}
+
+// Add CSS animations for modal
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    input::placeholder, select option {
+        color: rgba(255, 255, 255, 0.6);
+    }
+    input:focus, select:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 2px rgba(0, 237, 100, 0.2);
+    }
+`;
+document.head.appendChild(style);
+
+// Performance metrics simulation with real data
+function animateMetrics() {
+    const metricsData = [
+        { label: 'Docs/segundo', value: '5K+', color: 'var(--color-primary)' },
+        { label: 'Tiempo respuesta', value: '3s', color: 'var(--color-success)' },
+        { label: 'Working Set', value: '108GB', color: 'var(--color-info)' },
+        { label: 'Compresión', value: '50%', color: 'var(--color-accent)' }
+    ];
+
+    const metricsContainer = document.createElement('div');
+    metricsContainer.style.cssText = `
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: rgba(13, 42, 61, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: var(--radius-xl);
+        padding: var(--spacing-lg);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 100;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+        min-width: 280px;
+        box-shadow: var(--shadow-xl);
+        transform: translateX(100%);
+        transition: transform 0.5s ease;
+    `;
+
+    // Add header to metrics
+    const header = document.createElement('div');
+    header.style.cssText = `
+        grid-column: 1 / -1;
+        text-align: center;
+        font-size: var(--text-sm);
+        color: var(--color-primary);
+        font-weight: 600;
+        margin-bottom: var(--spacing-xs);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: var(--spacing-xs);
+    `;
+    header.textContent = '📊 Métricas Técnicas en Vivo';
+    metricsContainer.appendChild(header);
+
+    metricsData.forEach(metric => {
+        const metricElement = document.createElement('div');
+        metricElement.style.cssText = `
+            text-align: center;
+            padding: var(--spacing-sm);
+        `;
+        metricElement.innerHTML = `
+            <div style="
+                font-size: var(--text-xl);
+                font-weight: 700;
+                color: ${metric.color};
+                margin-bottom: var(--spacing-xs);
+            ">${metric.value}</div>
+            <div style="
+                font-size: var(--text-xs);
+                color: var(--color-text-secondary);
+            ">${metric.label}</div>
+        `;
+        metricsContainer.appendChild(metricElement);
+    });
+
+    document.body.appendChild(metricsContainer);
+
+    // Show metrics after a delay
+    setTimeout(() => {
+        metricsContainer.style.transform = 'translateX(0)';
+    }, 2000);
+
+    // Hide on click
+    metricsContainer.addEventListener('click', () => {
+        metricsContainer.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (document.body.contains(metricsContainer)) {
+                document.body.removeChild(metricsContainer);
+            }
+        }, 500);
+    });
+}
+
+// Add comparison tooltip
+function addComparisonTooltips() {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        const tooltip = document.createElement('div');
+        tooltip.style.cssText = `
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        `;
+        tooltip.textContent = 'Click para ver detalles técnicos';
+        card.style.position = 'relative';
+        card.appendChild(tooltip);
+
+        card.addEventListener('mouseenter', () => {
+            tooltip.style.opacity = '1';
+        });
+
+        card.addEventListener('mouseleave', () => {
+            tooltip.style.opacity = '0';
+        });
+    });
+}
+
+// Initialize everything when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    initializePage();
+    addInteractiveFeatures();
+    animateMetrics();
+    addComparisonTooltips();
+});
+
+// Add keyboard navigation
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && window.currentModal) {
+        closeModal();
+    }
+});
+</script>
+</body>
+</html>

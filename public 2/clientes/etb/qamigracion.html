@@ -1,0 +1,792 @@
+
+</section><!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETB - Estrategia de Migración QA a Atlas</title>
+<link rel="stylesheet" href="../../styles/gomdb-global.css">
+</head>
+<body>
+<!-- Navegación -->
+<nav class="navbar" id="navbar">
+    <div class="container">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <div class="text-gradient">ETB</div>
+            </div>
+            <div class="navbar-links">
+                <a href="#estrategias" class="navbar-link">Estrategias</a>
+                <a href="#recomendada" class="navbar-link">Recomendada</a>
+                <a href="#alternativa" class="navbar-link">Alternativa</a>
+                <a href="#comparacion" class="navbar-link">Comparación</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-background"></div>
+    <div class="hero-blur hero-blur-primary"></div>
+    <div class="hero-blur hero-blur-accent"></div>
+    
+    <div class="container">
+        <div class="text-center animate-fadeIn">
+            <div class="badge badge-primary mb-4">
+                Piloto de Migración
+            </div>
+            <h1 class="text-gradient mb-4">
+                Estrategia de Migración QA a Atlas
+            </h1>
+            <p class="text-xl mb-6">
+                Análisis de requisitos técnicos para cada estrategia de migración propuesta
+            </p>
+            <div class="flex justify-center gap-4 flex-wrap">
+                <a href="#recomendada" class="btn btn-primary btn-lg animate-glow">
+                    <span>🚀</span> Atlas Live Migration
+                </a>
+                <a href="#alternativa" class="btn btn-secondary btn-lg">
+                    <span>⚡</span> Dump & Restore
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Introducción -->
+<section class="section" id="introduccion">
+    <div class="container">
+        <div class="card mongodb-glow animate-fadeIn">
+            <div class="text-center">
+                <div class="text-6xl mb-4">🔄</div>
+                <h2 class="text-gradient mb-4">Análisis de Requisitos para la Migración</h2>
+                <p class="text-lg mb-6">
+                    A continuación se detallan los requisitos técnicos específicos para cada una de las estrategias de migración propuestas.
+                </p>
+                <div class="inline-flex items-center gap-2 badge badge-primary text-lg p-4">
+                    <span>⭐</span>
+                    La Estrategia 1 (Atlas Live Migration) es la recomendada por su seguridad y mínimo impacto al negocio
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Estrategia Recomendada -->
+<section class="section" id="recomendada">
+    <div class="container">
+        <div class="flex items-center justify-center gap-4 mb-6">
+            <div class="text-6xl animate-pulse">✅</div>
+            <h2 class="text-gradient">Estrategia 1: Atlas Live Migration</h2>
+            <div class="badge badge-primary animate-glow">Recomendada</div>
+        </div>
+        
+        <div class="card card-gradient mb-6 mongodb-glow">
+            <div class="flex items-center gap-4">
+                <div class="text-5xl">🔗</div>
+                <div>
+                    <h3 class="text-primary mb-2">Conexión Continua y Segura</h3>
+                    <p class="text-lg">
+                        Esta estrategia establece una conexión continua y segura entre el clúster de origen y Atlas, sincronizando los datos en tiempo real hasta el momento del corte final.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hardware Adicional -->
+        <div class="grid md:grid-cols-1 gap-6 mb-6">
+            <div class="card card-bordered animate-slideInLeft">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="text-4xl">💻</div>
+                    <h3 class="text-primary">1. Hardware Adicional</h3>
+                </div>
+                
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="badge badge-success text-lg p-3">✨ No se requiere hardware nuevo</div>
+                </div>
+                
+                <p class="mb-4 text-lg">La migración se ejecuta utilizando la infraestructura existente.</p>
+                
+                <div class="card mongodb-gradient p-4">
+                    <div class="flex items-start gap-3">
+                        <div class="text-2xl">⚡</div>
+                        <div>
+                            <h4 class="text-text-dark font-bold mb-2">Consideración de Carga:</h4>
+                            <p class="text-text-dark">El proceso de migración inicial puede generar una carga de lectura adicional en el nodo primario del clúster on-premise. Dado que el clúster de QA no debería tener una carga productiva, el impacto será mínimo y manejable por los 4 vCPU y 16 GB de RAM existentes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Red (Conectividad Segura) -->
+        <div class="card card-bordered mb-6 animate-slideInRight">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="text-4xl">🌐</div>
+                <h3 class="text-primary">2. Red (Conectividad Segura)</h3>
+                <div class="badge badge-warning text-lg p-3">🔥 Parte más crítica</div>
+            </div>
+            
+            <div class="card mongodb-gradient p-4 mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="text-3xl">🎯</div>
+                    <p class="text-lg text-text-dark font-semibold">
+                        El objetivo es permitir que el servicio de Atlas se comunique con la base de datos del cliente a través de IPs privadas, sin exponer la base de datos a la internet pública.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Opciones de Red con diseño visual mejorado -->
+            <div class="space-y-6">
+                <!-- Opción A -->
+                <div class="card mongodb-glow">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="text-5xl">🏆</div>
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="badge badge-primary text-lg p-3">🌟 Recomendada</div>
+                                <h4 class="text-2xl">Opción A: Azure VNet Peering</h4>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <div class="flex items-start gap-3 mb-4">
+                                <div class="text-2xl">💡</div>
+                                <div>
+                                    <h5 class="text-primary font-bold mb-2">¿Qué es?</h5>
+                                    <p>Es una conexión directa y privada entre la Virtual Network (VNet) donde reside el clúster de Atlas y la VNet del cliente en Azure donde está su VM con MongoDB.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-start gap-3">
+                                <div class="text-2xl">📋</div>
+                                <div>
+                                    <h5 class="text-primary font-bold mb-3">Requisitos:</h5>
+                                    <div class="space-y-3">
+                                        <div class="flex items-start gap-2">
+                                            <span class="text-primary text-xl">•</span>
+                                            <span class="text-sm">El equipo de red del cliente necesita permisos en Azure para configurar el "peering" (emparejamiento) entre ambas VNets. Típicamente, el rol Network Contributor en la VNet de origen es suficiente.</span>
+                                        </div>
+                                        <div class="flex items-start gap-2">
+                                            <span class="text-primary text-xl">•</span>
+                                            <span class="text-sm">Las redes no deben tener rangos de direcciones IP que se superpongan.</span>
+                                        </div>
+                                        <div class="flex items-start gap-2">
+                                            <span class="text-primary text-xl">•</span>
+                                            <span class="text-sm">Configurar las rutas de red y los grupos de seguridad (NSG) para permitir el tráfico desde el rango de IP de la VNet de Atlas hacia la VM de MongoDB en el puerto 27017.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Opción B -->
+                <div class="card card-gradient">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="text-5xl">💎</div>
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="badge badge-accent text-lg p-3">✨ Premium</div>
+                                <h4 class="text-2xl">Opción B: Azure Private Link</h4>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <div class="flex items-start gap-3 mb-4">
+                                <div class="text-2xl">🔒</div>
+                                <div>
+                                    <h5 class="text-primary font-bold mb-2">¿Qué es?</h5>
+                                    <p>Es una tecnología que permite exponer servicios de Azure (o en este caso, Atlas sobre Azure) como un "endpoint privado" dentro de la propia VNet del cliente. Es aún más seguro que el peering porque la conexión es unidireccional.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-start gap-3">
+                                <div class="text-2xl">⚙️</div>
+                                <div>
+                                    <h5 class="text-primary font-bold mb-3">Requisitos:</h5>
+                                    <div class="space-y-3">
+                                        <div class="flex items-start gap-2">
+                                            <span class="text-primary text-xl">•</span>
+                                            <span class="text-sm">Esta funcionalidad en Atlas generalmente está disponible en tiers M10 y superiores.</span>
+                                        </div>
+                                        <div class="flex items-start gap-2">
+                                            <span class="text-primary text-xl">•</span>
+                                            <span class="text-sm">Permisos en Azure para crear y aprobar Private Endpoints.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Opción C -->
+                <div class="card" style="border: 3px solid var(--color-warning); background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(245, 158, 11, 0.1) 100%);">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="text-5xl">⚠️</div>
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="badge text-lg p-3" style="background-color: var(--color-warning); color: var(--color-text-dark);">❌ No Recomendada</div>
+                                <h4 class="text-2xl">Opción C: IP Access List</h4>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <div class="flex items-start gap-3 mb-4">
+                                <div class="text-2xl">🌍</div>
+                                <div>
+                                    <h5 class="text-primary font-bold mb-2">¿Qué es?</h5>
+                                    <p>Consiste en permitir la conexión desde el exterior abriendo el firewall de la VM y agregando las direcciones IP públicas de los servidores de migración de Atlas a la "IP Access List" de Atlas.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-start gap-3 mb-4">
+                                <div class="text-2xl">🔧</div>
+                                <div>
+                                    <h5 class="text-primary font-bold mb-3">Requisitos:</h5>
+                                    <div class="flex items-start gap-2">
+                                        <span class="text-primary text-xl">•</span>
+                                        <span class="text-sm">El cliente debe abrir su firewall para permitir conexiones entrantes desde las IPs que Atlas proveerá durante el proceso de configuración.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-4" style="background: linear-gradient(135deg, var(--color-warning) 0%, rgba(245, 158, 11, 0.8) 100%); padding: 1rem;">
+                        <div class="flex items-start gap-3">
+                            <div class="text-2xl">🚨</div>
+                            <div>
+                                <h5 class="text-text-dark font-bold mb-2">Riesgo:</h5>
+                                <p class="text-text-dark font-semibold">Expone la base de datos a internet, aunque sea a un rango limitado de IPs. Se debe usar con precaución y solo si las otras opciones son inviables para el piloto.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permisos -->
+        <div class="card card-bordered animate-fadeIn">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="text-4xl">🔐</div>
+                <h3 class="text-primary">3. Permisos</h3>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card card-gradient">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="text-3xl">🗄️</div>
+                        <h4 class="text-xl">Permisos en MongoDB (On-Premise)</h4>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="badge badge-secondary mb-3">Usuario dedicado para migración</div>
+                        <p class="mb-4">Se debe crear un usuario de base de datos dedicado para la migración con los siguientes roles:</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3 p-3 rounded-lg" style="background-color: var(--color-primary-light);">
+                            <span class="text-primary text-2xl">🔍</span>
+                            <div>
+                                <p class="font-bold text-primary">read en la base de datos local:</p>
+                                <p class="text-sm">Esencial para que Atlas pueda leer el "oplog" y sincronizar los cambios en tiempo real.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start gap-3 p-3 rounded-lg" style="background-color: var(--color-accent-light);">
+                            <span class="text-accent text-2xl">📊</span>
+                            <div>
+                                <p class="font-bold text-accent">clusterMonitor:</p>
+                                <p class="text-sm">Para que Atlas pueda leer el estado del clúster de origen.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start gap-3 p-3 rounded-lg" style="background-color: var(--color-info); opacity: 0.2;">
+                            <span class="text-info text-2xl">✏️</span>
+                            <div>
+                                <p class="font-bold text-info">readWrite en las bases de datos:</p>
+                                <p class="text-sm">Necesario para el proceso de validación y migración.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card card-gradient">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="text-3xl">☁️</div>
+                        <h4 class="text-xl">Permisos en la Nube</h4>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="p-4 rounded-lg" style="background-color: var(--color-primary-light);">
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="text-2xl">🅰️</div>
+                                <h5 class="font-bold text-primary">En Azure:</h5>
+                            </div>
+                            <p class="text-sm">El personal del cliente necesita los permisos de red mencionados anteriormente para configurar VNet Peering o Private Link.</p>
+                        </div>
+                        
+                        <div class="p-4 rounded-lg" style="background-color: var(--color-accent-light);">
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="text-2xl">🍃</div>
+                                <h5 class="font-bold text-accent">En Atlas:</h5>
+                            </div>
+                            <p class="text-sm">El usuario que configure la migración en la plataforma de Atlas necesita el rol de <span class="font-bold">Project Owner</span> o <span class="font-bold">Project Cluster Manager</span> en el proyecto de Atlas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Estrategia Alternativa -->
+<section class="section" id="alternativa" style="background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(245, 158, 11, 0.05) 100%);">
+    <div class="container">
+        <div class="flex items-center justify-center gap-4 mb-6">
+            <div class="text-6xl animate-pulse">⚠️</div>
+            <h2 class="text-gradient">Estrategia 2: mongodump y mongorestore</h2>
+            <div class="badge badge-warning">Alternativa con Downtime</div>
+        </div>
+        
+        <div class="card card-gradient mb-6" style="border: 2px solid var(--color-warning);">
+            <div class="flex items-center gap-4">
+                <div class="text-5xl">📦</div>
+                <div>
+                    <h3 class="text-warning mb-2">Backup y Restauración Manual</h3>
+                    <p class="text-lg">
+                        Esta es la estrategia de backup y restauración manual. Es más simple a nivel de red pero requiere una ventana de inactividad significativa.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-1 gap-6">
+            <!-- Hardware Adicional -->
+            <div class="card card-bordered animate-slideInLeft">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="text-4xl">💾</div>
+                    <h3 class="text-primary">1. Hardware Adicional</h3>
+                    <div class="badge badge-warning text-lg p-3">💽 Espacio en Disco: Requisito principal</div>
+                </div>
+                
+                <div class="card mongodb-gradient p-4 mb-4">
+                    <div class="flex items-start gap-3">
+                        <div class="text-3xl">🖥️</div>
+                        <div>
+                            <p class="text-lg text-text-dark font-semibold mb-2">
+                                Se necesita un servidor (puede ser la misma VM de la base de datos u otra máquina con acceso) con suficiente espacio libre en disco para almacenar el archivo de backup completo.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card" style="background: linear-gradient(135deg, var(--color-info) 0%, rgba(59, 130, 246, 0.8) 100%); padding: 1.5rem;">
+                    <div class="flex items-start gap-3">
+                        <div class="text-3xl">🧮</div>
+                        <div>
+                            <h4 class="text-text-dark font-bold mb-2">Cálculo:</h4>
+                            <p class="text-text-dark font-semibold">Si los datos en disco ocupan ~112 GB, se recomienda tener al menos <span class="text-2xl font-bold">150-200 GB</span> de espacio libre para el archivo dump y los logs del proceso.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Red -->
+            <div class="card card-bordered animate-slideInRight">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="text-4xl">🌐</div>
+                    <h3 class="text-primary">2. Red (Conectividad)</h3>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex items-start gap-3 p-4 rounded-lg" style="background-color: var(--color-primary-light);">
+                        <span class="text-primary text-2xl">🔗</span>
+                        <div>
+                            <p class="font-semibold">La máquina donde se ejecutará el comando mongorestore necesita tener conectividad de salida a internet para alcanzar el clúster de Atlas.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-4 rounded-lg" style="background-color: var(--color-accent-light);">
+                        <span class="text-accent text-2xl">🔥</span>
+                        <div>
+                            <p class="font-semibold">Se debe asegurar que el firewall de salida permita el tráfico hacia el hostname del clúster de Atlas en el puerto 27017.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-4 rounded-lg" style="background-color: var(--color-success); opacity: 0.2;">
+                        <span class="text-success text-2xl">🔐</span>
+                        <div>
+                            <p class="font-semibold text-success">La conexión se realiza utilizando la cadena de conexión estándar de Atlas, que ya viene con TLS/SSL activado para cifrar los datos en tránsito. No se necesita VNet Peering.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Permisos -->
+            <div class="card card-bordered animate-fadeIn">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="text-4xl">🔐</div>
+                    <h3 class="text-primary">3. Permisos</h3>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="card card-gradient">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="text-3xl">📤</div>
+                            <h4 class="text-xl">MongoDB On-Premise</h4>
+                        </div>
+                        
+                        <div class="flex items-start gap-3 p-4 rounded-lg" style="background-color: var(--color-primary-light);">
+                            <span class="text-primary text-3xl">👤</span>
+                            <div>
+                                <p class="font-bold text-primary mb-2">Usuario para mongodump:</p>
+                                <p class="text-sm mb-2">El usuario que ejecute mongodump necesita permisos de lectura sobre todas las bases de datos a migrar.</p>
+                                <div class="badge badge-primary">readAnyDatabase</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card card-gradient">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="text-3xl">📥</div>
+                            <h4 class="text-xl">MongoDB Atlas</h4>
+                        </div>
+                        
+                        <div class="flex items-start gap-3 p-4 rounded-lg" style="background-color: var(--color-accent-light);">
+                            <span class="text-accent text-3xl">👤</span>
+                            <div>
+                                <p class="font-bold text-accent mb-2">Usuario para mongorestore:</p>
+                                <p class="text-sm mb-3">El usuario que ejecute mongorestore necesita permisos de escritura en el clúster de Atlas.</p>
+                                <div class="flex gap-2 flex-wrap">
+                                    <div class="badge badge-accent">readWriteAnyDatabase</div>
+                                    <div class="badge badge-accent">AtlasAdmin</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Tabla Comparativa -->
+<section class="section" id="comparacion">
+    <div class="container">
+        <div class="text-center mb-8">
+            <div class="text-6xl mb-4">⚖️</div>
+            <h2 class="text-gradient mb-4">Tabla Comparativa de Requisitos</h2>
+            <p class="text-lg">Comparación detallada entre ambas estrategias de migración</p>
+        </div>
+        
+        <div class="card chart-container mongodb-glow">
+            <div class="overflow-x-auto">
+                <table class="w-full" style="table-layout: fixed;">
+                    <thead>
+                        <tr style="border-bottom: 3px solid var(--color-primary);">
+                            <th class="text-left p-6 text-primary text-lg" style="width: 25%;">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">📋</span>
+                                    <span>Requisito</span>
+                                </div>
+                            </th>
+                            <th class="text-center p-6 text-primary text-lg" style="width: 37.5%;">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-2xl">✅</span>
+                                        <span>Atlas Live Migration</span>
+                                    </div>
+                                    <div class="badge badge-primary">Recomendada</div>
+                                </div>
+                            </th>
+                            <th class="text-center p-6 text-primary text-lg" style="width: 37.5%;">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-2xl">⚠️</span>
+                                        <span>mongodump / mongorestore</span>
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 2px solid rgba(255,255,255,0.1);">
+                            <td class="p-6">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">💻</span>
+                                    <span class="font-bold text-lg">Hardware Adicional</span>
+                                </div>
+                            </td>
+                            <td class="p-6">
+                                <div class="text-center space-y-2">
+                                    <div class="badge badge-success text-base p-3 w-full">
+                                        ✨ Ninguno
+                                    </div>
+                                    <p class="text-sm text-secondary">(solo considerar carga temporal)</p>
+                                </div>
+                            </td>
+                            <td class="p-6">
+                                <div class="text-center space-y-2">
+                                    <div class="badge badge-warning text-base p-3 w-full">
+                                        💾 Sí: > 150 GB
+                                    </div>
+                                    <p class="text-sm text-secondary">para el backup</p>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr style="border-bottom: 2px solid rgba(255,255,255,0.1);">
+                            <td class="p-6">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">🌐</span>
+                                    <span class="font-bold text-lg">Red</span>
+                                </div>
+                            </td>
+                            <td class="p-6">
+                                <div class="text-center space-y-2">
+                                    <div class="badge badge-accent text-base p-3 w-full">
+                                        🔧 Configuración VNet
+                                    </div>
+                                    <p class="text-sm text-secondary">Peering o Private Link</p>
+                                </div>
+                            </td>
+                            <td class="p-6">
+                                <div class="text-center space-y-2">
+                                    <div class="badge badge-info text-base p-3 w-full">
+                                        🌍 Internet
+                                    </div>
+                                    <p class="text-sm text-secondary">Puerto 27017</p>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr style="border-bottom: 2px solid rgba(255,255,255,0.1);">
+                            <td class="p-6">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">🔐</span>
+                                    <span class="font-bold text-lg">Permisos MongoDB</span>
+                                </div>
+                            </td>
+                            <td class="p-6">
+                                <div class="text-center space-y-2">
+                                    <div class="badge badge-primary text-base p-3 w-full">
+                                        👥 Roles específicos
+                                    </div>
+                                    <p class="text-sm text-secondary">(lectura de oplog)</p>
+                                </div>
+                            </td>
+                            <td class="p-6">
+                                <div class="text-center space-y-2">
+                                    <div class="badge badge-secondary text-base p-3 w-full">
+                                        📖 Lectura/Escritura
+                                    </div>
+                                    <p class="text-sm text-secondary">origen y destino</p>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr style="border-bottom: 2px solid rgba(255,255,255,0.1);">
+                            <td class="p-6">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">☁️</span>
+                                    <span class="font-bold text-lg">Permisos Nube</span>
+                                </div>
+                            </td>
+                            <td class="p-6">
+                                <div class="text-center space-y-2">
+                                    <div class="badge badge-warning text-base p-3 w-full">
+                                        🅰️ Network Contributor
+                                    </div>
+                                    <p class="text-sm text-secondary">en Azure</p>
+                                </div>
+                            </td>
+                            <td class="p-6">
+                                <div class="text-center space-y-2">
+                                    <div class="badge badge-success text-base p-3 w-full">
+                                        ✅ Ninguno específico
+                                    </div>
+                                    <p class="text-sm text-secondary">solo acceso VM</p>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <tr style="background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);">
+                            <td class="p-6">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">⏱️</span>
+                                    <span class="font-bold text-lg">Downtime</span>
+                                </div>
+                            </td>
+                            <td class="p-6">
+                                <div class="text-center space-y-3">
+                                    <div class="text-4xl">🚀</div>
+                                    <div class="badge badge-success text-xl p-4 w-full animate-glow">
+                                        ⏰ MÍNIMO
+                                    </div>
+                                    <p class="text-sm font-bold text-success">solo minutos durante corte final</p>
+                                </div>
+                            </td>
+                            <td class="p-6">
+                                <div class="text-center space-y-3">
+                                    <div class="text-4xl">🐌</div>
+                                    <div class="badge badge-error text-xl p-4 w-full">
+                                        ⏳ ALTO
+                                    </div>
+                                    <p class="text-sm font-bold text-warning">horas durante proceso completo</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recomendación Final -->
+<section class="section" style="background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(0, 237, 100, 0.05) 100%);">
+    <div class="container">
+        <div class="text-center mb-8">
+            <div class="text-6xl mb-4 animate-glow">🏆</div>
+            <h2 class="text-gradient mb-4">Recomendación Final de Arquitectura</h2>
+        </div>
+        
+        <div class="card mongodb-glow animate-fadeIn">
+            <div class="text-center mb-8">
+                <div class="flex justify-center items-center gap-4 mb-6">
+                    <div class="badge badge-primary text-2xl p-6 animate-pulse">🌟 Recomendación Definitiva</div>
+                </div>
+                
+                <div class="card mongodb-gradient p-6 mb-6">
+                    <div class="flex items-center justify-center gap-4 mb-4">
+                        <div class="text-5xl">🚀</div>
+                        <div class="text-left">
+                            <h3 class="text-3xl font-bold text-text-dark mb-2">Atlas Live Migration</h3>
+                            <h4 class="text-2xl text-text-dark">+ Azure VNet Peering</h4>
+                        </div>
+                    </div>
+                    <p class="text-xl text-text-dark font-bold">
+                        Para un piloto que busca impresionar y demostrar la superioridad de la plataforma, esta estrategia es indiscutiblemente la mejor.
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="card card-gradient">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="text-4xl">💡</div>
+                            <h4 class="text-xl">Beneficios Clave</h4>
+                        </div>
+                        <p class="mb-6">
+                            Presenta un enfoque moderno, seguro y profesional que minimiza el riesgo y el impacto en las operaciones del cliente.
+                        </p>
+                    </div>
+                    
+                    <div class="card card-gradient">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="text-4xl">🎯</div>
+                            <h4 class="text-xl">Resultado</h4>
+                        </div>
+                        <p class="mb-6">
+                            Sienta las bases para una migración a producción exitosa con máxima confianza.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="card">
+                        <div class="text-4xl mb-3 animate-pulse">🔧</div>
+                        <div class="badge badge-primary text-lg p-4 w-full">
+                            Moderno
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="text-4xl mb-3 animate-pulse">🛡️</div>
+                        <div class="badge badge-primary text-lg p-4 w-full">
+                            Seguro
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="text-4xl mb-3 animate-pulse">👔</div>
+                        <div class="badge badge-primary text-lg p-4 w-full">
+                            Profesional
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="section">
+    <div class="container">
+        <div class="text-center">
+            <div class="text-gradient text-2xl font-bold mb-4">ETB</div>
+            <p class="text-muted">Empresa de Telecomunicaciones de Panamá</p>
+            <p class="text-sm mt-2">Estrategia de Migración QA a MongoDB Atlas</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Navegación con scroll
+    window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('navbar-scrolled');
+        } else {
+            navbar.classList.remove('navbar-scrolled');
+        }
+    });
+
+    // Smooth scroll para los enlaces
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Animaciones al hacer scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-fadeIn');
+            }
+        });
+    }, observerOptions);
+
+    // Observar elementos para animaciones
+    document.querySelectorAll('.card').forEach(el => {
+        observer.observe(el);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recomendación Estratégica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+
+    <!-- Main Container -->
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <!-- Header Section -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">
+                <span class="gradient-text">Recomendación Estratégica</span>
+            </h1>
+            <p class="max-w-3xl mx-auto mt-4 text-lg">
+                No existe una "única" arquitectura correcta; la elección depende de las prioridades, capacidades y estrategia a largo plazo del cliente. A continuación se presentan las recomendaciones basadas en diferentes objetivos estratégicos.
+            </p>
+        </header>
+
+        <!-- Recommendations Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <!-- Card 1: Máximo Control -->
+            <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700 shadow-lg flex flex-col text-center h-full">
+                <div class="text-4xl text-sky-400 mb-4"><i class="fas fa-sliders"></i></div>
+                <h2 class="text-xl font-bold text-white mb-2">Para Máximo Control y Personalización</h2>
+                <p class="text-gray-400 flex-grow">Si el cliente tiene un equipo de ingeniería sólido y prevé que la lógica de negocio de la sincronización será un diferenciador competitivo, la <strong class="text-sky-300">Arquitectura 1 (Servicio Personalizado)</strong> es la opción más poderosa. Ofrece un control total sin dependencias de terceros.</p>
+            </div>
+
+            <!-- Card 2: Mayor Velocidad -->
+            <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700 shadow-lg flex flex-col text-center h-full">
+                <div class="text-4xl text-emerald-400 mb-4"><i class="fas fa-rocket"></i></div>
+                <h2 class="text-xl font-bold text-white mb-2">Para la Mayor Velocidad de Desarrollo</h2>
+                <p class="text-gray-400 flex-grow">Si el objetivo principal es lanzar la funcionalidad offline rápidamente y con una experiencia de usuario pulida, la <strong class="text-emerald-300">Arquitectura 3 (Híbrido con BaaS)</strong> es la más pragmática. Reduce drásticamente la complejidad en el lado del cliente.</p>
+            </div>
+
+            <!-- Card 3: Escalabilidad y Resiliencia -->
+            <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700 shadow-lg flex flex-col text-center h-full">
+                <div class="text-4xl text-amber-400 mb-4"><i class="fas fa-shield-alt"></i></div>
+                <h2 class="text-xl font-bold text-white mb-2">Para Escalabilidad y Resiliencia</h2>
+                <p class="text-gray-400 flex-grow">Si la visión es construir una plataforma distribuida que pueda escalar a miles de boticas y procesar millones de eventos, la <strong class="text-amber-300">Arquitectura 2 (Orientada a Eventos)</strong> es la más robusta y preparada para el futuro, aunque también la más compleja de operar.</p>
+            </div>
+
+        </div>
+
+        <!-- Architect's Recommendation Section -->
+        <section class="bg-indigo-900/30 border border-indigo-500/50 p-8 rounded-xl mt-12">
+            <h2 class="text-2xl font-semibold text-indigo-300 mb-4 text-center">Recomendación del Arquitecto</h2>
+            <p class="text-indigo-200 text-lg text-center max-w-4xl mx-auto">
+                Para un primer paso pragmático y de riesgo controlado, mi recomendación sería <strong class="text-white">analizar en profundidad la Arquitectura 1 y la Arquitectura 3</strong>.
+            </p>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="text-center">
+                    <h3 class="font-bold text-sky-300">Arquitectura 1:</h3>
+                    <p class="text-indigo-200">Representa el camino de la "propiedad total".</p>
+                </div>
+                <div class="text-center">
+                    <h3 class="font-bold text-emerald-300">Arquitectura 3:</h3>
+                    <p class="text-indigo-200">Representa el de la "integración inteligente".</p>
+                </div>
+            </div>
+            <p class="text-indigo-200 text-center mt-6 max-w-4xl mx-auto">
+                Una evaluación de los costos de desarrollo (para la opción 1) frente a los costos operativos de dos nubes y la complejidad del "puente" (para la opción 3) permitirá tomar la decisión final más informada.
+            </p>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="text-center mt-12 pt-8 border-t border-gray-700">
+            <p class="text-gray-500">Documento generado para Farmacias Peruanas &copy; 2025</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

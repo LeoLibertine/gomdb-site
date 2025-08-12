@@ -1,0 +1,1073 @@
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoMDB - Reporte de Optimización Cluster Shardeado ETB</title>
+<link rel="stylesheet" href="../../styles/gomdb-global.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<!-- Navegación -->
+<nav class="navbar" id="navbar">
+    <div class="container">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <div style="width: 40px; height: 40px; background: var(--mongodb-gradient); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--color-text-dark); font-weight: 800;">Go</div>
+                <span class="text-gradient">MDB</span>
+            </div>
+            <div class="navbar-links">
+                <a href="#resumen" class="navbar-link">Resumen</a>
+                <a href="#diagnostico" class="navbar-link">Diagnóstico</a>
+                <a href="#fases" class="navbar-link">Plan por Fases</a>
+                <a href="#viabilidad" class="navbar-link">Viabilidad Atlas</a>
+            </div>
+            <div>
+                <span class="badge badge-primary">ETB</span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-background"></div>
+    <div class="hero-blur hero-blur-primary"></div>
+    <div class="hero-blur hero-blur-accent"></div>
+    
+    <div class="container">
+        <div class="text-center animate-fadeIn">
+            <div class="badge badge-secondary mb-4">
+                📊 Reporte de Optimización • Julio 2025
+            </div>
+            <h1 class="text-gradient mb-4">
+                Optimización Cluster Shardeado
+            </h1>
+            <h2 class="mb-6" style="color: var(--color-text-secondary); font-weight: 400;">
+                Plan de Acción Estratégico para ETB
+            </h2>
+            <p class="mb-6" style="font-size: var(--text-xl); max-width: 800px; margin: 0 auto;">
+                Análisis completo del cluster shardeado de ETB: desbalanceo crítico de datos, ineficiencia masiva de índices y estrategia de optimización por fases para migración a Atlas.
+            </p>
+            <div class="flex justify-center gap-4 flex-wrap">
+                <a href="#resumen" class="btn btn-primary btn-lg animate-glow">
+                    📋 Ver Resumen Ejecutivo
+                </a>
+                <a href="#fases" class="btn btn-secondary btn-lg">
+                    🚀 Plan por Fases
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Resumen Ejecutivo -->
+<section id="resumen" class="section">
+    <div class="container">
+        <div class="text-center mb-6">
+            <h2 class="text-gradient">Resumen Ejecutivo</h2>
+            <p class="text-center" style="color: var(--color-text-secondary); max-width: 600px; margin: 0 auto;">
+                Cluster shardeado con desbalanceo crítico y problemas de índices identificados.
+            </p>
+        </div>
+
+        <!-- Métricas Críticas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="card card-gradient text-center" style="padding: var(--spacing-xl);">
+                <div class="metric-value" style="color: var(--color-error); font-size: var(--text-4xl); margin-bottom: var(--spacing-md);">2:1</div>
+                <div class="metric-label" style="font-size: var(--text-base); margin-bottom: var(--spacing-md);">Ratio Desbalanceo</div>
+                <div class="badge badge-secondary" style="background-color: var(--color-error); color: white;">
+                    ⚠️ Hot Shard
+                </div>
+            </div>
+            <div class="card card-gradient text-center" style="padding: var(--spacing-xl);">
+                <div class="metric-value" style="color: var(--color-error); font-size: var(--text-4xl); margin-bottom: var(--spacing-md);">39%</div>
+                <div class="metric-label" style="font-size: var(--text-base); margin-bottom: var(--spacing-md);">Índices en RAM (Shard 1)</div>
+                <div class="badge badge-secondary" style="background-color: var(--color-error); color: white;">
+                    🐌 Crítico
+                </div>
+            </div>
+            <div class="card card-gradient text-center" style="padding: var(--spacing-xl);">
+                <div class="metric-value" style="color: var(--color-success); font-size: var(--text-4xl); margin-bottom: var(--spacing-md);">100%</div>
+                <div class="metric-label" style="font-size: var(--text-base); margin-bottom: var(--spacing-md);">Índices en RAM (Shard 2)</div>
+                <div class="badge badge-primary">
+                    ✅ Saludable
+                </div>
+            </div>
+            <div class="card card-gradient text-center" style="padding: var(--spacing-xl);">
+                <div class="metric-value" style="color: var(--color-primary); font-size: var(--text-4xl); margin-bottom: var(--spacing-md);">2 Fases</div>
+                <div class="metric-label" style="font-size: var(--text-base); margin-bottom: var(--spacing-md);">Plan Estratégico</div>
+                <div class="badge badge-primary">
+                    🎯 Solución
+                </div>
+            </div>
+        </div>
+
+        <!-- Diagnóstico Principal -->
+        <div class="card card-bordered mb-8" style="border-left: 4px solid var(--color-error); padding: var(--spacing-2xl);">
+            <h3 style="color: var(--color-error); margin-bottom: var(--spacing-lg);">🚨 Dos Problemas Interrelacionados Identificados</h3>
+            <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-xl);">
+                El cluster sufre de <strong>desbalanceo crítico de datos</strong> (Shard 1 tiene el doble de datos que Shard 2) e <strong>ineficiencia masiva de índices</strong> concentrada en el Shard 1.
+            </p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                    <h4 style="color: var(--color-error); margin-bottom: var(--spacing-lg);">🔍 Problema 1: Desbalanceo</h4>
+                    <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg); line-height: 1.8;">
+                        <li style="margin-bottom: var(--spacing-sm);">• Shard 1: 6.38 TB de datos</li>
+                        <li style="margin-bottom: var(--spacing-sm);">• Shard 2: 3.1 TB de datos</li>
+                        <li style="margin-bottom: var(--spacing-sm);">• Shard key inadecuada creando "hot shard"</li>
+                        <li style="margin-bottom: var(--spacing-sm);">• Distribución de carga desigual</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: var(--color-error); margin-bottom: var(--spacing-lg);">💽 Problema 2: Índices Ineficientes</h4>
+                    <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg); line-height: 1.8;">
+                        <li style="margin-bottom: var(--spacing-sm);">• Shard 1: 580.1 GB de índices (39% en RAM)</li>
+                        <li style="margin-bottom: var(--spacing-sm);">• Shard 2: 79.9 GB de índices (100% en RAM)</li>
+                        <li style="margin-bottom: var(--spacing-sm);">• Problema del _id localizado en Shard 1</li>
+                        <li style="margin-bottom: var(--spacing-sm);">• Impacto directo en rendimiento</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conclusión Clave -->
+        <div class="card mongodb-glow" style="background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(86, 68, 212, 0.1) 100%); padding: var(--spacing-2xl); margin-bottom: var(--spacing-3xl);">
+            <h3 class="text-gradient" style="margin-bottom: var(--spacing-lg);">💡 Conclusión Estratégica</h3>
+            <p style="font-size: var(--text-xl); font-weight: 500; margin-bottom: var(--spacing-lg);">
+                El problema <strong style="color: var(--color-warning);">NO se resuelve únicamente</strong> optimizando índices ni únicamente rebalanceando datos. Rebalancear ahora contaminaría el shard saludable. 
+            </p>
+            <p style="font-size: var(--text-xl); font-weight: 500;">
+                <strong style="color: var(--color-primary);">Solución:</strong> Plan de dos fases: primero optimizar índices en Shard 1, segundo revisar shard key para balanceo correcto.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Diagnóstico del Cluster Shardeado -->
+<section id="diagnostico" class="section" style="background-color: var(--color-bg-secondary);">
+    <div class="container">
+        <div class="text-center mb-8">
+            <h2 class="text-gradient">Diagnóstico del Cluster Shardeado</h2>
+            <p style="color: var(--color-text-secondary); font-size: var(--text-lg); margin-top: var(--spacing-md);">Análisis comparativo entre Shard 1 (Hot Shard) y Shard 2 (Shard Saludable)</p>
+        </div>
+
+        <!-- Comparación de Shards -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+            <!-- Shard 1 -->
+            <div class="card card-bordered" style="border-left: 6px solid var(--color-error); padding: var(--spacing-2xl);">
+                <div class="flex items-center gap-4 mb-6">
+                    <div style="width: 60px; height: 60px; background-color: var(--color-error); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--text-xl);">S1</div>
+                    <div>
+                        <h3 style="color: var(--color-error); margin-bottom: var(--spacing-xs);">Shard 1 - "Hot Shard"</h3>
+                        <p style="color: var(--color-text-secondary); margin: 0; font-size: var(--text-sm);">Sobrecargado con problemas críticos</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-error); font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">435 GB</div>
+                        <div class="metric-label">RAM Total</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-error); font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">6.38 TB</div>
+                        <div class="metric-label">Datos</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-error); font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">580.1 GB</div>
+                        <div class="metric-label">Índices</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-error); font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">39%</div>
+                        <div class="metric-label">Índices en RAM</div>
+                    </div>
+                </div>
+                <div style="margin-top: var(--spacing-lg);">
+                    <div class="badge badge-secondary" style="background-color: var(--color-error); color: white; padding: var(--spacing-sm) var(--spacing-lg);">
+                        🔥 Sobrecargado - Problema Crítico
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shard 2 -->
+            <div class="card card-bordered" style="border-left: 6px solid var(--color-success); padding: var(--spacing-2xl);">
+                <div class="flex items-center gap-4 mb-6">
+                    <div style="width: 60px; height: 60px; background-color: var(--color-success); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--text-xl);">S2</div>
+                    <div>
+                        <h3 style="color: var(--color-success); margin-bottom: var(--spacing-xs);">Shard 2 - "Shard Saludable"</h3>
+                        <p style="color: var(--color-text-secondary); margin: 0; font-size: var(--text-sm);">Funcionando correctamente</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-success); font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">257 GB</div>
+                        <div class="metric-label">RAM Total</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-success); font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">3.1 TB</div>
+                        <div class="metric-label">Datos</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-success); font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">79.9 GB</div>
+                        <div class="metric-label">Índices</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-success); font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">100%</div>
+                        <div class="metric-label">Índices en RAM</div>
+                    </div>
+                </div>
+                <div style="margin-top: var(--spacing-lg);">
+                    <div class="badge badge-primary" style="padding: var(--spacing-sm) var(--spacing-lg);">
+                        ✅ Funcionando Correctamente
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla Comparativa Detallada -->
+        <div class="card" style="padding: var(--spacing-2xl); margin-bottom: var(--spacing-3xl);">
+            <h3 style="margin-bottom: var(--spacing-xl);">📊 Tabla Comparativa Detallada</h3>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--color-primary);">
+                            <th style="padding: var(--spacing-lg); text-align: left; color: var(--color-primary); font-size: var(--text-lg);">Métrica</th>
+                            <th style="padding: var(--spacing-lg); text-align: center; color: var(--color-error); font-size: var(--text-lg);">Shard 1 (Hot Shard)</th>
+                            <th style="padding: var(--spacing-lg); text-align: center; color: var(--color-success); font-size: var(--text-lg);">Shard 2 (Saludable)</th>
+                            <th style="padding: var(--spacing-lg); text-align: left; color: var(--color-primary); font-size: var(--text-lg);">Observación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding: var(--spacing-lg); font-weight: 600; font-size: var(--text-base);">RAM</td>
+                            <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-error); font-size: var(--text-lg); font-weight: 700;">435 GB</td>
+                            <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-success); font-size: var(--text-lg); font-weight: 700;">257 GB</td>
+                            <td style="padding: var(--spacing-lg); color: var(--color-text-secondary); font-size: var(--text-base);">Hardware diferente.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding: var(--spacing-lg); font-weight: 600; font-size: var(--text-base);">Tamaño de Datos</td>
+                            <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-error); font-size: var(--text-lg); font-weight: 700;">6.38 TB</td>
+                            <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-success); font-size: var(--text-lg); font-weight: 700;">3.1 TB</td>
+                            <td style="padding: var(--spacing-lg); color: var(--color-error); font-size: var(--text-base);">🚨 Desbalanceo Crítico.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding: var(--spacing-lg); font-weight: 600; font-size: var(--text-base);">Tamaño de Índices</td>
+                            <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-error); font-size: var(--text-lg); font-weight: 700;">580.1 GB</td>
+                            <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-success); font-size: var(--text-lg); font-weight: 700;">79.9 GB</td>
+                            <td style="padding: var(--spacing-lg); color: var(--color-warning); font-size: var(--text-base);">El problema de índices está aislado en Shard 1.</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding: var(--spacing-lg); font-weight: 600; font-size: var(--text-base);">% de Índices en RAM</td>
+                            <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-error); font-size: var(--text-lg); font-weight: 700;">39%</td>
+                            <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-success); font-size: var(--text-lg); font-weight: 700;">100%</td>
+                            <td style="padding: var(--spacing-lg); color: var(--color-error); font-size: var(--text-base);">Causa directa del bajo rendimiento del Shard 1.</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: var(--spacing-lg); font-weight: 600; font-size: var(--text-base);">Índice _id_ más grande</td>
+                            <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-error); font-size: var(--text-lg); font-weight: 700;">196.4 GB</td>
+                            <td style="padding: var(--spacing-lg); text-align: center; color: var(--color-success); font-size: var(--text-lg); font-weight: 700;">~6.8 GB</td>
+                            <td style="padding: var(--spacing-lg); color: var(--color-warning); font-size: var(--text-base);">Confirma que el problema del _id es específico del Shard 1.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Gráfico de Comparación -->
+        <div class="card mt-6">
+            <h3 class="mb-4">📈 Visualización del Desbalanceo</h3>
+            <div style="position: relative; height: 400px;">
+                <canvas id="shardsComparisonChart" width="800" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Plan de Acción Estratégico por Fases -->
+<section id="fases" class="section">
+    <div class="container">
+        <div class="text-center mb-6">
+            <h2 class="text-gradient">🚀 Plan de Acción Estratégico (En Fases)</h2>
+            <p style="color: var(--color-text-secondary);">El orden de ejecución es crucial para no desestabilizar el shard saludable</p>
+        </div>
+
+        <!-- Advertencia Importante -->
+        <div class="card mb-6" style="border: 2px solid var(--color-warning); background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);">
+            <h3 style="color: var(--color-warning);">⚠️ Importante: Orden de Ejecución Crítico</h3>
+            <p style="font-size: var(--text-lg);">
+                <strong>NO rebalancear primero:</strong> Mover datos "tóxicos" con índices ineficientes del Shard 1 al Shard 2 contaminaría el shard que actualmente funciona bien. Primero debemos optimizar, luego rebalancear.
+            </p>
+        </div>
+
+        <!-- Fase 1 -->
+        <div class="card card-bordered mb-6" style="border-left: 6px solid var(--color-error);">
+            <div class="flex items-center gap-3 mb-4">
+                <div style="width: 60px; height: 60px; background-color: var(--color-error); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--text-xl);">1</div>
+                <div>
+                    <h3 style="color: var(--color-error);">Fase 1: Optimización de Índices en Shard 1</h3>
+                    <p style="color: var(--color-text-secondary); margin: 0;">Eliminar la "toxicidad" de los datos antes del rebalanceo</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Acciones de Fase 1 -->
+                <div>
+                    <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-md);">🔧 Acciones Específicas:</h4>
+                    <div class="space-y-3" style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                        <div class="card" style="background-color: rgba(239, 68, 68, 0.1); border: 1px solid var(--color-error); padding: var(--spacing-md);">
+                            <h5 style="color: var(--color-error); margin-bottom: var(--spacing-sm);">1.1 Refactorizar _id de MDM_CONSUMO</h5>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">
+                                Usar Script 1 para cambiar _id gigantes por ObjectIds. <strong>Impacto: ~149.4 GB de ahorro.</strong>
+                            </p>
+                        </div>
+                        <div class="card" style="background-color: rgba(245, 158, 11, 0.1); border: 1px solid var(--color-warning); padding: var(--spacing-md);">
+                            <h5 style="color: var(--color-warning); margin-bottom: var(--spacing-sm);">1.2 Eliminar Índices No Utilizados</h5>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">
+                                Aplicar Script 2 en AMBOS shards. <strong>Impacto: ~57.1 GB total (31 GB Shard 1, 26.1 GB Shard 2).</strong>
+                            </p>
+                        </div>
+                        <div class="card" style="background-color: rgba(59, 130, 246, 0.1); border: 1px solid var(--color-info); padding: var(--spacing-md);">
+                            <h5 style="color: var(--color-info); margin-bottom: var(--spacing-sm);">1.3 Consolidar Índices Redundantes</h5>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">
+                                Analizar índices prefijos en Shard 1. <strong>Impacto: ~20.9 GB de ahorro.</strong>
+                            </p>
+                        </div>
+                        <div class="card" style="background-color: rgba(86, 68, 212, 0.1); border: 1px solid var(--color-accent); padding: var(--spacing-md);">
+                            <h5 style="color: var(--color-accent); margin-bottom: var(--spacing-sm);">1.4 Implementar Índices Avanzados</h5>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">
+                                Índices parciales y TTL en Shard 1. <strong>Impacto: Adicional variable.</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resultado de Fase 1 -->
+                <div>
+                    <h4 style="color: var(--color-success); margin-bottom: var(--spacing-md);">✅ Resultado de Fase 1:</h4>
+                    <div class="card" style="background-color: rgba(0, 237, 100, 0.1); border: 2px solid var(--color-success); padding: var(--spacing-lg);">
+                        <div class="text-center mb-4">
+                            <div class="metric-value" style="color: var(--color-success);">~350 GB</div>
+                            <div class="metric-label">Índices Post-Optimización</div>
+                        </div>
+                        <div class="text-center mb-4">
+                            <div class="metric-value" style="color: var(--color-success);">~230 GB</div>
+                            <div class="metric-label">Reducción Total</div>
+                        </div>
+                        <p style="color: var(--color-text-secondary); text-align: center; margin: 0;">
+                            Los documentos ya NO serán "tóxicos" y el rendimiento del Shard 1 mejorará drásticamente.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fase 2 -->
+        <div class="card card-bordered" style="border-left: 6px solid var(--color-primary);">
+            <div class="flex items-center gap-3 mb-4">
+                <div style="width: 60px; height: 60px; background-color: var(--color-primary); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: var(--color-text-dark); font-weight: 700; font-size: var(--text-xl);">2</div>
+                <div>
+                    <h3 style="color: var(--color-primary);">Fase 2: Rebalanceo del Cluster</h3>
+                    <p style="color: var(--color-text-secondary); margin: 0;">Corregir la distribución una vez que los datos son eficientes</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Acciones de Fase 2 -->
+                <div>
+                    <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-md);">🎯 Acciones Específicas:</h4>
+                    <div class="space-y-3" style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                        <div class="card" style="background-color: rgba(0, 237, 100, 0.1); border: 1px solid var(--color-primary); padding: var(--spacing-md);">
+                            <h5 style="color: var(--color-primary); margin-bottom: var(--spacing-sm);">2.1 Analizar y Elegir Nueva Shard Key</h5>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">
+                                La shard key actual es inadecuada. Elegir clave con alta cardinalidad y distribución uniforme (ObjectId, UUID).
+                            </p>
+                        </div>
+                        <div class="card" style="background-color: rgba(86, 68, 212, 0.1); border: 1px solid var(--color-accent); padding: var(--spacing-md);">
+                            <h5 style="color: var(--color-accent); margin-bottom: var(--spacing-sm);">2.2 Re-shardear la Colección</h5>
+                            <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">
+                                Crear nueva colección con nueva shard key y migrar datos. MongoDB distribuirá automáticamente.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Advertencia sobre Shard Keys -->
+                    <div class="card mt-4" style="background-color: rgba(245, 158, 11, 0.1); border: 1px solid var(--color-warning); padding: var(--spacing-md);">
+                        <h5 style="color: var(--color-warning); margin-bottom: var(--spacing-sm);">⚠️ Evitar Shard Keys Inadecuadas:</h5>
+                        <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin: 0;">
+                            Campos como <strong>Tipo_Trafico</strong> serían una mala elección por baja cardinalidad y distribución desigual.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Resultado de Fase 2 -->
+                <div>
+                    <h4 style="color: var(--color-success); margin-bottom: var(--spacing-md);">✅ Resultado de Fase 2:</h4>
+                    <div class="card" style="background-color: rgba(0, 237, 100, 0.1); border: 2px solid var(--color-success); padding: var(--spacing-lg);">
+                        <div class="grid grid-cols-2 gap-4 text-center mb-4">
+                            <div>
+                                <div class="metric-value" style="color: var(--color-success); font-size: var(--text-xl);">~4.74 TB</div>
+                                <div class="metric-label">Datos por Shard</div>
+                            </div>
+                            <div>
+                                <div class="metric-value" style="color: var(--color-success); font-size: var(--text-xl);">~218.5 GB</div>
+                                <div class="metric-label">Índices por Shard</div>
+                            </div>
+                        </div>
+                        <p style="color: var(--color-text-secondary); text-align: center; margin: 0;">
+                            Distribución uniforme eliminando el "hot shard" y asegurando escalabilidad a largo plazo.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Visual -->
+        <div class="card mt-6">
+            <h3 class="mb-4">⏱️ Timeline de Implementación Sugerido</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card" style="background-color: rgba(239, 68, 68, 0.1); border: 1px solid var(--color-error);">
+                    <h4 style="color: var(--color-error);">📅 Semana 1-2: Fase 1</h4>
+                    <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg);">
+                        <li>• Backup completo del cluster</li>
+                        <li>• Ejecución de scripts de optimización</li>
+                        <li>• Validación de mejoras en rendimiento</li>
+                        <li>• Monitoreo de estabilidad</li>
+                    </ul>
+                </div>
+                <div class="card" style="background-color: rgba(0, 237, 100, 0.1); border: 1px solid var(--color-primary);">
+                    <h4 style="color: var(--color-primary);">📅 Semana 3-4: Fase 2</h4>
+                    <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg);">
+                        <li>• Análisis de nueva shard key</li>
+                        <li>• Planificación del re-sharding</li>
+                        <li>• Ejecución del rebalanceo</li>
+                        <li>• Validación de distribución uniforme</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Análisis de Viabilidad M200 -->
+<section id="viabilidad" class="section" style="background-color: var(--color-bg-secondary);">
+    <div class="container">
+        <div class="text-center mb-6">
+            <h2 class="text-gradient">Análisis de Viabilidad en M200</h2>
+            <p style="color: var(--color-text-secondary);">Evaluación técnica completa para la migración a Atlas M200</p>
+        </div>
+
+        <!-- Especificaciones M200 -->
+        <div class="card mb-6">
+            <h3 class="mb-4">⚙️ Especificaciones MongoDB Atlas M200</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="text-center">
+                    <div class="metric-value" style="color: var(--color-info);">256 GB</div>
+                    <div class="metric-label">RAM Total</div>
+                </div>
+                <div class="text-center">
+                    <div class="metric-value" style="color: var(--color-accent);">~127.5 GB</div>
+                    <div class="metric-label">WiredTiger Cache</div>
+                </div>
+                <div class="text-center">
+                    <div class="metric-value" style="color: var(--color-primary);">64</div>
+                    <div class="metric-label">vCPUs</div>
+                </div>
+                <div class="text-center">
+                    <div class="metric-value" style="color: var(--color-success);">8 TB</div>
+                    <div class="metric-label">Almacenamiento Máximo</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparativa de Viabilidad -->
+        <div class="card mb-6">
+            <h3 class="mb-4">🔍 Análisis de Viabilidad - Comparativa Directa</h3>
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--color-primary);">
+                            <th style="padding: var(--spacing-md); text-align: left; color: var(--color-primary);">Métrica del Cluster</th>
+                            <th style="padding: var(--spacing-md); text-align: center; color: var(--color-primary);">Estado Actual</th>
+                            <th style="padding: var(--spacing-md); text-align: center; color: var(--color-primary);">Post-Optimización</th>
+                            <th style="padding: var(--spacing-md); text-align: center; color: var(--color-primary);">Capacidad M200</th>
+                            <th style="padding: var(--spacing-md); text-align: center; color: var(--color-primary);">Veredicto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding: var(--spacing-md); font-weight: 600;">Tamaño de Datos</td>
+                            <td style="padding: var(--spacing-md); text-align: center;">6.38 TB</td>
+                            <td style="padding: var(--spacing-md); text-align: center;">6.38 TB</td>
+                            <td style="padding: var(--spacing-md); text-align: center; color: var(--color-success);">8 TB (Disco)</td>
+                            <td style="padding: var(--spacing-md); text-align: center; color: var(--color-success);">✅ SUFICIENTE</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding: var(--spacing-md); font-weight: 600;">Tamaño de Índices</td>
+                            <td style="padding: var(--spacing-md); text-align: center; color: var(--color-error);">580.1 GB</td>
+                            <td style="padding: var(--spacing-md); text-align: center; color: var(--color-warning);">~379 GB</td>
+                            <td style="padding: var(--spacing-md); text-align: center; color: var(--color-error);">~127.5 GB (RAM)</td>
+                            <td style="padding: var(--spacing-md); text-align: center; color: var(--color-error);">❌ INSUFICIENTE</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: var(--spacing-md); font-weight: 600;">% de Índices en RAM</td>
+                            <td style="padding: var(--spacing-md); text-align: center; color: var(--color-error);">39%</td>
+                            <td style="padding: var(--spacing-md); text-align: center; color: var(--color-error);">~33%</td>
+                            <td style="padding: var(--spacing-md); text-align: center; color: var(--color-success);">100% (Ideal)</td>
+                            <td style="padding: var(--spacing-md); text-align: center; color: var(--color-error);">❌ CRÍTICO</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Gráfico de Comparación -->
+        <div class="card mb-6">
+            <h3 class="mb-4">📊 Visualización de Capacidades vs Requerimientos</h3>
+            <div style="position: relative; height: 400px;">
+                <canvas id="viabilityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Conclusión Final -->
+        <div class="card" style="border: 2px solid var(--color-error); background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);">
+            <h3 style="color: var(--color-error);">⚠️ Conclusión Final para ETB</h3>
+            <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-lg);">
+                Un tier M200 <strong>solo es una opción viable</strong> si se cumplen AMBAS condiciones, sin excepción:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="card" style="background-color: rgba(239, 68, 68, 0.1); border: 1px solid var(--color-error);">
+                    <h4 style="color: var(--color-error);">🔧 Condición 1: Optimización Completa</h4>
+                    <p style="color: var(--color-text-secondary);">
+                        Se ejecutan TODAS las optimizaciones de índices descritas en este reporte, reduciendo el tamaño total de índices a ~379 GB.
+                    </p>
+                </div>
+                <div class="card" style="background-color: rgba(239, 68, 68, 0.1); border: 1px solid var(--color-error);">
+                    <h4 style="color: var(--color-error);">📦 Condición 2: Archivado Agresivo</h4>
+                    <p style="color: var(--color-text-secondary);">
+                        Se implementa una estrategia de archivado de datos agresiva para reducir el tamaño total de la base de datos en al menos un 70-80%, llevando el tamaño de los índices restantes por debajo de los 100 GB.
+                    </p>
+                </div>
+            </div>
+            <div class="card mt-4" style="background-color: rgba(239, 68, 68, 0.2); border: 2px solid var(--color-error);">
+                <p style="font-size: var(--text-xl); font-weight: 600; color: var(--color-error); text-align: center;">
+                    ⚠️ Sin estos dos pasos, la migración a un M200 no es un ahorro de costos; es una decisión que degradará severamente la funcionalidad y la experiencia del usuario final.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Scripts de Optimización -->
+<section class="section">
+    <div class="container">
+        <div class="text-center mb-6">
+            <h2 class="text-gradient">💻 Scripts de Optimización</h2>
+            <p style="color: var(--color-text-secondary);">Herramientas técnicas para implementar las optimizaciones</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Script 1 -->
+            <div class="card">
+                <h3 class="mb-4" style="color: var(--color-primary);">🔧 Script 1: Migración del Campo _id</h3>
+                <div class="badge badge-secondary mb-3" style="background-color: var(--color-error); color: white;">
+                    ⚠️ CRÍTICO: Realizar backup completo antes de ejecutar
+                </div>
+                <div class="code-block" style="max-height: 300px; overflow-y: auto;">
+                    <pre style="color: var(--color-text-secondary); font-size: var(--text-sm); line-height: 1.4;">
+// CONÉCTATE A TU BASE DE DATOS 'MDM'
+// use MDM;
+
+// 1. Define el tamaño del lote para no sobrecargar el servidor
+const BATCH_SIZE = 500;
+
+// 2. Define el nombre de la colección y el nuevo campo
+const COLLECTION_NAME = "MDM_CONSUMO";
+const NEW_FIELD_NAME = "consumo_id"; // O el nombre que prefieras
+
+// 3. Crea el índice en el nuevo campo ANTES de empezar la migración
+print(`Creando índice en ${NEW_FIELD_NAME}...`);
+db.getCollection(COLLECTION_NAME).createIndex({ [NEW_FIELD_NAME]: 1 });
+print("Índice creado.");
+
+// 4. Busca solo los documentos que necesitan migración
+const query = { "_id": { "$type": { "$ne": "objectId" } } };
+const totalDocsToMigrate = db.getCollection(COLLECTION_NAME).countDocuments(query);
+print(`Total de documentos a migrar: ${totalDocsToMigrate}`);
+
+let migratedCount = 0;
+
+while (migratedCount < totalDocsToMigrate) {
+const cursor = db.getCollection(COLLECTION_NAME).find(query).limit(BATCH_SIZE);
+
+let bulkOps = [];
+let docsInBatch = 0;
+
+while(cursor.hasNext()) {
+    docsInBatch++;
+    const doc = cursor.next();
+    const old_id = doc._id;
+    
+    // Crea el nuevo documento
+    let newDoc = { ...doc };
+    delete newDoc._id; // Quita el _id para que Mongo genere uno nuevo
+    newDoc[NEW_FIELD_NAME] = old_id; // Mueve el _id viejo al nuevo campo
+    
+    // Prepara las operaciones: 1. Inserta el nuevo, 2. Borra el viejo
+    bulkOps.push({ "insertOne": { "document": newDoc } });
+    bulkOps.push({ "deleteOne": { "filter": { "_id": old_id } } });
+}
+
+if (bulkOps.length > 0) {
+    try {
+        print(`Procesando lote de ${docsInBatch} documentos...`);
+        db.getCollection(COLLECTION_NAME).bulkWrite(bulkOps, { "ordered": false });
+        migratedCount += docsInBatch;
+        print(`Progreso: ${migratedCount} / ${totalDocsToMigrate} migrados.`);
+    } catch (e) {
+        print("Error en el lote:", e);
+        break; 
+    }
+} else {
+    break;
+}
+}
+
+print("Migración completada.");
+                    </pre>
+                </div>
+                <div class="mt-3">
+                    <span class="badge badge-primary">Reducción esperada: ~149.4 GB</span>
+                </div>
+            </div>
+
+            <!-- Script 2 -->
+            <div class="card">
+                <h3 class="mb-4" style="color: var(--color-warning);">🗑️ Script 2: Eliminar Índices No Utilizados</h3>
+                <div class="badge badge-secondary mb-3" style="background-color: var(--color-success); color: white;">
+                    ✅ Seguro: Genera comandos para revisión
+                </div>
+                <div class="code-block" style="max-height: 300px; overflow-y: auto;">
+                    <pre style="color: var(--color-text-secondary); font-size: var(--text-sm); line-height: 1.4;">
+// Script para generar los comandos de borrado
+// Ejecutar en mongosh
+
+print("// Se han identificado índices no utilizados.");
+print("// Copia y ejecuta los siguientes comandos para eliminarlos:");
+
+db.getCollectionNames().forEach(function(collectionName) {
+const indexStats = db.getCollection(collectionName).aggregate([{$indexStats: {}}]);
+indexStats.forEach(function(stats) {
+    // No eliminar el índice _id_ por defecto, aunque no se use
+    if (stats.accesses.ops === 0 && stats.name !== '_id_') {
+        print(`db.getCollection("${collectionName}").dropIndex("${stats.name}"); 
+// Tamaño: ${ (stats.size / (1024*1024*1024)).toFixed(3) } GB`);
+    }
+});
+});
+
+print("\n// Comando para verificar el impacto:");
+print("db.runCommand({collStats: 'NOMBRE_COLECCION'});");
+                    </pre>
+                </div>
+                <div class="mt-3">
+                    <span class="badge badge-secondary" style="background-color: var(--color-warning); color: white;">Reducción esperada: 31.0 GB</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Siguiente Paso Crítico -->
+        <div class="card mt-6 mongodb-glow" style="background: linear-gradient(135deg, rgba(86, 68, 212, 0.1) 0%, rgba(0, 237, 100, 0.1) 100%);">
+            <h3 class="text-gradient">🚨 Siguiente Paso CRÍTICO</h3>
+            <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-lg);">
+                Como demuestra el análisis de RAM, incluso después de esta optimización, el working set sigue siendo muy grande. Para poder migrar a un tier de Atlas de tamaño razonable (como un M200 o M300), el siguiente paso obligatorio es implementar una estrategia de archivado de datos.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <h4 style="color: var(--color-primary);">📦 Opciones de Archivado:</h4>
+                    <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg);">
+                        <li>• Atlas Online Archive (Recomendado)</li>
+                        <li>• Solución de archivado propia</li>
+                        <li>• Particionamiento temporal</li>
+                        <li>• Migración a cold storage</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: var(--color-success);">✅ Beneficios Esperados:</h4>
+                    <ul style="color: var(--color-text-secondary); margin-left: var(--spacing-lg);">
+                        <li>• Cluster más pequeño y rápido</li>
+                        <li>• Reducción significativa de costos</li>
+                        <li>• Mejor rendimiento general</li>
+                        <li>• Migración viable a M200/M300</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="section" style="background-color: var(--color-bg-tertiary); border-top: 1px solid rgba(255,255,255,0.1);">
+    <div class="container">
+        <div class="text-center">
+            <div class="navbar-logo mb-4" style="justify-content: center;">
+                <div style="width: 40px; height: 40px; background: var(--mongodb-gradient); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--color-text-dark); font-weight: 800;">Go</div>
+                <span class="text-gradient">MDB</span>
+            </div>
+            <p style="color: var(--color-text-muted); margin-bottom: var(--spacing-md);">
+                Reporte generado para ETB - Empresa de Telecomunicaciones de Bogotá
+            </p>
+            <p style="color: var(--color-text-muted); font-size: var(--text-sm);">
+                Arquitectura MongoDB para Latinoamérica • Julio 2025
+            </p>
+            <div class="flex justify-center gap-4 mt-4">
+                <span class="badge badge-primary">MongoDB Atlas</span>
+                <span class="badge badge-secondary">Optimización</span>
+                <span class="badge badge-secondary">M200 Analysis</span>
+            </div>
+        </div>
+    </div>
+<!-- Viabilidad de Migración a Atlas -->
+<section id="viabilidad" class="section" style="background-color: var(--color-bg-secondary);">
+    <div class="container">
+        <div class="text-center mb-6">
+            <h2 class="text-gradient">Viabilidad de Migración a Atlas</h2>
+            <p style="color: var(--color-text-secondary);">Análisis post-optimización completa para diferentes tiers de Atlas</p>
+        </div>
+
+        <!-- Estado Post-Optimización Completa -->
+        <div class="card mb-6">
+            <h3 class="mb-4">📊 Estado del Cluster Post-Optimización Completa (Ambas Fases)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                <div class="text-center">
+                    <div class="metric-value" style="color: var(--color-primary);">~9.48 TB</div>
+                    <div class="metric-label">Datos Totales</div>
+                </div>
+                <div class="text-center">
+                    <div class="metric-value" style="color: var(--color-primary);">~4.74 TB</div>
+                    <div class="metric-label">Datos por Shard (Balanceado)</div>
+                </div>
+                <div class="text-center">
+                    <div class="metric-value" style="color: var(--color-success);">~437 GB</div>
+                    <div class="metric-label">Índices Totales (Optimizados)</div>
+                </div>
+                <div class="text-center">
+                    <div class="metric-value" style="color: var(--color-success);">~218.5 GB</div>
+                    <div class="metric-label">Índices por Shard (Balanceado)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Análisis por Tiers de Atlas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- M200 Analysis -->
+            <div class="card card-bordered" style="border-left: 4px solid var(--color-error);">
+                <h3 style="color: var(--color-error);">❌ Análisis para M200</h3>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-info); font-size: var(--text-xl);">256 GB</div>
+                        <div class="metric-label">RAM</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-accent); font-size: var(--text-xl);">~127.5 GB</div>
+                        <div class="metric-label">WiredTiger Cache</div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="grid grid-cols-1 gap-2">
+                        <div class="flex justify-between">
+                            <span style="color: var(--color-text-secondary);">Almacenamiento:</span>
+                            <span style="color: var(--color-success);">✅ 4.74 TB < 8 TB</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span style="color: var(--color-text-secondary);">RAM para Índices:</span>
+                            <span style="color: var(--color-error);">❌ 218.5 GB > 127.5 GB</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="badge badge-secondary" style="background-color: var(--color-error); color: white; width: 100%; text-align: center;">
+                    NO VIABLE - Insuficiente RAM
+                </div>
+            </div>
+
+            <!-- M300 Analysis -->
+            <div class="card card-bordered" style="border-left: 4px solid var(--color-warning);">
+                <h3 style="color: var(--color-warning);">⚠️ Análisis para M300</h3>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-info); font-size: var(--text-xl);">384 GB</div>
+                        <div class="metric-label">RAM</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="metric-value" style="color: var(--color-accent); font-size: var(--text-xl);">~191 GB</div>
+                        <div class="metric-label">WiredTiger Cache</div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="grid grid-cols-1 gap-2">
+                        <div class="flex justify-between">
+                            <span style="color: var(--color-text-secondary);">Almacenamiento:</span>
+                            <span style="color: var(--color-success);">✅ 4.74 TB < 8 TB</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span style="color: var(--color-text-secondary);">RAM para Índices:</span>
+                            <span style="color: var(--color-warning);">⚠️ 218.5 GB > 191 GB</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="badge badge-secondary" style="background-color: var(--color-warning); color: white; width: 100%; text-align: center;">
+                    VIABLE CON DIFICULTAD
+                </div>
+            </div>
+        </div>
+
+        <!-- Recomendación Final -->
+        <div class="card mongodb-glow">
+            <h3 class="text-gradient">🎯 Recomendación Final</h3>
+            <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-lg);">
+                Incluso con un cluster perfectamente optimizado y balanceado, la migración a Atlas requiere consideraciones adicionales:
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Opción 1 -->
+                <div class="card" style="background-color: rgba(0, 237, 100, 0.1); border: 2px solid var(--color-success);">
+                    <h4 style="color: var(--color-success);">✅ Opción Recomendada</h4>
+                    <h5 style="color: var(--color-primary);">Optimización + Balanceo + Archivado</h5>
+                    <p style="color: var(--color-text-secondary); font-size: var(--text-sm);">
+                        Implementar archivado de datos para reducir el tamaño total y usar tiers M200 económicos.
+                    </p>
+                    <div class="badge badge-primary mt-2">
+                        💰 Más Económico
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Script moved to end before </body> -->
+<script>
+    // Navegación con scroll
+    window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('navbar-scrolled');
+        } else {
+            navbar.classList.remove('navbar-scrolled');
+        }
+    });
+
+    // Smooth scrolling para enlaces internos
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Configuración de gráficos
+    Chart.defaults.color = '#B8C4CE';
+    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+    // Gráfico de RAM
+    const ramCtx = document.getElementById('ramChart').getContext('2d');
+    new Chart(ramCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Índices en RAM (39%)', 'Índices en Disco (61%)'],
+            datasets: [{
+                data: [39, 61],
+                backgroundColor: ['#00ED64', '#EF4444'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true
+                    }
+                }
+            }
+        }
+    });
+
+    // Gráfico de Índices
+    const indexCtx = document.getElementById('indexChart').getContext('2d');
+    new Chart(indexCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Índice _id MDM_CONSUMO', 'Índices No Utilizados', 'Índices Redundantes', 'Otros Índices'],
+            datasets: [{
+                label: 'Tamaño (GB)',
+                data: [196.4, 31.0, 20.9, 331.8],
+                backgroundColor: ['#EF4444', '#F59E0B', '#3B82F6', '#00ED64'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Tamaño (GB)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Gráfico de Viabilidad
+    // Gráfico de Visualización del Desbalanceo
+    window.onload = () => {
+      const shardsComparisonCanvas = document.getElementById('shardsComparisonChart');
+      if (shardsComparisonCanvas) {
+        const shardsComparisonCtx = shardsComparisonCanvas.getContext('2d');
+        new Chart(shardsComparisonCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Shard 1', 'Shard 2'],
+            datasets: [
+              {
+                label: 'Datos (TB)',
+                data: [6.38, 3.1],
+                backgroundColor: '#EF4444',
+                borderWidth: 0
+              },
+              {
+                label: 'RAM (GB)',
+                data: [435, 257],
+                backgroundColor: '#3B82F6',
+                borderWidth: 0
+              },
+              {
+                label: 'Índices (GB)',
+                data: [580.1, 79.9],
+                backgroundColor: '#10B981',
+                borderWidth: 0
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Tamaño (GB / TB)'
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'top'
+              }
+            }
+          }
+        });
+      }
+      const viabilityCtx = document.getElementById('viabilityChart').getContext('2d');
+      new Chart(viabilityCtx, {
+          type: 'bar',
+          data: {
+              labels: ['Datos (TB)', 'Índices Actuales (GB)', 'Índices Post-Opt (GB)', 'Capacidad M200 RAM (GB)'],
+              datasets: [
+                  {
+                      label: 'Requerimientos ETB',
+                      data: [6380, 580.1, 379, 0],
+                      backgroundColor: '#EF4444',
+                      borderWidth: 0
+                  },
+                  {
+                      label: 'Capacidad M200',
+                      data: [8000, 0, 0, 127.5],
+                      backgroundColor: '#00ED64',
+                      borderWidth: 0
+                  }
+              ]
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      title: {
+                          display: true,
+                          text: 'Tamaño (GB / TB convertido a GB)'
+                      }
+                  }
+              },
+              plugins: {
+                  legend: {
+                      position: 'top'
+                  },
+                  tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              let label = context.dataset.label || '';
+                              if (label) {
+                                  label += ': ';
+                              }
+                              if (context.parsed.y !== null) {
+                                  if (context.parsed.y > 1000) {
+                                      label += (context.parsed.y / 1000).toFixed(1) + ' TB';
+                                  } else {
+                                      label += context.parsed.y + ' GB';
+                                  }
+                              }
+                              return label;
+                          }
+                      }
+                  }
+              }
+          }
+      });
+
+      // Animaciones de entrada
+      const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver(function(entries) {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.style.opacity = '1';
+                  entry.target.style.transform = 'translateY(0)';
+              }
+          });
+      }, observerOptions);
+
+      // Aplicar animaciones a las cards
+      document.querySelectorAll('.card').forEach(card => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(30px)';
+          card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+          observer.observe(card);
+      });
+    };
+</script>
+</body>
+</html>

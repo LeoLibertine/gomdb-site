@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Atlas - Gestión del Ciclo de Vida del Dato</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #001E2B;
+            color: #fff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #001E2B 0%, #00303F 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 80%, #00ED64 0%, transparent 50%);
+            opacity: 0.1;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(-10%, -10%) rotate(0deg); }
+            50% { transform: translate(10%, 10%) rotate(180deg); }
+        }
+        
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            max-width: 900px;
+            padding: 0 20px;
+        }
+        
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        .hero .subtitle {
+            font-size: 1.5rem;
+            color: #00ED64;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #B8C4CE;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Section Styles */
+        .section {
+            padding: 100px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: #00ED64;
+        }
+        
+        /* Problem Section */
+        .problem-section {
+            background: #00303F;
+            position: relative;
+        }
+        
+        .problem-card {
+            background: rgba(0, 237, 100, 0.1);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: 16px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            margin: 0 auto;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .problem-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .problem-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+            text-align: center;
+        }
+        
+        /* Solutions Grid */
+        .solutions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .solution-card {
+            background: linear-gradient(135deg, #001E2B 0%, #00303F 100%);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: 16px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .solution-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, #00ED64 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .solution-card:hover::before {
+            opacity: 0.1;
+        }
+        
+        .solution-card:hover {
+            transform: translateY(-10px);
+            border-color: #00ED64;
+        }
+        
+        .solution-number {
+            background: #00ED64;
+            color: #001E2B;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .solution-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .solution-card p {
+            color: #B8C4CE;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: #B8C4CE;
+        }
+        
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #00ED64;
+            font-weight: bold;
+        }
+        
+        /* Data Federation Section */
+        .federation-section {
+            background: #001E2B;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .federation-visual {
+            background: rgba(0, 237, 100, 0.05);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 3rem 0;
+            position: relative;
+        }
+        
+        .data-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .data-source {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 237, 100, 0.1);
+            border-radius: 16px;
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .data-source:hover {
+            background: rgba(0, 237, 100, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .data-source-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .arrow {
+            font-size: 2rem;
+            color: #00ED64;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        /* Benefits Section */
+        .benefits-section {
+            background: linear-gradient(135deg, #00303F 0%, #001E2B 100%);
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .benefit-item {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .benefit-item:hover {
+            background: rgba(0, 237, 100, 0.1);
+            transform: translateY(-5px);
+        }
+        
+        .benefit-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #00ED64;
+        }
+        
+        .benefit-item h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .benefit-item p {
+            color: #B8C4CE;
+            font-size: 0.95rem;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: #00ED64;
+            color: #001E2B;
+            text-align: center;
+            padding: 80px 20px;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: #001E2B;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 30, 43, 0.4);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .data-flow {
+                flex-direction: column;
+            }
+            
+            .arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Gestión Inteligente del Ciclo de Vida del Dato</h1>
+            <p class="subtitle">MongoDB Atlas para Fondos de Pensiones</p>
+            <p>Una estrategia moderna para manejar décadas de datos: manteniéndolos accesibles, cumpliendo regulaciones y optimizando costos.</p>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="problem-section section">
+        <h2 class="section-title">El Desafío que Enfrentan</h2>
+        <div class="problem-card">
+            <span class="problem-icon">⚠️</span>
+            <h3>Datos de 10, 20 o más de 30 años</h3>
+            <p>Las instituciones financieras enfrentan un dilema crítico: mantener décadas de datos históricos por requisitos regulatorios y de negocio, mientras luchan con:</p>
+            <ul class="feature-list" style="margin-top: 1.5rem;">
+                <li>Costos exponenciales de almacenamiento en sistemas transaccionales</li>
+                <li>Degradación severa del rendimiento en consultas históricas</li>
+                <li>Complejidad en el cumplimiento regulatorio</li>
+                <li>Imposibilidad de ofrecer vistas completas del cliente</li>
+            </ul>
+            <p style="margin-top: 1.5rem; font-style: italic; color: #00ED64;">
+                "La lentitud de las consultas a datos históricos en Oracle es un síntoma perfecto de este desafío."
+            </p>
+        </div>
+    </section>
+
+    <!-- Solutions Section -->
+    <section class="section">
+        <h2 class="section-title">La Solución MongoDB Atlas</h2>
+        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 3rem; color: #B8C4CE;">
+            Tres herramientas integradas que transforman la gestión de datos históricos
+        </p>
+        
+        <div class="solutions-grid">
+            <!-- Atlas Online Archive -->
+            <div class="solution-card">
+                <div class="solution-number">1</div>
+                <h3>Atlas Online Archive</h3>
+                <p>Para datos que deben conservarse a largo plazo pero no se consultan diariamente.</p>
+                <ul class="feature-list">
+                    <li><strong>Reducción drástica de costos:</strong> Almacenamiento en S3 a fracción del precio</li>
+                    <li><strong>Datos siempre accesibles:</strong> Consultables con el mismo lenguaje MQL</li>
+                    <li><strong>Proceso automatizado:</strong> Define reglas y Atlas hace el resto</li>
+                </ul>
+                <p style="margin-top: 1.5rem; padding: 1rem; background: rgba(0, 237, 100, 0.1); border-radius: 8px;">
+                    <em>"Mueve automáticamente transacciones de más de 36 meses al archivo de bajo costo"</em>
+                </p>
+            </div>
+
+            <!-- TTL Indexes -->
+            <div class="solution-card">
+                <div class="solution-number">2</div>
+                <h3>Índices TTL (Time-to-Live)</h3>
+                <p>Para datos efímeros que deben eliminarse automáticamente.</p>
+                <ul class="feature-list">
+                    <li><strong>Cumplimiento automático:</strong> Elimina datos según políticas de privacidad</li>
+                    <li><strong>Higiene de datos:</strong> Evita acumulación de "basura digital"</li>
+                    <li><strong>Sin intervención manual:</strong> MongoDB purga automáticamente</li>
+                </ul>
+                <p style="margin-top: 1.5rem; padding: 1rem; background: rgba(0, 237, 100, 0.1); border-radius: 8px;">
+                    <em>"Elimina sesiones de usuario 24 horas después de su creación"</em>
+                </p>
+            </div>
+
+            <!-- Atlas Data Federation -->
+            <div class="solution-card" style="grid-column: 1 / -1;">
+                <div class="solution-number">3</div>
+                <h3>Atlas Data Federation</h3>
+                <p>El puente que unifica todos sus datos en una vista única.</p>
+                <div class="federation-visual">
+                    <div class="data-flow">
+                        <div class="data-source">
+                            <span class="data-source-icon">🔥</span>
+                            <h4>Clúster Atlas</h4>
+                            <p>Últimos 2 años<br/>Alto rendimiento</p>
+                        </div>
+                        <span class="arrow">→</span>
+                        <div class="data-source">
+                            <span class="data-source-icon">🎯</span>
+                            <h4>Data Federation</h4>
+                            <p>Motor de consultas<br/>federadas</p>
+                        </div>
+                        <span class="arrow">←</span>
+                        <div class="data-source">
+                            <span class="data-source-icon">🗄️</span>
+                            <h4>Online Archive</h4>
+                            <p>2-30 años<br/>Bajo costo</p>
+                        </div>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 2rem; font-size: 1.1rem;">
+                    <strong>Una consulta, múltiples fuentes, resultados unificados.</strong><br/>
+                    Construye dashboards con el rendimiento completo de 10 años sin importar dónde residan los datos.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits-section section">
+        <h2 class="section-title">Beneficios Clave</h2>
+        <div class="benefits-grid">
+            <div class="benefit-item">
+                <span class="benefit-icon">💰</span>
+                <h4>Control de Costos</h4>
+                <p>Reduce hasta 90% los costos de almacenamiento histórico</p>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">⚡</span>
+                <h4>Alto Rendimiento</h4>
+                <p>Mantén tu clúster principal ágil y rápido</p>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">🔒</span>
+                <h4>Cumplimiento</h4>
+                <p>Garantiza retención y eliminación según regulaciones</p>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">👁️</span>
+                <h4>Vista 360°</h4>
+                <p>Ofrece a clientes su historial completo instantáneamente</p>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">🔄</span>
+                <h4>Automatización</h4>
+                <p>Configura una vez y olvídate del mantenimiento</p>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">🚀</span>
+                <h4>Preparado para el Futuro</h4>
+                <p>Arquitectura escalable para las próximas décadas</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <h2>Construye una Base de Datos Sostenible</h2>
+        <p>No solo resuelve los retos de hoy, prepárate para las próximas décadas</p>
+        <a href="#" class="cta-button">Hablemos de su Caso de Uso</a>
+    </section>
+
+    <script>
+        // Smooth scroll animation for sections
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'all 0.8s ease-out';
+            observer.observe(section);
+        });
+
+        // Add hover effects to cards
+        document.querySelectorAll('.solution-card, .benefit-item').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.3s ease';
+            });
+        });
+    </script>
+</body>
+</html>

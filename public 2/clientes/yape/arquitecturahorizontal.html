@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Arquitectura - Escalamiento y Contingencia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mongodb-green: #00ed64;
+            --mongodb-dark: #001e2b;
+            --mongodb-darker: #000d13;
+            --text-light: #e8edeb;
+            --text-gray: #b8c4c2;
+            --border-color: #21313c;
+            --card-bg: #011621;
+            --success-green: #00ed64;
+            --error-red: #ff5252;
+            --warning-yellow: #ffc107;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--mongodb-darker);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Architecture Section */
+        .architecture-section {
+            padding: 4rem 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--mongodb-green), #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(0, 237, 100, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(0, 237, 100, 0.8)); }
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-gray);
+        }
+
+        /* Topic Cards */
+        .topics-container {
+            display: grid;
+            gap: 3rem;
+        }
+
+        .topic-card {
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(0, 237, 100, 0.05) 100%);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--mongodb-green);
+            box-shadow: 0 20px 40px rgba(0, 237, 100, 0.2);
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .topic-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--mongodb-green), #00ff88);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--mongodb-dark);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .topic-info h2 {
+            font-size: 2.5rem;
+            color: var(--mongodb-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .topic-tagline {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+
+        /* Content Sections */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .content-block {
+            background-color: var(--mongodb-dark);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .content-block:hover {
+            transform: scale(1.02);
+            border-color: var(--mongodb-green);
+        }
+
+        .content-block h3 {
+            color: var(--mongodb-green);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .content-block p {
+            color: var(--text-gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        /* Interactive Visualizations */
+        .visualization {
+            background: rgba(0, 237, 100, 0.05);
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(0, 237, 100, 0.2);
+        }
+
+        /* Sharding Visualization */
+        .sharding-demo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .data-source {
+            text-align: center;
+            padding: 2rem;
+            background: var(--mongodb-dark);
+            border-radius: 12px;
+            border: 2px solid var(--mongodb-green);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-source::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        .data-amount {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--mongodb-green);
+        }
+
+        .arrow-container {
+            font-size: 2.5rem;
+            color: var(--mongodb-green);
+            animation: moveRight 2s ease-in-out infinite;
+        }
+
+        @keyframes moveRight {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        .shards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .shard-box {
+            background: var(--mongodb-dark);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .shard-box:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: var(--mongodb-green);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.3);
+        }
+
+        .shard-name {
+            font-weight: bold;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .shard-size {
+            color: var(--mongodb-green);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .shard-server {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Replica Set Visualization */
+        .replica-demo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .primary-server {
+            background: linear-gradient(135deg, var(--mongodb-dark), rgba(0, 237, 100, 0.1));
+            padding: 2rem 3rem;
+            border-radius: 15px;
+            border: 2px solid var(--mongodb-green);
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 237, 100, 0.3);
+            position: relative;
+        }
+
+        .primary-server::after {
+            content: 'PRIMARIO';
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--mongodb-green);
+            color: var(--mongodb-dark);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .server-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .server-role {
+            color: var(--mongodb-green);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .server-status {
+            color: var(--success-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--success-green);
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .sync-arrows {
+            font-size: 2rem;
+            color: var(--mongodb-green);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        .secondary-servers {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .secondary-server {
+            background: var(--mongodb-dark);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .secondary-server:hover {
+            transform: scale(1.05);
+            border-color: var(--mongodb-green);
+        }
+
+        /* Example Boxes */
+        .example-box {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, transparent 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--mongodb-green);
+            margin: 1.5rem 0;
+        }
+
+        .example-box h4 {
+            color: var(--mongodb-green);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .example-list {
+            list-style: none;
+            padding-left: 1rem;
+        }
+
+        .example-list li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-gray);
+        }
+
+        .example-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--mongodb-green);
+            font-weight: bold;
+        }
+
+        /* Benefits Grid */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .benefit-card {
+            background: var(--mongodb-dark);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--mongodb-green);
+            box-shadow: 0 10px 20px rgba(0, 237, 100, 0.2);
+        }
+
+        .benefit-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .benefit-title {
+            color: var(--mongodb-green);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit-text {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Analogy Box */
+        .analogy-box {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--mongodb-green);
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analogy-box::before {
+            content: '💡';
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            font-size: 4rem;
+            opacity: 0.1;
+        }
+
+        .analogy-box h4 {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .analogy-box p {
+            color: var(--text-gray);
+            font-style: italic;
+        }
+
+        /* Failover Demo */
+        .failover-demo {
+            background: rgba(0, 237, 100, 0.05);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .failover-timeline {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .failover-timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border-color);
+            z-index: 0;
+        }
+
+        .timeline-step {
+            position: relative;
+            z-index: 1;
+            background: var(--mongodb-darker);
+            padding: 1rem;
+            border-radius: 12px;
+            opacity: 0.5;
+            transition: all 0.3s;
+        }
+
+        .timeline-step.active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .step-time {
+            font-weight: bold;
+            color: var(--mongodb-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-ok {
+            background: var(--success-green);
+            color: var(--mongodb-dark);
+        }
+
+        .status-error {
+            background: var(--error-red);
+            color: white;
+        }
+
+        .status-warning {
+            background: var(--warning-yellow);
+            color: var(--mongodb-dark);
+        }
+
+        .simulate-btn {
+            padding: 1rem 2rem;
+            background: var(--mongodb-green);
+            color: var(--mongodb-dark);
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 2rem;
+        }
+
+        .simulate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 237, 100, 0.5);
+        }
+
+        .simulate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* PITR Visualization */
+        .pitr-timeline {
+            position: relative;
+            height: 100px;
+            background: var(--mongodb-dark);
+            border-radius: 50px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+
+        .pitr-progress {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 70%;
+            background: linear-gradient(90deg, var(--success-green) 0%, var(--success-green) 90%, var(--error-red) 90%);
+            border-radius: 50px;
+        }
+
+        .time-point {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .time-label {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .time-dot {
+            width: 20px;
+            height: 20px;
+            background: var(--success-green);
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+
+        .time-dot.error {
+            background: var(--error-red);
+        }
+
+        .time-dot.recovery {
+            background: var(--mongodb-green);
+            box-shadow: 0 0 20px rgba(0, 237, 100, 0.5);
+        }
+
+        /* Summary Section */
+        .summary-section {
+            background: linear-gradient(135deg, var(--mongodb-dark) 0%, #012a3f 100%);
+            padding: 3rem;
+            border-radius: 20px;
+            margin-top: 4rem;
+            text-align: center;
+            border: 2px solid var(--mongodb-green);
+        }
+
+        .summary-title {
+            font-size: 2.5rem;
+            color: var(--mongodb-green);
+            margin-bottom: 2rem;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .summary-item {
+            background: rgba(0, 237, 100, 0.05);
+            padding: 2rem;
+            border-radius: 15px;
+            transition: all 0.3s;
+        }
+
+        .summary-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.3);
+        }
+
+        .summary-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .summary-item h3 {
+            color: var(--mongodb-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-item p {
+            color: var(--text-gray);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .shards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sharding-demo {
+                flex-direction: column;
+            }
+
+            .secondary-servers {
+                flex-direction: column;
+            }
+
+            .failover-timeline {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .failover-timeline::before {
+                display: none;
+            }
+        }
+        /* PITR Visualization Styles */
+            .pitr-visualization {
+                padding: 2.5rem;
+                background-color: var(--mongodb-dark);
+                border-radius: 12px;
+                margin-bottom: 1rem;
+                border: 1px solid var(--border-color);
+            }
+
+            .pitr-timeline-container {
+                position: relative;
+                padding: 0 2rem;
+            }
+
+            .pitr-timeline-bar {
+                position: relative;
+                height: 70px;
+                border-radius: 35px;
+                overflow: hidden;
+                display: flex;
+                background-color: var(--mongodb-green);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            }
+
+            .timeline-normal {
+                width: 70%;
+                background-color: var(--mongodb-green);
+            }
+
+            .timeline-error {
+                width: 15%;
+                background-color: #ef5350;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+            }
+
+            .timeline-recovery {
+                width: 15%;
+                background-color: var(--mongodb-green);
+            }
+
+            .error-label {
+                position: absolute;
+                top: -35px;
+                white-space: nowrap;
+                color: var(--text-light);
+                font-size: 0.9rem;
+                background-color: rgba(239, 83, 80, 0.9);
+                padding: 0.4rem 0.8rem;
+                border-radius: 6px;
+                font-weight: 500;
+            }
+
+            .error-label::after {
+                content: '';
+                position: absolute;
+                bottom: -6px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 0;
+                height: 0;
+                border-left: 6px solid transparent;
+                border-right: 6px solid transparent;
+                border-top: 6px solid rgba(239, 83, 80, 0.9);
+            }
+
+            .pitr-markers {
+                position: relative;
+                height: 30px;
+                margin-top: 0.5rem;
+            }
+
+            .pitr-time {
+                color: var(--text-gray);
+                font-size: 0.9rem;
+                font-weight: 600;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .pitr-visualization {
+                    padding: 1.5rem;
+                }
+                
+                .pitr-timeline-bar {
+                    height: 50px;
+                    border-radius: 25px;
+                }
+                
+                .error-label {
+                    font-size: 0.8rem;
+                    top: -30px;
+                }
+                
+                .pitr-time {
+                    font-size: 0.8rem;
+                }
+            }
+
+    </style>
+</head>
+<body>
+    <section class="architecture-section">
+        <div class="container">
+            <div class="section-header">
+                <h1 class="main-title">Arquitectura MongoDB</h1>
+                <p class="subtitle">Escalamiento Horizontal y Esquema de Contingencia para Yape</p>
+            </div>
+
+            <div class="topics-container">
+                <!-- Escalamiento Horizontal -->
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <div class="topic-icon">⚡</div>
+                        <div class="topic-info">
+                            <h2>Escalamiento Horizontal</h2>
+                            <p class="topic-tagline">Crecimiento ilimitado sin comprometer el rendimiento</p>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 1.2rem; margin-bottom: 2rem; color: var(--text-gray);">
+                        El escalamiento horizontal reparte datos y trabajo entre múltiples servidores, permitiendo manejar millones de usuarios sin ralentizar el sistema. MongoDB lo logra mediante <strong>sharding</strong> y <strong>réplicas</strong>.
+                    </p>
+
+                    <div class="content-grid">
+                        <!-- Sharding -->
+                        <div class="content-block">
+                            <h3>🔀 Sharding</h3>
+                            <p>
+                                MongoDB divide los datos en fragmentos (shards) distribuidos en diferentes servidores usando una clave de particionamiento. Cuando los datos crecen, simplemente añades más servidores.
+                            </p>
+
+                            <div class="visualization">
+                                <div class="sharding-demo">
+                                    <div class="data-source">
+                                        <div class="data-label">Datos Totales</div>
+                                        <div class="data-amount">3 TB</div>
+                                        <div class="data-label" style="color: var(--text-gray); font-size: 0.9rem;">23M registros/día</div>
+                                    </div>
+                                    
+                                    <div class="arrow-container">→</div>
+                                    
+                                    <div class="shards-grid">
+                                        <div class="shard-box">
+                                            <div class="shard-name">Shard 1</div>
+                                            <div class="shard-size">1 TB</div>
+                                            <div class="shard-server">Server A</div>
+                                        </div>
+                                        <div class="shard-box">
+                                            <div class="shard-name">Shard 2</div>
+                                            <div class="shard-size">1 TB</div>
+                                            <div class="shard-server">Server B</div>
+                                        </div>
+                                        <div class="shard-box">
+                                            <div class="shard-name">Shard 3</div>
+                                            <div class="shard-size">1 TB</div>
+                                            <div class="shard-server">Server C</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>💡 Ejemplo Práctico: App de Música</h4>
+                                <ul class="example-list">
+                                    <li>Millones de listas de reproducción distribuidas por ID de usuario</li>
+                                    <li>Usuario 1-1000000 → Servidor A</li>
+                                    <li>Usuario 1000001-2000000 → Servidor B</li>
+                                    <li>Si un servidor se llena, añades otro y MongoDB rebalancea automáticamente</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Réplicas -->
+                        <div class="content-block">
+                            <h3>📋 Réplicas</h3>
+                            <p>
+                                Cada shard mantiene copias en múltiples servidores. El primario maneja escrituras mientras los secundarios distribuyen las lecturas, aliviando la carga.
+                            </p>
+
+                            <div class="visualization">
+                                <div class="replica-demo">
+                                    <div class="primary-server">
+                                        <div class="server-icon">🖥️</div>
+                                        <div class="server-role">Maneja Escrituras</div>
+                                        <div class="server-status">
+                                            <span class="status-dot"></span>
+                                            <span>Activo 24/7</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="sync-arrows">⬇️ ⬇️</div>
+                                    
+                                    <div class="secondary-servers">
+                                        <div class="secondary-server">
+                                            <div class="server-icon">💾</div>
+                                            <div class="server-role">Secundario 1</div>
+                                            <div class="server-status" style="color: var(--success-green);">
+                                                Lecturas
+                                            </div>
+                                        </div>
+                                        <div class="secondary-server">
+                                            <div class="server-icon">💾</div>
+                                            <div class="server-role">Secundario 2</div>
+                                            <div class="server-status" style="color: var(--success-green);">
+                                                Lecturas
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>💡 Distribución de Carga en Hora Pico</h4>
+                                <ul class="example-list">
+                                    <li>50,000 usuarios consultando sus listas (lecturas) → Secundarios</li>
+                                    <li>5,000 usuarios creando playlists (escrituras) → Primario</li>
+                                    <li>Resultado: Sistema 3x más rápido que SQL Server</li>
+                                    <li>Si crece la demanda, añades más réplicas instantáneamente</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 2rem; color: var(--mongodb-green);">✨ ¿Por qué es útil?</h3>
+                    <div class="benefits-grid">
+                        <div class="benefit-card">
+                            <div class="benefit-icon">📈</div>
+                            <div class="benefit-title">Escalamiento Infinito</div>
+                            <div class="benefit-text">Maneja millones de usuarios sin ralentización</div>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="benefit-icon">💰</div>
+                            <div class="benefit-title">Costo-Eficiente</div>
+                            <div class="benefit-text">Más económico que servidores gigantes</div>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="benefit-icon">🤖</div>
+                            <div class="benefit-title">Balanceo Automático</div>
+                            <div class="benefit-text">MongoDB gestiona todo sin intervención manual</div>
+                        </div>
+                    </div>
+
+                    <div class="analogy-box">
+                        <h4>📚 Analogía Simple</h4>
+                        <p>
+                            Es como dividir un cuaderno gigante en varias libretas más pequeñas (shards) y guardar copias de cada libreta (réplicas). 
+                            Si necesitas más espacio, añades otra libreta, y MongoDB organiza las páginas automáticamente.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Esquema de Contingencia -->
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <div class="topic-icon">🛡️</div>
+                        <div class="topic-info">
+                            <h2>Esquema de Contingencia</h2>
+                            <p class="topic-tagline">Sistema siempre disponible, sin interrupciones</p>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 1.2rem; margin-bottom: 2rem; color: var(--text-gray);">
+                        El esquema de contingencia garantiza que el sistema siga funcionando incluso si un servidor falla. MongoDB usa <strong>replica sets</strong> y <strong>recuperación automática</strong> para asegurar disponibilidad continua.
+                    </p>
+
+                    <div class="content-grid">
+                        <!-- Replica Sets -->
+                        <div class="content-block">
+                            <h3>🔄 Replica Sets</h3>
+                            <p>
+                                Grupos de servidores con copias idénticas. Si el primario falla, un secundario toma control automáticamente en 1-2 segundos.
+                            </p>
+
+                            <div class="failover-demo">
+                                <h4 style="color: var(--text-light); margin-bottom: 1rem;">Simulación de Failover</h4>
+                                <div class="failover-timeline">
+                                    <div class="timeline-step active" id="step1">
+                                        <div class="step-time">0s</div>
+                                        <div class="step-status status-ok">Normal</div>
+                                        <div>Sistema OK</div>
+                                    </div>
+                                    <div class="timeline-step" id="step4">
+                                        <div class="step-time">2s</div>
+                                        <div class="step-status status-ok">Restaurado</div>
+                                        <div>Nuevo Primario</div>
+                                    </div>
+                                </div>
+                                <button class="simulate-btn" onclick="simulateFailover()">Simular Falla del Servidor</button>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>💡 Ejemplo: App de Mensajería</h4>
+                                <ul class="example-list">
+                                    <li>Servidor principal guardando mensajes nuevos falla</li>
+                                    <li>Secundario detecta la falla instantáneamente</li>
+                                    <li>Se convierte en primario en 1-2 segundos</li>
+                                    <li>Usuarios siguen enviando mensajes sin notar interrupciones</li>
+                                    <li>Cero pérdida de datos, cero downtime percibido</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Point-in-Time Recovery -->
+                        <div class="content-block">
+                            <h3>⏰ Point-in-Time Recovery (PITR)</h3>
+                            <p>
+                                MongoDB guarda un registro de todas las operaciones (oplog) permitiendo restaurar la base de datos a cualquier momento específico.
+                            </p>
+
+                            <!-- PITR Visualization -->
+                            <div class="pitr-visualization">
+                                <h4 style="text-align: center; margin-bottom: 1.5rem; color: var(--text-light); font-size: 1.3rem;">
+                                    <span style="font-size: 1.5rem;">🕰️</span> Point-in-Time Recovery (PITR)
+                                </h4>
+                                <p style="text-align: center; color: var(--text-gray); margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                                    MongoDB guarda un registro de todas las operaciones (oplog) permitiendo restaurar la base de datos a cualquier momento específico.
+                                </p>
+                                
+                                <div class="pitr-timeline-container">
+                                    <div class="pitr-timeline-bar">
+                                        <div class="timeline-normal"></div>
+                                        <div class="timeline-error">
+                                            <span class="error-label">Error detectado a las 3:59 PM</span>
+                                        </div>
+                                        <div class="timeline-recovery"></div>
+                                    </div>
+                                    
+                                    <div class="pitr-markers">
+                                        <span class="pitr-time" style="position: absolute; right: 60px;">4:00 PM</span>
+                                        <span class="pitr-time" style="position: absolute; right: 0;">4:30 PM</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="example-box">
+                                <h4>💡 Caso Real de Recuperación</h4>
+                                <ul class="example-list">
+                                    <li>4:00 PM: Alguien borra accidentalmente transacciones del día</li>
+                                    <li>4:05 PM: Se detecta el error y se inicia recuperación</li>
+                                    <li>4:10 PM: Base restaurada al estado de las 3:59 PM usando oplog</li>
+                                    <li>4:15 PM: Sistema completamente operativo sin pérdida de datos válidos</li>
+                                    <li>Tiempo total de recuperación: menos de 15 minutos</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 2rem; color: var(--mongodb-green);">✨ ¿Por qué es útil?</h3>
+                    <div class="benefits-grid">
+                        <div class="benefit-card">
+                            <div class="benefit-icon">⚡</div>
+                            <div class="benefit-title">Failover Ultrarrápido</div>
+                            <div class="benefit-text">Recuperación automática en 1-2 segundos</div>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="benefit-icon">🔒</div>
+                            <div class="benefit-title">Cero Pérdida de Datos</div>
+                            <div class="benefit-text">RPO = 0, toda transacción protegida</div>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="benefit-icon">🤖</div>
+                            <div class="benefit-title">100% Automático</div>
+                            <div class="benefit-text">Sin intervención manual necesaria</div>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="benefit-icon">⏱️</div>
+                            <div class="benefit-title">Viaje en el Tiempo</div>
+                            <div class="benefit-text">Restaura a cualquier momento exacto</div>
+                        </div>
+                    </div>
+
+                    <div class="analogy-box">
+                        <h4>☕ Analogía Simple</h4>
+                        <p>
+                            Es como tener varios baristas en una cafetería preparando el mismo café. Si el principal se va, otro toma su lugar al instante sin que los clientes lo noten. 
+                            Si alguien derrama el café, tienes una receta guardada (oplog) para prepararlo de nuevo exactamente como estaba.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="summary-section">
+                <h2 class="summary-title">🚀 MongoDB: La Solución Perfecta para Yape</h2>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-icon">⚡</div>
+                        <h3>Escalamiento Sin Límites</h3>
+                        <p>De 3 a 4 millones de usuarios activos sin problemas. Solo añade servidores según creces.</p>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-icon">🛡️</div>
+                        <h3>Disponibilidad 99.995%</h3>
+                        <p>Failover automático y recuperación instantánea garantizan servicio continuo 24/7.</p>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-icon">🚀</div>
+                        <h3>Rendimiento Superior</h3>
+                        <p>100,000+ transacciones/segundo con latencia < 15ms, incluso en horas pico.</p>
+                    </div>
+                </div>
+                <p style="margin-top: 2rem; font-size: 1.2rem; color: var(--text-gray);">
+                    MongoDB hace que sea fácil crecer y mantener el sistema funcionando sin interrupciones, 
+                    incluso con grandes volúmenes de datos o usuarios.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Simulate Failover Animation
+        function simulateFailover() {
+            const steps = document.querySelectorAll('.timeline-step');
+            const button = document.querySelector('.simulate-btn');
+            
+            // Reset animation
+            steps.forEach(step => step.classList.remove('active'));
+            button.disabled = true;
+            button.textContent = 'Simulando...';
+            
+            // Step 1: Normal operation
+            setTimeout(() => {
+                steps[0].classList.add('active');
+            }, 100);
+            
+            // Step 2: Failure detected
+            setTimeout(() => {
+                steps[0].classList.remove('active');
+                steps[1].classList.add('active');
+            }, 1000);
+            
+            // Step 3: Election process
+            setTimeout(() => {
+                steps[1].classList.remove('active');
+                steps[2].classList.add('active');
+            }, 2000);
+            
+            // Step 4: New primary elected
+            setTimeout(() => {
+                steps[2].classList.remove('active');
+                steps[3].classList.add('active');
+                
+                // Re-enable button
+                setTimeout(() => {
+                    button.disabled = false;
+                    button.textContent = 'Simular Falla del Servidor';
+                }, 1000);
+            }, 3000);
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Apply fade-in animation to elements
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.topic-card, .content-block, .benefit-card, .summary-item');
+            elements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.6s ease-out';
+                observer.observe(el);
+            });
+
+            // Animate shards on hover
+            const shardBoxes = document.querySelectorAll('.shard-box');
+            shardBoxes.forEach((shard, index) => {
+                shard.addEventListener('mouseenter', () => {
+                    shard.style.animation = `float 2s ease-in-out infinite`;
+                    shard.style.animationDelay = `${index * 0.1}s`;
+                });
+            });
+
+            // Animate data flow
+            const dataAmount = document.querySelector('.data-amount');
+            if (dataAmount) {
+                setInterval(() => {
+                    dataAmount.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        dataAmount.style.transform = 'scale(1)';
+                    }, 500);
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

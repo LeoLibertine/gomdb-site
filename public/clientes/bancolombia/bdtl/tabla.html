@@ -331,12 +331,7 @@
                         <a href="bdtl.html" class="menu-item">
                             📚 Introducción al Proyecto BDTL
                         </a>
-                        <a href="arquitectura.html" class="menu-item">
-                            🏗️ Arquitectura del Sistema
-                        </a>
-                        <a href="evolucion.html" class="menu-item">
-                            📈 Evolución de la Arquitectura
-                        </a>
+                      
                         <a href="ventajas.html" class="menu-item">
                             ⚡ Ventajas de MongoDB como BDTL
                         </a>
@@ -378,7 +373,7 @@
                         <a href="indices.html" class="menu-item active">
                             🔍 Estrategia de Indexación
                         </a>
-                        <a href="guias.html" class="menu-item">
+                        <a href="bp.html" class="menu-item">
                             📖 Guías y Mejores Prácticas
                         </a>
                     </nav>
@@ -840,53 +835,53 @@
                         </div>
                     </div>
 
-                    <div class="field-card">
-                        <div class="field-header">
-
-                              <!-- Resumen de Categorías -->
-            <div class="content-section">
-                <div class="card" style="background: linear-gradient(135deg, var(--color-accent) 0%, rgba(86, 68, 212, 0.8) 100%);">
-                    <h2 style="color: white; text-align: center; margin-bottom: var(--spacing-xl);">📊 Resumen de Campos por Categoría</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
-                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center;">
-                            <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">🔑</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">Identificación</h4>
-                            <p style="font-size: var(--text-2xl); font-weight: bold; margin: 0;">3</p>
-                            <p style="font-size: var(--text-sm); margin: 0;">campos clave</p>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center;">
-                            <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">📋</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">Proceso</h4>
-                            <p style="font-size: var(--text-2xl); font-weight: bold; margin: 0;">6</p>
-                            <p style="font-size: var(--text-sm); margin: 0;">campos de clasificación</p>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center;">
-                            <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">🔍</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">Auditoría</h4>
-                            <p style="font-size: var(--text-2xl); font-weight: bold; margin: 0;">4</p>
-                            <p style="font-size: var(--text-sm); margin: 0;">campos de control</p>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center;">
-                            <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">⏰</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">Fechas</h4>
-                            <p style="font-size: var(--text-2xl); font-weight: bold; margin: 0;">6</p>
-                            <p style="font-size: var(--text-sm); margin: 0;">campos temporales</p>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center;">
-                            <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">💾</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">Datos</h4>
-                            <p style="font-size: var(--text-2xl); font-weight: bold; margin: 0;">6</p>
-                            <p style="font-size: var(--text-sm); margin: 0;">campos de contenido</p>
-                        </div>
-                        <div style="background: rgba(239, 68, 68, 0.3); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center;">
-                            <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">📦</div>
-                            <h4 style="margin-bottom: var(--spacing-sm);">Legacy</h4>
-                            <p style="font-size: var(--text-2xl); font-weight: bold; margin: 0;">6</p>
-                            <p style="font-size: var(--text-sm); margin: 0;">campos obsoletos</p>
-                        </div>
-                    </div>
                 </div>
             </div>
+
+            <!-- Resumen de Categorías -->
+         <div class="content-section">
+             <div class="card" style="background: linear-gradient(135deg, var(--color-accent) 0%, rgba(86, 68, 212, 0.8) 100%); overflow: visible;">
+                 <h2 style="color: white; text-align: center; margin-bottom: var(--spacing-xl);">📊 Resumen de Campos por Categoría</h2>
+                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--spacing-lg); align-items: stretch; grid-auto-rows: 1fr; overflow: visible;">
+                     <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                         <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">🔑</div>
+                         <h4 style="margin-bottom: var(--spacing-sm);">Identificación</h4>
+                         <p style="font-size: var(--text-2xl); font-weight: bold; margin: 0;">3</p>
+                         <p style="font-size: var(--text-sm); margin: 0;">campos clave</p>
+                     </div>
+                     <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                         <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">📋</div>
+                         <h4 style="margin-bottom: var(--spacing-sm);">Proceso</h4>
+                         <p style="font-size: var(--text-2xl); font-weight: bold; margin: 0;">6</p>
+                         <p style="font-size: var(--text-sm); margin: 0;">campos de clasificación</p>
+                     </div>
+                     <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                         <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">🔍</div>
+                         <h4 style="margin-bottom: var(--spacing-sm);">Auditoría</h4>
+                         <p style="font-size: var(--text-2xl); font-weight: bold; margin: 0;">4</p>
+                         <p style="font-size: var(--text-sm); margin: 0;">campos de control</p>
+                     </div>
+                     <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                         <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">⏰</div>
+                         <h4 style="margin-bottom: var(--spacing-sm);">Fechas</h4>
+                         <p style="font-size: var(--text-2xl); font-weight: bold; margin: 0;">6</p>
+                         <p style="font-size: var(--text-sm); margin: 0;">campos temporales</p>
+                     </div>
+                     <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                         <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">💾</div>
+                         <h4 style="margin-bottom: var(--spacing-sm);">Datos</h4>
+                         <p style="font-size: var(--text-2xl); font-weight: bold; margin: 0;">6</p>
+                         <p style="font-size: var(--text-sm); margin: 0;">campos de contenido</p>
+                     </div>
+                     <div style="background: rgba(239, 68, 68, 0.3); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                         <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">📦</div>
+                         <h4 style="margin-bottom: var(--spacing-sm);">Legacy</h4>
+                         <p style="font-size: var(--text-2xl); font-weight: bold; margin: 0;">6</p>
+                         <p style="font-size: var(--text-sm); margin: 0;">campos obsoletos</p>
+                     </div>
+                 </div>
+             </div>
+         </div>
 
             <!-- Notas Importantes -->
             <div class="content-section">

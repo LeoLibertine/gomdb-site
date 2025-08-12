@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectura 1: Servicio de Sincronización Personalizado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #38bdf8, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+
+    <!-- Main Container -->
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <!-- Header Section -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">
+                Arquitectura 1: <span class="gradient-text">Sincronización Personalizada</span>
+            </h1>
+            <p class="text-xl text-gray-400 font-medium">(Enfoque "Build")</p>
+            <p class="max-w-3xl mx-auto mt-4 text-lg">
+                Este es el enfoque de "construcción propia". Implica desarrollar un microservicio a medida que actúe como el intermediario inteligente entre los clientes y la base de datos central.
+            </p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left Column (Diagram & Analysis) -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Conceptual Diagram -->
+                <section class="bg-gray-800/50 p-6 rounded-xl border border-gray-700 shadow-lg">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Diagrama Conceptual</h2>
+                    <div class="bg-gray-900 p-4 rounded-lg overflow-x-auto">
+                        <pre class="text-sm text-cyan-300 font-mono whitespace-pre">
+[Terminal en Botica (POS)] &lt;--&gt; [Base de Datos Local (SQLite)] &lt;--&gt; [Agente de Sincronización]
+      ^                                                                     ^
+      | (Offline: Lectura/Escritura Local)                                  | (Online: Sincronización)
+      v                                                                     v
+[Internet] &lt;---------------------&gt; [API Gateway] &lt;--&gt; [Servicio de Sincronización] &lt;--&gt; [MongoDB Atlas]
+                                                          ^
+                                                          | (Utiliza Change Streams)
+                                                          v
+                                                     [Lógica de Negocio]</pre>
+                    </div>
+                </section>
+
+                <!-- Analysis Section -->
+                <section>
+                    <h2 class="text-2xl font-semibold text-white mb-4 text-center">Análisis de la Arquitectura</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Pros -->
+                        <div class="bg-green-900/30 border border-green-500/50 p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-green-400 mb-3">Pros ✅</h3>
+                            <ul class="space-y-3 text-green-200">
+                                <li class="flex items-start"><span class="mr-2 mt-1">✔️</span><span><strong>Control Total:</strong> Control absoluto sobre la lógica de negocio y el proceso de resolución de conflictos.</span></li>
+                                <li class="flex items-start"><span class="mr-2 mt-1">✔️</span><span><strong>Sin Vendor Lock-in:</strong> No hay dependencia de un proveedor tercero para la capa de sincronización.</span></li>
+                                <li class="flex items-start"><span class="mr-2 mt-1">✔️</span><span><strong>Optimización a Medida:</strong> La solución puede ser perfectamente optimizada para el caso de uso específico de las farmacias.</span></li>
+                            </ul>
+                        </div>
+                        <!-- Cons -->
+                        <div class="bg-red-900/30 border border-red-500/50 p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-red-400 mb-3">Contras ❌</h3>
+                            <ul class="space-y-3 text-red-200">
+                                <li class="flex items-start"><span class="mr-2 mt-1">✖️</span><span><strong>Alto Costo de Desarrollo:</strong> Requiere un esfuerzo de ingeniería significativo para construir y probar.</span></li>
+                                <li class="flex items-start"><span class="mr-2 mt-1">✖️</span><span><strong>Complejidad:</strong> La gestión de la concurrencia, los reintentos y la fiabilidad es compleja.</span></li>
+                                <li class="flex items-start"><span class="mr-2 mt-1">✖️</span><span><strong>Mayor Tiempo de Salida al Mercado:</strong> El desarrollo inicial es más lento que usar una solución pre-construida.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Recommendation Section -->
+                <section class="bg-indigo-900/30 border border-indigo-500/50 p-6 rounded-xl mt-8">
+                    <h2 class="text-2xl font-semibold text-indigo-300 mb-3">Recomendación</h2>
+                    <p class="text-indigo-200"><strong>Recomendado si:</strong> El cliente tiene un equipo de ingeniería fuerte y requisitos de negocio muy específicos que no se ajustan a las soluciones estándar.</p>
+                    <p class="mt-2 text-sm text-indigo-400"><strong>Nota:</strong> PowerSync es, en esencia, una versión empaquetada y gestionada de este patrón.</p>
+                </section>
+
+            </div>
+
+            <!-- Right Column (Components & Flow) -->
+            <div class="lg:col-span-1 space-y-8">
+                
+                <!-- Key Components -->
+                <section class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Componentes Clave</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-sky-400">1. Cliente (Terminal de la Botica)</h3>
+                            <ul class="list-disc list-inside pl-2 mt-2 space-y-1 text-gray-300">
+                                <li><strong>Base de Datos Local:</strong> SQLite, robusta y transaccional.</li>
+                                <li><strong>Lógica de la Aplicación:</strong> El POS opera 100% offline contra SQLite.</li>
+                                <li><strong>Agente de Sincronización:</strong> Monitorea la red y gestiona la cola de cambios.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-sky-400">2. Backend (Alojado en la Nube)</h3>
+                            <ul class="list-disc list-inside pl-2 mt-2 space-y-1 text-gray-300">
+                                <li><strong>Servicio de Sincronización:</strong> Microservicio a medida (Node.js, Go, Java).</li>
+                                <li><strong>API Gateway:</strong> Expone endpoints seguros (REST, WebSockets).</li>
+                                <li><strong>MongoDB Atlas:</strong> La base de datos central.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Synchronization Flow -->
+                <section class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Flujo de Sincronización</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-fuchsia-400">Sincronización Ascendente (Uplink)</h3>
+                            <p class="mt-1 text-gray-300">Al recuperar la conexión, el agente envía cambios locales a la API. El servidor valida, aplica lógica de negocio y actualiza MongoDB Atlas, manteniendo la autoridad del servidor.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-fuchsia-400">Sincronización Descendente (Downlink)</h3>
+                            <p class="mt-1 text-gray-300">El servicio utiliza MongoDB Change Streams para detectar cambios en Atlas (ej. precios) y los empuja en tiempo real a los clientes conectados vía WebSockets.</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="text-center mt-12 pt-8 border-t border-gray-700">
+            <p class="text-gray-500">Documento generado para Farmacias Peruanas &copy; 2025</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

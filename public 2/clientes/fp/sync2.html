@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectura 2: El Modelo Orientado a Eventos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #f87171, #fb923c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300">
+
+    <!-- Main Container -->
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <!-- Header Section -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">
+                Arquitectura 2: <span class="gradient-text">Modelo Orientado a Eventos</span>
+            </h1>
+            <p class="text-xl text-gray-400 font-medium">(Enfoque "Resiliente")</p>
+            <p class="max-w-3xl mx-auto mt-4 text-lg">
+                Esta arquitectura utiliza una cola de mensajes (Message Broker) como la columna vertebral de la comunicación. Es un patrón extremadamente robusto y escalable, ideal para sistemas distribuidos con conectividad poco fiable.
+            </p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left Column (Diagram & Analysis) -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Conceptual Diagram -->
+                <section class="bg-gray-800/50 p-6 rounded-xl border border-gray-700 shadow-lg">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Diagrama Conceptual</h2>
+                    <div class="bg-gray-900 p-4 rounded-lg overflow-x-auto">
+                        <pre class="text-sm text-orange-300 font-mono whitespace-pre">
+[Terminal en Botica] &lt;--&gt; [BD Local + Cola de Salida]
+      ^
+      | (Online)
+      v
+[Internet] &lt;--&gt; [Message Broker (Kafka, RabbitMQ, Google Pub/Sub)]
+                        ^                v
+                        | (Publica)      | (Consume)
+                        v                ^
+        [Servicios Consumidores (Workers)] &lt;--&gt; [MongoDB Atlas]
+                        ^
+                        | (Usa Change Streams para publicar eventos de downlink)
+                        v
+        [Servicio de Gateway para Clientes (Opcional)]</pre>
+                    </div>
+                </section>
+
+                <!-- Analysis Section -->
+                <section>
+                    <h2 class="text-2xl font-semibold text-white mb-4 text-center">Análisis de la Arquitectura</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Pros -->
+                        <div class="bg-green-900/30 border border-green-500/50 p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-green-400 mb-3">Pros ✅</h3>
+                            <ul class="space-y-3 text-green-200">
+                                <li class="flex items-start"><span class="mr-2 mt-1">✔️</span><span><strong>Máxima Resiliencia:</strong> El broker garantiza la entrega de mensajes incluso si los servicios consumidores están caídos.</span></li>
+                                <li class="flex items-start"><span class="mr-2 mt-1">✔️</span><span><strong>Desacoplamiento Total:</strong> Los clientes y los servicios de backend no necesitan conocerse entre sí.</span></li>
+                                <li class="flex items-start"><span class="mr-2 mt-1">✔️</span><span><strong>Gran Escalabilidad:</strong> Puede procesar un volumen masivo de eventos de forma concurrente.</span></li>
+                            </ul>
+                        </div>
+                        <!-- Cons -->
+                        <div class="bg-red-900/30 border border-red-500/50 p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-red-400 mb-3">Contras ❌</h3>
+                            <ul class="space-y-3 text-red-200">
+                                <li class="flex items-start"><span class="mr-2 mt-1">✖️</span><span><strong>Alta Complejidad Operativa:</strong> Requiere gestionar y monitorear un Message Broker y múltiples microservicios.</span></li>
+                                <li class="flex items-start"><span class="mr-2 mt-1">✖️</span><span><strong>No es "Request-Response":</strong> La comunicación es asíncrona, lo que puede cambiar la experiencia del usuario.</span></li>
+                                <li class="flex items-start"><span class="mr-2 mt-1">✖️</span><span><strong>Complejidad en Downlink:</strong> La entrega de mensajes en tiempo real a los clientes es un desafío en sí mismo.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Recommendation Section -->
+                <section class="bg-indigo-900/30 border border-indigo-500/50 p-6 rounded-xl mt-8">
+                    <h2 class="text-2xl font-semibold text-indigo-300 mb-3">Recomendación</h2>
+                    <p class="text-indigo-200"><strong>Recomendado si:</strong> La estrategia a largo plazo de la empresa es una arquitectura orientada a eventos, y se espera un gran volumen de transacciones o se necesita una resiliencia extrema.</p>
+                </section>
+
+            </div>
+
+            <!-- Right Column (Components & Flow) -->
+            <div class="lg:col-span-1 space-y-8">
+                
+                <!-- Key Components -->
+                <section class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Componentes Clave</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-amber-400">1. Cliente (Terminal de la Botica)</h3>
+                            <ul class="list-disc list-inside pl-2 mt-2 space-y-1 text-gray-300">
+                                <li>Base de datos local (SQLite).</li>
+                                <li>Un evento (venta) se escribe localmente y se encola como mensaje.</li>
+                                <li>Agente publica mensajes al Broker cuando hay conexión.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-amber-400">2. Backend (Alojado en la Nube)</h3>
+                            <ul class="list-disc list-inside pl-2 mt-2 space-y-1 text-gray-300">
+                                <li><strong>Message Broker:</strong> Kafka, RabbitMQ, o Google Pub/Sub.</li>
+                                <li><strong>Servicios Consumidores:</strong> Workers que procesan mensajes.</li>
+                                <li><strong>MongoDB Atlas:</strong> Base de datos de registro.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Synchronization Flow -->
+                <section class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Flujo de Sincronización</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-rose-400">Sincronización Ascendente (Uplink)</h3>
+                            <p class="mt-1 text-gray-300">El cliente publica eventos en un tema (ej. `botica-transacciones`). El broker persiste el mensaje. Un consumidor lo procesa y actualiza MongoDB, sin necesidad de respuesta al cliente.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-rose-400">Sincronización Descendente (Downlink)</h3>
+                            <p class="mt-1 text-gray-300">Un servicio backend usa Change Streams para detectar cambios en MongoDB y publica un mensaje a un tema de downlink, que requiere un Gateway de WebSockets para llegar al cliente.</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="text-center mt-12 pt-8 border-t border-gray-700">
+            <p class="text-gray-500">Documento generado para Farmacias Peruanas &copy; 2025</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

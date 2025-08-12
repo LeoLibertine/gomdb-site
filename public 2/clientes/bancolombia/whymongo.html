@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bancolombia + MongoDB: Transformación Digital</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css">
+    <style>
+        /* Estilos adicionales para el Hero Section */
+        .hero-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--color-error);
+            border-radius: 50%;
+            opacity: 0.8;
+            transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px currentColor;
+        }
+        
+        .particle.organized {
+            background: var(--color-primary);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 1100px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: heroFadeIn 1.5s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+        
+        @keyframes heroFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero-title {
+            font-size: clamp(var(--text-4xl), 6vw, var(--text-7xl));
+            margin-bottom: var(--spacing-lg);
+            font-weight: 800;
+        }
+        
+        .hero-subtitle {
+            font-size: var(--text-2xl);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-2xl);
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 1s;
+        }
+        
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-xl);
+            margin: var(--spacing-3xl) 0;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 1.5s;
+        }
+        
+        .stat-card {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            transition: all var(--transition-base);
+            cursor: default;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--color-primary);
+        }
+        
+        .stat-value {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            color: var(--color-error);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .stat-label {
+            color: var(--color-text-secondary);
+            font-size: var(--text-sm);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .stat-description {
+            color: var(--color-text-muted);
+            font-size: var(--text-xs);
+            line-height: 1.5;
+            margin: 0;
+        }
+        
+        .hero-context {
+            margin-top: var(--spacing-4xl);
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 2s;
+        }
+        
+        .context-title {
+            font-size: var(--text-3xl);
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .context-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+        }
+        
+        .context-item {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.5) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            text-align: left;
+            transition: all var(--transition-base);
+        }
+        
+        .context-item:hover {
+            border-color: var(--color-primary);
+            transform: translateX(10px);
+        }
+        
+        .context-icon {
+            font-size: var(--text-4xl);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .context-item h4 {
+            color: var(--color-text-primary);
+            font-size: var(--text-xl);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .context-item p {
+            color: var(--color-text-secondary);
+            font-size: var(--text-base);
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: var(--spacing-2xl);
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            cursor: pointer;
+            z-index: 3;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-20px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
+        
+        .scroll-indicator svg {
+            width: 40px;
+            height: 40px;
+            color: var(--color-primary);
+        }
+        
+        /* Efecto de organización de partículas */
+        .particles-organizing {
+            animation: organizeParticles 3s ease-out forwards;
+        }
+        
+        @keyframes organizeParticles {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            50% {
+                transform: translate(var(--tx), var(--ty)) scale(1.2);
+            }
+            100% {
+                transform: translate(var(--fx), var(--fy)) scale(1);
+                background: var(--color-primary);
+            }
+        }
+        
+        /* ============================================= 
+           PAIN POINTS GALAXY SECTION
+           ============================================= */
+        .pain-points-section {
+            position: relative;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at center, var(--color-bg-secondary) 0%, var(--color-bg-primary) 70%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .section-header {
+            margin-bottom: var(--spacing-4xl);
+        }
+        
+        .section-title {
+            font-size: var(--text-5xl);
+            font-weight: 700;
+        }
+        
+        .section-subtitle {
+            font-size: var(--text-xl);
+            color: var(--color-text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .galaxy-container {
+            position: relative;
+            width: 900px;
+            height: 700px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .galaxy-center {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, var(--color-accent) 0%, var(--color-bg-primary) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 80px var(--color-accent), 0 0 120px rgba(86, 68, 212, 0.5);
+            z-index: 10;
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { 
+                box-shadow: 0 0 80px var(--color-accent), 0 0 120px rgba(86, 68, 212, 0.5);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 100px var(--color-accent), 0 0 150px rgba(86, 68, 212, 0.7);
+                transform: scale(1.05);
+            }
+        }
+        
+        .center-label {
+            color: var(--color-text-primary);
+            font-weight: 700;
+            text-align: center;
+            font-size: var(--text-base);
+            letter-spacing: 2px;
+        }
+        
+        .planet {
+            position: absolute;
+            width: var(--planet-size);
+            height: var(--planet-size);
+            animation: orbit var(--orbit-speed) linear infinite;
+            transform-origin: calc(var(--orbit-radius) * -1 + var(--planet-size) / 2) center;
+            cursor: pointer;
+            z-index: 5;
+        }
+        
+        @keyframes orbit {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .planet-content {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--color-error) 0%, var(--color-warning) 100%);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: counter-rotate var(--orbit-speed) linear infinite;
+            transition: all var(--transition-base);
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        @keyframes counter-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+        
+        .planet:hover .planet-content {
+            transform: scale(1.15) rotate(0deg);
+            box-shadow: 0 0 60px rgba(239, 68, 68, 0.9), inset 0 0 30px rgba(0, 0, 0, 0.3);
+            animation-play-state: paused;
+            border-color: var(--color-primary);
+        }
+        
+        .planet.selected .planet-content {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            box-shadow: 0 0 60px rgba(0, 237, 100, 0.8);
+        }
+        
+        .planet-icon {
+            font-size: calc(var(--planet-size) * 0.35);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .planet-label {
+            font-size: var(--text-sm);
+            font-weight: 700;
+            text-align: center;
+            padding: 0 var(--spacing-sm);
+            line-height: 1.2;
+        }
+        
+        /* Panel de detalles */
+        .pain-detail-panel {
+            position: fixed;
+            right: -500px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 480px;
+            max-height: 80vh;
+            background: var(--color-bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            box-shadow: var(--shadow-xl);
+            transition: right var(--transition-slow);
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .pain-detail-panel.active {
+            right: var(--spacing-2xl);
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .panel-title {
+            font-size: var(--text-2xl);
+            margin: 0;
+        }
+        
+        .panel-close {
+            background: none;
+            border: none;
+            color: var(--color-text-secondary);
+            font-size: var(--text-3xl);
+            cursor: pointer;
+            transition: color var(--transition-base);
+        }
+        
+        .panel-close:hover {
+            color: var(--color-text-primary);
+        }
+        
+        .panel-content {
+            color: var(--color-text-secondary);
+        }
+        
+        .pain-projects {
+            margin-top: var(--spacing-lg);
+        }
+        
+        .pain-projects h4 {
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .project-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .project-list li {
+            padding: var(--spacing-sm) 0;
+            padding-left: var(--spacing-lg);
+            position: relative;
+        }
+        
+        .project-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--color-primary);
+        }
+        
+        .pain-solution {
+            margin-top: var(--spacing-xl);
+            padding: var(--spacing-lg);
+            background: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-primary);
+        }
+        
+        .pain-solution h4 {
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .galaxy-container {
+                width: 400px;
+                height: 400px;
+            }
+            
+            .planet {
+                --orbit-radius: calc(var(--orbit-radius) * 0.6);
+                --planet-size: calc(var(--planet-size) * 0.8);
+            }
+            
+            .pain-detail-panel {
+                width: 90%;
+                right: -100%;
+            }
+            
+            .pain-detail-panel.active {
+                right: 5%;
+            }
+        }
+        
+        /* ============================================= 
+           COST BLEEDING VISUALIZER SECTION
+           ============================================= */
+        .cost-bleeding-section {
+            background: linear-gradient(180deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 50%, var(--color-bg-primary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cost-bleeding-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        .cost-visualizer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--spacing-2xl);
+            margin-bottom: var(--spacing-4xl);
+        }
+        
+        .cost-counter-card {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-base);
+        }
+        
+        .cost-counter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .cost-counter-card[data-system="documentdb"]::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--color-error), transparent, var(--color-error));
+            border-radius: var(--radius-xl);
+            opacity: 0.5;
+            animation: rotate 4s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .cost-counter-card.mongodb-solution {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(0, 237, 100, 0.1) 100%);
+            border-color: var(--color-primary);
+        }
+        
+        .cost-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .cost-system-name {
+            font-size: var(--text-2xl);
+            margin: 0;
+        }
+        
+        .mongodb-logo {
+            color: var(--color-primary);
+            margin-right: var(--spacing-sm);
+        }
+        
+        .cost-status-badge {
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-critical {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--color-error);
+            border: 1px solid var(--color-error);
+        }
+        
+        .status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--color-warning);
+            border: 1px solid var(--color-warning);
+        }
+        
+        .status-success {
+            background: rgba(0, 237, 100, 0.2);
+            color: var(--color-success);
+            border: 1px solid var(--color-success);
+        }
+        
+        .cost-display {
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .cost-amount {
+            display: flex;
+            align-items: baseline;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .currency {
+            font-size: var(--text-3xl);
+            color: var(--color-text-secondary);
+        }
+        
+        .cost-value {
+            font-size: var(--text-4xl);
+            font-weight: 700;
+            color: var(--color-error);
+        }
+        
+        .cost-amount.success .cost-value {
+            color: var(--color-success);
+        }
+        
+        .period {
+            font-size: var(--text-base);
+            color: var(--color-text-secondary);
+        }
+        
+        .cost-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-sm);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+        }
+        
+        .breakdown-item.bleeding {
+            background: rgba(239, 68, 68, 0.1);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .breakdown-label {
+            color: var(--color-text-secondary);
+            font-size: var(--text-sm);
+        }
+        
+        .breakdown-value {
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+        
+        .breakdown-value.success {
+            color: var(--color-success);
+        }
+        
+        .cost-issues, .cost-benefits {
+            margin-top: var(--spacing-xl);
+        }
+        
+        .cost-issues h4, .cost-benefits h4 {
+            font-size: var(--text-lg);
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text-primary);
+        }
+        
+        .cost-issues ul, .cost-benefits ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .cost-issues li, .cost-benefits li {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+        }
+        
+        /* Total Cost Comparison */
+        .total-cost-comparison {
+            background: var(--color-bg-card);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-3xl);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .total-cost-comparison::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 237, 100, 0.3), transparent);
+            animation: sweep 3s ease-in-out infinite;
+        }
+        
+        @keyframes sweep {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .comparison-title {
+            font-size: var(--text-3xl);
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .savings-calculator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-3xl);
+            flex-wrap: wrap;
+        }
+        
+        .current-cost, .mongodb-cost {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .big-number {
+            font-size: var(--text-5xl);
+            font-weight: 700;
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .big-number.negative {
+            color: var(--color-error);
+        }
+        
+        .big-number.positive {
+            color: var(--color-success);
+        }
+        
+        .arrow-transition {
+            flex: 0 0 100px;
+        }
+        
+        @media (max-width: 768px) {
+            .cost-visualizer-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .arrow-transition {
+                transform: rotate(90deg);
+            }
+        }
+        
+        /* ============================================= 
+           PERFORMANCE RACE TRACK SECTION
+           ============================================= */
+        .performance-race-section {
+            background: linear-gradient(180deg, var(--color-bg-primary) 0%, #0a1929 50%, var(--color-bg-primary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .race-controls {
+            margin-bottom: var(--spacing-3xl);
+            text-align: center;
+        }
+        
+        .race-scenario-title {
+            font-size: var(--text-2xl);
+            margin-bottom: var(--spacing-xl);
+            color: var(--color-text-primary);
+        }
+        
+        .scenario-buttons {
+            display: flex;
+            gap: var(--spacing-lg);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .scenario-btn {
+            background: var(--color-bg-card);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            color: var(--color-text-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-sm);
+            min-width: 180px;
+        }
+        
+        .scenario-btn:hover {
+            transform: translateY(-3px);
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .scenario-btn.active {
+            background: var(--color-primary-light);
+            border-color: var(--color-primary);
+            box-shadow: 0 0 30px rgba(0, 237, 100, 0.3);
+        }
+        
+        .scenario-icon {
+            font-size: var(--text-3xl);
+        }
+        
+        .scenario-name {
+            font-weight: 600;
+            font-size: var(--text-base);
+        }
+        
+        .scenario-detail {
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+        }
+        
+        /* Race Track */
+        .race-track {
+            background: linear-gradient(to right, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            position: relative;
+            margin-bottom: var(--spacing-3xl);
+            min-height: 400px;
+        }
+        
+        .track-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+        
+        .start-line {
+            position: absolute;
+            left: 100px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: repeating-linear-gradient(
+                to bottom,
+                white 0,
+                white 10px,
+                transparent 10px,
+                transparent 20px
+            );
+        }
+        
+        .finish-line {
+            position: absolute;
+            right: 100px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: repeating-linear-gradient(
+                to bottom,
+                white 0,
+                white 10px,
+                transparent 10px,
+                transparent 20px
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .finish-flag {
+            position: absolute;
+            right: -50px;
+            font-size: var(--text-4xl);
+            filter: grayscale(0.5);
+        }
+        
+        .race-lane {
+            position: relative;
+            height: 100px;
+            margin-bottom: var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.1);
+        }
+        
+        .race-lane:last-child {
+            border-bottom: none;
+        }
+        
+        .db-label {
+            position: absolute;
+            left: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            width: 80px;
+        }
+        
+        .db-icon {
+            font-size: var(--text-2xl);
+        }
+        
+        .race-car {
+            position: absolute;
+            left: 100px;
+            width: 80px;
+            height: 40px;
+            transition: all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .car-body {
+            background: var(--color-bg-card);
+            border-radius: 20px 10px 10px 20px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mongodb-car .car-body {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+        }
+        
+        .dynamodb-car .car-body {
+            background: linear-gradient(135deg, #FF9900 0%, #FF6600 100%);
+        }
+        
+        .rds-car .car-body {
+            background: linear-gradient(135deg, #0066CC 0%, #003366 100%);
+        }
+        
+        .car-details {
+            font-size: var(--text-xs);
+            font-weight: 700;
+            color: white;
+        }
+        
+        .speed-indicator {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+        
+        .race-car.racing .speed-indicator {
+            opacity: 1;
+        }
+        
+        .performance-metric {
+            position: absolute;
+            right: 20px;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+        
+        /* Results Panel */
+        .race-results {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin-bottom: var(--spacing-3xl);
+            text-align: center;
+        }
+        
+        .results-title {
+            font-size: var(--text-2xl);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .results-placeholder {
+            color: var(--color-text-secondary);
+            font-style: italic;
+        }
+        
+        .race-winner {
+            font-size: var(--text-3xl);
+            color: var(--color-primary);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .race-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+        
+        .summary-item {
+            padding: var(--spacing-md);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-md);
+        }
+        
+        /* Performance Comparison */
+        .performance-comparison {
+            margin-top: var(--spacing-3xl);
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+        }
+        
+        .comparison-card {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .comparison-card h4 {
+            font-size: var(--text-xl);
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-text-primary);
+        }
+        
+        .performance-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .performance-list li {
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+        }
+        
+        @media (max-width: 768px) {
+            .scenario-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .scenario-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .race-track {
+                padding: var(--spacing-lg);
+            }
+            
+            .finish-line {
+                right: 50px;
+            }
+            
+            .start-line {
+                left: 50px;
+            }
+            
+            .race-car {
+                left: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-particles" id="particlesContainer"></div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    De la <span class="text-gradient">fragmentación</span><br>
+                    a la <span style="color: var(--color-primary)">unificación</span>
+                </h1>
+                
+                <p class="hero-subtitle">
+                    Bancolombia enfrenta desafíos críticos en sus sistemas de datos.<br>
+                    MongoDB es la solución integral para transformar su arquitectura.
+                </p>
+                
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">$5,000 USD</div>
+                        <div class="stat-label">Costo mensual DocumentDB sin HA</div>
+                        <p class="stat-description">
+                            Pagando premium por una solución que no incluye alta disponibilidad. 
+                            MongoDB ofrece HA nativa con mejor precio.
+                        </p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">75M</div>
+                        <div class="stat-label">Registros mensuales en Plink</div>
+                        <p class="stat-description">
+                            Volumen que requiere escalabilidad horizontal real. 
+                            Las agregaciones actuales toman decenas de segundos.
+                        </p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">5,000 TPS</div>
+                        <div class="stat-label">Requerimiento Traza de proceso</div>
+                        <p class="stat-description">
+                            Necesidad crítica de rendimiento para captura unificada.
+                            SQL Server no puede escalar para este volumen.
+                        </p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">600-700ms</div>
+                        <div class="stat-label">Objetivo gestión de fraudes</div>
+                        <p class="stat-description">
+                            Las orquestaciones actuales son muy lentas.
+                            MongoDB puede lograr <1ms con pre-agregación.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="hero-context">
+                    <h3 class="context-title">El Desafío Actual</h3>
+                    <div class="context-grid">
+                        <div class="context-item">
+                            <div class="context-icon">💸</div>
+                            <h4>Costos Descontrolados</h4>
+                            <p>Múltiples soluciones fragmentadas incrementan exponencialmente los costos operativos y de licenciamiento</p>
+                        </div>
+                        <div class="context-item">
+                            <div class="context-icon">🔗</div>
+                            <h4>Datos Fragmentados</h4>
+                            <p>Información descentralizada con múltiples "fuentes de verdad" afectando la integridad de datos</p>
+                        </div>
+                        <div class="context-item">
+                            <div class="context-icon">⚡</div>
+                            <h4>Rendimiento Limitado</h4>
+                            <p>Tiempos de respuesta inaceptables para consultas complejas y agregaciones en tiempo real</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator" onclick="scrollToNextSection()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+        </div>
+        
+        <!-- Efectos de fondo -->
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+    <!-- Pain Points Galaxy Section -->
+    <section class="section pain-points-section" id="painPointsGalaxy">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title text-center mb-3">
+                    Galaxia de <span class="text-gradient">Desafíos Críticos</span>
+                </h2>
+                <p class="section-subtitle text-center mb-6">
+                    8 pain points identificados en los proyectos de Bancolombia.<br>
+                    Cada uno representa una oportunidad de transformación con MongoDB.
+                </p>
+            </div>
+            
+            <div class="galaxy-container" id="galaxyContainer">
+                <div class="galaxy-center">
+                    <div class="center-label">DESAFÍOS<br>ACTUALES</div>
+                </div>
+                
+                <!-- Pain Points como planetas -->
+                <div class="planet" data-pain="costs" style="--orbit-radius: 320px; --orbit-speed: 25s; --planet-size: 110px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">💰</div>
+                        <div class="planet-label">Costos Elevados</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="scalability" style="--orbit-radius: 380px; --orbit-speed: 30s; --planet-size: 120px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">📈</div>
+                        <div class="planet-label">Escalabilidad</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="performance" style="--orbit-radius: 280px; --orbit-speed: 22s; --planet-size: 100px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">🚀</div>
+                        <div class="planet-label">Rendimiento</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="fragmentation" style="--orbit-radius: 340px; --orbit-speed: 27s; --planet-size: 115px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">🔗</div>
+                        <div class="planet-label">Fragmentación</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="rigidity" style="--orbit-radius: 360px; --orbit-speed: 28s; --planet-size: 95px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">🔒</div>
+                        <div class="planet-label">Rigidez de Datos</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="support" style="--orbit-radius: 300px; --orbit-speed: 24s; --planet-size: 90px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">🆘</div>
+                        <div class="planet-label">Falta de Soporte</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="retention" style="--orbit-radius: 330px; --orbit-speed: 26s; --planet-size: 95px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">⏰</div>
+                        <div class="planet-label">Retención de Datos</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="indexing" style="--orbit-radius: 350px; --orbit-speed: 29s; --planet-size: 105px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">🔍</div>
+                        <div class="planet-label">Indexación</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel de detalles -->
+            <div class="pain-detail-panel" id="painDetailPanel">
+                <div class="panel-header">
+                    <h3 class="panel-title">Selecciona un desafío para explorar</h3>
+                    <button class="panel-close" onclick="closePainPanel()">×</button>
+                </div>
+                <div class="panel-content" id="panelContent">
+                    <!-- Contenido dinámico -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Race Track Section -->
+    <section class="section performance-race-section" id="performanceRaceTrack">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title text-center mb-3">
+                    Pista de <span class="text-gradient">Rendimiento</span>
+                </h2>
+                <p class="section-subtitle text-center mb-6">
+                    Compara el rendimiento real de cada solución de base de datos.<br>
+                    Basado en los requerimientos específicos de Bancolombia.
+                </p>
+            </div>
+
+            <!-- Race Controls -->
+            <div class="race-controls">
+                <h3 class="race-scenario-title">Selecciona el Escenario de Prueba:</h3>
+                <div class="scenario-buttons">
+                    <button class="scenario-btn active" onclick="alert('Escrituras Masivas clicked!'); handleRaceClick('writes', this)">
+                        <span class="scenario-icon">✍️</span>
+                        <span class="scenario-name">Escrituras Masivas</span>
+                        <span class="scenario-detail">5,000 TPS requeridos</span>
+                    </button>
+                    <button class="scenario-btn" onclick="alert('Agregaciones Complejas clicked!'); handleRaceClick('aggregations', this)">
+                        <span class="scenario-icon">📊</span>
+                        <span class="scenario-name">Agregaciones Complejas</span>
+                        <span class="scenario-detail">75M registros Plink</span>
+                    </button>
+                    <button class="scenario-btn" onclick="alert('Detección de Fraude clicked!'); handleRaceClick('fraud', this)">
+                        <span class="scenario-icon">🚨</span>
+                        <span class="scenario-name">Detección de Fraude</span>
+                        <span class="scenario-detail">Objetivo: 600-700ms</span>
+                    </button>
+                    <button class="scenario-btn" onclick="alert('Consultas JSON clicked!'); handleRaceClick('json', this)">
+                        <span class="scenario-icon">📄</span>
+                        <span class="scenario-name">Consultas JSON</span>
+                        <span class="scenario-detail">Datos no estructurados</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Race Track -->
+            <div class="race-track">
+                <div class="track-lines">
+                    <div class="start-line"></div>
+                    <div class="finish-line">
+                        <span class="finish-flag">🏁</span>
+                    </div>
+                </div>
+
+                <!-- Racing Cars -->
+                <div class="race-lane" data-db="mongodb">
+                    <div class="db-label">
+                        <span class="db-icon">🍃</span>
+                        <span>MongoDB</span>
+                    </div>
+                    <div class="race-car mongodb-car" id="mongodbCar">
+                        <div class="car-body">
+                            <div class="car-details">MongoDB</div>
+                        </div>
+                        <div class="speed-indicator" id="mongodbSpeed">0 ms</div>
+                    </div>
+                    <div class="performance-metric" id="mongodbMetric"></div>
+                </div>
+
+                <div class="race-lane" data-db="dynamodb">
+                    <div class="db-label">
+                        <span class="db-icon">🔶</span>
+                        <span>DynamoDB</span>
+                    </div>
+                    <div class="race-car dynamodb-car" id="dynamodbCar">
+                        <div class="car-body">
+                            <div class="car-details">DynamoDB</div>
+                        </div>
+                        <div class="speed-indicator" id="dynamodbSpeed">0 ms</div>
+                    </div>
+                    <div class="performance-metric" id="dynamodbMetric"></div>
+                </div>
+
+                <div class="race-lane" data-db="rds">
+                    <div class="db-label">
+                        <span class="db-icon">🗄️</span>
+                        <span>RDS/SQL</span>
+                    </div>
+                    <div class="race-car rds-car" id="rdsCar">
+                        <div class="car-body">
+                            <div class="car-details">RDS</div>
+                        </div>
+                        <div class="speed-indicator" id="rdsSpeed">0 ms</div>
+                    </div>
+                    <div class="performance-metric" id="rdsMetric"></div>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="race-results" id="raceResults">
+                <h3 class="results-title">Resultados de la Carrera</h3>
+                <div class="results-content" id="resultsContent">
+                    <p class="results-placeholder">Selecciona un escenario y observa el rendimiento real de cada base de datos</p>
+                </div>
+            </div>
+
+            <!-- Performance Comparison Table -->
+            <div class="performance-comparison">
+                <h3 class="comparison-title">Comparación Detallada de Rendimiento</h3>
+                <div class="comparison-grid">
+                    <div class="comparison-card">
+                        <h4>MongoDB</h4>
+                        <ul class="performance-list">
+                            <li>✅ Mejor rendimiento de escritura vs DocumentDB</li>
+                            <li>✅ Agregaciones en <1ms con pre-agregación</li>
+                            <li>✅ Maneja 5,000 TPS sin problemas</li>
+                            <li>✅ Consultas JSON nativas y eficientes</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-card">
+                        <h4>DynamoDB</h4>
+                        <ul class="performance-list">
+                            <li>⚡ Ultra-rápido para búsquedas clave-valor</li>
+                            <li>❌ Agregaciones requieren procesamiento externo</li>
+                            <li>❌ Sin lenguaje de consulta rico</li>
+                            <li>❌ Limitado para consultas complejas</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-card">
+                        <h4>RDS/SQL Server</h4>
+                        <ul class="performance-list">
+                            <li>❌ No puede escalar para 5,000 TPS</li>
+                            <li>❌ Consultas JSON ineficientes y lentas</li>
+                            <li>❌ Agregaciones de Plink tardan decenas de segundos</li>
+                            <li>⚠️ Escalamiento solo vertical (costoso)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cost Bleeding Visualizer Section -->
+    <section class="section cost-bleeding-section" id="costBleedingVisualizer">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title text-center mb-3">
+                    Visualizador de <span class="text-gradient">Sangrado de Costos</span>
+                </h2>
+                <p class="section-subtitle text-center mb-6">
+                    Observa en tiempo real cómo los sistemas actuales drenan recursos.<br>
+                    Compara el costo real de las soluciones existentes vs MongoDB.
+                </p>
+            </div>
+
+            <div class="cost-visualizer-grid">
+                <!-- DocumentDB Cost Counter -->
+                <div class="cost-counter-card" data-system="documentdb">
+                    <div class="cost-header">
+                        <h3 class="cost-system-name">DocumentDB AWS</h3>
+                        <div class="cost-status-badge status-critical">Sin Alta Disponibilidad</div>
+                    </div>
+                    
+                    <div class="cost-display">
+                        <div class="cost-amount">
+                            <span class="currency">$</span>
+                            <span class="cost-value" id="documentdbCost">5,000.00</span>
+                            <span class="period">USD/mes</span>
+                        </div>
+                        
+                        <div class="cost-breakdown">
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Por día:</span>
+                                <span class="breakdown-value">$166.67</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Por hora:</span>
+                                <span class="breakdown-value">$6.94</span>
+                            </div>
+                            <div class="breakdown-item bleeding">
+                                <span class="breakdown-label">Por minuto:</span>
+                                <span class="breakdown-value" id="documentdbPerMinute">$0.12</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cost-issues">
+                        <h4>Problemas Identificados:</h4>
+                        <ul>
+                            <li>❌ Sin alta disponibilidad incluida</li>
+                            <li>❌ Monitoreo limitado</li>
+                            <li>❌ Una sola máquina - punto único de falla</li>
+                            <li>❌ Costo premium sin beneficios completos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- CouchDB Cost Counter -->
+                <div class="cost-counter-card" data-system="couchdb">
+                    <div class="cost-header">
+                        <h3 class="cost-system-name">CouchDB</h3>
+                        <div class="cost-status-badge status-warning">Open Source - Costo Oculto</div>
+                    </div>
+                    
+                    <div class="cost-display">
+                        <div class="cost-amount">
+                            <span class="currency">💰</span>
+                            <span class="cost-value">???</span>
+                            <span class="period">Costo Real</span>
+                        </div>
+                        
+                        <div class="cost-breakdown">
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Soporte interno:</span>
+                                <span class="breakdown-value">100% responsabilidad</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Escalabilidad:</span>
+                                <span class="breakdown-value">Problemática</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Mantenimiento:</span>
+                                <span class="breakdown-value">24/7 interno</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cost-issues">
+                        <h4>Costos Ocultos:</h4>
+                        <ul>
+                            <li>⚠️ Equipo dedicado para soporte</li>
+                            <li>⚠️ Sin SLA garantizado</li>
+                            <li>⚠️ Problemas de escalabilidad conocidos</li>
+                            <li>⚠️ Stack no objetivo - migración pendiente</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SQL Server Cost Counter -->
+                <div class="cost-counter-card" data-system="sqlserver">
+                    <div class="cost-header">
+                        <h3 class="cost-system-name">SQL Server</h3>
+                        <div class="cost-status-badge status-warning">Licenciamiento + Escalabilidad</div>
+                    </div>
+                    
+                    <div class="cost-display">
+                        <div class="cost-amount">
+                            <span class="currency">📊</span>
+                            <span class="cost-value">Alto</span>
+                            <span class="period">Costo Total</span>
+                        </div>
+                        
+                        <div class="cost-breakdown">
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Licencias:</span>
+                                <span class="breakdown-value">Costo prohibitivo</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Escalamiento:</span>
+                                <span class="breakdown-value">Solo vertical ($$)</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">JSON/NoSQL:</span>
+                                <span class="breakdown-value">Rendimiento pobre</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cost-issues">
+                        <h4>Limitaciones Críticas:</h4>
+                        <ul>
+                            <li>🔴 No puede manejar 5,000 TPS requeridos</li>
+                            <li>🔴 Problemas con datos no estructurados</li>
+                            <li>🔴 Escalamiento vertical tiene techo</li>
+                            <li>🔴 ALTER TABLE = riesgo operacional</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- MongoDB Solution -->
+                <div class="cost-counter-card mongodb-solution" data-system="mongodb">
+                    <div class="cost-header">
+                        <h3 class="cost-system-name">
+                            <span class="mongodb-logo">🍃</span> MongoDB Atlas
+                        </h3>
+                        <div class="cost-status-badge status-success">Solución Integral</div>
+                    </div>
+                    
+                    <div class="cost-display">
+                        <div class="cost-amount success">
+                            <span class="currency">✓</span>
+                            <span class="cost-value">Optimizado</span>
+                            <span class="period">Costo-Beneficio</span>
+                        </div>
+                        
+                        <div class="cost-breakdown">
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Alta Disponibilidad:</span>
+                                <span class="breakdown-value success">✓ Incluida</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Soporte 24/7:</span>
+                                <span class="breakdown-value success">✓ SLA 2 horas</span>
+                            </div>
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">Escalabilidad:</span>
+                                <span class="breakdown-value success">✓ Horizontal nativa</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cost-benefits">
+                        <h4>Beneficios MongoDB:</h4>
+                        <ul>
+                            <li>✅ Menor costo mensual con más beneficios</li>
+                            <li>✅ No cobra por consulta</li>
+                            <li>✅ Sharding automático incluido</li>
+                            <li>✅ Monitoreo y optimización incluidos</li>
+                            <li>✅ Multi-cloud sin vendor lock-in</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Cost Comparison -->
+            <div class="total-cost-comparison">
+                <h3 class="comparison-title">Proyección de Ahorro Anual</h3>
+                <div class="savings-calculator">
+                    <div class="current-cost">
+                        <h4>Costo Actual Estimado</h4>
+                        <div class="big-number negative" id="currentTotalCost">$0</div>
+                        <p>Múltiples sistemas + costos ocultos</p>
+                    </div>
+                    
+                    <div class="arrow-transition">
+                        <svg width="100" height="50" viewBox="0 0 100 50">
+                            <path d="M10,25 L70,25" stroke="var(--color-primary)" stroke-width="3" fill="none"/>
+                            <path d="M70,25 L60,15 M70,25 L60,35" stroke="var(--color-primary)" stroke-width="3" fill="none"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="mongodb-cost">
+                        <h4>Con MongoDB Atlas</h4>
+                        <div class="big-number positive">Optimizado</div>
+                        <p>Consolidación + optimización</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pain Points Galaxy Section -->
+    <section class="section pain-points-section" id="painPointsGalaxy">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title text-center mb-3">
+                    Galaxia de <span class="text-gradient">Desafíos Críticos</span>
+                </h2>
+                <p class="section-subtitle text-center mb-6">
+                    8 pain points identificados en los proyectos de Bancolombia.<br>
+                    Cada uno representa una oportunidad de transformación con MongoDB.
+                </p>
+            </div>
+            
+            <div class="galaxy-container" id="galaxyContainer">
+                <div class="galaxy-center">
+                    <div class="center-label">DESAFÍOS<br>ACTUALES</div>
+                </div>
+                
+                <!-- Pain Points como planetas -->
+                <div class="planet" data-pain="costs" style="--orbit-radius: 320px; --orbit-speed: 25s; --planet-size: 110px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">💰</div>
+                        <div class="planet-label">Costos Elevados</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="scalability" style="--orbit-radius: 380px; --orbit-speed: 30s; --planet-size: 120px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">📈</div>
+                        <div class="planet-label">Escalabilidad</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="performance" style="--orbit-radius: 280px; --orbit-speed: 22s; --planet-size: 100px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">🚀</div>
+                        <div class="planet-label">Rendimiento</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="fragmentation" style="--orbit-radius: 340px; --orbit-speed: 27s; --planet-size: 115px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">🔗</div>
+                        <div class="planet-label">Fragmentación</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="rigidity" style="--orbit-radius: 360px; --orbit-speed: 28s; --planet-size: 95px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">🔒</div>
+                        <div class="planet-label">Rigidez de Datos</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="support" style="--orbit-radius: 300px; --orbit-speed: 24s; --planet-size: 90px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">🆘</div>
+                        <div class="planet-label">Falta de Soporte</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="retention" style="--orbit-radius: 330px; --orbit-speed: 26s; --planet-size: 95px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">⏰</div>
+                        <div class="planet-label">Retención de Datos</div>
+                    </div>
+                </div>
+                
+                <div class="planet" data-pain="indexing" style="--orbit-radius: 350px; --orbit-speed: 29s; --planet-size: 105px;">
+                    <div class="planet-content">
+                        <div class="planet-icon">🔍</div>
+                        <div class="planet-label">Indexación</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel de detalles -->
+            <div class="pain-detail-panel" id="painDetailPanel">
+                <div class="panel-header">
+                    <h3 class="panel-title">Selecciona un desafío para explorar</h3>
+                    <button class="panel-close" onclick="closePainPanel()">×</button>
+                </div>
+                <div class="panel-content" id="panelContent">
+                    <!-- Contenido dinámico -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Crear partículas caóticas
+        const particlesContainer = document.getElementById('particlesContainer');
+        const numberOfParticles = 80;
+        const particles = [];
+        
+        // Generar partículas iniciales (caos)
+        for (let i = 0; i < numberOfParticles; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            // Posición aleatoria inicial
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            
+            particlesContainer.appendChild(particle);
+            particles.push({
+                element: particle,
+                x: x,
+                y: y,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2
+            });
+        }
+        
+        // Animación de movimiento caótico
+        let animationFrame;
+        let isOrganizing = false;
+        
+        function animateParticles() {
+            if (!isOrganizing) {
+                particles.forEach(p => {
+                    // Movimiento browniano
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    
+                    // Rebote en los bordes
+                    if (p.x < 0 || p.x > window.innerWidth) p.vx *= -1;
+                    if (p.y < 0 || p.y > window.innerHeight) p.vy *= -1;
+                    
+                    // Actualizar posición
+                    p.element.style.left = p.x + 'px';
+                    p.element.style.top = p.y + 'px';
+                });
+            }
+            
+            animationFrame = requestAnimationFrame(animateParticles);
+        }
+        
+        animateParticles();
+        
+        // Organizar partículas al hacer scroll
+        let organized = false;
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100 && !organized) {
+                organized = true;
+                organizeParticles();
+            }
+        });
+        
+        function organizeParticles() {
+            isOrganizing = true;
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const radius = Math.min(window.innerWidth, window.innerHeight) * 0.3;
+            
+            particles.forEach((p, i) => {
+                const angle = (i / particles.length) * Math.PI * 2;
+                const targetX = centerX + Math.cos(angle) * radius;
+                const targetY = centerY + Math.sin(angle) * radius;
+                
+                p.element.style.setProperty('--fx', targetX + 'px');
+                p.element.style.setProperty('--fy', targetY + 'px');
+                p.element.style.setProperty('--tx', (centerX + (Math.random() - 0.5) * 100) + 'px');
+                p.element.style.setProperty('--ty', (centerY + (Math.random() - 0.5) * 100) + 'px');
+                
+                p.element.classList.add('organized');
+                p.element.style.left = targetX + 'px';
+                p.element.style.top = targetY + 'px';
+            });
+        }
+        
+        // Interacción con el mouse
+        document.addEventListener('mousemove', (e) => {
+            if (!isOrganizing) {
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
+                
+                particles.forEach(p => {
+                    const dx = mouseX - p.x;
+                    const dy = mouseY - p.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 150) {
+                        // Repeler partículas del mouse
+                        const force = (150 - distance) / 150;
+                        p.vx -= (dx / distance) * force * 0.5;
+                        p.vy -= (dy / distance) * force * 0.5;
+                    }
+                });
+            }
+        });
+        
+        // Función para scroll suave
+        function scrollToNextSection() {
+            window.scrollTo({
+                top: window.innerHeight,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Limpiar animación al salir
+        window.addEventListener('beforeunload', () => {
+            cancelAnimationFrame(animationFrame);
+        });
+        
+        // =============================================
+        // PAIN POINTS GALAXY FUNCTIONALITY
+        // =============================================
+        
+        // Data de los pain points basada en los documentos
+        const painPointsData = {
+            costs: {
+                title: "Costos Elevados y Optimización",
+                description: "Bancolombia incurre en costos muy elevados con las soluciones actuales. Por ejemplo, $5,000 USD mensuales por DocumentDB en AWS para una sola máquina sin alta disponibilidad.",
+                projects: [
+                    "Réplica de saldos y movimientos",
+                    "Sucursal Bancaria - Migración CouchBase",
+                    "Proyecto de Centralización de Repositorio",
+                    "Vista, Reportería Inteligente",
+                    "Evolución Digital - Datos de Texto Líquido"
+                ],
+                solution: "MongoDB ofrece un pago mensual menor con alta disponibilidad incluida y mejor monitoreo. No cobra por consulta y permite modelado eficiente para optimizar gastos."
+            },
+            scalability: {
+                title: "Limitaciones de Escalabilidad",
+                description: "Los sistemas actuales no cumplen con estándares de alta disponibilidad. SQL Server presenta problemas al escalar. Demandas específicas: 2-3M registros diarios, 40K registros/día para Evolución Digital, 5000 TPS para Traza de proceso.",
+                projects: [
+                    "Réplica de saldos y movimientos",
+                    "Evolución Digital - Datos de Texto Líquido",
+                    "Sucursal Bancaria - Migración CouchBase",
+                    "Proyecto de Centralización de Repositorio",
+                    "Traza de proceso / NWL",
+                    "Plink"
+                ],
+                solution: "MongoDB soporta sharding para escalar en escritura. Proporciona alta disponibilidad mediante replicación y clustering automáticos. Escala lecturas eficientemente sin infraestructura rígida."
+            },
+            performance: {
+                title: "Problemas de Rendimiento",
+                description: "Altos tiempos de respuesta con soluciones actuales. La gestión de fraudes no puede evaluar transacciones en 600-700ms. Agregaciones de Plink tardan decenas de segundos.",
+                projects: [
+                    "Réplica de saldos y movimientos",
+                    "Evolución Digital - Datos de Texto Líquido",
+                    "Enriquecimiento",
+                    "Plink",
+                    "Proyecto de Centralización de Repositorio"
+                ],
+                solution: "MongoDB demuestra mejor rendimiento de escritura vs DocumentDB. Para agregaciones intensivas, logra tiempos <1ms con pre-agregación. Atlas proporciona análisis y ajuste de rendimiento."
+            },
+            fragmentation: {
+                title: "Fragmentación de Datos",
+                description: "Información descentralizada con acceso limitado. Múltiples 'fuentes de verdad' afectan integridad. Los clientes deben acceder a varias plataformas para reportes.",
+                projects: [
+                    "Centralización de Información",
+                    "Enriquecimiento",
+                    "Traza de proceso / NWL",
+                    "Vista, Reportería Inteligente",
+                    "Proyecto de Centralización de Repositorio"
+                ],
+                solution: "MongoDB centraliza información de diversas fuentes en un único repositorio. Gestiona datos 'calientes' y 'fríos'. Integra flujos en tiempo real efectivamente."
+            },
+            rigidity: {
+                title: "Modelos de Datos Rígidos",
+                description: "SQL Server tiene limitaciones para JSON y datos no estructurados. Se requieren documentos mutables. Las categorías de Plink cambian frecuentemente requiriendo esquema flexible.",
+                projects: [
+                    "Evolución Digital - Datos de Texto Líquido",
+                    "Galatea: Sucursal Virtual Negocio",
+                    "Plink",
+                    "Vista, Reportería Inteligente"
+                ],
+                solution: "El modelo de documentos MongoDB ofrece esquema flexible y escalable. Permite diferentes atributos en la misma colección sin actualizar documentos existentes."
+            },
+            support: {
+                title: "Falta de Soporte",
+                description: "Para soluciones open-source como CouchDB, la responsabilidad del rendimiento recae completamente en equipos internos, creando una carga significativa.",
+                projects: [
+                    "Sucursal Bancaria - Migración CouchBase"
+                ],
+                solution: "MongoDB proporciona soporte integral con servicios de asesoramiento. Atlas Pro ofrece soporte 24x7, SLA 2 horas, diseño de esquemas y soporte telefónico directo."
+            },
+            retention: {
+                title: "Purga y Retención de Datos",
+                description: "Necesidad de purga automatizada: cada 6 meses para Evolución Digital, anualmente para Plink. Políticas específicas: 8 días para Traza de proceso, 3 meses para Galatea.",
+                projects: [
+                    "Traza de proceso / NWL",
+                    "Evolución Digital - Datos de Texto Líquido",
+                    "Galatea: Sucursal Virtual Negocio",
+                    "Plink"
+                ],
+                solution: "MongoDB puede definir si los datos van a S3, soportando gestión del ciclo de vida. Los índices TTL automatizan la expiración de documentos según políticas de retención."
+            },
+            indexing: {
+                title: "Necesidad de Indexación Robusta",
+                description: "En Centralización de Información no hay índices definidos. Se necesitan consultas eficientes con agregaciones y proyecciones complejas para mejorar rendimiento.",
+                projects: [
+                    "Centralización de Información",
+                    "Evolución Digital - Datos de Texto Líquido"
+                ],
+                solution: "Atlas Pro proporciona asesoramiento sobre mejoras de consultas e índices. Soporta índices compuestos para consultas eficientes. MongoDB Compass ofrece planes visuales de ejecución."
+            }
+        };
+        
+        // Agregar event listeners a los planetas
+        document.addEventListener('DOMContentLoaded', function() {
+            const planets = document.querySelectorAll('.planet');
+            const panel = document.getElementById('painDetailPanel');
+            const panelContent = document.getElementById('panelContent');
+            
+            planets.forEach(planet => {
+                planet.addEventListener('click', function() {
+                    const painType = this.getAttribute('data-pain');
+                    const data = painPointsData[painType];
+                    
+                    if (data) {
+                        // Actualizar contenido del panel
+                        panelContent.innerHTML = `
+                            <h3 style="color: var(--color-error); margin-bottom: var(--spacing-lg);">${data.title}</h3>
+                            <p style="line-height: 1.6; margin-bottom: var(--spacing-xl);">${data.description}</p>
+                            
+                            <div class="pain-projects">
+                                <h4>Proyectos Afectados:</h4>
+                                <ul class="project-list">
+                                    ${data.projects.map(project => `<li>${project}</li>`).join('')}
+                                </ul>
+                            </div>
+                            
+                            <div class="pain-solution">
+                                <h4>¿Cómo MongoDB Resuelve Esto?</h4>
+                                <p>${data.solution}</p>
+                            </div>
+                        `;
+                        
+                        // Mostrar panel
+                        panel.classList.add('active');
+                        
+                        // Highlight planeta seleccionado
+                        planets.forEach(p => p.classList.remove('selected'));
+                        this.classList.add('selected');
+                    }
+                });
+            });
+        });
+        
+        // Función para cerrar el panel
+        function closePainPanel() {
+            const panel = document.getElementById('painDetailPanel');
+            panel.classList.remove('active');
+            
+            // Remover highlight de planetas
+            document.querySelectorAll('.planet').forEach(p => p.classList.remove('selected'));
+        }
+        
+        // =============================================
+        // COST BLEEDING VISUALIZER
+        // =============================================
+        
+        // Animación de contador de costos
+        function startCostAnimation() {
+            let documentdbCost = 5000;
+            let minutesPassed = 0;
+            
+            setInterval(() => {
+                minutesPassed++;
+                const dailyCost = 166.67;
+                const costPerMinute = dailyCost / (24 * 60);
+                const totalCost = documentdbCost + (costPerMinute * minutesPassed);
+                
+                // Actualizar el display
+                const costElement = document.getElementById('documentdbCost');
+                if (costElement) {
+                    costElement.textContent = totalCost.toFixed(2);
+                    
+                    // Efecto de flash rojo cada 10 segundos
+                    if (minutesPassed % 10 === 0) {
+                        costElement.style.color = '#FF0000';
+                        setTimeout(() => {
+                            costElement.style.color = 'var(--color-error)';
+                        }, 500);
+                    }
+                }
+                
+                // Actualizar total estimado
+                updateTotalCost(minutesPassed);
+            }, 1000); // Actualizar cada segundo para efecto dramático
+        }
+        
+        function updateTotalCost(minutesPassed) {
+            // Cálculo estimado basado en múltiples sistemas
+            const baseAnnualCost = 5000 * 12; // Solo DocumentDB
+            const hiddenCosts = baseAnnualCost * 0.8; // Costos ocultos de soporte, mantenimiento, etc.
+            const totalEstimated = baseAnnualCost + hiddenCosts + (minutesPassed * 0.12);
+            
+            const totalElement = document.getElementById('currentTotalCost');
+            if (totalElement) {
+                totalElement.textContent = `${totalEstimated.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            }
+        }
+        
+        // Iniciar animaciones cuando la sección sea visible
+        const costObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    startCostAnimation();
+                    costObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+        
+        // Observar la sección de costos
+        document.addEventListener('DOMContentLoaded', () => {
+            const costSection = document.querySelector('.cost-bleeding-section');
+            if (costSection) {
+                costObserver.observe(costSection);
+            }
+        });
+        
+        // =============================================
+        // PERFORMANCE RACE TRACK
+        // =============================================
+        
+        // Datos de rendimiento basados en los documentos
+        const performanceData = {
+            writes: {
+                title: "Escrituras Masivas - 5,000 TPS",
+                description: "Requerimiento de Traza de proceso",
+                results: {
+                    mongodb: { time: 200, status: "✅ Maneja 5,000 TPS sin problemas", position: 95 },
+                    dynamodb: { time: 250, status: "✅ Puede manejar el volumen", position: 85 },
+                    rds: { time: 2000, status: "❌ No puede escalar para este volumen", position: 30 }
+                }
+            },
+            aggregations: {
+                title: "Agregaciones Complejas - 75M registros",
+                description: "Procesamiento de datos Plink",
+                results: {
+                    mongodb: { time: 800, status: "✅ <1ms con pre-agregación", position: 95 },
+                    dynamodb: { time: 30000, status: "❌ Requiere procesamiento externo", position: 20 },
+                    rds: { time: 45000, status: "❌ Tarda decenas de segundos", position: 15 }
+                }
+            },
+            fraud: {
+                title: "Detección de Fraude",
+                description: "Objetivo: 600-700ms para evaluación",
+                results: {
+                    mongodb: { time: 500, status: "✅ Cumple objetivo con agregaciones", position: 95 },
+                    dynamodb: { time: 2000, status: "❌ Requiere múltiples llamadas", position: 40 },
+                    rds: { time: 1500, status: "❌ Orquestaciones muy lentas", position: 50 }
+                }
+            },
+            json: {
+                title: "Consultas JSON",
+                description: "Manejo de datos no estructurados",
+                results: {
+                    mongodb: { time: 100, status: "✅ Consultas JSON nativas", position: 95 },
+                    dynamodb: { time: 300, status: "⚠️ Limitado para objetos complejos", position: 70 },
+                    rds: { time: 3000, status: "❌ Ineficiente para JSON", position: 25 }
+                }
+            }
+        };
+        
+        let currentRace = null;
+        
+        // Función global para manejar clicks
+        function handleRaceClick(scenario, buttonElement) {
+            console.log('Click detectado en:', scenario);
+            
+            // Update active button
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            buttonElement.classList.add('active');
+            
+            // Llamar a startRace
+            startRace(scenario);
+        }
+        
+        function startRace(scenario) {
+            console.log('Iniciando carrera:', scenario);
+            
+            // Reset positions
+            const cars = document.querySelectorAll('.race-car');
+            cars.forEach(car => {
+                car.style.left = '100px';
+                car.classList.remove('racing');
+            });
+            
+            // Reset speed indicators
+            document.getElementById('mongodbSpeed').textContent = '0 ms';
+            document.getElementById('dynamodbSpeed').textContent = '0 ms';
+            document.getElementById('rdsSpeed').textContent = '0 ms';
+            
+            // Reset metrics
+            document.getElementById('mongodbMetric').textContent = '';
+            document.getElementById('dynamodbMetric').textContent = '';
+            document.getElementById('rdsMetric').textContent = '';
+            
+            // Clear previous results
+            const resultsContent = document.getElementById('resultsContent');
+            if (resultsContent) {
+                resultsContent.innerHTML = '<p>Carrera en progreso...</p>';
+            }
+            
+            // Get race data
+            currentRace = performanceData[scenario];
+            
+            if (!currentRace) {
+                console.error('No hay datos para el escenario:', scenario);
+                return;
+            }
+            
+            // Start the race after a delay
+            setTimeout(() => {
+                // MongoDB
+                const mongodbCar = document.getElementById('mongodbCar');
+                mongodbCar.classList.add('racing');
+                mongodbCar.style.left = `${currentRace.results.mongodb.position}%`;
+                document.getElementById('mongodbSpeed').textContent = `${currentRace.results.mongodb.time}ms`;
+                document.getElementById('mongodbMetric').textContent = currentRace.results.mongodb.status;
+                
+                // DynamoDB
+                const dynamodbCar = document.getElementById('dynamodbCar');
+                dynamodbCar.classList.add('racing');
+                dynamodbCar.style.left = `${currentRace.results.dynamodb.position}%`;
+                document.getElementById('dynamodbSpeed').textContent = `${currentRace.results.dynamodb.time}ms`;
+                document.getElementById('dynamodbMetric').textContent = currentRace.results.dynamodb.status;
+                
+                // RDS
+                const rdsCar = document.getElementById('rdsCar');
+                rdsCar.classList.add('racing');
+                rdsCar.style.left = `${currentRace.results.rds.position}%`;
+                document.getElementById('rdsSpeed').textContent = `${currentRace.results.rds.time}ms`;
+                document.getElementById('rdsMetric').textContent = currentRace.results.rds.status;
+                
+                // Show results after animation
+                setTimeout(() => showRaceResults(scenario), 2500);
+            }, 500);
+        }
+        
+        function showRaceResults(scenario) {
+            const race = performanceData[scenario];
+            const resultsContent = document.getElementById('resultsContent');
+            
+            resultsContent.innerHTML = `
+                <div class="race-winner">🏆 MongoDB Gana!</div>
+                <h4>${race.title}</h4>
+                <p>${race.description}</p>
+                <div class="race-summary">
+                    <div class="summary-item">
+                        <strong>MongoDB</strong>
+                        <div>${race.results.mongodb.time}ms</div>
+                        <div style="color: var(--color-success)">Óptimo</div>
+                    </div>
+                    <div class="summary-item">
+                        <strong>DynamoDB</strong>
+                        <div>${race.results.dynamodb.time}ms</div>
+                        <div style="color: ${race.results.dynamodb.time > 1000 ? 'var(--color-error)' : 'var(--color-warning)'}">
+                            ${race.results.dynamodb.time > 10000 ? 'Inaceptable' : 'Limitado'}
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <strong>RDS/SQL</strong>
+                        <div>${race.results.rds.time}ms</div>
+                        <div style="color: var(--color-error)">No viable</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Auto-start first race on section visibility
+        const raceObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Start the first race
+                    startRace('writes');
+                    raceObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const raceSection = document.querySelector('.performance-race-section');
+            if (raceSection) {
+                raceObserver.observe(raceSection);
+            }
+        });
+    </script>
+</body>
+</html>

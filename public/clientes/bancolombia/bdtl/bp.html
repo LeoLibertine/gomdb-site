@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guías y Mejores Prácticas - BDTL</title>
+    <link rel="stylesheet" href="../../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para la aplicación */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--color-bg-secondary);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: var(--spacing-md) var(--spacing-xl);
+            z-index: var(--z-fixed);
+            height: 70px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--color-text-dark);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 300px;
+            height: calc(100vh - 70px);
+            background-color: var(--color-bg-secondary);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            z-index: var(--z-sticky);
+        }
+
+        .sidebar-content {
+            padding: var(--spacing-xl);
+        }
+
+        .menu-item {
+            display: block;
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+            border-radius: var(--radius-lg);
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+        }
+
+        .menu-item.active {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            border-left: 3px solid var(--color-primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            margin-top: 70px;
+            padding: var(--spacing-2xl);
+            flex: 1;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform var(--transition-slow);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text-primary);
+            font-size: var(--text-xl);
+            cursor: pointer;
+        }
+
+        /* Estilos específicos para submenús */
+        .menu-section {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .submenu {
+            margin-left: var(--spacing-lg);
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+            padding-left: var(--spacing-md);
+            margin-top: var(--spacing-xs);
+        }
+
+        .submenu-item {
+            display: block;
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-xs);
+            border-radius: var(--radius-md);
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+            font-size: var(--text-sm);
+        }
+
+        .submenu-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+            transform: translateX(4px);
+        }
+
+        .submenu-item.active {
+            background-color: rgba(0, 237, 100, 0.1);
+            color: var(--color-primary);
+            border-left: 2px solid var(--color-primary);
+            padding-left: calc(var(--spacing-md) - 2px);
+        }
+
+        /* Estilos específicos para guías */
+        .content-section {
+            margin: var(--spacing-3xl) 0;
+        }
+
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .guide-card {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .guide-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .guide-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .guide-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xl);
+            color: white;
+        }
+
+        .guide-title {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .guide-description {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+
+        .guide-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--color-primary);
+            color: var(--color-text-dark);
+            text-decoration: none;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: var(--text-sm);
+            transition: all var(--transition-base);
+        }
+
+        .guide-link:hover {
+            background: var(--color-primary-hover);
+            transform: scale(1.05);
+        }
+
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .pattern-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-base);
+        }
+
+        .pattern-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pattern-icon {
+            font-size: var(--text-3xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .pattern-title {
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 700;
+        }
+
+        .pattern-description {
+            color: var(--color-text-secondary);
+            font-size: var(--text-sm);
+            margin: 0;
+        }
+
+        .best-practice-list {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .practice-item {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .practice-item:last-child {
+            border-bottom: none;
+        }
+
+        .practice-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-sm);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .practice-content h4 {
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-xs);
+            font-size: var(--text-base);
+        }
+
+        .practice-content p {
+            margin: 0;
+            color: var(--color-text-secondary);
+            font-size: var(--text-sm);
+        }
+
+        .learning-path {
+            background: linear-gradient(135deg, var(--color-accent) 0%, rgba(86, 68, 212, 0.8) 100%);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            color: white;
+            margin: var(--spacing-xl) 0;
+        }
+
+        .step-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .step-item {
+            background: rgba(255,255,255,0.1);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+        }
+
+        .step-number {
+            background: var(--color-primary);
+            color: var(--color-text-dark);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .resources-section {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+            border: 2px solid var(--color-primary);
+        }
+
+        .resource-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .resource-link {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: var(--color-bg-tertiary);
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            color: var(--color-text-primary);
+            transition: all var(--transition-base);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .resource-link:hover {
+            background: var(--color-bg-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--color-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-lg);
+            color: var(--color-text-dark);
+            flex-shrink: 0;
+        }
+
+        .resource-content h4 {
+            margin: 0 0 var(--spacing-xs) 0;
+            color: var(--color-primary);
+            font-size: var(--text-base);
+        }
+
+        .resource-content p {
+            margin: 0;
+            color: var(--color-text-secondary);
+            font-size: var(--text-sm);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">B</div>
+                <div>
+                    <h2 style="margin-bottom: 0; font-size: var(--text-xl);">Bitácora Digital BDTL</h2>
+                    <p style="margin-bottom: 0; font-size: var(--text-sm); color: var(--color-text-muted);">Bancolombia MongoDB Architecture</p>
+                </div>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <nav>
+                    <a href="bdtl.html" class="menu-item">
+                        📚 Introducción al Proyecto BDTL
+                    </a>
+                  
+                    <a href="ventajas.html" class="menu-item">
+                        ⚡ Ventajas de MongoDB como BDTL
+                    </a>
+                    <a href="tabla.html" class="menu-item">
+                        📋 Descripción Tablas y Campos
+                    </a>
+                    
+                    <!-- Store Procedures con submenús -->
+                    <div class="menu-section">
+                        <a href="procedures.html" class="menu-item">
+                            ⚙️ Store Procedures
+                        </a>
+                        <div class="submenu">
+                            <a href="spsinsert.html" class="submenu-item">
+                                📝 SPs de ingesta y actualización
+                            </a>
+                            <a href="spsconsulta.html" class="submenu-item">
+                                🔍 SPs Lambda Consulta
+                            </a>
+                            <a href="spscarga.html" class="submenu-item">
+                                📦 SPs Lambda Carga Batch
+                            </a>
+                            <a href="jobsdepuracion.html" class="submenu-item">
+                                🗑️ Jobs Depuración
+                            </a>
+                            <a href="frombdtl.html" class="submenu-item">
+                                🔄 From BDTL
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <a href="modeloactual.html" class="menu-item">
+                        🔌 Modelo de Datos Actual
+                    </a>
+
+                    <a href="modelo.html" class="menu-item">
+                        🗃️ Evolución del Modelo de Datos
+                    </a>
+                    <a href="indices.html" class="menu-item active">
+                        🔍 Estrategia de Indexación
+                    </a>
+                    <a href="bp.html" class="menu-item">
+                        📖 Guías y Mejores Prácticas
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="text-gradient">Guías y Mejores Prácticas MongoDB</h1>
+            <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-2xl);">
+                Recursos esenciales para la implementación y optimización de MongoDB en el proyecto BDTL de Bancolombia.
+            </p>
+
+            <!-- Introducción -->
+            <div class="content-section">
+                <div class="card" style="background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%); border: 2px solid var(--color-primary); box-shadow: var(--shadow-glow);">
+                    <div style="display: flex; align-items: center; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                        <div style="width: 60px; height: 60px; background: var(--color-primary); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: var(--text-2xl);">📖</div>
+                        <div>
+                            <h2 style="margin-bottom: 0; font-size: var(--text-3xl);">Fundamentos para el Éxito</h2>
+                            <p style="margin-bottom: 0; color: var(--color-text-muted);">Migración estratégica de SQL Server a MongoDB</p>
+                        </div>
+                    </div>
+                    <p style="font-size: var(--text-lg);">
+                        Esta guía reúne las mejores prácticas, patrones de diseño y recursos oficiales de MongoDB para garantizar una migración exitosa del sistema BDTL. Cada recurso ha sido seleccionado específicamente para abordar los desafíos de transformar una arquitectura relacional a un modelo orientado a documentos.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Guías Técnicas Principales -->
+            <div class="content-section">
+                <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-xl);">🎯 Guías Técnicas Especializadas</h2>
+                
+                <div class="guide-grid">
+                    <!-- Wildcard Indexes -->
+                    <div class="guide-card" style="border: 2px solid var(--color-primary);">
+                        <div class="guide-header">
+                            <div class="guide-icon" style="background: var(--color-primary);">🔍</div>
+                            <div>
+                                <h3 class="guide-title">Wildcard Indexes</h3>
+                                <p style="margin: 0; color: var(--color-text-muted); font-size: var(--text-sm);">Índices dinámicos para campos variables</p>
+                            </div>
+                        </div>
+                        <p class="guide-description">
+                            Fundamentales para indexar documentos con esquemas flexibles como los datos líquidos de BDTL. Permiten crear índices automáticamente en campos que pueden variar entre documentos.
+                        </p>
+                        <a href="https://www.mongodb.com/docs/manual/core/indexes/index-types/index-wildcard/" 
+                           target="_blank" 
+                           class="guide-link">
+                            📚 Ver Documentación
+                        </a>
+                    </div>
+
+                    <!-- Compound Wildcard Indexes -->
+                    <div class="guide-card" style="border: 2px solid var(--color-accent);">
+                        <div class="guide-header">
+                            <div class="guide-icon" style="background: var(--color-accent);">⚡</div>
+                            <div>
+                                <h3 class="guide-title">Compound Wildcard Indexes</h3>
+                                <p style="margin: 0; color: var(--color-text-muted); font-size: var(--text-sm);">Índices compuestos avanzados</p>
+                            </div>
+                        </div>
+                        <p class="guide-description">
+                            Combinan índices wildcard con campos específicos para optimizar consultas complejas. Ideales para consultas que filtran por campos fijos (como EntidadId) y campos variables dentro de DatosLiquidos.
+                        </p>
+                        <a href="https://www.mongodb.com/docs/manual/core/indexes/index-types/index-wildcard/index-wildcard-compound/" 
+                           target="_blank" 
+                           class="guide-link">
+                            🔧 Explorar Técnica
+                        </a>
+                    </div>
+
+                    <!-- Partial Indexes -->
+                    <div class="guide-card" style="border: 2px solid var(--color-warning);">
+                        <div class="guide-header">
+                            <div class="guide-icon" style="background: var(--color-warning);">🎯</div>
+                            <div>
+                                <h3 class="guide-title">Partial Indexes</h3>
+                                <p style="margin: 0; color: var(--color-text-muted); font-size: var(--text-sm);">Índices condicionalmente eficientes</p>
+                            </div>
+                        </div>
+                        <p class="guide-description">
+                            Indexan únicamente documentos que cumplen condiciones específicas, reduciendo el tamaño del índice y mejorando el rendimiento. Perfectos para indexar solo documentos activos o de ciertos tipos.
+                        </p>
+                        <a href="https://www.mongodb.com/docs/manual/core/index-partial/" 
+                           target="_blank" 
+                           class="guide-link">
+                            🎲 Aprender Más
+                        </a>
+                    </div>
+
+                    <!-- Building with Patterns -->
+                    <div class="guide-card" style="border: 2px solid var(--color-success);">
+                        <div class="guide-header">
+                            <div class="guide-icon" style="background: var(--color-success);">🏗️</div>
+                            <div>
+                                <h3 class="guide-title">Building with Patterns</h3>
+                                <p style="margin: 0; color: var(--color-text-muted); font-size: var(--text-sm);">Patrones arquitectónicos probados</p>
+                            </div>
+                        </div>
+                        <p class="guide-description">
+                            Resumen completo de los patrones de diseño más efectivos en MongoDB. Incluye el Patrón de Referencia Extendida que estamos implementando en BDTL para desnormalización estratégica.
+                        </p>
+                        <a href="https://www.mongodb.com/company/blog/building-with-patterns-a-summary" 
+                           target="_blank" 
+                           class="guide-link">
+                            🧩 Ver Patrones
+                        </a>
+                    </div>
+
+                    <!-- Design Patterns -->
+                    <div class="guide-card" style="border: 2px solid var(--color-info);">
+                        <div class="guide-header">
+                            <div class="guide-icon" style="background: var(--color-info);">📐</div>
+                            <div>
+                                <h3 class="guide-title">Data Modeling Design Patterns</h3>
+                                <p style="margin: 0; color: var(--color-text-muted); font-size: var(--text-sm);">Documentación oficial de patrones</p>
+                            </div>
+                        </div>
+                        <p class="guide-description">
+                            Documentación oficial detallada de todos los patrones de diseño disponibles en MongoDB. Referencia completa para decisiones arquitectónicas en el modelado de datos.
+                        </p>
+                        <a href="https://www.mongodb.com/docs/manual/data-modeling/design-patterns/" 
+                           target="_blank" 
+                           class="guide-link">
+                            📋 Consultar Guía
+                        </a>
+                    </div>
+
+                    <!-- Learning Course -->
+                    <div class="guide-card" style="border: 2px solid var(--color-error);">
+                        <div class="guide-header">
+                            <div class="guide-icon" style="background: var(--color-error);">🎓</div>
+                            <div>
+                                <h3 class="guide-title">Relational to Document Model</h3>
+                                <p style="margin: 0; color: var(--color-text-muted); font-size: var(--text-sm);">Curso práctico de migración</p>
+                            </div>
+                        </div>
+                        <p class="guide-description">
+                            Curso interactivo que enseña cómo migrar efectivamente de modelos relacionales a modelos de documentos. Perfecto para equipos que vienen de SQL Server y necesitan pensar en documentos.
+                        </p>
+                        <a href="https://learn.mongodb.com/courses/relational-to-document-model" 
+                           target="_blank" 
+                           class="guide-link">
+                            🎯 Tomar Curso
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patrones Específicos para BDTL -->
+            <div class="content-section">
+                <h2 style="color: var(--color-accent); margin-bottom: var(--spacing-xl);">🧩 Patrones Implementados en BDTL</h2>
+                
+                <div class="pattern-grid">
+                    <div class="pattern-card" style="border-left: 4px solid var(--color-primary);">
+                        <div class="pattern-icon">🔗</div>
+                        <h4 class="pattern-title">Extended Reference Pattern</h4>
+                        <p class="pattern-description">
+                            Incrusta campos frecuentemente consultados de documentos referenciados para eliminar JOINs. Aplicado en la desnormalización de entidades, canales y tecnologías.
+                        </p>
+                    </div>
+
+                    <div class="pattern-card" style="border-left: 4px solid var(--color-accent);">
+                        <div class="pattern-icon">🕒</div>
+                        <h4 class="pattern-title">Document Versioning</h4>
+                        <p class="pattern-description">
+                            Gestiona cambios en documentos manteniendo versiones. Útil para el control de auditoría en registros BDTL que requieren trazabilidad histórica.
+                        </p>
+                    </div>
+
+                    <div class="pattern-card" style="border-left: 4px solid var(--color-success);">
+                        <div class="pattern-icon">📊</div>
+                        <h4 class="pattern-title">Outlier Pattern</h4>
+                        <p class="pattern-description">
+                            Separa documentos que crecen excesivamente. Aplicado en la separación de logs de auditoría para mantener el documento principal compacto.
+                        </p>
+                    </div>
+
+                    <div class="pattern-card" style="border-left: 4px solid var(--color-warning);">
+                        <div class="pattern-icon">⏱️</div>
+                        <h4 class="pattern-title">Schema Versioning</h4>
+                        <p class="pattern-description">
+                            Permite evolución gradual del esquema sin migración masiva. Facilita actualizaciones incrementales del modelo de datos BDTL.
+                        </p>
+                    </div>
+
+                    <div class="pattern-card" style="border-left: 4px solid var(--color-info);">
+                        <div class="pattern-icon">🎯</div>
+                        <h4 class="pattern-title">Computed Pattern</h4>
+                        <p class="pattern-description">
+                            Pre-calcula valores derivados durante la escritura. Implementado en el cálculo de FechaVigencia y FechaDepuracion en el microservicio de ingesta.
+                        </p>
+                    </div>
+
+                    <div class="pattern-card" style="border-left: 4px solid var(--color-error);">
+                        <div class="pattern-icon">🗂️</div>
+                        <h4 class="pattern-title">Bucket Pattern</h4>
+                        <p class="pattern-description">
+                            Agrupa documentos relacionados en "buckets" para optimizar consultas. Considerado para agrupar registros por período temporal en consultas de batch.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mejores Prácticas -->
+            <div class="content-section">
+                <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-xl);">✅ Mejores Prácticas para BDTL</h2>
+                
+                <div class="best-practice-list">
+                    <div class="practice-item">
+                        <div class="practice-icon" style="background: var(--color-primary); color: var(--color-text-dark);">📐</div>
+                        <div class="practice-content">
+                            <h4>Diseño Orientado a Consultas</h4>
+                            <p>Modela los datos basándote en cómo se van a consultar, no en cómo se almacenan en SQL. BDTL prioriza velocidad de lectura sobre normalización perfecta.</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-item">
+                        <div class="practice-icon" style="background: var(--color-accent); color: white;">🔍</div>
+                        <div class="practice-content">
+                            <h4>Índices Estratégicos</h4>
+                            <p>Crea índices compuestos que cubran múltiples campos de consulta. Usa wildcard indexes para datos líquidos variables y partial indexes para filtros condicionales.</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-item">
+                        <div class="practice-icon" style="background: var(--color-success); color: white;">⚡</div>
+                        <div class="practice-content">
+                            <h4>Desnormalización Inteligente</h4>
+                            <p>Incrusta datos frecuentemente consultados para eliminar JOINs. Acepta duplicación controlada a cambio de performance excepcional en lecturas.</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-item">
+                        <div class="practice-icon" style="background: var(--color-warning); color: var(--color-text-dark);">📏</div>
+                        <div class="practice-content">
+                            <h4>Documentos de Tamaño Predecible</h4>
+                            <p>Mantén documentos bajo 16MB y evita arrays que crezcan sin límite. Separa logs y datos grandes en colecciones independientes.</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-item">
+                        <div class="practice-icon" style="background: var(--color-info); color: white;">🔄</div>
+                        <div class="practice-content">
+                            <h4>Operaciones Atómicas</h4>
+                            <p>Aprovecha que las operaciones a nivel de documento son atómicas. Agrupa datos relacionados para garantizar consistencia sin transacciones complejas.</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-item">
+                        <div class="practice-icon" style="background: var(--color-error); color: white;">⏰</div>
+                        <div class="practice-content">
+                            <h4>TTL para Datos Temporales</h4>
+                            <p>Usa índices TTL (Time To Live) para automatizar la depuración de datos. Reemplaza jobs complejos de limpieza con expiración automática.</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-item">
+                        <div class="practice-icon" style="background: #9333EA; color: white;">🧪</div>
+                        <div class="practice-content">
+                            <h4>Evolución de Esquema Gradual</h4>
+                            <p>Diseña documentos que puedan evolucionar sin migración masiva. Usa campos opcionales y versioning para cambios incrementales.</p>
+                        </div>
+                    </div>
+
+                    <div class="practice-item">
+                        <div class="practice-icon" style="background: #059669; color: white;">📊</div>
+                        <div class="practice-content">
+                            <h4>Aggregation Framework</h4>
+                            <p>Usa pipelines de agregación para análisis complejos en lugar de traer datos a la aplicación. Procesa datos donde residen para mejor performance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ruta de Aprendizaje -->
+            <div class="content-section">
+                <div class="learning-path">
+                    <h2 style="color: white; text-align: center; margin-bottom: var(--spacing-xl);">🎓 Ruta de Aprendizaje Recomendada</h2>
+                    <p style="text-align: center; margin-bottom: var(--spacing-lg);">
+                        Secuencia de estudio optimizada para equipos que migran de SQL Server a MongoDB
+                    </p>
+                    
+                    <div class="step-grid">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Fundamentos Conceptuales</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Entender las diferencias fundamentales entre modelos relacionales y orientados a documentos.</p>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Curso de Migración</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Completar el curso "Relational to Document Model" para técnicas prácticas de transformación.</p>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Patrones de Diseño</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Estudiar los patrones específicos aplicables al contexto BDTL y casos de uso bancarios.</p>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Estrategias de Indexación</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Dominar wildcard, compound y partial indexes para datos líquidos variables.</p>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">5</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Implementación Práctica</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Aplicar conocimientos en prototipos del modelo BDTL con datos reales.</p>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="step-number">6</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Optimización Continua</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Monitorear rendimiento y refinar estrategias basándose en métricas reales.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recursos Adicionales -->
+            <div class="content-section">
+                <div class="resources-section">
+                    <div style="display: flex; align-items: center; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                        <div style="width: 60px; height: 60px; background: var(--color-primary); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: var(--text-2xl);">🔗</div>
+                        <div>
+                            <h2 style="margin-bottom: 0; color: var(--color-primary);">Recursos Oficiales MongoDB</h2>
+                            <p style="margin-bottom: 0; color: var(--color-text-muted);">Enlaces directos a documentación y cursos especializados</p>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-links">
+                        <a href="https://www.mongodb.com/docs/manual/core/indexes/index-types/index-wildcard/" 
+                           target="_blank" 
+                           class="resource-link">
+                            <div class="resource-icon">🔍</div>
+                            <div class="resource-content">
+                                <h4>Wildcard Indexes</h4>
+                                <p>Documentación oficial para indexación dinámica de campos variables</p>
+                            </div>
+                        </a>
+
+                        <a href="https://www.mongodb.com/docs/manual/core/indexes/index-types/index-wildcard/index-wildcard-compound/" 
+                           target="_blank" 
+                           class="resource-link">
+                            <div class="resource-icon">⚡</div>
+                            <div class="resource-content">
+                                <h4>Compound Wildcard Indexes</h4>
+                                <p>Índices compuestos avanzados para consultas complejas</p>
+                            </div>
+                        </a>
+
+                        <a href="https://www.mongodb.com/docs/manual/core/index-partial/" 
+                           target="_blank" 
+                           class="resource-link">
+                            <div class="resource-icon">🎯</div>
+                            <div class="resource-content">
+                                <h4>Partial Indexes</h4>
+                                <p>Indexación condicional para optimización de espacio y rendimiento</p>
+                            </div>
+                        </a>
+
+                        <a href="https://www.mongodb.com/company/blog/building-with-patterns-a-summary" 
+                           target="_blank" 
+                           class="resource-link">
+                            <div class="resource-icon">🏗️</div>
+                            <div class="resource-content">
+                                <h4>Building with Patterns</h4>
+                                <p>Resumen completo de patrones arquitectónicos probados</p>
+                            </div>
+                        </a>
+
+                        <a href="https://www.mongodb.com/docs/manual/data-modeling/design-patterns/" 
+                           target="_blank" 
+                           class="resource-link">
+                            <div class="resource-icon">📐</div>
+                            <div class="resource-content">
+                                <h4>Design Patterns Guide</h4>
+                                <p>Documentación oficial detallada de patrones de modelado</p>
+                            </div>
+                        </a>
+
+                        <a href="https://learn.mongodb.com/courses/relational-to-document-model" 
+                           target="_blank" 
+                           class="resource-link">
+                            <div class="resource-icon">🎓</div>
+                            <div class="resource-content">
+                                <h4>Migration Course</h4>
+                                <p>Curso interactivo de migración relacional a documentos</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aplicación en BDTL -->
+            <div class="content-section">
+                <div class="card" style="border-left: 4px solid var(--color-accent);">
+                    <h2 style="color: var(--color-accent);">🎯 Aplicación Directa en BDTL</h2>
+                    <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-lg);">
+                        Estos recursos están directamente alineados con las decisiones arquitectónicas del proyecto BDTL:
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg);">
+                        <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
+                            <h4 style="color: var(--color-primary);">🔍 Wildcard Indexes</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Para indexar campos variables dentro de DatosLiquidos que cambian según el tipo de documento procesado.</p>
+                        </div>
+                        
+                        <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
+                            <h4 style="color: var(--color-accent);">🔗 Extended Reference</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Implementado en la incrustación de datos de entidades, canales y tecnologías para eliminar JOINs.</p>
+                        </div>
+                        
+                        <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
+                            <h4 style="color: var(--color-success);">📊 Outlier Pattern</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Aplicado en la separación de auditoría en colección independiente para mantener documentos principales compactos.</p>
+                        </div>
+                        
+                        <div style="background-color: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-lg);">
+                            <h4 style="color: var(--color-warning);">⏰ TTL Indexes</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Reemplazan los jobs de depuración complejos con expiración automática basada en FechaDepuracion.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen de Implementación -->
+            <div class="content-section">
+                <div class="card" style="background: linear-gradient(135deg, var(--color-primary) 0%, rgba(0, 237, 100, 0.8) 100%);">
+                    <h2 style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-xl);">📋 Resumen de Implementación</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
+                        <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">6</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Recursos Clave</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Guías especializadas para la migración</p>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">8</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Mejores Prácticas</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Aplicables directamente a BDTL</p>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">6</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Patrones de Diseño</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Implementados en la arquitectura</p>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">100%</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Oficiales MongoDB</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Fuentes verificadas y actualizadas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Próximos Pasos -->
+            <div class="content-section">
+                <div class="card" style="background: linear-gradient(135deg, var(--color-accent) 0%, rgba(86, 68, 212, 0.8) 100%);">
+                    <h2 style="color: white; text-align: center; margin-bottom: var(--spacing-xl);">🚀 Próximos Pasos Recomendados</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
+                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white;">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
+                                <div style="background: var(--color-primary); color: var(--color-text-dark); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
+                                <h4 style="margin: 0;">Estudio de Fundamentos</h4>
+                            </div>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--text-sm);">
+                                <li>Completar curso de migración relacional</li>
+                                <li>Revisar patrones de diseño aplicables</li>
+                                <li>Estudiar estrategias de indexación</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white;">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
+                                <div style="background: var(--color-primary); color: var(--color-text-dark); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
+                                <h4 style="margin: 0;">Prototipado</h4>
+                            </div>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--text-sm);">
+                                <li>Implementar modelo desnormalizado</li>
+                                <li>Crear índices wildcard para DatosLiquidos</li>
+                                <li>Probar TTL indexes para depuración</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white;">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
+                                <div style="background: var(--color-primary); color: var(--color-text-dark); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
+                                <h4 style="margin: 0;">Validación</h4>
+                            </div>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--text-sm);">
+                                <li>Medir performance vs SQL Server</li>
+                                <li>Validar integridad de datos migrados</li>
+                                <li>Optimizar consultas más frecuentes</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: white;">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md);">
+                                <div style="background: var(--color-primary); color: var(--color-text-dark); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">4</div>
+                                <h4 style="margin: 0;">Producción</h4>
+                            </div>
+                            <ul style="margin: 0; padding-left: var(--spacing-lg); font-size: var(--text-sm);">
+                                <li>Migración gradual por módulos</li>
+                                <li>Monitoreo continuo de rendimiento</li>
+                                <li>Refinamiento basado en métricas</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Función para toggle del menú móvil
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        // Marcar enlace activo basado en la página actual
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop() || 'guias.html';
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === currentPage) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

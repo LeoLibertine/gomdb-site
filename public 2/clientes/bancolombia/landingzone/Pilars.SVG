@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 550">
+  <!-- Background -->
+  <rect width="800" height="550" fill="#FFFFFF"/>
+  
+  <!-- Title -->
+  <text x="400" y="30" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#001E2B">Bancolombia Current Initiatives</text>
+  <text x="400" y="55" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#001E2B">Aligned with MongoDB Atlas Landing Zone Pillars</text>
+  
+  <!-- Pillar Headers - Changed to military green with white text -->
+  <rect x="30" y="80" width="220" height="40" rx="5" ry="5" fill="#4D5D53"/>
+  <text x="140" y="105" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Infrastructure Management</text>
+  
+  <rect x="290" y="80" width="220" height="40" rx="5" ry="5" fill="#4D5D53"/>
+  <text x="400" y="105" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Application Management</text>
+  
+  <rect x="550" y="80" width="220" height="40" rx="5" ry="5" fill="#4D5D53"/>
+  <text x="660" y="105" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Security Model</text>
+  
+  <rect x="30" y="280" width="220" height="40" rx="5" ry="5" fill="#4D5D53"/>
+  <text x="140" y="305" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Tooling (IaC)</text>
+  
+  <rect x="290" y="280" width="220" height="40" rx="5" ry="5" fill="#4D5D53"/>
+  <text x="400" y="305" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Financial Model</text>
+  
+  <rect x="550" y="280" width="220" height="40" rx="5" ry="5" fill="#4D5D53"/>
+  <text x="660" y="305" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">People and Process</text>
+  
+  <!-- Infrastructure Management Initiatives -->
+  <rect x="30" y="130" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.7"/>
+  <text x="140" y="152" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">CloudFormation Templates</text>
+  
+  <rect x="30" y="175" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.7"/>
+  <text x="140" y="197" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">Azure DevOps CI/CD Integration</text>
+  
+  <rect x="30" y="220" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.7"/>
+  <text x="140" y="242" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">Environment Standardization</text>
+  
+  <!-- Application Management Initiatives -->
+  <rect x="290" y="130" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.7"/>
+  <text x="400" y="152" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">DB Team Guidelines</text>
+  
+  <rect x="290" y="175" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.7"/>
+  <text x="400" y="197" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">Encryption Standards</text>
+  
+  <rect x="290" y="220" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.3"/>
+  <text x="400" y="242" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">(Future) Data Classification</text>
+  
+  <!-- Security Model Initiatives -->
+  <rect x="550" y="130" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.7"/>
+  <text x="660" y="152" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">Transit and At-Rest Encryption</text>
+  
+  <rect x="550" y="175" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.7"/>
+  <text x="660" y="197" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">Authentication Guidelines</text>
+  
+  <rect x="550" y="220" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.3"/>
+  <text x="660" y="242" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">(Future) Security Automation</text>
+  
+  <!-- Tooling Initiatives -->
+  <rect x="30" y="330" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.7"/>
+  <text x="140" y="352" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">CloudFormation Templates</text>
+  
+  <rect x="30" y="375" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.5"/>
+  <text x="140" y="397" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">OpenTofu Exploration</text>
+  
+  <rect x="30" y="420" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.5"/>
+  <text x="140" y="442" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">Kaizen Developer Portal</text>
+  
+  <rect x="30" y="465" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.5"/>
+  <text x="140" y="487" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">Backstage Integration</text>
+  
+  <!-- Financial Model Initiatives -->
+  <rect x="290" y="330" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.3"/>
+  <text x="400" y="352" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">(Future) Resource Tagging</text>
+  
+  <rect x="290" y="375" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.3"/>
+  <text x="400" y="397" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">(Future) Cost Reporting</text>
+  
+  <rect x="290" y="420" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.2"/>
+  <text x="400" y="442" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">(Not Started) Chargeback Model</text>
+  
+  <!-- People & Process Initiatives -->
+  <rect x="550" y="330" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.7"/>
+  <text x="660" y="352" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">Platform Engineering Team (Corex)</text>
+  
+  <rect x="550" y="375" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.5"/>
+  <text x="660" y="397" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">Cross-Team Collaboration</text>
+  
+  <rect x="550" y="420" width="220" height="35" rx="5" ry="5" fill="#00ED64" opacity="0.3"/>
+  <text x="660" y="442" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">(Future) MongoDB Expertise Dev</text>
+  
+  <!-- Legend -->
+  <text x="400" y="520" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#001E2B">Implementation Status:</text>
+  
+  <rect x="100" y="535" width="15" height="15" fill="#00ED64" opacity="0.7"/>
+  <text x="185" y="547" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">Implemented</text>
+  
+  <rect x="270" y="535" width="15" height="15" fill="#00ED64" opacity="0.5"/>
+  <text x="355" y="547" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">In Progress</text>
+  
+  <rect x="440" y="535" width="15" height="15" fill="#00ED64" opacity="0.3"/>
+  <text x="515" y="547" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">Planned</text>
+  
+  <rect x="610" y="535" width="15" height="15" fill="#00ED64" opacity="0.2"/>
+  <text x="685" y="547" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#001E2B">Not Started</text>
+</svg>

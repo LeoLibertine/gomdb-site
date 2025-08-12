@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama ER - BDTL Bancolombia</title>
+    <style>
+        :root {
+            --color-primary: #00ED64;
+            --color-primary-hover: #00D757;
+            --color-primary-light: #00ED6420;
+            --color-bg-primary: #001E2B;
+            --color-bg-secondary: #0D2A3D;
+            --color-bg-tertiary: #112331;
+            --color-accent: #5644D4;
+            --color-text-primary: #FFFFFF;
+            --color-text-secondary: #B8C4CE;
+            --color-text-muted: #718096;
+            --color-warning: #F59E0B;
+            --color-error: #EF4444;
+            --color-info: #3B82F6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--color-bg-secondary);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--color-primary);
+            position: relative;
+            z-index: 10;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--color-text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            top: 120px;
+            right: 20px;
+            background: var(--color-bg-secondary);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .controls h3 {
+            color: var(--color-primary);
+            margin-bottom: 15px;
+        }
+
+        .control-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-primary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: var(--color-primary);
+            color: var(--color-bg-primary);
+            transform: scale(1.05);
+        }
+
+        /* Canvas container */
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 100px);
+            overflow: auto;
+            background: radial-gradient(circle at 50% 50%, var(--color-bg-secondary) 0%, var(--color-bg-primary) 100%);
+        }
+
+        #canvas {
+            position: relative;
+            width: 5000px;
+            height: 3000px;
+        }
+
+        /* Entity styles */
+        .entity {
+            position: absolute;
+            background: var(--color-bg-secondary);
+            border: 2px solid var(--color-primary);
+            border-radius: 10px;
+            padding: 15px;
+            min-width: 200px;
+            box-shadow: 0 4px 15px rgba(0, 237, 100, 0.2);
+            transition: all 0.3s ease;
+            cursor: move;
+        }
+
+        .entity:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(0, 237, 100, 0.4);
+            z-index: 100;
+        }
+
+        .entity-header {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            margin: -15px -15px 10px -15px;
+            padding: 10px 15px;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+            color: var(--color-bg-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .entity-icon {
+            font-size: 1.2rem;
+        }
+
+        .entity-content {
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+        }
+
+        .field {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .field:last-child {
+            border-bottom: none;
+        }
+
+        .field-pk {
+            color: var(--color-warning);
+            font-weight: bold;
+        }
+
+        .field-fk {
+            color: var(--color-info);
+        }
+
+        .field-type {
+            color: var(--color-text-muted);
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+
+        /* Special entity types */
+        .entity-main {
+            border-color: var(--color-primary);
+            box-shadow: 0 4px 20px rgba(0, 237, 100, 0.4);
+        }
+
+        .entity-lookup {
+            border-color: var(--color-accent);
+            box-shadow: 0 4px 20px rgba(86, 68, 212, 0.3);
+        }
+
+        .entity-api {
+            border-color: var(--color-warning);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .entity-log {
+            border-color: var(--color-error);
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Connection lines */
+        .connection {
+            position: absolute;
+            background: var(--color-primary);
+            height: 2px;
+            transform-origin: left center;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .connection:hover {
+            opacity: 1;
+            height: 3px;
+        }
+
+        .connection-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Legend */
+        .legend {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--color-bg-secondary);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .legend h3 {
+            color: var(--color-primary);
+            margin-bottom: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            border: 2px solid;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: absolute;
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            border: 1px solid var(--color-primary);
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        /* Zoom controls */
+        .zoom-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--color-bg-secondary);
+            border: 2px solid var(--color-primary);
+            color: var(--color-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .zoom-btn:hover {
+            background: var(--color-primary);
+            color: var(--color-bg-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Diagrama Entidad-Relación BDTL</h1>
+        <p>Base de Datos de Texto Líquido - Bancolombia MongoDB Architecture</p>
+    </div>
+
+    <div class="controls">
+        <h3>Controles</h3>
+        <button class="control-btn" onclick="resetView()">🔄 Resetear Vista</button>
+        <button class="control-btn" onclick="toggleConnections()">🔗 Mostrar/Ocultar Conexiones</button>
+        <button class="control-btn" onclick="highlightMainFlow()">⚡ Resaltar Flujo Principal</button>
+    </div>
+
+    <div class="legend">
+        <h3>Leyenda</h3>
+        <div class="legend-item">
+            <div class="legend-color" style="border-color: var(--color-primary); background: rgba(0, 237, 100, 0.2);"></div>
+            <span>Tablas Principales</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="border-color: var(--color-accent); background: rgba(86, 68, 212, 0.2);"></div>
+            <span>Tablas de Búsqueda</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="border-color: var(--color-warning); background: rgba(245, 158, 11, 0.2);"></div>
+            <span>APIs</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="border-color: var(--color-error); background: rgba(239, 68, 68, 0.2);"></div>
+            <span>Logs/Auditoría</span>
+        </div>
+        <div class="legend-item">
+            <span style="color: var(--color-warning);">🔑 PK</span> = Llave Primaria
+        </div>
+        <div class="legend-item">
+            <span style="color: var(--color-info);">🔗 FK</span> = Llave Foránea
+        </div>
+    </div>
+
+    <div class="zoom-controls">
+        <button class="zoom-btn" onclick="zoomIn()">+</button>
+        <button class="zoom-btn" onclick="zoomOut()">-</button>
+    </div>
+
+    <div id="canvas-container">
+        <div id="canvas">
+            <!-- Main Tables -->
+            <div class="entity entity-main" style="left: 1500px; top: 500px; min-width: 350px;" data-table="DatosLiquidos">
+                <div class="entity-header">
+                    <span class="entity-icon">🗃️</span>
+                    <span>[dbo].[DatosLiquidos]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span class="field-pk">🔑 PK</span>
+                        <span>IdDocumento</span>
+                        <span class="field-type">[bigint] IDENTITY(1,1)</span>
+                    </div>
+                    <div class="field">
+                        <span class="field-fk">🔗 FK</span>
+                        <span>EntidadId</span>
+                        <span class="field-type">[int]</span>
+                    </div>
+                    <div class="field">
+                        <span>EntidadValor</span>
+                        <span class="field-type">[varchar](200)</span>
+                    </div>
+                    <div class="field">
+                        <span>Proceso</span>
+                        <span class="field-type">[varchar](250)</span>
+                    </div>
+                    <div class="field">
+                        <span>TipoDocumento</span>
+                        <span class="field-type">[varchar](250)</span>
+                    </div>
+                    <div class="field">
+                        <span class="field-fk">🔗 FK</span>
+                        <span>CanalDocumentoId</span>
+                        <span class="field-type">[int]</span>
+                    </div>
+                    <div class="field">
+                        <span>CanalDocumentoValor</span>
+                        <span class="field-type">[varchar](200)</span>
+                    </div>
+                    <div class="field">
+                        <span class="field-fk">🔗 FK</span>
+                        <span>TecnologiaExtraccionId</span>
+                        <span class="field-type">[int]</span>
+                    </div>
+                    <div class="field">
+                        <span>TecnologiaExtraccionValor</span>
+                        <span class="field-type">[varchar](200)</span>
+                    </div>
+                    <div class="field">
+                        <span>FechaCambioEstado</span>
+                        <span class="field-type">[datetime]</span>
+                    </div>
+                    <div class="field">
+                        <span>UsuarioCambioEstado</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>RazonCambioEstado</span>
+                        <span class="field-type">[varchar](8000)</span>
+                    </div>
+                    <div class="field">
+                        <span>FechaKofax</span>
+                        <span class="field-type">[datetime]</span>
+                    </div>
+                    <div class="field">
+                        <span>DatosLiquidos</span>
+                        <span class="field-type">[nvarchar](max) JSON</span>
+                    </div>
+                    <div class="field">
+                        <span>IdNumeroRadicado</span>
+                        <span class="field-type">[bigint]</span>
+                    </div>
+                    <div class="field">
+                        <span>IdNumeroCaso</span>
+                        <span class="field-type">[bigint]</span>
+                    </div>
+                    <div class="field">
+                        <span>CaseRef</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>IDProceso</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                    <div class="field">
+                        <span>OracleID</span>
+                        <span class="field-type">[varchar](200)</span>
+                    </div>
+                    <div class="field">
+                        <span>NumDasVigencia</span>
+                        <span class="field-type">[bigint]</span>
+                    </div>
+                    <div class="field">
+                        <span>VersionFirma</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>FechaExpedicion</span>
+                        <span class="field-type">[datetime]</span>
+                    </div>
+                    <div class="field">
+                        <span>FechaVigencia</span>
+                        <span class="field-type">[datetime]</span>
+                    </div>
+                    <div class="field">
+                        <span>FechaDepuracion</span>
+                        <span class="field-type">[datetime]</span>
+                    </div>
+                    <div class="field">
+                        <span>DatosLiquidosDetalles</span>
+                        <span class="field-type">[nvarchar](max)</span>
+                    </div>
+                    <div class="field">
+                        <span class="field-fk">🔗 FK</span>
+                        <span>IdEstadoDocumentoId</span>
+                        <span class="field-type">[int]</span>
+                    </div>
+                    <div class="field">
+                        <span>IdEstadoDocumentoDescripcion</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>CuentaSeguridad</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>CodigoArea</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>FechaFin</span>
+                        <span class="field-type">[datetime]</span>
+                    </div>
+                    <div class="field">
+                        <span>FechaBDTL</span>
+                        <span class="field-type">[datetime]</span>
+                    </div>
+                    <div class="field">
+                        <span>FechaFirma</span>
+                        <span class="field-type">[datetime]</span>
+                    </div>
+                    <div class="field">
+                        <span>LlaveParticion</span>
+                        <span class="field-type">[int]</span>
+                    </div>
+                    <div class="field">
+                        <span>NumDoc</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>TipoDoc</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>Active</span>
+                        <span class="field-type">[bit]</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Tables -->
+            <div class="entity entity-api" style="left: 300px; top: 100px;" data-table="Entity">
+                <div class="entity-header">
+                    <span class="entity-icon">🏢</span>
+                    <span>[API].[Entity]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span class="field-pk">🔑 PK</span>
+                        <span>Id</span>
+                        <span class="field-type">[int] IDENTITY(1,1)</span>
+                    </div>
+                    <div class="field">
+                        <span>value</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                    <div class="field">
+                        <span>description</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="entity entity-api" style="left: 300px; top: 300px;" data-table="Channel">
+                <div class="entity-header">
+                    <span class="entity-icon">📡</span>
+                    <span>[API].[Channel]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span class="field-pk">🔑 PK</span>
+                        <span>Id</span>
+                        <span class="field-type">[int] IDENTITY(1,1)</span>
+                    </div>
+                    <div class="field">
+                        <span>value</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                    <div class="field">
+                        <span>description</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="entity entity-api" style="left: 300px; top: 500px;" data-table="Technology">
+                <div class="entity-header">
+                    <span class="entity-icon">⚙️</span>
+                    <span>[API].[Technology]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span class="field-pk">🔑 PK</span>
+                        <span>Id</span>
+                        <span class="field-type">[int] IDENTITY(1,1)</span>
+                    </div>
+                    <div class="field">
+                        <span>value</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                    <div class="field">
+                        <span>description</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lookup Tables -->
+            <div class="entity entity-lookup" style="left: 700px; top: 200px;" data-table="DiasVigenciaTipoDocumento">
+                <div class="entity-header">
+                    <span class="entity-icon">📅</span>
+                    <span>[PS].[DiasVigenciaTipoDocumento]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span class="field-pk">🔑 PK</span>
+                        <span>Id</span>
+                        <span class="field-type">[bigint] IDENTITY(1,1)</span>
+                    </div>
+                    <div class="field">
+                        <span>TipoDocumento</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                    <div class="field">
+                        <span>DiasVigencia</span>
+                        <span class="field-type">[int]</span>
+                    </div>
+                    <div class="field">
+                        <span>FechaInicioVigenciaRegistro</span>
+                        <span class="field-type">[datetime]</span>
+                    </div>
+                    <div class="field">
+                        <span>FechaFinalVigenciaRegistro</span>
+                        <span class="field-type">[datetime]</span>
+                    </div>
+                    <div class="field">
+                        <span>UsuarioActualizacion</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>Proceso</span>
+                        <span class="field-type">[varchar](250)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="entity entity-lookup" style="left: 700px; top: 500px;" data-table="Grupos">
+                <div class="entity-header">
+                    <span class="entity-icon">👥</span>
+                    <span>[PS].[Grupos]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span>IdGrupo</span>
+                        <span class="field-type">[bigint]</span>
+                    </div>
+                    <div class="field">
+                        <span>ProcessType</span>
+                        <span class="field-type">[varchar](250)</span>
+                    </div>
+                    <div class="field">
+                        <span>DocumentType</span>
+                        <span class="field-type">[varchar](250)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parameter Tables -->
+            <div class="entity entity-lookup" style="left: 2300px; top: 200px;" data-table="MapeoParametros">
+                <div class="entity-header">
+                    <span class="entity-icon">🗺️</span>
+                    <span>[API].[MapeoParametros]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span class="field-pk">🔑 PK</span>
+                        <span>Id</span>
+                        <span class="field-type">[int] IDENTITY(1,1)</span>
+                    </div>
+                    <div class="field">
+                        <span>TipoDocumento</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                    <div class="field">
+                        <span>NombreFacturadorEnArchivo</span>
+                        <span class="field-type">[varchar](200)</span>
+                    </div>
+                    <div class="field">
+                        <span>CanalTec</span>
+                        <span class="field-type">[varchar](200)</span>
+                    </div>
+                    <div class="field">
+                        <span>ChaveTag</span>
+                        <span class="field-type">[varchar](200)</span>
+                    </div>
+                    <div class="field">
+                        <span>Active</span>
+                        <span class="field-type">[bit]</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="entity entity-lookup" style="left: 2300px; top: 450px;" data-table="MapeoValoresTipoDocCliente">
+                <div class="entity-header">
+                    <span class="entity-icon">🔄</span>
+                    <span>[API].[MapeoValoresTipoDocCliente]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span>Valor</span>
+                        <span class="field-type">[varchar](200)</span>
+                    </div>
+                    <div class="field">
+                        <span>Descripcion</span>
+                        <span class="field-type">[varchar](200)</span>
+                    </div>
+                    <div class="field">
+                        <span>ValorNumerico</span>
+                        <span class="field-type">[varchar](200)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parameters -->
+            <div class="entity entity-lookup" style="left: 2300px; top: 650px;" data-table="Parameters">
+                <div class="entity-header">
+                    <span class="entity-icon">⚙️</span>
+                    <span>[API].[Parameters]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span class="field-pk">🔑 PK</span>
+                        <span>Id</span>
+                        <span class="field-type">[bigint] IDENTITY(1,1)</span>
+                    </div>
+                    <div class="field">
+                        <span>ValorInfra</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>ValorDB</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>Categoria</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>Descripcion</span>
+                        <span class="field-type">[varchar](200)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ParametrosTipoDocumento -->
+            <div class="entity entity-lookup" style="left: 1100px; top: 650px;" data-table="ParametrosTipoDocumento">
+                <div class="entity-header">
+                    <span class="entity-icon">📄</span>
+                    <span>[API].[ParametrosTipoDocumento]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span class="field-pk">🔑 PK</span>
+                        <span>Id</span>
+                        <span class="field-type">[bigint] IDENTITY(1,1)</span>
+                    </div>
+                    <div class="field">
+                        <span>TipoDocumento</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log Tables -->
+            <div class="entity entity-log" style="left: 2700px; top: 800px;" data-table="Logs">
+                <div class="entity-header">
+                    <span class="entity-icon">📝</span>
+                    <span>[API].[Logs]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span class="field-pk">🔑 PK</span>
+                        <span>Id</span>
+                        <span class="field-type">[int] IDENTITY(1,1)</span>
+                    </div>
+                    <div class="field">
+                        <span>Message</span>
+                        <span class="field-type">[nvarchar](max)</span>
+                    </div>
+                    <div class="field">
+                        <span>MessageTemplate</span>
+                        <span class="field-type">[nvarchar](max)</span>
+                    </div>
+                    <div class="field">
+                        <span>Level</span>
+                        <span class="field-type">[nvarchar](128)</span>
+                    </div>
+                    <div class="field">
+                        <span>TimeStamp</span>
+                        <span class="field-type">[datetime]</span>
+                    </div>
+                    <div class="field">
+                        <span>Exception</span>
+                        <span class="field-type">[nvarchar](max)</span>
+                    </div>
+                    <div class="field">
+                        <span>Properties</span>
+                        <span class="field-type">[xml]</span>
+                    </div>
+                    <div class="field">
+                        <span>LogEvent</span>
+                        <span class="field-type">[nvarchar](max)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auditor Tables -->
+            <div class="entity entity-log" style="left: 2700px; top: 1200px;" data-table="AuditoraDatosLiquidos">
+                <div class="entity-header">
+                    <span class="entity-icon">🔍</span>
+                    <span>[dbo].[AuditoraDatosLiquidos]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span>Fecha</span>
+                        <span class="field-type">[datetime]</span>
+                    </div>
+                    <div class="field">
+                        <span>Usuario</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>NombreTabla</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>RegistroAnterior</span>
+                        <span class="field-type">[varchar](max)</span>
+                    </div>
+                    <div class="field">
+                        <span>RegistroNuevo</span>
+                        <span class="field-type">[varchar](max)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estados -->
+            <div class="entity entity-lookup" style="left: 1100px; top: 400px;" data-table="Estados">
+                <div class="entity-header">
+                    <span class="entity-icon">📊</span>
+                    <span>[API].[Estados]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span class="field-pk">🔑 PK</span>
+                        <span>Id</span>
+                        <span class="field-type">[int]</span>
+                    </div>
+                    <div class="field">
+                        <span>EstadoDocumento</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>CuentaSecundaria</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>CodigoArea</span>
+                        <span class="field-type">[varchar](50)</span>
+                    </div>
+                    <div class="field">
+                        <span>FechaFin</span>
+                        <span class="field-type">[datetime]</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Excepciones -->
+            <div class="entity entity-api" style="left: 2700px; top: 400px;" data-table="Excepciones">
+                <div class="entity-header">
+                    <span class="entity-icon">⚠️</span>
+                    <span>[API].[Excepciones]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span class="field-pk">🔑 PK</span>
+                        <span>Id</span>
+                        <span class="field-type">[int] IDENTITY(1,1)</span>
+                    </div>
+                    <div class="field">
+                        <span>Codigo</span>
+                        <span class="field-type">[varchar](10)</span>
+                    </div>
+                    <div class="field">
+                        <span>Campo</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                    <div class="field">
+                        <span>Codigo</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                    <div class="field">
+                        <span>Descripcion</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parametrizacion Proceso Liquidador -->
+            <div class="entity entity-lookup" style="left: 1100px; top: 200px;" data-table="ParametrizacionProcesoLiquidador">
+                <div class="entity-header">
+                    <span class="entity-icon">⚙️</span>
+                    <span>[dbo].[ParametrizacionProcesoLiquidador]</span>
+                </div>
+                <div class="entity-content">
+                    <div class="field">
+                        <span class="field-pk">🔑 PK</span>
+                        <span>IdColumnaPadre</span>
+                        <span class="field-type">[int]</span>
+                    </div>
+                    <div class="field">
+                        <span class="field-pk">🔑 PK</span>
+                        <span>IdColumnaHijo</span>
+                        <span class="field-type">[int]</span>
+                    </div>
+                    <div class="field">
+                        <span>Proceso</span>
+                        <span class="field-type">[varchar](550)</span>
+                    </div>
+                    <div class="field">
+                        <span>EstadoCampo</span>
+                        <span class="field-type">[bit]</span>
+                    </div>
+                    <div class="field">
+                        <span>Entidad</span>
+                        <span class="field-type">[varchar](20)</span>
+                    </div>
+                    <div class="field">
+                        <span>TipoDocumento</span>
+                        <span class="field-type">[varchar](100)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        let scale = 1;
+        let isDragging = false;
+        let startX, startY;
+        let scrollLeft, scrollTop;
+        let connectionsVisible = true;
+        const canvas = document.getElementById('canvas');
+        const container = document.getElementById('canvas-container');
+        const tooltip = document.getElementById('tooltip');
+
+        // Initialize connections
+        const connections = [
+            { from: 'Entity', to: 'DatosLiquidos', field: 'EntidadId' },
+            { from: 'Channel', to: 'DatosLiquidos', field: 'CanalDocumentoId' },
+            { from: 'Technology', to: 'DatosLiquidos', field: 'TecnologiaExtraccionId' },
+            { from: 'DiasVigenciaTipoDocumento', to: 'DatosLiquidos', field: 'TipoDocumento' },
+            { from: 'Grupos', to: 'DatosLiquidos', field: 'Proceso/TipoDocumento' },
+            { from: 'Estados', to: 'DatosLiquidos', field: 'IdEstadoDocumento' },
+            { from: 'DatosLiquidos', to: 'Logs', field: 'IdDocumento' },
+            { from: 'DatosLiquidos', to: 'AuditoraDatosLiquidos', field: 'Audit' },
+            { from: 'ParametrosTipoDocumento', to: 'DatosLiquidos', field: 'TipoDocumento' },
+            { from: 'MapeoParametros', to: 'DatosLiquidos', field: 'TipoDocumento' },
+            { from: 'ParametrizacionProcesoLiquidador', to: 'DatosLiquidos', field: 'Proceso' }
+        ];
+
+        // Draw connections
+        function drawConnections() {
+            // Remove existing connections
+            document.querySelectorAll('.connection').forEach(el => el.remove());
+            
+            if (!connectionsVisible) return;
+
+            connections.forEach(conn => {
+                const fromEl = document.querySelector(`[data-table="${conn.from}"]`);
+                const toEl = document.querySelector(`[data-table="${conn.to}"]`);
+                
+                if (fromEl && toEl) {
+                    const fromRect = fromEl.getBoundingClientRect();
+                    const toRect = toEl.getBoundingClientRect();
+                    const canvasRect = canvas.getBoundingClientRect();
+                    
+                    const fromX = fromEl.offsetLeft + fromEl.offsetWidth / 2;
+                    const fromY = fromEl.offsetTop + fromEl.offsetHeight / 2;
+                    const toX = toEl.offsetLeft + toEl.offsetWidth / 2;
+                    const toY = toEl.offsetTop + toEl.offsetHeight / 2;
+                    
+                    const distance = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
+                    const angle = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
+                    
+                    const line = document.createElement('div');
+                    line.className = 'connection';
+                    line.style.width = distance + 'px';
+                    line.style.left = fromX + 'px';
+                    line.style.top = fromY + 'px';
+                    line.style.transform = `rotate(${angle}deg)`;
+                    line.dataset.field = conn.field;
+                    
+                    // Add dots at endpoints
+                    const startDot = document.createElement('div');
+                    startDot.className = 'connection-dot';
+                    startDot.style.left = '0';
+                    startDot.style.top = '50%';
+                    
+                    const endDot = document.createElement('div');
+                    endDot.className = 'connection-dot';
+                    endDot.style.left = '100%';
+                    endDot.style.top = '50%';
+                    
+                    line.appendChild(startDot);
+                    line.appendChild(endDot);
+                    canvas.appendChild(line);
+                    
+                    // Add hover tooltip
+                    line.addEventListener('mouseenter', (e) => {
+                        tooltip.textContent = `Relación: ${conn.field}`;
+                        tooltip.classList.add('show');
+                    });
+                    
+                    line.addEventListener('mousemove', (e) => {
+                        tooltip.style.left = e.pageX + 10 + 'px';
+                        tooltip.style.top = e.pageY - 30 + 'px';
+                    });
+                    
+                    line.addEventListener('mouseleave', () => {
+                        tooltip.classList.remove('show');
+                    });
+                }
+            });
+        }
+
+        // Drag functionality
+        container.addEventListener('mousedown', (e) => {
+            if (e.target === container || e.target === canvas) {
+                isDragging = true;
+                startX = e.pageX - container.offsetLeft;
+                startY = e.pageY - container.offsetTop;
+                scrollLeft = container.scrollLeft;
+                scrollTop = container.scrollTop;
+                container.style.cursor = 'grabbing';
+            }
+        });
+
+        container.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - container.offsetLeft;
+            const y = e.pageY - container.offsetTop;
+            const walkX = (x - startX) * 2;
+            const walkY = (y - startY) * 2;
+            container.scrollLeft = scrollLeft - walkX;
+            container.scrollTop = scrollTop - walkY;
+        });
+
+        container.addEventListener('mouseup', () => {
+            isDragging = false;
+            container.style.cursor = 'grab';
+        });
+
+        container.addEventListener('mouseleave', () => {
+            isDragging = false;
+            container.style.cursor = 'grab';
+        });
+
+        // Entity hover effects
+        document.querySelectorAll('.entity').forEach(entity => {
+            entity.addEventListener('mouseenter', function() {
+                this.style.zIndex = '1000';
+            });
+            
+            entity.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+
+        // Control functions
+        function resetView() {
+            container.scrollLeft = (canvas.offsetWidth - container.offsetWidth) / 2;
+            container.scrollTop = (canvas.offsetHeight - container.offsetHeight) / 2;
+            scale = 1;
+            canvas.style.transform = `scale(${scale})`;
+        }
+
+        function toggleConnections() {
+            connectionsVisible = !connectionsVisible;
+            drawConnections();
+        }
+
+        function highlightMainFlow() {
+            // Remove existing highlights
+            document.querySelectorAll('.entity').forEach(e => e.classList.remove('pulse'));
+            
+            // Highlight main flow entities
+            const mainFlow = ['Entity', 'Channel', 'Technology', 'DatosLiquidos', 'Logs'];
+            mainFlow.forEach(table => {
+                const entity = document.querySelector(`[data-table="${table}"]`);
+                if (entity) entity.classList.add('pulse');
+            });
+        }
+
+        function zoomIn() {
+            scale = Math.min(scale + 0.1, 2);
+            canvas.style.transform = `scale(${scale})`;
+        }
+
+        function zoomOut() {
+            scale = Math.max(scale - 0.1, 0.5);
+            canvas.style.transform = `scale(${scale})`;
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            drawConnections();
+            resetView();
+        });
+
+        // Redraw connections on window resize
+        window.addEventListener('resize', drawConnections);
+
+        // Make entities draggable
+        document.querySelectorAll('.entity').forEach(entity => {
+            let isDraggingEntity = false;
+            let startX, startY;
+            let initialLeft, initialTop;
+
+            entity.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.entity-header')) {
+                    isDraggingEntity = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    initialLeft = entity.offsetLeft;
+                    initialTop = entity.offsetTop;
+                    entity.style.zIndex = '1000';
+                    e.preventDefault();
+                }
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDraggingEntity) {
+                    const deltaX = e.clientX - startX;
+                    const deltaY = e.clientY - startY;
+                    entity.style.left = (initialLeft + deltaX) + 'px';
+                    entity.style.top = (initialTop + deltaY) + 'px';
+                    drawConnections();
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDraggingEntity) {
+                    isDraggingEntity = false;
+                    entity.style.zIndex = '1';
+                }
+            });
+        });
+
+        // Add search functionality
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.placeholder = 'Buscar tabla...';
+        searchInput.style.cssText = `
+            position: fixed;
+            top: 120px;
+            left: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--color-primary);
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            z-index: 1000;
+        `;
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.entity').forEach(entity => {
+                const tableName = entity.dataset.table.toLowerCase();
+                if (tableName.includes(searchTerm)) {
+                    entity.style.opacity = '1';
+                    entity.style.filter = 'none';
+                } else {
+                    entity.style.opacity = '0.3';
+                    entity.style.filter = 'grayscale(100%)';
+                }
+            });
+        });
+
+        document.body.appendChild(searchInput);
+    </script>
+</body>
+</html>

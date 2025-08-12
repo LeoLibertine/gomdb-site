@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bancolombia × MongoDB - Transformación Digital</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css">
+    <style>
+        /* Animaciones especiales */
+        @keyframes glitch {
+            0%, 100% { 
+                text-shadow: 2px 0 #00ED64, -2px 0 #EF4444;
+                transform: translate(0);
+            }
+            25% { 
+                text-shadow: -2px 0 #00ED64, 2px 0 #EF4444;
+                transform: translate(2px, -2px);
+            }
+            50% { 
+                text-shadow: 2px 0 #00ED64, -2px 0 #EF4444;
+                transform: translate(-2px, 2px);
+            }
+            75% { 
+                text-shadow: -2px 0 #00ED64, 2px 0 #EF4444;
+                transform: translate(2px, 2px);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes dataFlow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Hero Impactante */
+        .hero-impact {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at 20% 50%, #8B0000 0%, var(--color-bg-primary) 50%);
+        }
+
+        .money-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid #EF4444;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(10px);
+        }
+
+        .money-label {
+            color: var(--color-text-secondary);
+            font-size: var(--text-sm);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .money-amount {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            color: #EF4444;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .glitch-title {
+            font-size: clamp(var(--text-4xl), 10vw, var(--text-8xl));
+            font-weight: 900;
+            animation: glitch 3s infinite;
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        /* Pain Cards System */
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--spacing-xl);
+            padding: var(--spacing-4xl);
+            background: linear-gradient(180deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+        }
+
+        .pain-card {
+            position: relative;
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.1) 0%, rgba(139, 0, 0, 0.05) 100%);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            cursor: pointer;
+            transition: all var(--transition-slow);
+            overflow: hidden;
+        }
+
+        .pain-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--color-primary);
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(0, 237, 100, 0.05) 100%);
+        }
+
+        .pain-number {
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            font-size: var(--text-8xl);
+            font-weight: 900;
+            opacity: 0.1;
+            color: #EF4444;
+            transition: all var(--transition-base);
+        }
+
+        .pain-card:hover .pain-number {
+            color: var(--color-primary);
+            opacity: 0.2;
+        }
+
+        .pain-title {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            color: #EF4444;
+            transition: color var(--transition-base);
+        }
+
+        .pain-card:hover .pain-title {
+            color: var(--color-primary);
+        }
+
+        .pain-project {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.2);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .pain-cost {
+            font-size: var(--text-4xl);
+            font-weight: 700;
+            color: #EF4444;
+            margin: var(--spacing-md) 0;
+        }
+
+        .pain-details {
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .solution-box {
+            background: rgba(0, 237, 100, 0.1);
+            border: 1px solid var(--color-primary);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all var(--transition-slow);
+        }
+
+        .pain-card:hover .solution-box {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .solution-title {
+            color: var(--color-primary);
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .solution-item {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .solution-icon {
+            color: var(--color-primary);
+            flex-shrink: 0;
+        }
+
+        /* Comparison Visual */
+        .comparison-section {
+            padding: var(--spacing-4xl);
+            background: var(--color-bg-tertiary);
+        }
+
+        .comparison-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-3xl);
+        }
+
+        .db-column {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .db-column.mongodb {
+            border: 2px solid var(--color-primary);
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.05) 0%, var(--color-bg-card) 100%);
+        }
+
+        .db-column.aurora, .db-column.dynamodb {
+            opacity: 0.7;
+        }
+
+        .db-logo {
+            font-size: var(--text-3xl);
+            font-weight: 900;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .mongodb .db-logo {
+            color: var(--color-primary);
+        }
+
+        .aurora .db-logo {
+            color: #FF9900;
+        }
+
+        .dynamodb .db-logo {
+            color: #569DD8;
+        }
+
+        .metric-comparison {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .metric-label {
+            color: var(--color-text-secondary);
+            font-size: var(--text-sm);
+        }
+
+        .metric-value {
+            font-weight: 700;
+        }
+
+        .metric-bad {
+            color: #EF4444;
+        }
+
+        .metric-good {
+            color: var(--color-primary);
+        }
+
+        .metric-warning {
+            color: #F59E0B;
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .data-stream {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+            animation: dataFlow 3s linear infinite;
+        }
+
+        /* CTA Final */
+        .decision-hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, var(--color-primary-light) 0%, var(--color-bg-primary) 50%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .decision-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        .savings-calculator {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin: var(--spacing-3xl) auto;
+            max-width: 600px;
+            border: 2px solid var(--color-primary);
+        }
+
+        .savings-display {
+            font-size: var(--text-6xl);
+            font-weight: 900;
+            color: var(--color-primary);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-xl);
+            justify-content: center;
+            margin-top: var(--spacing-3xl);
+        }
+
+        .btn-destroy {
+            background: linear-gradient(135deg, #EF4444 0%, #8B0000 100%);
+            animation: pulse 2s infinite;
+        }
+
+        .btn-transform {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            animation: glow 2s infinite;
+            transform: scale(1.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .pain-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero con Contador de Pérdidas -->
+    <section class="hero-impact">
+        <div class="money-counter">
+            <div class="money-label">PÉRDIDA EN TIEMPO REAL</div>
+            <div class="money-amount">$<span id="lossCounter">5,000</span> USD</div>
+            <div class="money-label">Por máquina DocumentDB sin HA</div>
+        </div>
+        
+        <div class="container text-center">
+            <h1 class="glitch-title">7 DOLORES CRÍTICOS</h1>
+            <p class="text-2xl text-secondary">Que están costando millones a Bancolombia</p>
+            <div class="mt-6">
+                <p class="text-4xl font-bold text-gradient">1 SOLUCIÓN: MongoDB Atlas</p>
+            </div>
+        </div>
+
+        <div class="data-stream" style="top: 20%;"></div>
+        <div class="data-stream" style="top: 50%; animation-delay: 1s;"></div>
+        <div class="data-stream" style="top: 80%; animation-delay: 2s;"></div>
+    </section>
+
+    <!-- Grid de Dolores y Soluciones -->
+    <section class="pain-grid">
+        <!-- Pain 1: High Costs -->
+        <div class="pain-card">
+            <div class="pain-number">1</div>
+            <h3 class="pain-title">Costos Altos e Ineficientes</h3>
+            <span class="pain-project">📁 Réplica de saldos y movimientos</span>
+            
+            <div class="pain-cost">$5,000 USD/mes</div>
+            <div class="pain-details">
+                • Sin alta disponibilidad<br>
+                • Problemas de performance<br>
+                • DynamoDB On-Demand: 5x más caro<br>
+                • Aurora Serverless: 50% premium adicional
+            </div>
+            
+            <div class="solution-box">
+                <div class="solution-title">✅ MongoDB Resuelve:</div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Sharding reduce costo/máquina</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Atlas M50 más barato que DynamoDB Reserved (3 años)</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Auto-scaling sin premium de Aurora</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pain 2: Limited Scalability -->
+        <div class="pain-card">
+            <div class="pain-number">2</div>
+            <h3 class="pain-title">Escalabilidad Limitada (Escrituras)</h3>
+            <span class="pain-project">📁 Inversiones Bancolombia (CouchBase)</span>
+            
+            <div class="pain-cost">Sin HA Real</div>
+            <div class="pain-details">
+                • DocumentDB sin scaling standards<br>
+                • CouchDB: problemas de escalabilidad<br>
+                • Aurora: máx 2 nodos multi-primary<br>
+                • DynamoDB: throttling en hot partitions
+            </div>
+            
+            <div class="solution-box">
+                <div class="solution-title">✅ MongoDB Resuelve:</div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Sharding horizontal transparente</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Replica sets auto-healing</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Global Clusters "write anywhere"</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pain 3: Rigid Data Models -->
+        <div class="pain-card">
+            <div class="pain-number">3</div>
+            <h3 class="pain-title">Modelos de Datos Rígidos</h3>
+            <span class="pain-project">📁 Centralización de Información</span>
+            <span class="pain-project">📁 Plink-Categorías</span>
+            
+            <div class="pain-cost">JOINs Complejos</div>
+            <div class="pain-details">
+                • Múltiples colecciones referenciadas<br>
+                • SQL Server: limitado con JSON<br>
+                • DynamoDB: máx 400KB/record<br>
+                • Aurora: ALTER TABLE = downtime
+            </div>
+            
+            <div class="solution-box">
+                <div class="solution-title">✅ MongoDB Resuelve:</div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Documentos polimórficos flexibles</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Schema evolution sin downtime</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Performance Advisor inteligente</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pain 4: Limited Query Capabilities -->
+        <div class="pain-card">
+            <div class="pain-number">4</div>
+            <h3 class="pain-title">Queries y Analytics Limitados</h3>
+            <span class="pain-project">📁 Enriquecimiento</span>
+            <span class="pain-project">📁 Plink</span>
+            
+            <div class="pain-cost">>30 seg/query</div>
+            <div class="pain-details">
+                • Evaluaciones lentas multi-fuente<br>
+                • Agregaciones pesadas location-based<br>
+                • Millones de documentos NITS<br>
+                • DynamoDB requiere EMR/Redshift
+            </div>
+            
+            <div class="solution-box">
+                <div class="solution-title">✅ MongoDB Resuelve:</div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Aggregations nativas complejas</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Pre-computing: queries en ms</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Atlas Search full-text integrado</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pain 5: Platform Lock-in -->
+        <div class="pain-card">
+            <div class="pain-number">5</div>
+            <h3 class="pain-title">Vendor Lock-in Total</h3>
+            <span class="pain-project">📁 Todos los proyectos AWS</span>
+            
+            <div class="pain-cost">100% AWS</div>
+            <div class="pain-details">
+                • Aurora: 5 años atrás de MySQL<br>
+                • DynamoDB: código propietario<br>
+                • Migración = riesgo extremo<br>
+                • Sin poder de negociación
+            </div>
+            
+            <div class="solution-box">
+                <div class="solution-title">✅ MongoDB Resuelve:</div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Multi-cloud: AWS + Azure + GCP</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>MongoDB Community exit strategy</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Updates inmediatos al GA</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pain 6: Operational Complexity -->
+        <div class="pain-card">
+            <div class="pain-number">6</div>
+            <h3 class="pain-title">Complejidad Operacional</h3>
+            <span class="pain-project">📁 Galatea</span>
+            
+            <div class="pain-cost"><35 métricas</div>
+            <div class="pain-details">
+                • DynamoDB: backup incompleto<br>
+                • CloudWatch: visibilidad limitada<br>
+                • Sin encryption field-level<br>
+                • Auditoría solo admin actions
+            </div>
+            
+            <div class="solution-box">
+                <div class="solution-title">✅ MongoDB Resuelve:</div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>100+ métricas detalladas</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>CS-FLE encryption transparente</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Queryable Encryption (7.0)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pain 7: Fragmented Data -->
+        <div class="pain-card">
+            <div class="pain-number">7</div>
+            <h3 class="pain-title">Datos Fragmentados</h3>
+            <span class="pain-project">📁 TDC - Centralización Repositorio</span>
+            
+            <div class="pain-cost">Múltiples "truths"</div>
+            <div class="pain-details">
+                • Datos en diferentes cores<br>
+                • Tarjetas crédito vs prepago<br>
+                • Sin vista consolidada<br>
+                • ETL complejo en Aurora
+            </div>
+            
+            <div class="solution-box">
+                <div class="solution-title">✅ MongoDB Resuelve:</div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Modelo documento unificador</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Atlas Data Federation</span>
+                </div>
+                <div class="solution-item">
+                    <span class="solution-icon">→</span>
+                    <span>Query único MQL cross-source</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Visual -->
+    <section class="comparison-section">
+        <div class="container">
+            <h2 class="text-center text-5xl mb-3 text-gradient">Comparación Directa</h2>
+            <p class="text-center text-secondary mb-6">Datos reales de los sistemas actuales</p>
+            
+            <div class="comparison-container">
+                <!-- MongoDB Column -->
+                <div class="db-column mongodb">
+                    <div class="db-logo">MongoDB Atlas</div>
+                    
+                    <div class="metric-comparison">
+                        <span class="metric-label">Costo M50 (high load)</span>
+                        <span class="metric-value metric-good">Menor</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Escalabilidad Escritura</span>
+                        <span class="metric-value metric-good">∞ Sharding</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Tamaño Documento</span>
+                        <span class="metric-value metric-good">16MB</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Failover Time</span>
+                        <span class="metric-value metric-good">< 10s</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Multi-cloud</span>
+                        <span class="metric-value metric-good">✓ Todos</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Métricas</span>
+                        <span class="metric-value metric-good">100+</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Field Encryption</span>
+                        <span class="metric-value metric-good">✓ CS-FLE</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Feature Lag</span>
+                        <span class="metric-value metric-good">0 días</span>
+                    </div>
+                </div>
+
+                <!-- Aurora Column -->
+                <div class="db-column aurora">
+                    <div class="db-logo">AWS Aurora</div>
+                    
+                    <div class="metric-comparison">
+                        <span class="metric-label">Costo base (64GB)</span>
+                        <span class="metric-value metric-bad">$3.48/hr+</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Escalabilidad Escritura</span>
+                        <span class="metric-value metric-bad">1 nodo</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Schema Changes</span>
+                        <span class="metric-value metric-bad">Downtime</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Failover Time</span>
+                        <span class="metric-value metric-bad">120s</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Multi-cloud</span>
+                        <span class="metric-value metric-bad">✗ AWS only</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Serverless Premium</span>
+                        <span class="metric-value metric-bad">+50%</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Field Encryption</span>
+                        <span class="metric-value metric-bad">✗</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">MySQL Lag</span>
+                        <span class="metric-value metric-bad">5 años</span>
+                    </div>
+                </div>
+
+                <!-- DynamoDB Column -->
+                <div class="db-column dynamodb">
+                    <div class="db-logo">AWS DynamoDB</div>
+                    
+                    <div class="metric-comparison">
+                        <span class="metric-label">On-Demand vs Provisioned</span>
+                        <span class="metric-value metric-bad">5x costo</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Rate Limits</span>
+                        <span class="metric-value metric-bad">1K WCU</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Tamaño Record</span>
+                        <span class="metric-value metric-bad">400KB</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Hot Partitions</span>
+                        <span class="metric-value metric-bad">Manual fix</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Multi-cloud</span>
+                        <span class="metric-value metric-bad">✗ AWS only</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Métricas CloudWatch</span>
+                        <span class="metric-value metric-bad"><35</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Analytics</span>
+                        <span class="metric-value metric-bad">+EMR/Redshift</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span class="metric-label">Código</span>
+                        <span class="metric-value metric-bad">Propietario</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Decision Final con Calculadora -->
+    <section class="decision-hero">
+        <div class="floating-element" style="top: 10%; left: 5%;">
+            <div style="font-size: 100px; opacity: 0.1;">💰</div>
+        </div>
+        <div class="floating-element" style="top: 20%; right: 10%; animation-delay: 2s;">
+            <div style="font-size: 80px; opacity: 0.1;">📊</div>
+        </div>
+        
+        <div class="decision-content">
+            <h2 class="text-6xl font-bold mb-6">LA DECISIÓN ES CLARA</h2>
+            
+            <div class="savings-calculator">
+                <h3 class="text-2xl mb-4">Ahorro Proyectado Anual</h3>
+                <div class="savings-display">
+                    $<span id="savingsAmount">2,400,000</span> USD
+                </div>
+                <p class="text-secondary">Basado en casos reales de Bancolombia</p>
+                
+                <div class="mt-6">
+                    <div class="metric-comparison">
+                        <span>Réplica saldos y movimientos</span>
+                        <span class="metric-good">-73% costos</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span>Plink aggregations</span>
+                        <span class="metric-good">30s → ms</span>
+                    </div>
+                    <div class="metric-comparison">
+                        <span>Galatea security</span>
+                        <span class="metric-good">CS-FLE ✓</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-lg btn-destroy">
+                    SEGUIR PERDIENDO
+                </button>
+                <button class="btn btn-lg btn-transform">
+                    TRANSFORMAR CON MONGODB
+                </button>
+            </div>
+            
+            <p class="text-xl text-secondary mt-6">

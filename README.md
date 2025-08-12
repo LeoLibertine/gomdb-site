@@ -1,12 +1,50 @@
-# React + Vite
+# GoMDB.com
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+¡Bienvenido al sitio oficial de GoMDB!  
+Este proyecto fue desarrollado como una plataforma demostrativa para compartir recursos, historias de clientes, demos y contenido técnico alrededor del ecosistema MongoDB.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 ¿Qué es GoMDB?
 
-## Expanding the ESLint configuration
+GoMDB es una experiencia web creada con React y desplegada en Vercel.  
+Incluye páginas estáticas y dinámicas, recursos organizados por cliente, y contenido embebido como MongoDB Charts, videos y documentos interactivos.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠 Stack Tecnológico
+
+- **React** (JSX) con rutas personalizadas (`src/pages`)
+- **Vercel** para despliegue continuo (CI/CD)
+- **MongoDB Charts** embebido
+- **Archivos estáticos** en la carpeta `public/` por cliente
+- **React Router DOM** para navegación
+
+---
+
+## 📁 Estructura del proyecto
+
+```bash
+gomdb-site/
+├── public/
+│   └── clientes/
+│       ├── bancolombia/
+│       ├── segurosbolivar/
+│       └── cencosud/
+│           └── documento-inicial.html
+├── src/
+│   └── pages/
+│       └── Clientes/
+│           └── cencosud/
+│               └── document-mongo.jsx
+├── package.json
+├── vercel.json
+└── README.md
+
+📌 Nota importante sobre public/clientes/
+
+La mayor parte del contenido visual por cliente (HTML, logos, imágenes, PDFs, etc.) vive dentro de la carpeta:
+public/clientes/<nombre-del-cliente>/
+
+Esta carpeta permite servir contenido estático directamente desde la web, por ejemplo:
+https://gomdb.com/clientes/cencosud/documento-inicial.html

@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Enterprise Advanced + Ops Manager - Arquitectura</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mongodb-green: #00ed64;
+            --mongodb-dark: #001e2b;
+            --mongodb-darker: #000d13;
+            --yape-purple: #8b54ff;
+            --ops-manager-blue: #13aa52;
+            --text-light: #e8edeb;
+            --text-gray: #b8c4c2;
+            --border-color: #21313c;
+            --card-bg: #011621;
+            --success-green: #00ed64;
+            --error-red: #ff5252;
+            --warning-yellow: #ffc107;
+            --info-blue: #2196f3;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--mongodb-darker);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--mongodb-dark) 0%, #012a3f 100%);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 30, 43, 0.95);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span:first-child {
+            color: var(--mongodb-green);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--mongodb-green);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            padding: 4rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #001e2b 0%, #012a3f 50%, #001e2b 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.1) 0%, transparent 70%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--mongodb-green), var(--ops-manager-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 4rem 2rem;
+        }
+
+        .section:nth-child(even) {
+            background-color: var(--card-bg);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--mongodb-green), transparent);
+        }
+
+        /* Overview Section */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .overview-card {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.05) 0%, transparent 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .overview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.2);
+            border-color: var(--mongodb-green);
+        }
+
+        .overview-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .overview-title {
+            font-size: 1.5rem;
+            color: var(--mongodb-green);
+            margin-bottom: 1rem;
+        }
+
+        /* Architecture Diagram */
+        .architecture-diagram {
+            background-color: var(--mongodb-dark);
+            padding: 3rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
+
+        .diagram-container {
+            position: relative;
+            min-height: 500px;
+        }
+
+        /* Ops Manager Components */
+        .ops-manager-box {
+            background: linear-gradient(135deg, var(--ops-manager-blue) 0%, #0d7a3d 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(19, 170, 82, 0.3);
+        }
+
+        .ops-manager-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .ops-feature {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* MongoDB Cluster Visualization */
+        .cluster-visualization {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .cluster-node {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cluster-node.primary {
+            border-color: var(--mongodb-green);
+            box-shadow: 0 0 30px rgba(0, 237, 100, 0.3);
+        }
+
+        .cluster-node.primary::before {
+            content: 'PRIMARY';
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--mongodb-green);
+            color: var(--mongodb-dark);
+            padding: 0.25rem 1rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-bottom-left-radius: 8px;
+        }
+
+        .cluster-node:hover {
+            transform: translateY(-5px);
+            border-color: var(--mongodb-green);
+        }
+
+        .node-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .node-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--success-green);
+            margin-right: 0.5rem;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: var(--mongodb-green);
+            transform: scaleY(0);
+            transition: transform 0.3s;
+            transform-origin: top;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .feature-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 237, 100, 0.1);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(0, 237, 100, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .feature-description {
+            color: var(--text-gray);
+            margin-bottom: 1rem;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            color: var(--text-gray);
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .feature-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--mongodb-green);
+        }
+
+        /* Security Features */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .security-item {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, transparent 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .security-item:hover {
+            transform: translateY(-3px);
+            border-color: var(--info-blue);
+        }
+
+        .security-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--info-blue);
+        }
+
+        /* Monitoring Dashboard */
+        .monitoring-dashboard {
+            background-color: var(--mongodb-dark);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .metric-card {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--mongodb-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Automation Features */
+        .automation-timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .automation-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .automation-step::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 60px;
+            bottom: -20px;
+            width: 2px;
+            background-color: var(--border-color);
+        }
+
+        .automation-step:last-child::before {
+            display: none;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background-color: var(--mongodb-green);
+            color: var(--mongodb-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-right: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-content {
+            flex: 1;
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Benefits Section */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .benefit-card {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.05) 0%, transparent 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--mongodb-green);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .benefit-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .benefit-card:hover::after {
+            opacity: 1;
+        }
+
+        .benefit-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .benefit-title {
+            font-size: 1.5rem;
+            color: var(--mongodb-green);
+            margin-bottom: 1rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, var(--mongodb-dark) 0%, #012a3f 100%);
+            text-align: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: var(--mongodb-green);
+            color: var(--mongodb-dark);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 237, 100, 0.5);
+        }
+
+        .cta-button.secondary {
+            background-color: transparent;
+            border: 2px solid var(--mongodb-green);
+            color: var(--mongodb-green);
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.8s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .cluster-visualization {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ops-manager-features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                <span>MongoDB Enterprise</span>
+                <span>+ Ops Manager</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#arquitectura">Arquitectura</a></li>
+                <li><a href="#features">Características</a></li>
+                <li><a href="#seguridad">Seguridad</a></li>
+                <li><a href="#monitoreo">Monitoreo</a></li>
+                <li><a href="#automatizacion">Automatización</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content fade-in">
+            <h1>MongoDB Enterprise Advanced + Ops Manager</h1>
+            <p>La plataforma de gestión completa para despliegues MongoDB empresariales</p>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview" class="section">
+        <div class="container">
+            <h2 class="section-title fade-in">Visión General de la Plataforma</h2>
+            <div class="overview-grid">
+                <div class="overview-card fade-in">
+                    <div class="overview-icon">🏢</div>
+                    <h3 class="overview-title">Enterprise Advanced</h3>
+                    <p>Base de datos MongoDB con características empresariales avanzadas, soporte 24/7 y herramientas de gestión completas.</p>
+                </div>
+                <div class="overview-card fade-in">
+                    <div class="overview-icon">⚙️</div>
+                    <h3 class="overview-title">Ops Manager</h3>
+                    <p>Plataforma de gestión on-premise que automatiza, monitorea y respalda implementaciones MongoDB.</p>
+                </div>
+                <div class="overview-card fade-in">
+                    <div class="overview-icon">🔐</div>
+                    <h3 class="overview-title">Seguridad Avanzada</h3>
+                    <p>Cifrado, auditoría, LDAP/Kerberos, y control de acceso granular para cumplir con regulaciones.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="arquitectura" class="section">
+        <div class="container">
+            <h2 class="section-title fade-in">Arquitectura del Sistema</h2>
+            
+            <div class="architecture-diagram fade-in">
+                <div class="ops-manager-box">
+                    <h3 style="font-size: 1.8rem; margin-bottom: 1rem;">Ops Manager Central</h3>
+                    <div class="ops-manager-features">
+                        <div class="ops-feature">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+                            <div>Monitoreo</div>
+                        </div>
+                        <div class="ops-feature">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔧</div>
+                            <div>Automatización</div>
+                        </div>
+                        <div class="ops-feature">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">💾</div>
+                            <div>Backup</div>
+                        </div>
+                        <div class="ops-feature">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚨</div>
+                            <div>Alertas</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 2rem 0;">
+                    <div style="font-size: 3rem; color: var(--mongodb-green);">↓</div>
+                    <p style="color: var(--text-gray);">Gestión Centralizada</p>
+                </div>
+
+                <div class="cluster-visualization">
+                    <div class="cluster-node primary">
+                        <div class="node-icon">🗄️</div>
+                        <h4>MongoDB Primary</h4>
+                        <p><span class="node-status"></span>Activo</p>
+                        <p style="color: var(--text-gray); font-size: 0.9rem; margin-top: 0.5rem;">Escrituras/Lecturas</p>
+                    </div>
+                    <div class="cluster-node">
+                        <div class="node-icon">🗄️</div>
+                        <h4>MongoDB Secondary</h4>
+                        <p><span class="node-status"></span>Replicando</p>
+                        <p style="color: var(--text-gray); font-size: 0.9rem; margin-top: 0.5rem;">Lecturas</p>
+                    </div>
+                    <div class="cluster-node">
+                        <div class="node-icon">🗄️</div>
+                        <h4>MongoDB Secondary</h4>
+                        <p><span class="node-status"></span>Replicando</p>
+                        <p style="color: var(--text-gray); font-size: 0.9rem; margin-top: 0.5rem;">Lecturas</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; padding: 1.5rem; background-color: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color);">
+                    <h4 style="color: var(--mongodb-green); margin-bottom: 1rem;">Agentes de Gestión</h4>
+                    <p style="color: var(--text-gray);">Cada nodo MongoDB ejecuta un agente ligero que se comunica con Ops Manager para:</p>
+                    <ul style="list-style: none; margin-top: 1rem;">
+                        <li style="color: var(--text-gray); padding: 0.25rem 0;">• Recopilar métricas de rendimiento</li>
+                        <li style="color: var(--text-gray); padding: 0.25rem 0;">• Ejecutar tareas de automatización</li>
+                        <li style="color: var(--text-gray); padding: 0.25rem 0;">• Gestionar backups incrementales</li>
+                        <li style="color: var(--text-gray); padding: 0.25rem 0;">• Aplicar configuraciones de seguridad</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+        <div class="container">
+            <h2 class="section-title fade-in">Características Principales</h2>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <span>🔄</span>
+                    </div>
+                    <h3 class="feature-title">Automatización Completa</h3>
+                    <p class="feature-description">Despliegue, actualización y gestión automatizada de clusters MongoDB.</p>
+                    <ul class="feature-list">
+                        <li>Despliegue con un clic</li>
+                        <li>Actualizaciones sin downtime</li>
+                        <li>Escalamiento automático</li>
+                        <li>Configuración consistente</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <span>📈</span>
+                    </div>
+                    <h3 class="feature-title">Monitoreo en Tiempo Real</h3>
+                    <p class="feature-description">Visibilidad completa del rendimiento y estado del cluster.</p>
+                    <ul class="feature-list">
+                        <li>Métricas en tiempo real</li>
+                        <li>Análisis de queries lentas</li>
+                        <li>Alertas personalizables</li>
+                        <li>Dashboards customizables</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <span>💾</span>
+                    </div>
+                    <h3 class="feature-title">Backup y Recuperación</h3>
+                    <p class="feature-description">Protección de datos empresarial con recuperación punto en el tiempo.</p>
+                    <ul class="feature-list">
+                        <li>Backups continuos</li>
+                        <li>Point-in-Time Recovery</li>
+                        <li>Snapshots consistentes</li>
+                        <li>Restauración granular</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <span>🔐</span>
+                    </div>
+                    <h3 class="feature-title">Seguridad Empresarial</h3>
+                    <p class="feature-description">Características avanzadas de seguridad y cumplimiento.</p>
+                    <ul class="feature-list">
+                        <li>Cifrado en reposo/tránsito</li>
+                        <li>Autenticación LDAP/Kerberos</li>
+                        <li>Auditoría completa</li>
+                        <li>Control de acceso granular</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <span>🌍</span>
+                    </div>
+                    <h3 class="feature-title">Gestión Multi-Cluster</h3>
+                    <p class="feature-description">Administre múltiples clusters desde una interfaz centralizada.</p>
+                    <ul class="feature-list">
+                        <li>Vista unificada</li>
+                        <li>Gestión cross-datacenter</li>
+                        <li>Políticas globales</li>
+                        <li>Replicación geográfica</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <span>⚡</span>
+                    </div>
+                    <h3 class="feature-title">Performance Advisor</h3>
+                    <p class="feature-description">Recomendaciones automáticas para optimizar el rendimiento.</p>
+                    <ul class="feature-list">
+                        <li>Sugerencias de índices</li>
+                        <li>Optimización de queries</li>
+                        <li>Análisis de esquemas</li>
+                        <li>Mejores prácticas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Section -->
+    <section id="seguridad" class="section">
+        <div class="container">
+            <h2 class="section-title fade-in">Seguridad de Nivel Empresarial</h2>
+            <div class="security-grid">
+                <div class="security-item fade-in">
+                    <div class="security-icon">🔒</div>
+                    <h4>Cifrado Total</h4>
+                    <p>Datos cifrados en reposo y en tránsito con gestión de claves empresarial</p>
+                </div>
+                <div class="security-item fade-in">
+                    <div class="security-icon">👤</div>
+                    <h4>Autenticación</h4>
+                    <p>LDAP, Active Directory, Kerberos, x.509 certificates</p>
+                </div>
+                <div class="security-item fade-in">
+                    <div class="security-icon">🛡️</div>
+                    <h4>Autorización</h4>
+                    <p>RBAC granular con roles personalizados y segregación de funciones</p>
+                </div>

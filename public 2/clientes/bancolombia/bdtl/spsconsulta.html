@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API de Consultas - BDTL</title>
+    <link rel="stylesheet" href="../../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para la aplicación */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--color-bg-secondary);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: var(--spacing-md) var(--spacing-xl);
+            z-index: var(--z-fixed);
+            height: 70px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--color-text-dark);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 300px;
+            height: calc(100vh - 70px);
+            background-color: var(--color-bg-secondary);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            z-index: var(--z-sticky);
+        }
+
+        .sidebar-content {
+            padding: var(--spacing-xl);
+        }
+
+        .menu-item {
+            display: block;
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+            border-radius: var(--radius-lg);
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+        }
+
+        .menu-item.active {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            border-left: 3px solid var(--color-primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            margin-top: 70px;
+            padding: var(--spacing-2xl);
+            flex: 1;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Responsive mejorado */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform var(--transition-slow);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: var(--spacing-lg);
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .code-comparison {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+
+            .vs-divider {
+                display: none;
+            }
+
+            .transformation-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .code-column {
+                font-size: var(--text-xs);
+                max-height: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: var(--spacing-md);
+            }
+            
+            .code-column {
+                padding: var(--spacing-md);
+                font-size: 10px;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text-primary);
+            font-size: var(--text-xl);
+            cursor: pointer;
+        }
+
+        /* Estilos específicos para APIs */
+        .content-section {
+            margin: var(--spacing-3xl) 0;
+        }
+
+        .api-card {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-base);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .api-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .api-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .api-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xl);
+            color: white;
+        }
+
+        .api-name {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin: 0;
+        }
+
+        .transformation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .transformation-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .transformation-number {
+            position: absolute;
+            top: -10px;
+            left: var(--spacing-lg);
+            background: var(--color-primary);
+            color: var(--color-text-dark);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: var(--text-sm);
+        }
+
+        .transformation-title {
+            color: var(--color-primary);
+            margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+            font-weight: 700;
+        }
+
+        .transformation-description {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .code-comparison {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: var(--spacing-lg);
+            align-items: flex-start;
+            margin: var(--spacing-xl) 0;
+        }
+
+        /* Para código de una sola columna */
+        .code-comparison.single-column {
+            grid-template-columns: 1fr;
+        }
+
+        .code-column {
+            background: var(--color-bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+            width: 100%;
+            /* Asegurar que el contenido no se corte */
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        /* Scrollbar personalizado para mejor visualización */
+        .code-column::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .code-column::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+        }
+
+        .code-column::-webkit-scrollbar-thumb {
+            background: var(--color-primary);
+            border-radius: var(--radius-sm);
+        }
+
+        .code-column::-webkit-scrollbar-thumb:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .code-header {
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            text-align: center;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-sm);
+        }
+
+        .sql-header {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--color-error);
+        }
+
+        .mongodb-header {
+            background: rgba(0, 237, 100, 0.2);
+            color: var(--color-primary);
+        }
+
+        .vs-divider {
+            font-size: var(--text-3xl);
+            font-weight: bold;
+            color: var(--color-primary);
+            text-align: center;
+        }
+
+        .complexity-comparison {
+            background: linear-gradient(135deg, var(--color-accent) 0%, rgba(86, 68, 212, 0.8) 100%);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            color: white;
+            margin: var(--spacing-xl) 0;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .benefit-item {
+            background: rgba(0,0,0,0.1);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .benefit-icon {
+            font-size: var(--text-3xl);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .json-search-demo {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .elimination-card {
+            background: linear-gradient(135deg, var(--color-error) 0%, rgba(239, 68, 68, 0.8) 100%);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            color: white;
+            margin: var(--spacing-xl) 0;
+        }
+
+        .complexity-badge {
+            background: var(--color-error);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            font-weight: bold;
+            display: inline-block;
+            margin-left: var(--spacing-sm);
+        }
+
+        .performance-card {
+            background: linear-gradient(135deg, var(--color-primary) 0%, rgba(0, 237, 100, 0.8) 100%);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            color: var(--color-text-dark);
+            margin: var(--spacing-xl) 0;
+        }
+         /* Estilos para submenús */
+         .menu-section {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .submenu {
+            margin-left: var(--spacing-lg);
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+            padding-left: var(--spacing-md);
+            margin-top: var(--spacing-xs);
+        }
+
+        .submenu-item {
+            display: block;
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-xs);
+            border-radius: var(--radius-md);
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            cursor: pointer;
+            font-size: var(--text-sm);
+        }
+
+        .submenu-item:hover {
+            background-color: var(--color-bg-tertiary);
+            color: var(--color-text-secondary);
+            transform: translateX(4px);
+        }
+
+        .submenu-item.active {
+            background-color: rgba(0, 237, 100, 0.1);
+            color: var(--color-primary);
+            border-left: 2px solid var(--color-primary);
+            padding-left: calc(var(--spacing-md) - 2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">B</div>
+                <div>
+                    <h2 style="margin-bottom: 0; font-size: var(--text-xl);">Bitácora Digital BDTL</h2>
+                    <p style="margin-bottom: 0; font-size: var(--text-sm); color: var(--color-text-muted);">Bancolombia MongoDB Architecture</p>
+                </div>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </header>
+
+    <div class="app-container">
+               <!-- Sidebar -->
+               <aside class="sidebar" id="sidebar">
+                <div class="sidebar-content">
+                    <nav>
+                        <a href="bdtl.html" class="menu-item">
+                            📚 Introducción al Proyecto BDTL
+                        </a>
+                        <a href="arquitectura.html" class="menu-item">
+                            🏗️ Arquitectura del Sistema
+                        </a>
+                        <a href="evolucion.html" class="menu-item">
+                            📈 Evolución de la Arquitectura
+                        </a>
+                        <a href="ventajas.html" class="menu-item">
+                            ⚡ Ventajas de MongoDB como BDTL
+                        </a>
+                        <a href="tabla.html" class="menu-item">
+                            📋 Descripción Tablas y Campos
+                        </a>
+                        
+                        <!-- Store Procedures con submenús -->
+                        <div class="menu-section">
+                            <a href="procedures.html" class="menu-item">
+                                ⚙️ Store Procedures
+                            </a>
+                            <div class="submenu">
+                                <a href="spsinsert.html" class="submenu-item">
+                                    📝 SPs de ingesta y actualización
+                                </a>
+                                <a href="spsconsulta.html" class="submenu-item">
+                                    🔍 SPs Lambda Consulta
+                                </a>
+                                <a href="spscarga.html" class="submenu-item">
+                                    📦 SPs Lambda Carga Batch
+                                </a>
+                                <a href="jobsdepuracion.html" class="submenu-item">
+                                    🗑️ Jobs Depuración
+                                </a>
+                                <a href="frombdtl.html" class="submenu-item">
+                                    🔄 From BDTL
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <a href="modeloactual.html" class="menu-item">
+                            🔌 Modelo de Datos Actual
+                        </a>
+    
+                        <a href="modelo.html" class="menu-item">
+                            🗃️ Evolución del Modelo de Datos
+                        </a>
+                        <a href="indices.html" class="menu-item active">
+                            🔍 Estrategia de Indexación
+                        </a>
+                        <a href="guias.html" class="menu-item">
+                            📖 Guías y Mejores Prácticas
+                        </a>
+                    </nav>
+                </div>
+            </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="text-gradient">API que permite consultar información de los registros insertados en BD</h1>
+            <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-2xl);">
+                Análisis de los <strong>Stored Procedures de consulta</strong> del sistema BDTL y su transformación a una arquitectura de <strong>microservicios</strong> optimizada para MongoDB.
+            </p>
+
+            <!-- Introducción -->
+            <div class="content-section">
+                <div class="card" style="background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%); border: 2px solid var(--color-info);">
+                    <h2 style="color: var(--color-info); margin-bottom: var(--spacing-lg);">📍 Contexto de Migración de APIs de Consulta</h2>
+                    <p style="font-size: var(--text-lg);">
+                        Los Stored Procedures de consulta representan las operaciones más <strong>críticas y frecuentes</strong> del sistema BDTL. Su migración a microservicios con MongoDB eliminará la complejidad de JOINs y optimizará dramáticamente el rendimiento de las consultas.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Análisis del SP spGetDataSubTypeDocumentByDateAndHours -->
+            <div class="content-section">
+                <div class="api-card" style="border: 2px solid var(--color-primary); box-shadow: var(--shadow-glow);">
+                    <div class="api-header">
+                        <div class="api-icon" style="background: var(--color-primary);">🔍</div>
+                        <div>
+                            <h2 class="api-name">spGetDataSubTypeDocumentByDateAndHours</h2>
+                            <p style="margin: 0; color: var(--color-text-muted);">Consulta por Proceso, Subtipo y Rango de Fechas</p>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-bottom: var(--spacing-lg); font-size: var(--text-lg);">
+                        Este SP está diseñado para una consulta específica: <strong>buscar registros por Proceso, Subtipo Documental y un rango de fecha/hora</strong>. Su lógica se puede descomponer en cuatro pasos clave que serán simplificados radicalmente en la nueva arquitectura.
+                    </p>
+
+                    <div class="transformation-grid">
+                        <div class="transformation-card">
+                            <div class="transformation-number">1</div>
+                            <h4 class="transformation-title">Preparación de Parámetros</h4>
+                            <p class="transformation-description">
+                                Recibe los filtros a través de un tipo de tabla (@Parameters) y los convierte en variables de fecha (@FechaInicio, @FechaFin) y paginación (@PageSize, @Page).
+                            </p>
+                            <div style="background: rgba(255, 255, 255, 0.05); padding: var(--spacing-sm); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted);">
+                                <strong>Migración:</strong> Los parámetros se reciben directamente como JSON en el microservicio
+                            </div>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">2</div>
+                            <h4 class="transformation-title">Consulta y JOIN</h4>
+                            <p class="transformation-description">
+                                Ejecuta la consulta principal con la operación más costosa: filtra DatosLiquidos por Proceso y TipoDocumento, realiza un LEFT OUTER JOIN con API.Estados para obtener la descripción del estado del documento.
+                            </p>
+                            <div style="background: rgba(239, 68, 68, 0.1); padding: var(--spacing-sm); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-error);">
+                                <strong>Eliminado:</strong> El JOIN desaparece gracias a la desnormalización
+                            </div>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">3</div>
+                            <h4 class="transformation-title">Uso de Tabla Temporal</h4>
+                            <p class="transformation-description">
+                                Almacena todos los resultados de la consulta en una tabla temporal (#TMPCONSULTARPORFECHA). Esto consume recursos y añade un paso intermedio innecesario.
+                            </p>
+                            <div style="background: rgba(239, 68, 68, 0.1); padding: var(--spacing-sm); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-error);">
+                                <strong>Eliminado:</strong> La consulta se ejecuta directamente sobre la colección
+                            </div>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">4</div>
+                            <h4 class="transformation-title">Paginación con SQL Dinámico</h4>
+                            <p class="transformation-description">
+                                Para poder paginar los resultados, el SP construye una consulta como un string de texto (@SQL) y la ejecuta con sp_executesql. Técnica compleja y propensa a errores.
+                            </p>
+                            <div style="background: rgba(0, 237, 100, 0.1); padding: var(--spacing-sm); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-primary);">
+                                <strong>Reemplazado:</strong> Por .skip() y .limit() nativos de MongoDB
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparación de Código -->
+            <div class="content-section">
+                <h2 style="color: var(--color-accent); margin-bottom: var(--spacing-xl);">⚖️ Comparación: SQL Server vs MongoDB</h2>
+                
+                <div class="code-comparison">
+                    <div class="code-column">
+                        <div class="code-header sql-header">❌ SQL Server (Complejo)</div>
+                        <div style="color: var(--color-text-secondary);">
+                            <div style="color: var(--color-success);">-- Paso 1: Preparar parámetros</div>
+                            <div>DECLARE @FechaInicio DATETIME</div>
+                            <div>DECLARE @FechaFin DATETIME</div>
+                            <div>DECLARE @PageSize INT</div>
+                            <br>
+                            <div style="color: var(--color-success);">-- Paso 2: JOIN complejo</div>
+                            <div>SELECT DL.*, E.Descripcion</div>
+                            <div>FROM DatosLiquidos DL</div>
+                            <div>LEFT OUTER JOIN API.Estados E</div>
+                            <div>  ON DL.IdEstadoDocumento = E.Id</div>
+                            <div>WHERE DL.Proceso = @Proceso</div>
+                            <br>
+                            <div style="color: var(--color-success);">-- Paso 3: Tabla temporal</div>
+                            <div>INTO #TMPCONSULTARPORFECHA</div>
+                            <br>
+                            <div style="color: var(--color-success);">-- Paso 4: SQL dinámico</div>
+                            <div>SET @SQL = 'SELECT * FROM #TMP...'</div>
+                            <div>EXEC sp_executesql @SQL</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vs-divider">VS</div>
+                    
+                    <div class="code-column">
+                        <div class="code-header mongodb-header">✅ MongoDB (Simple)</div>
+                        <div style="color: var(--color-text-secondary);">
+                            <div style="color: var(--color-success);">// Parámetros directos del request</div>
+                            <div style="color: var(--color-primary);">const</div> proceso = <span style="color: var(--color-warning);">"EstudioCreditoPyPConsumo"</span>;
+                            <div style="color: var(--color-primary);">const</div> subTipo = <span style="color: var(--color-warning);">"Anexo de riesgo"</span>;
+                            <div style="color: var(--color-primary);">const</div> fechaInicio = <span style="color: var(--color-info);">new Date</span>(<span style="color: var(--color-warning);">"2019-01-14T08:00:00Z"</span>);
+                            <br>
+                            <div style="color: var(--color-success);">// Una sola consulta sin JOINs</div>
+                            <div style="color: var(--color-primary);">const</div> resultados = <span style="color: var(--color-primary);">await</span> db.collection(<span style="color: var(--color-warning);">'registros_bdtl'</span>)
+                            <div>  .find({</div>
+                            <div>    <span style="color: var(--color-warning);">"Proceso"</span>: proceso,</div>
+                            <div>    <span style="color: var(--color-warning);">"TipoDocumento"</span>: subTipo,</div>
+                            <div>    <span style="color: var(--color-warning);">"FechaKofax"</span>: { <span style="color: var(--color-accent);">$gte</span>: fechaInicio }</div>
+                            <div>  })</div>
+                            <div>  .sort({ <span style="color: var(--color-warning);">"FechaKofax"</span>: <span style="color: var(--color-info);">1</span> })</div>
+                            <div>  .skip((pagina - <span style="color: var(--color-info);">1</span>) * tamanoPagina)</div>
+                            <div>  .limit(tamanoPagina)</div>
+                            <div>  .toArray();</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Beneficios de la Transformación -->
+            <div class="content-section">
+                <div class="performance-card">
+                    <h2 style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-xl);">🚀 Beneficios de la Transformación</h2>
+                    <p style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-lg);">
+                        Un Stored Procedure complejo de <strong>más de 80 líneas</strong> se transforma en una consulta de MongoDB de <strong>unas pocas líneas</strong> que es más legible, más fácil de mantener y mucho más rápida.
+                    </p>
+                    
+                    <div class="benefits-grid">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">⚡</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Sin JOINs</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Eliminación completa de operaciones JOIN costosas</p>
+                        </div>
+                        
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🗑️</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Sin Tablas Temporales</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Consulta directa sin pasos intermedios</p>
+                        </div>
+                        
+                        <div class="benefit-item">
+                            <div class="benefit-icon">📄</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Paginación Nativa</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Métodos .skip() y .limit() eficientes</p>
+                        </div>
+                        
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🔧</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Mantenibilidad</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Código simple y legible en el microservicio</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análisis del SP spObtenerDatosLiquidosClienteFechas -->
+            <div class="content-section">
+                <div class="api-card" style="border: 2px solid var(--color-accent); box-shadow: 0 0 40px rgba(86, 68, 212, 0.3);">
+                    <div class="api-header">
+                        <div class="api-icon" style="background: var(--color-accent);">🔎</div>
+                        <div>
+                            <h2 class="api-name">spObtenerDatosLiquidosClienteFechas <span class="complexity-badge">COMPLEJO</span></h2>
+                            <p style="margin: 0; color: var(--color-text-muted);">Búsqueda dentro de campos JSON</p>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-bottom: var(--spacing-lg); font-size: var(--text-lg);">
+                        Este SP es un ejemplo aún más potente de cómo la migración a MongoDB simplificará radicalmente la lógica. La característica más importante es que necesita <strong>buscar valores dentro del campo JSON</strong>, lo cual es una operación muy compleja y lenta en SQL Server, pero es una de las <strong>fortalezas nativas de MongoDB</strong>.
+                    </p>
+
+                    <div class="transformation-grid">
+                        <div class="transformation-card">
+                            <div class="transformation-number">1</div>
+                            <h4 class="transformation-title">Parámetros Complejos</h4>
+                            <p class="transformation-description">
+                                Acepta un tipo de tabla (@ParametrosJSON) que le permite recibir una lista de pares clave/valor para buscar dentro del campo DatosLiquidos.
+                            </p>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">2</div>
+                            <h4 class="transformation-title">Lógica Delegada</h4>
+                            <p class="transformation-description">
+                                La parte más difícil no la hace este SP directamente. Construye una cadena de filtros (@CADENABUSQPRINCIPAL) y llama a otro SP (API.spBusqJsonDatosLiquidos) para hacer el trabajo pesado.
+                            </p>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">3</div>
+                            <h4 class="transformation-title">Tabla Temporal</h4>
+                            <p class="transformation-description">
+                                Depende de una tabla temporal (#TMPCONSULTAAPI) para almacenar los resultados intermedios antes de poder paginarlos.
+                            </p>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">4</div>
+                            <h4 class="transformation-title">SQL Dinámico</h4>
+                            <p class="transformation-description">
+                                Utiliza SQL dinámico para aplicar el OFFSET y FETCH, una técnica que puede ser ineficiente y difícil de mantener.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- La Operación Más Costosa: Búsqueda en JSON -->
+            <div class="content-section">
+                <div class="elimination-card">
+                    <h3 style="margin-bottom: var(--spacing-lg); text-align: center;">🎯 La Funcionalidad Más Crítica</h3>
+                    <p style="margin-bottom: var(--spacing-lg); text-align: center;">
+                        La funcionalidad clave y más costosa es la <strong>búsqueda dentro de un campo de texto que contiene JSON</strong>. En SQL Server esto requiere múltiples SPs, lógica compleja y operaciones costosas.
+                    </p>
+                    
+                    <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); margin: var(--spacing-lg) 0;">
+                        <h4 style="margin-bottom: var(--spacing-md);">🔍 Ejemplo de Búsqueda:</h4>
+                        <p style="margin: 0;">Buscar todos los documentos donde DatosLiquidos contenga <code>"TipoDocCliente": "CC"</code> y <code>"NumeroDocCliente": "1016041796"</code></p>
+                    </div>
+                    
+                    <p style="text-align: center; margin: 0; font-weight: 600;">
+                        💡 <strong>En MongoDB:</strong> Esta operación compleja se convierte en una consulta nativa usando "dot notation"
+                    </p>
+                </div>
+            </div>
+
+            <!-- Transformación en MongoDB -->
+            <div class="content-section">
+                <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-xl);">🔄 Transformación Completa a MongoDB</h2>
+                
+                <div class="json-search-demo">
+                    <h3 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">Comparación de la Lógica Completa</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                        <div style="font-weight: 600; color: var(--color-error);">1. Búsqueda dentro del JSON</div>
+                        <div><strong style="color: var(--color-primary);">Reemplazado por Dot Notation:</strong> MongoDB permite consultar campos dentro de un objeto JSON de forma nativa usando "DatosLiquidos.NumeroDocCliente". Con índices, la búsqueda es extremadamente rápida.</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                        <div style="font-weight: 600; color: var(--color-warning);">2. Lógica Delegada</div>
+                        <div><strong style="color: var(--color-primary);">Eliminado:</strong> No hay necesidad de delegar la lógica. La consulta completa se puede expresar en una única operación find() en el microservicio.</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                        <div style="font-weight: 600; color: var(--color-accent);">3. Uso de Tabla Temporal</div>
+                        <div><strong style="color: var(--color-primary);">Eliminado:</strong> La consulta se ejecuta directamente sobre la colección registros_bdtl.</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-lg);">
+                        <div style="font-weight: 600; color: var(--color-info);">4. Paginación con SQL Dinámico</div>
+                        <div><strong style="color: var(--color-primary);">Reemplazado:</strong> Por .skip() y .limit() nativos de MongoDB.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ejemplo Completo de la Nueva Consulta -->
+            <div class="content-section">
+                <h2 style="color: var(--color-accent); margin-bottom: var(--spacing-xl);">💻 Ejemplo: La Nueva Consulta en MongoDB</h2>
+                
+                <div class="code-comparison single-column">
+                    <div class="code-column">
+                        <div class="code-header mongodb-header">✨ Consulta Completa en MongoDB (Microservicio)</div>
+                        <div style="color: var(--color-text-secondary); line-height: 1.6;">
+                            <div style="color: var(--color-success);">// Parámetros recibidos por el microservicio</div>
+                            <div><span style="color: var(--color-primary);">const</span> tipoDocumento = <span style="color: var(--color-warning);">"Anexo de riesgo"</span>;</div>
+                            <div><span style="color: var(--color-primary);">const</span> fechaInicio = <span style="color: var(--color-info);">new Date</span>(<span style="color: var(--color-warning);">"2018-01-01T00:00:00Z"</span>);</div>
+                            <div><span style="color: var(--color-primary);">const</span> fechaFin = <span style="color: var(--color-info);">new Date</span>(<span style="color: var(--color-warning);">"2018-11-14T23:59:59Z"</span>);</div>
+                            <div><span style="color: var(--color-primary);">const</span> pagina = <span style="color: var(--color-info);">1</span>;</div>
+                            <div><span style="color: var(--color-primary);">const</span> tamanoPagina = <span style="color: var(--color-info);">15</span>;</div>
+                            <br>
+                            <div style="color: var(--color-success);">// Parámetros JSON que ahora son parte del filtro principal</div>
+                            <div><span style="color: var(--color-primary);">const</span> filtroJson = {</div>
+                            <div>  <span style="color: var(--color-warning);">"DatosLiquidos.TipoDocCliente"</span>: <span style="color: var(--color-warning);">"CC"</span>,</div>
+                            <div>  <span style="color: var(--color-warning);">"DatosLiquidos.NumeroDocCliente"</span>: <span style="color: var(--color-warning);">"1016041796"</span></div>
+                            <div>};</div>
+                            <br>
+                            <div style="color: var(--color-success);">// La consulta completa en MongoDB</div>
+                            <div><span style="color: var(--color-primary);">const</span> resultados = <span style="color: var(--color-primary);">await</span> db.collection(<span style="color: var(--color-warning);">'registros_bdtl'</span>).find({</div>
+                            <div>  <span style="color: var(--color-success);">// --- Filtros ---</span></div>
+                            <div>  <span style="color: var(--color-warning);">"TipoDocumento"</span>: tipoDocumento,</div>
+                            <div>  <span style="color: var(--color-warning);">"FechaKofax"</span>: {</div>
+                            <div>    <span style="color: var(--color-accent);">$gte</span>: fechaInicio,</div>
+                            <div>    <span style="color: var(--color-accent);">$lte</span>: fechaFin</div>
+                            <div>  },</div>
+                            <div>  ...filtroJson <span style="color: var(--color-success);">// Se añaden dinámicamente los filtros del JSON</span></div>
+                            <div>})</div>
+                            <div>.sort({ <span style="color: var(--color-warning);">"FechaKofax"</span>: <span style="color: var(--color-info);">1</span>, <span style="color: var(--color-warning);">"IdDocumento"</span>: <span style="color: var(--color-info);">1</span> })</div>
+                            <div>.skip((pagina - <span style="color: var(--color-info);">1</span>) * tamanoPagina)</div>
+                            <div>.limit(tamanoPagina)</div>
+                            <div>.toArray();</div>
+                            <br>
+                            <div style="color: var(--color-success);">// Conteo total para la paginación</div>
+                            <div><span style="color: var(--color-primary);">const</span> totalRegistros = <span style="color: var(--color-primary);">await</span> db.collection(<span style="color: var(--color-warning);">'registros_bdtl'</span>)</div>
+                            <div>  .countDocuments({</div>
+                            <div>    <span style="color: var(--color-warning);">"TipoDocumento"</span>: tipoDocumento,</div>
+                            <div>    <span style="color: var(--color-warning);">"FechaKofax"</span>: { <span style="color: var(--color-accent);">$gte</span>: fechaInicio, <span style="color: var(--color-accent);">$lte</span>: fechaFin },</div>
+                            <div>    ...filtroJson</div>
+                            <div>  });</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(0, 237, 100, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-lg); margin-top: var(--spacing-lg); border-left: 4px solid var(--color-primary);">
+                    <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-sm);">💡 Nota sobre el Código</h4>
+                    <p style="margin: 0; color: var(--color-text-secondary);">
+                        Este ejemplo muestra cómo un Stored Procedure complejo de más de 80 líneas se reduce a una consulta MongoDB elegante y eficiente. El código es completamente funcional y listo para implementar en un microservicio AWS Lambda.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Demostración del Beneficio -->
+            <div class="content-section">
+                <div class="complexity-comparison">
+                    <h2 style="color: white; text-align: center; margin-bottom: var(--spacing-xl);">🎯 La Demostración Perfecta de los Beneficios</h2>
+                    <p style="color: white; text-align: center; margin-bottom: var(--spacing-lg);">
+                        Este caso de uso es la <strong>demostración perfecta</strong> de los beneficios de la migración. Un proceso que en SQL Server requiere múltiples SPs, tablas temporales y lógica compleja para simular una búsqueda dentro de un JSON, en MongoDB se convierte en una consulta nativa, simple, legible y de alto rendimiento.
+                    </p>
+                    
+                    <div class="benefits-grid">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🔍</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Búsqueda JSON Nativa</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Dot notation integrada en el motor de BD</p>
+                        </div>
+                        
+                        <div class="benefit-item">
+                            <div class="benefit-icon">⚡</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Sin SPs Anidados</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Una sola consulta reemplaza múltiples procedimientos</p>
+                        </div>
+                        
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🧹</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Código Limpio</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Lógica clara y mantenible en el microservicio</p>
+                        </div>
+                        
+                        <div class="benefit-item">
+                            <div class="benefit-icon">📈</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Performance Superior</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Índices nativos en campos JSON</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análisis del SP API.spGetDatosLiquidosJson -->
+            <div class="content-section">
+                <div class="api-card" style="border: 2px solid var(--color-error); box-shadow: 0 0 40px rgba(239, 68, 68, 0.3);">
+                    <div class="api-header">
+                        <div class="api-icon" style="background: var(--color-error);">🔧</div>
+                        <div>
+                            <h2 class="api-name">API.spGetDatosLiquidosJson <span class="complexity-badge">MUY COMPLEJO</span></h2>
+                            <p style="margin: 0; color: var(--color-text-muted);">Constructor de Consultas Dinámicas Avanzado</p>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-bottom: var(--spacing-lg); font-size: var(--text-lg);">
+                        Este SP es un <strong>constructor de consultas dinámicas muy avanzado</strong>. Su propósito es ofrecer un único punto de entrada para realizar búsquedas complejas con múltiples filtros opcionales. Es probablemente el ejemplo más claro de por qué se necesita la migración a MongoDB.
+                    </p>
+
+                    <div class="transformation-grid">
+                        <div class="transformation-card">
+                            <div class="transformation-number">1</div>
+                            <h4 class="transformation-title">Validación y Preparación</h4>
+                            <p class="transformation-description">
+                                Valida que los campos obligatorios no estén vacíos. Luego, construye dinámicamente las cláusulas WHERE consultando una tabla de parámetros ([API].[Parameters]) para mapear los nombres de los filtros a los nombres reales de las columnas.
+                            </p>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">2</div>
+                            <h4 class="transformation-title">Consulta SQL Dinámica</h4>
+                            <p class="transformation-description">
+                                Construye una consulta SQL como un string de texto para obtener un conjunto inicial de datos basado en los filtros de metadatos (Entidad, Proceso, Fechas, etc.).
+                            </p>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">3</div>
+                            <h4 class="transformation-title">El Bucle para "Parsear" el JSON</h4>
+                            <p class="transformation-description">
+                                <strong>La parte más crítica y costosa.</strong> Para filtrar por un campo dentro del DatosLiquidos, utiliza un bucle WHILE y la función OPENJSON para recorrer de forma recursiva la estructura del JSON de cada registro. Proceso extremadamente lento e intensivo en CPU.
+                            </p>
+                            <div style="background: rgba(239, 68, 68, 0.2); padding: var(--spacing-sm); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-error);">
+                                <strong>Crítico:</strong> "Desarmando" el JSON en SQL nivel por nivel
+                            </div>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">4</div>
+                            <h4 class="transformation-title">Paginación y JOIN Final</h4>
+                            <p class="transformation-description">
+                                Después del complejo proceso de filtrado de JSON, utiliza tablas temporales y ROW_NUMBER() para paginar los resultados y finalmente hace un JOIN con la tabla Estados.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ejemplo de la Nueva Consulta spGetDatosLiquidosJson -->
+            <div class="content-section">
+                <h2 style="color: var(--color-error); margin-bottom: var(--spacing-xl);">🔄 Transformación del SP Más Complejo</h2>
+                
+                <div class="json-search-demo">
+                    <h3 style="color: var(--color-error); margin-bottom: var(--spacing-lg);">Comparación de Lógica - spGetDatosLiquidosJson</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                        <div style="font-weight: 600; color: var(--color-error);">1. Construcción de SQL Dinámico</div>
+                        <div><strong style="color: var(--color-primary);">Reemplazado por Construcción de Objeto de Filtro:</strong> El microservicio construye un objeto JSON de filtro de forma programática, añadiendo solo las claves que el usuario proporcionó. Esto es más seguro y mucho más simple.</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                        <div style="font-weight: 600; color: var(--color-error);">2. Bucle WHILE y OPENJSON</div>
+                        <div><strong style="color: var(--color-primary);">Reemplazado por Dot Notation:</strong> Esta es la mayor ganancia. La búsqueda dentro del JSON se convierte en una parte nativa del filtro. Para buscar un ValorDatoLiquido en un CampoDatoLiquido, la sintaxis es directa y no requiere ningún bucle.</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-lg);">
+                        <div style="font-weight: 600; color: var(--color-error);">3. Múltiples Tablas Temporales</div>
+                        <div><strong style="color: var(--color-primary);">Eliminado:</strong> La consulta se ejecuta directamente sobre la colección y se pagina con los métodos nativos .skip() y .limit().</div>
+                    </div>
+                </div>
+
+                <div class="code-comparison single-column">
+                    <div class="code-column">
+                        <div class="code-header mongodb-header">✨ Ejemplo: Búsqueda de Placa en MongoDB</div>
+                        <div style="color: var(--color-text-secondary); line-height: 1.6;">
+                            <div style="color: var(--color-success);">// Parámetros recibidos por el microservicio</div>
+                            <div><span style="color: var(--color-primary);">const</span> filtros = {</div>
+                            <div>    <span style="color: var(--color-warning);">"Proceso"</span>: <span style="color: var(--color-warning);">"Desembolsos"</span>,</div>
+                            <div>    <span style="color: var(--color-warning);">"TipoDocumento"</span>: <span style="color: var(--color-warning);">"Cedula de ciudadania"</span>,</div>
+                            <div>    <span style="color: var(--color-warning);">"FechaKofax"</span>: {</div>
+                            <div>        <span style="color: var(--color-accent);">"$gte"</span>: <span style="color: var(--color-info);">new Date</span>(<span style="color: var(--color-warning);">"2024-06-01T00:00:00Z"</span>),</div>
+                            <div>        <span style="color: var(--color-accent);">"$lte"</span>: <span style="color: var(--color-info);">new Date</span>(<span style="color: var(--color-warning);">"2024-06-06T23:59:59Z"</span>)</div>
+                            <div>    },</div>
+                            <div>    <span style="color: var(--color-success);">// --- Búsqueda dentro del JSON ---</span></div>
+                            <div>    <span style="color: var(--color-success);">// La clave se construye dinámicamente</span></div>
+                            <div>    <span style="color: var(--color-warning);">"DatosLiquidos.placa"</span>: <span style="color: var(--color-warning);">"HJG333"</span></div>
+                            <div>};</div>
+                            <br>
+                            <div><span style="color: var(--color-primary);">const</span> pagina = <span style="color: var(--color-info);">1</span>;</div>
+                            <div><span style="color: var(--color-primary);">const</span> tamanoPagina = <span style="color: var(--color-info);">50</span>;</div>
+                            <br>
+                            <div style="color: var(--color-success);">// La consulta completa en MongoDB</div>
+                            <div><span style="color: var(--color-primary);">const</span> resultados = <span style="color: var(--color-primary);">await</span> db.collection(<span style="color: var(--color-warning);">'registros_bdtl'</span>).find(filtros)</div>
+                            <div>    .sort({ <span style="color: var(--color-warning);">"IdDocumento"</span>: <span style="color: var(--color-info);">1</span> })</div>
+                            <div>    .skip((pagina - <span style="color: var(--color-info);">1</span>) * tamanoPagina)</div>
+                            <div>    .limit(tamanoPagina)</div>
+                            <div>    .toArray();</div>
+                            <br>
+                            <div style="color: var(--color-success);">// Conteo para la paginación</div>
+                            <div><span style="color: var(--color-primary);">const</span> totalRegistros = <span style="color: var(--color-primary);">await</span> db.collection(<span style="color: var(--color-warning);">'registros_bdtl'</span>)</div>
+                            <div>    .countDocuments(filtros);</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(239, 68, 68, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-lg); margin-top: var(--spacing-lg); border-left: 4px solid var(--color-error);">
+                    <h4 style="color: var(--color-error); margin-bottom: var(--spacing-sm);">🎯 Conclusión Crítica</h4>
+                    <p style="margin: 0; color: var(--color-text-secondary);">
+                        Este SP es el ejemplo perfecto de cómo se fuerza a una base de datos relacional a comportarse como una base de datos de documentos. Al migrar a MongoDB, reemplazamos un código procedural, frágil y lento por una consulta declarativa, simple y extremadamente rápida, especialmente si se crea un índice en el campo DatosLiquidos.placa.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Análisis del SP API.spGetDatosLiquidosProcesoFechas -->
+            <div class="content-section">
+                <div class="api-card" style="border: 2px solid var(--color-warning); box-shadow: 0 0 40px rgba(245, 158, 11, 0.3);">
+                    <div class="api-header">
+                        <div class="api-icon" style="background: var(--color-warning);">🔍</div>
+                        <div>
+                            <h2 class="api-name">API.spGetDatosLiquidosProcesoFechas</h2>
+                            <p style="margin: 0; color: var(--color-text-muted);">Constructor de Consultas Dinámicas - Motor de Búsqueda</p>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-bottom: var(--spacing-lg); font-size: var(--text-lg);">
+                        Este SP es un excelente ejemplo de un <strong>"constructor de consultas dinámicas"</strong> en SQL. Su propósito es ser un punto de entrada flexible para buscar registros con múltiples filtros opcionales. Es esencialmente un motor de búsqueda para los metadatos de los registros.
+                    </p>
+
+                    <div class="transformation-grid">
+                        <div class="transformation-card">
+                            <div class="transformation-number">1</div>
+                            <h4 class="transformation-title">Construcción de SQL Dinámico</h4>
+                            <p class="transformation-description">
+                                El núcleo del SP es la construcción de un string de texto (@SQL) que se convierte en la consulta final. Utiliza varias técnicas para manejar los filtros opcionales.
+                            </p>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">2</div>
+                            <h4 class="transformation-title">Consulta a Tabla de Parámetros</h4>
+                            <p class="transformation-description">
+                                Busca en la tabla [API].[Parameters] para traducir los nombres de los filtros que llegan de la API a los nombres de las columnas de la base de datos.
+                            </p>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">3</div>
+                            <h4 class="transformation-title">Subconsulta Ineficiente</h4>
+                            <p class="transformation-description">
+                                Para obtener la descripción del estado, ejecuta una subconsulta (select Description from API.Estados ...) por cada fila del resultado. Esto es funcionalmente un JOIN y puede ser muy lento en conjuntos de datos grandes.
+                            </p>
+                            <div style="background: rgba(245, 158, 11, 0.2); padding: var(--spacing-sm); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-warning);">
+                                <strong>Problema:</strong> Una subconsulta por cada fila
+                            </div>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">4</div>
+                            <h4 class="transformation-title">Paginación con Funciones de Ventana</h4>
+                            <p class="transformation-description">
+                                Utiliza COUNT(*) OVER() para calcular el total de filas y OFFSET ... FETCH para la paginación. Aunque es una técnica moderna en SQL, sigue siendo parte de una consulta dinámica compleja.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ejemplo de Transformación spGetDatosLiquidosProcesoFechas -->
+            <div class="content-section">
+                <h2 style="color: var(--color-warning); margin-bottom: var(--spacing-xl);">🔄 Transformación del Motor de Búsqueda</h2>
+                
+                <div class="json-search-demo">
+                    <h3 style="color: var(--color-warning); margin-bottom: var(--spacing-lg);">Comparación de Lógica - spGetDatosLiquidosProcesoFechas</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                        <div style="font-weight: 600; color: var(--color-warning);">1. Construcción de SQL Dinámico</div>
+                        <div><strong style="color: var(--color-primary);">Reemplazado por Construcción de Objeto de Filtro:</strong> El microservicio crea un objeto de filtro y solo añade las claves correspondientes a los parámetros que el usuario envió. Es más simple, seguro y no requiere concatenar strings.</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                        <div style="font-weight: 600; color: var(--color-warning);">2. Subconsulta para el Estado</div>
+                        <div><strong style="color: var(--color-primary);">Eliminado:</strong> Gracias al modelo desnormalizado, el documento IdEstadoDocumento con su descripción ya está incrustado en el registro principal. No se necesita ninguna operación adicional para obtenerlo.</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-lg);">
+                        <div style="font-weight: 600; color: var(--color-warning);">3. Paginación con Funciones de Ventana</div>
+                        <div><strong style="color: var(--color-primary);">Reemplazado por .skip() y .limit():</strong> Se usan los métodos nativos de MongoDB para una paginación simple y eficiente.</div>
+                    </div>
+                </div>
+
+                <div class="code-comparison single-column">
+                    <div class="code-column">
+                        <div class="code-header mongodb-header">✨ Ejemplo: Motor de Búsqueda en MongoDB</div>
+                        <div style="color: var(--color-text-secondary); line-height: 1.6;">
+                            <div style="color: var(--color-success);">// Parámetros recibidos por el microservicio</div>
+                            <div><span style="color: var(--color-primary);">const</span> pagina = <span style="color: var(--color-info);">1</span>;</div>
+                            <div><span style="color: var(--color-primary);">const</span> tamanoPagina = <span style="color: var(--color-info);">10</span>;</div>
+                            <br>
+                            <div style="color: var(--color-success);">// El microservicio construye el objeto de filtro dinámicamente</div>
+                            <div><span style="color: var(--color-primary);">const</span> filtro = {</div>
+                            <div>    <span style="color: var(--color-warning);">"Entidad.valor"</span>: <span style="color: var(--color-warning);">"Bancolombia"</span>,</div>
+                            <div>    <span style="color: var(--color-warning);">"Proceso"</span>: <span style="color: var(--color-warning);">"MiValorProceso"</span>, <span style="color: var(--color-success);">// Asumiendo que se busca por nombre</span></div>
+                            <div>    <span style="color: var(--color-warning);">"TipoDocumento"</span>: <span style="color: var(--color-warning);">"MiTipoDocumento"</span>,</div>
+                            <div>    <span style="color: var(--color-warning);">"FechaKofax"</span>: { <span style="color: var(--color-success);">// Asumiendo que se busca por FechaKofax</span></div>
+                            <div>        <span style="color: var(--color-accent);">"$gte"</span>: <span style="color: var(--color-info);">new Date</span>(<span style="color: var(--color-warning);">"2025-07-22T08:00:00Z"</span>),</div>
+                            <div>        <span style="color: var(--color-accent);">"$lte"</span>: <span style="color: var(--color-info);">new Date</span>(<span style="color: var(--color-warning);">"2025-07-22T17:00:00Z"</span>)</div>
+                            <div>    }</div>
+                            <div>};</div>
+                            <br>
+                            <div style="color: var(--color-success);">// Se añaden los filtros opcionales si existen</div>
+                            <div><span style="color: var(--color-primary);">if</span> (canalDocumento) {</div>
+                            <div>    filtro[<span style="color: var(--color-warning);">"CanalDocumento.valor"</span>] = canalDocumento;</div>
+                            <div>}</div>
+                            <div><span style="color: var(--color-primary);">if</span> (tecnologiaExtraccion) {</div>
+                            <div>    filtro[<span style="color: var(--color-warning);">"TecnologiaExtraccion.valor"</span>] = tecnologiaExtraccion;</div>
+                            <div>}</div>
+                            <div style="color: var(--color-success);">// etc.</div>
+                            <br>
+                            <div style="color: var(--color-success);">// La consulta completa en MongoDB</div>
+                            <div><span style="color: var(--color-primary);">const</span> resultados = <span style="color: var(--color-primary);">await</span> db.collection(<span style="color: var(--color-warning);">'registros_bdtl'</span>).find(filtro)</div>
+                            <div>    .sort({ <span style="color: var(--color-warning);">"IdDocumento"</span>: <span style="color: var(--color-info);">1</span> })</div>
+                            <div>    .skip((pagina - <span style="color: var(--color-info);">1</span>) * tamanoPagina)</div>
+                            <div>    .limit(tamanoPagina)</div>
+                            <div>    .toArray();</div>
+                            <br>
+                            <div style="color: var(--color-success);">// Conteo para la paginación</div>
+                            <div><span style="color: var(--color-primary);">const</span> totalRegistros = <span style="color: var(--color-warning);">await</span> db.collection(<span style="color: var(--color-warning);">'registros_bdtl'</span>)</div>
+                            <div>    .countDocuments(filtro);</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análisis del SP API.spBusqJsonDatosLiquidos -->
+            <div class="content-section">
+                <div class="api-card" style="border: 2px solid var(--color-accent); box-shadow: 0 0 40px rgba(86, 68, 212, 0.3);">
+                    <div class="api-header">
+                        <div class="api-icon" style="background: var(--color-accent);">🏗️</div>
+                        <div>
+                            <h2 class="api-name">API.spBusqJsonDatosLiquidos <span class="complexity-badge">CRÍTICO</span></h2>
+                            <p style="margin: 0; color: var(--color-text-muted);">Motor de Búsqueda JSON - El SP Más Importante</p>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-bottom: var(--spacing-lg); font-size: var(--text-lg);">
+                        Este es probablemente el SP <strong>más importante de toda la lógica de consulta</strong>, ya que es el "motor" que los otros SPs utilizan para realizar la tarea más difícil en SQL Server: buscar valores dentro del campo JSON DatosLiquidos. Su análisis revela de la manera más clara los beneficios de la migración a MongoDB.
+                    </p>
+
+                    <div class="transformation-grid">
+                        <div class="transformation-card">
+                            <div class="transformation-number">1</div>
+                            <h4 class="transformation-title">Seguridad y Validación</h4>
+                            <p class="transformation-description">
+                                Realiza una limpieza básica de los parámetros para prevenir inyecciones de SQL. Luego, llama a otro SP (spValidarBusquedaDocCliente) para ejecutar reglas de negocio y validar que los parámetros de búsqueda sean correctos.
+                            </p>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">2</div>
+                            <h4 class="transformation-title">Construcción Dinámica de WHERE</h4>
+                            <p class="transformation-description">
+                                <strong>Su función principal.</strong> Utiliza la función JSON_VALUE de SQL Server para acceder a los datos dentro del campo DatosLiquidos. Consulta tablas de mapeo (API.MapeoParametros, API.MapeoValoresTipoDocCliente) para traducir los nombres de los parámetros de la API a la ruta real dentro del JSON.
+                            </p>
+                            <div style="background: rgba(86, 68, 212, 0.2); padding: var(--spacing-sm); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-accent);">
+                                <strong>Ejemplo:</strong> NumeroDocCliente → $.client.id
+                            </div>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">3</div>
+                            <h4 class="transformation-title">Concatenación de Filtros</h4>
+                            <p class="transformation-description">
+                                Concatena todos los filtros JSON en un único string de texto (@CADENABUSQJSON). Este string se convierte en la cláusula WHERE que se inyectará en la consulta principal.
+                            </p>
+                        </div>
+
+                        <div class="transformation-card">
+                            <div class="transformation-number">4</div>
+                            <h4 class="transformation-title">Ejecución de SQL Dinámico</h4>
+                            <p class="transformation-description">
+                                Toma el string de la cláusula WHERE construido, lo inyecta en una plantilla de INSERT ... SELECT y lo ejecuta usando sp_executesql. El resultado se inserta en una tabla temporal (#TMPCONSULTAAPI).
+                            </p>
+                            <div style="background: rgba(239, 68, 68, 0.2); padding: var(--spacing-sm); border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-error);">
+                                <strong>Crítico:</strong> Inyección de SQL construido dinámicamente
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- La Prueba Definitiva -->
+            <div class="content-section">
+                <div class="elimination-card">
+                    <h3 style="margin-bottom: var(--spacing-lg); text-align: center;">🎯 La Prueba Definitiva de la Migración</h3>
+                    <p style="margin-bottom: var(--spacing-lg); text-align: center;">
+                        La existencia de este SP es la <strong>prueba definitiva</strong> de que se está forzando a una base de datos relacional a hacer algo para lo que no fue diseñada. En MongoDB, toda la funcionalidad de este SP es nativa, simple y no requiere un SP intermediario.
+                    </p>
+                    
+                    <div style="background: rgba(255,255,255,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); margin: var(--spacing-lg) 0;">
+                        <h4 style="margin-bottom: var(--
+
+            <!-- Resumen de Impacto -->
+            <div class="content-section">
+                <div class="performance-card">
+                    <h2 style="color: var(--color-text-dark); text-align: center; margin-bottom: var(--spacing-xl);">📊 Resumen del Impacto de la Migración</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
+                        <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">2</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">SPs Analizados</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Con lógica compleja eliminada</p>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">0</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">JOINs Necesarios</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">En las nuevas consultas MongoDB</p>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">90%</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Reducción Estimada</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">En líneas de código y complejidad</p>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); color: var(--color-text-dark); text-align: center;">
+                            <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm); font-weight: bold;">100%</div>
+                            <h4 style="margin-bottom: var(--spacing-sm);">Búsqueda JSON</h4>
+                            <p style="font-size: var(--text-sm); margin: 0;">Nativa y optimizada</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Función para toggle del menú móvil
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        // Marcar enlace activo basado en la página actual
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop() || 'api.html';
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === currentPage) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
