@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyectos MongoDB en Bancolombia | Transformación en Acción</title>
+    <link rel="stylesheet" href="../../../styles/gomdb-global.css">
+    <style>
+        /* Animaciones avanzadas y efectos especiales */
+        @keyframes circuitFlow {
+            0% { 
+                stroke-dashoffset: 1000;
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% { 
+                stroke-dashoffset: 0;
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes holographicShimmer {
+            0% { 
+                background-position: -200% center;
+            }
+            100% { 
+                background-position: 200% center;
+            }
+        }
+
+        @keyframes matrixRain {
+            0% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        @keyframes orbitalRotation {
+            from { transform: rotate(0deg) translateX(150px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+        }
+
+        @keyframes dataPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(0, 237, 100, 0.5);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 40px rgba(0, 237, 100, 1);
+            }
+        }
+
+        /* Estilos de proyectos interactivos */
+        .project-card {
+            background: linear-gradient(135deg, rgba(13, 42, 61, 0.9) 0%, rgba(17, 35, 49, 0.8) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(0, 237, 100, 0.1),
+                transparent
+            );
+            animation: holographicShimmer 3s linear infinite;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 
+                0 20px 40px rgba(0, 237, 100, 0.3),
+                0 0 60px rgba(0, 237, 100, 0.2),
+                inset 0 0 30px rgba(0, 237, 100, 0.1);
+            border-color: var(--color-primary);
+        }
+
+        .project-expanded {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1000;
+            animation: expandIn 0.5s ease-out;
+        }
+
+        @keyframes expandIn {
+            from {
+                transform: translate(-50%, -50%) scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Circuit board background */
+        .circuit-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.05;
+            z-index: -1;
+        }
+
+        .circuit-line {
+            stroke: var(--color-primary);
+            stroke-width: 1;
+            fill: none;
+            stroke-dasharray: 1000;
+            animation: circuitFlow 10s linear infinite;
+        }
+
+        /* Matrix rain effect */
+        .matrix-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: 0;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: var(--color-primary);
+            writing-mode: vertical-lr;
+            text-orientation: upright;
+            animation: matrixRain 10s linear infinite;
+            opacity: 0.1;
+        }
+
+        /* 3D comparison cards */
+        .comparison-container {
+            perspective: 1500px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-xl);
+            margin: var(--spacing-2xl) 0;
+        }
+
+        .comparison-card {
+            background: linear-gradient(135deg, var(--color-bg-card) 0%, rgba(13, 42, 61, 0.5) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            position: relative;
+        }
+
+        .comparison-card.mongodb {
+            border: 2px solid var(--color-primary);
+            box-shadow: 0 0 30px rgba(0, 237, 100, 0.3);
+        }
+
+        .comparison-card.aurora {
+            border: 2px solid #FF9900;
+            box-shadow: 0 0 30px rgba(255, 153, 0, 0.3);
+        }
+
+        .comparison-card.dynamodb {
+            border: 2px solid #4B9BFF;
+            box-shadow: 0 0 30px rgba(75, 155, 255, 0.3);
+        }
+
+        /* Orbital elements */
+        .orbital-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+
+        .orbital-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--color-text-dark);
+            box-shadow: 0 0 40px rgba(0, 237, 100, 0.5);
+            animation: dataPulse 2s ease-in-out infinite;
+        }
+
+        .orbital-item {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60px;
+            height: 60px;
+            margin: -30px 0 0 -30px;
+            border-radius: 50%;
+            background: var(--color-bg-secondary);
+            border: 2px solid var(--color-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .orbital-item:nth-child(2) {
+            animation: orbitalRotation 10s linear infinite;
+        }
+
+        .orbital-item:nth-child(3) {
+            animation: orbitalRotation 10s linear infinite reverse;
+            animation-delay: -3.33s;
+        }
+
+        .orbital-item:nth-child(4) {
+            animation: orbitalRotation 10s linear infinite;
+            animation-delay: -6.66s;
+        }
+
+        /* Interactive timeline */
+        .timeline-interactive {
+            position: relative;
+            padding: var(--spacing-2xl) 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--color-primary), var(--color-accent));
+            transform: translateX(-50%);
+        }
+
+        .timeline-node {
+            position: relative;
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+            opacity: 0;
+            animation: fadeInUp 0.8s forwards;
+        }
+
+        .timeline-node:nth-child(even) {
+            text-align: right;
+            padding-right: 52%;
+        }
+
+        .timeline-node:nth-child(odd) {
+            text-align: left;
+            padding-left: 52%;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            border: 3px solid var(--color-bg-primary);
+            box-shadow: 0 0 20px rgba(0, 237, 100, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .timeline-dot:hover {
+            transform: translate(-50%, -50%) scale(1.5);
+            box-shadow: 0 0 40px rgba(0, 237, 100, 1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Overlay for project details */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Metric cards with animation */
+        .metric-flip-card {
+            background: transparent;
+            width: 200px;
+            height: 150px;
+            perspective: 1000px;
+            margin: 0 auto;
+        }
+
+        .metric-flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .metric-flip-card:hover .metric-flip-inner {
+            transform: rotateY(180deg);
+        }
+
+        .metric-flip-front, .metric-flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: var(--spacing-lg);
+        }
+
+        .metric-flip-front {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: var(--color-text-dark);
+        }
+
+        .metric-flip-back {
+            background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-tertiary));
+            color: var(--color-text-primary);
+            transform: rotateY(180deg);
+            border: 2px solid var(--color-primary);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .timeline-node:nth-child(even),
+            .timeline-node:nth-child(odd) {
+                text-align: left;
+                padding-left: 60px;
+                padding-right: var(--spacing-lg);
+            }
+
+            .timeline-line {
+                left: 30px;
+            }
+
+            .timeline-dot {
+                left: 30px;
+            }
+
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading animation */
+        .loader-advanced {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-bg-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s;
+        }
+
+        .loader-dna {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .loader-dna::before,
+        .loader-dna::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: var(--color-primary);
+            animation: spin 2s linear infinite;
+        }
+
+        .loader-dna::after {
+            border-top-color: var(--color-accent);
+            animation-direction: reverse;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Project status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-badge::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-badge.active {
+            background: rgba(0, 237, 100, 0.2);
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
+        }
+
+        .status-badge.active::before {
+            background: var(--color-primary);
+        }
+
+        .status-badge.migration {
+            background: rgba(255, 153, 0, 0.2);
+            color: #FF9900;
+            border: 1px solid #FF9900;
+        }
+
+        .status-badge.migration::before {
+            background: #FF9900;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Advanced Loader -->
+    <div class="loader-advanced" id="loader">
+        <div class="loader-dna"></div>
+        <h3 class="text-gradient">Cargando Proyectos MongoDB...</h3>
+    </div>
+
+    <!-- Circuit Board Background -->
+    <svg class="circuit-bg">
+        <defs>
+            <pattern id="circuit" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
+                <path class="circuit-line" d="M0,100 L50,100 L50,50 L100,50 M100,50 L150,50 L150,100 L200,100" />
+                <path class="circuit-line" d="M100,0 L100,50 M100,150 L100,200" />
+                <circle cx="50" cy="100" r="3" fill="var(--color-primary)" opacity="0.5" />
+                <circle cx="100" cy="50" r="3" fill="var(--color-primary)" opacity="0.5" />
+                <circle cx="150" cy="100" r="3" fill="var(--color-primary)" opacity="0.5" />
+            </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#circuit)" />
+    </svg>
+
+    <!-- Matrix Rain Effect -->
+    <div class="matrix-container" id="matrix"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container navbar-container">
+            <div class="navbar-logo">
+                <span class="text-gradient">MongoDB Projects @ Bancolombia</span>
+            </div>
+            <div class="navbar-links">
+                <a href="#overview" class="navbar-link">Visión General</a>
+                <a href="#projects" class="navbar-link">Proyectos</a>
+                <a href="#challenges" class="navbar-link">Retos</a>
+                <a href="#comparison" class="navbar-link">Comparativa</a>
+                <a href="#roadmap" class="navbar-link">Roadmap</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Orbital Animation -->
+    <section class="hero" id="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="text-center animate-fadeIn">
+                <h1 class="text-gradient mb-4" style="font-size: clamp(3rem, 8vw, 6rem);">
+                    Proyectos MongoDB en Acción
+                </h1>
+                <p class="text-2xl mb-5" style="color: var(--color-text-secondary);">
+                    Transformando los desafíos de Bancolombia en oportunidades de innovación
+                </p>
+                
+                <!-- Orbital Animation -->
+                <div class="orbital-container">
+                    <div class="orbital-center">7</div>
+                    <div class="orbital-item">💰</div>
+                    <div class="orbital-item">📊</div>
+                    <div class="orbital-item">🔒</div>
+                </div>
+                
+                <div class="flex justify-center gap-4 mt-6">
+                    <button class="btn btn-primary btn-lg animate-glow" onclick="scrollToSection('projects')">
+                        Explorar Proyectos
+                    </button>
+                    <button class="btn btn-secondary btn-lg" onclick="scrollToSection('comparison')">
+                        Ver Comparativa
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section class="section" id="overview">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Visión General de la Transformación</h2>
+            
+            <div class="grid md:grid-cols-4 gap-4 mb-6">
+                <div class="metric-flip-card">
+                    <div class="metric-flip-inner">
+                        <div class="metric-flip-front">
+                            <div class="text-4xl font-bold">7</div>
+                            <div>Proyectos Activos</div>
+                        </div>
+                        <div class="metric-flip-back">
+                            <p class="text-sm">Transformación digital en múltiples áreas críticas del banco</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metric-flip-card">
+                    <div class="metric-flip-inner">
+                        <div class="metric-flip-front">
+                            <div class="text-4xl font-bold">$5K</div>
+                            <div>USD/mes Ahorro</div>
+                        </div>
+                        <div class="metric-flip-back">
+                            <p class="text-sm">Reducción de costos vs DocumentDB actual</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metric-flip-card">
+                    <div class="metric-flip-inner">
+                        <div class="metric-flip-front">
+                            <div class="text-4xl font-bold">50%</div>
+                            <div>Mejor Rendimiento</div>
+                        </div>
+                        <div class="metric-flip-back">
+                            <p class="text-sm">Reducción en tiempo de consultas complejas</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metric-flip-card">
+                    <div class="metric-flip-inner">
+                        <div class="metric-flip-front">
+                            <div class="text-4xl font-bold">24/7</div>
+                            <div>Alta Disponibilidad</div>
+                        </div>
+                        <div class="metric-flip-back">
+                            <p class="text-sm">Failover automático y recuperación sin intervención</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Pain Points Summary -->
+            <div class="card mongodb-gradient p-6">
+                <h3 class="text-2xl mb-4 text-center">Principales Desafíos Identificados</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-xl mb-3 text-gradient">🔴 Problemas Actuales</h4>
+                        <ul class="space-y-2">
+                            <li>• Costos elevados e ineficiente uso de recursos</li>
+                            <li>• Escalabilidad limitada (especialmente escrituras)</li>
+                            <li>• Modelos de datos rígidos y complejos</li>
+                            <li>• Capacidades limitadas de consulta y analítica</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-xl mb-3 text-gradient">✅ Soluciones MongoDB</h4>
+                        <ul class="space-y-2">
+                            <li>• Modelos de precios flexibles y auto-scaling</li>
+                            <li>• Escalado horizontal transparente con sharding</li>
+                            <li>• Modelo de documentos natural y polimórfico</li>
+                            <li>• Lenguaje de consulta expresivo con agregaciones nativas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section with Interactive Cards -->
+    <section class="section" id="projects" style="background: var(--color-bg-secondary);">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Proyectos en Transformación</h2>
+            
+            <!-- Project Grid -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Project 1: Réplica de saldos y movimientos -->
+                <div class="project-card" onclick="expandProject('replica')">
+                    <span class="status-badge active" style="position: absolute; top: 20px; right: 20px;">
+                        En Producción
+                    </span>
+                    <h3 class="text-2xl mb-3 text-gradient">📊 Réplica de Saldos y Movimientos</h3>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">🎯 Reto Principal:</h4>
+                        <p class="text-secondary">Costos de ~$5,000 USD/mes en DocumentDB sin alta disponibilidad y con problemas de rendimiento</p>
+                    </div>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">💡 Caso de Uso:</h4>
+                        <p class="text-secondary">Replicación en tiempo real de saldos y movimientos bancarios para consultas de alta frecuencia</p>
+                    </div>
+                    <div class="badge badge-primary">Click para más detalles →</div>
+                </div>
+
+                <!-- Project 2: Inversiones Bancolombia -->
+                <div class="project-card" onclick="expandProject('inversiones')">
+                    <span class="status-badge migration" style="position: absolute; top: 20px; right: 20px;">
+                        Migración
+                    </span>
+                    <h3 class="text-2xl mb-3 text-gradient">💼 Inversiones Bancolombia</h3>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">🎯 Reto Principal:</h4>
+                        <p class="text-secondary">CouchBase no es stack estratégico, problemas de escalabilidad</p>
+                    </div>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">💡 Caso de Uso:</h4>
+                        <p class="text-secondary">Gestión de portafolios de inversión y datos de mercado en tiempo real</p>
+                    </div>
+                    <div class="badge badge-primary">Click para más detalles →</div>
+                </div>
+
+                <!-- Project 3: Centralización de Información -->
+                <div class="project-card" onclick="expandProject('centralizacion')">
+                    <span class="status-badge active" style="position: absolute; top: 20px; right: 20px;">
+                        En Desarrollo
+                    </span>
+                    <h3 class="text-2xl mb-3 text-gradient">🗄️ Centralización de Información</h3>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">🎯 Reto Principal:</h4>
+                        <p class="text-secondary">Modelo con múltiples colecciones referenciadas, complejidad para desarrolladores</p>
+                    </div>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">💡 Caso de Uso:</h4>
+                        <p class="text-secondary">Repositorio unificado de información del cliente</p>
+                    </div>
+                    <div class="badge badge-primary">Click para más detalles →</div>
+                </div>
+
+                <!-- Project 4: Evolución Digital -->
+                <div class="project-card" onclick="expandProject('evolucion')">
+                    <span class="status-badge migration" style="position: absolute; top: 20px; right: 20px;">
+                        En Evaluación
+                    </span>
+                    <h3 class="text-2xl mb-3 text-gradient">🚀 Evolución Digital - BDTL</h3>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">🎯 Reto Principal:</h4>
+                        <p class="text-secondary">SQL Server con limitaciones para JSON y datos no estructurados. Necesidad de repositorio temporal para texto líquido</p>
+                    </div>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">💡 Caso de Uso:</h4>
+                        <p class="text-secondary">Repositorio temporal (6 meses) para información extraída de documentos en formato JSON para LZ Analytics</p>
+                    </div>
+                    <div class="badge badge-primary">Click para más detalles →</div>
+                </div>
+
+                <!-- Project 5: Enriquecimiento -->
+                <div class="project-card" onclick="expandProject('enriquecimiento')">
+                    <span class="status-badge active" style="position: absolute; top: 20px; right: 20px;">
+                        Crítico - Fraude
+                    </span>
+                    <h3 class="text-2xl mb-3 text-gradient">⚡ Enriquecimiento para Gestión de Fraude</h3>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">🎯 Reto Principal:</h4>
+                        <p class="text-secondary">Orquestación de transacciones debe completarse en <600ms consultando múltiples fuentes</p>
+                    </div>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">💡 Caso de Uso:</h4>
+                        <p class="text-secondary">Enriquecimiento de datos para evaluación de fraude en tiempo real - 15-20M clientes</p>
+                    </div>
+                    <div class="badge badge-primary">Click para más detalles →</div>
+                </div>
+
+                <!-- Project 6: Plink -->
+                <div class="project-card" onclick="expandProject('plink')">
+                    <span class="status-badge active" style="position: absolute; top: 20px; right: 20px;">
+                        Producto No Financiero
+                    </span>
+                    <h3 class="text-2xl mb-3 text-gradient">📍 Plink - Analytics para Comercios</h3>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">🎯 Reto Principal:</h4>
+                        <p class="text-secondary">Millones de registros, analíticas pesadas, necesidad de independencia de Data Lake</p>
+                    </div>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">💡 Caso de Uso:</h4>
+                        <p class="text-secondary">Análisis en tiempo real de transacciones para decisiones de crecimiento de comercios</p>
+                    </div>
+                    <div class="badge badge-primary">Click para más detalles →</div>
+                </div>
+
+                <!-- Project 7: Galatea -->
+                <div class="project-card" onclick="expandProject('galatea')">
+                    <span class="status-badge active" style="position: absolute; top: 20px; right: 20px;">
+                        Plataforma Central
+                    </span>
+                    <h3 class="text-2xl mb-3 text-gradient">🔐 Galatea - Plataforma Transaccional</h3>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">🎯 Reto Principal:</h4>
+                        <p class="text-secondary">2M transacciones/día por canal, auditoría completa, retención 3 meses</p>
+                    </div>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">💡 Caso de Uso:</h4>
+                        <p class="text-secondary">Plataforma centralizada de captura y distribución de todas las transacciones del banco</p>
+                    </div>
+                    <div class="badge badge-primary">Click para más detalles →</div>
+                </div>
+
+                <!-- Project 8: TDC Centralización -->
+                <div class="project-card" onclick="expandProject('tdc')">
+                    <span class="status-badge migration" style="position: absolute; top: 20px; right: 20px;">
+                        Consolidación
+                    </span>
+                    <h3 class="text-2xl mb-3 text-gradient">💳 TDC - Repositorio Centralizado</h3>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">🎯 Reto Principal:</h4>
+                        <p class="text-secondary">Datos fragmentados entre diferentes sistemas y cores</p>
+                    </div>
+                    <div class="mb-4">
+                        <h4 class="text-lg mb-2">💡 Caso de Uso:</h4>
+                        <p class="text-secondary">Unificación de información de tarjetas de crédito y prepago</p>
+                    </div>
+                    <div class="badge badge-primary">Click para más detalles →</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Challenges Deep Dive -->
+    <section class="section" id="challenges">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Análisis Profundo de Retos</h2>
+            
+            <div class="timeline-interactive">
+                <div class="timeline-line"></div>
+                
+                <div class="timeline-node">
+                    <div class="timeline-dot"></div>
+                    <div class="card">
+                        <h3 class="text-xl mb-3 text-gradient">💸 Costos Elevados e Ineficiencia</h3>
+                        <p class="mb-3">DocumentDB actual: ~$5,000 USD/mes sin alta disponibilidad</p>
+                        <div class="code-block">
+                            <code>// MongoDB Atlas: Auto-scaling sin premium
+// Modelo de precios por consumo escalonado
+// Sharding reduce costo por máquina aumentando capacidad</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-node" style="animation-delay: 0.2s;">
+                    <div class="timeline-dot"></div>
+                    <div class="card">
+                        <h3 class="text-xl mb-3 text-gradient">⚡ Escalabilidad Limitada</h3>
+                        <p class="mb-3">DocumentDB falla en rendimiento de escritura vs MongoDB</p>
+                        <div class="code-block">
+                            <code>// MongoDB: Escalado horizontal transparente
+sh.enableSharding("banking")
+sh.shardCollection("banking.transactions", { customerId: "hashed" })
+// Rebalanceo automático sin downtime</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-node" style="animation-delay: 0.4s;">
+                    <div class="timeline-dot"></div>
+                    <div class="card">
+                        <h3 class="text-xl mb-3 text-gradient">🔧 Modelos de Datos Rígidos</h3>
+                        <p class="mb-3">JOINs complejos impactan rendimiento y desarrollo</p>
+                        <div class="code-block">
+                            <code>// MongoDB: Documentos polimórficos
+{
+  _id: ObjectId("..."),
+  customerInfo: { /* datos embebidos */ },
+  accounts: [ /* arrays anidados */ ],
+  // Esquema evoluciona sin migraciones
+}</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-node" style="animation-delay: 0.6s;">
+                    <div class="timeline-dot"></div>
+                    <div class="card">
+                        <h3 class="text-xl mb-3 text-gradient">📊 Capacidades Limitadas de Consulta</h3>
+                        <p class="mb-3">Agregaciones de 30+ segundos para grandes datasets</p>
+                        <div class="code-block">
+                            <code>// MongoDB: Agregaciones nativas optimizadas
+db.transactions.aggregate([
+  { $match: { date: { $gte: ISODate("2025-01-01") } } },
+  { $group: { _id: "$category", total: { $sum: "$amount" } } },
+  { $merge: { into: "daily_summaries" } } // Pre-computar resultados
+])</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-node" style="animation-delay: 0.8s;">
+                    <div class="timeline-dot"></div>
+                    <div class="card">
+                        <h3 class="text-xl mb-3 text-gradient">🔒 Seguridad y Cumplimiento</h3>
+                        <p class="mb-3">Necesidad de encriptación granular y auditoría completa</p>
+                        <div class="code-block">
+                            <code>// MongoDB: Client-Side Field Level Encryption
+{
+  ssn: encrypt("123-45-6789"), // Encriptado en cliente
+  balance: 50000, // No encriptado
+  // Queryable Encryption en MongoDB 7.0
+}</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="section" id="comparison" style="background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Comparativa Tecnológica Detallada</h2>
+            
+            <!-- Comparison Categories -->
+            <div class="mb-6">
+                <div class="flex justify-center gap-4 flex-wrap">
+                    <button class="btn btn-primary" onclick="showComparison('costs')">💰 Costos</button>
+                    <button class="btn btn-ghost" onclick="showComparison('scalability')">📈 Escalabilidad</button>
+                    <button class="btn btn-ghost" onclick="showComparison('flexibility')">🔄 Flexibilidad</button>
+                    <button class="btn btn-ghost" onclick="showComparison('performance')">⚡ Rendimiento</button>
+                    <button class="btn btn-ghost" onclick="showComparison('security')">🔒 Seguridad</button>
+                </div>
+            </div>
+
+            <!-- Costs Comparison -->
+            <div id="comparison-costs" class="comparison-content">
+                <div class="comparison-container">
+                    <div class="comparison-card mongodb">
+                        <h3 class="text-2xl mb-4 text-gradient">MongoDB Atlas</h3>
+                        <div class="mb-4">
+                            <div class="metric-value text-3xl">✅</div>
+                        </div>
+                        <ul class="space-y-2">
+                            <li>✓ Auto-scaling sin premium de precio</li>
+                            <li>✓ Modelo serverless con precios escalonados</li>
+                            <li>✓ M10 más económico que DynamoDB On-Demand</li>
+                            <li>✓ M50 supera a DynamoDB Reserved (3 años)</li>
+                            <li>✓ Sharding reduce costo por máquina</li>
+                        </ul>
+                        <div class="mt-4 p-3 bg-primary-light rounded">
+                            <strong>ROI:</strong> 40% reducción en costos operativos
+                        </div>
+                    </div>
+
+                    <div class="comparison-card aurora">
+                        <h3 class="text-2xl mb-4" style="color: #FF9900;">AWS Aurora</h3>
+                        <div class="mb-4">
+                            <div class="metric-value text-3xl">⚠️</div>
+                        </div>
+                        <ul class="space-y-2">
+                            <li>✗ Serverless v1: 50% más caro que provisioned</li>
+                            <li>✗ Serverless v2: 2x más caro que v1</li>
+                            <li>✗ Base 64GB/8vCPU: $3.48/hora + storage + I/O</li>
+                            <li>✗ Costos I/O impredecibles y acumulativos</li>
+                            <li>✗ Sin verdadero pay-per-use</li>
+                        </ul>
+                        <div class="mt-4 p-3" style="background: rgba(255,153,0,0.1); border-radius: 8px;">
+                            <strong>TCO:</strong> Costos ocultos en I/O y storage
+                        </div>
+                    </div>
+
+                    <div class="comparison-card dynamodb">
+                        <h3 class="text-2xl mb-4" style="color: #4B9BFF;">AWS DynamoDB</h3>
+                        <div class="mb-4">
+                            <div class="metric-value text-3xl">❌</div>
+                        </div>
+                        <ul class="space-y-2">
+                            <li>✗ On-Demand: 5x más caro con alta utilización</li>
+                            <li>✗ Provisioned: pago por recursos no usados</li>
+                            <li>✗ Reserved: pago anticipado no reembolsable</li>
+                            <li>✗ Hot partitions escalan costos rápidamente</li>
+                            <li>✗ Modelo de precios complejo (RCU/WCU)</li>
+                        </ul>
+                        <div class="mt-4 p-3" style="background: rgba(75,155,255,0.1); border-radius: 8px;">
+                            <strong>Riesgo:</strong> Costos impredecibles con picos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scalability Comparison -->
+            <div id="comparison-scalability" class="comparison-content" style="display: none;">
+                <div class="comparison-container">
+                    <div class="comparison-card mongodb">
+                        <h3 class="text-2xl mb-4 text-gradient">MongoDB Atlas</h3>
+                        <ul class="space-y-2">
+                            <li>✓ Sharding horizontal para escrituras</li>
+                            <li>✓ Escalado transparente sin downtime</li>
+                            <li>✓ Rebalanceo automático de datos</li>
+                            <li>✓ Global Clusters: escritura activo-activo</li>
+                            <li>✓ Auto-failover y recuperación</li>
+                        </ul>
+                    </div>
+
+                    <div class="comparison-card aurora">
+                        <h3 class="text-2xl mb-4" style="color: #FF9900;">AWS Aurora</h3>
+                        <ul class="space-y-2">
+                            <li>✗ Sin escalado nativo de escrituras</li>
+                            <li>✗ Máximo 15 réplicas de lectura</li>
+                            <li>✗ Multi-primary limitado a 2 nodos/región</li>
+                            <li>✗ Failover hasta 120 segundos</li>
+                            <li>✗ Sin failover automático global</li>
+                        </ul>
+                    </div>
+
+                    <div class="comparison-card dynamodb">
+                        <h3 class="text-2xl mb-4" style="color: #4B9BFF;">AWS DynamoDB</h3>
+                        <ul class="space-y-2">
+                            <li>✗ Límites estrictos: 1,000 WCU, 3,000 RCU</li>
+                            <li>✗ Throttling en particiones saturadas</li>
+                            <li>✗ Sharding manual requerido</li>
+                            <li>✗ Global Tables: eventual consistency</li>
+                            <li>✗ Sin failover automático de cliente</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other comparisons follow similar pattern -->
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section class="section" id="roadmap">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Roadmap de Implementación MongoDB</h2>
+            
+            <div class="card mongodb-gradient p-6 mb-6">
+                <h3 class="text-2xl text-center mb-4">Fases de Migración Estratégica</h3>
+                
+                <div class="grid md:grid-cols-4 gap-4">
+                    <div class="card p-4 text-center">
+                        <div class="text-4xl mb-2">🚀</div>
+                        <h4 class="text-lg mb-2">Q1 2025</h4>
+                        <p class="text-sm">POC: Réplica de Saldos</p>
+                        <div class="badge badge-primary mt-2">En Curso</div>
+                    </div>
+                    
+                    <div class="card p-4 text-center">
+                        <div class="text-4xl mb-2">⚡</div>
+                        <h4 class="text-lg mb-2">Q2 2025</h4>
+                        <p class="text-sm">Migración Inversiones</p>
+                        <div class="badge badge-secondary mt-2">Planificado</div>
+                    </div>
+                    
+                    <div class="card p-4 text-center">
+                        <div class="text-4xl mb-2">🌐</div>
+                        <h4 class="text-lg mb-2">Q3 2025</h4>
+                        <p class="text-sm">Centralización TDC</p>
+                        <div class="badge badge-secondary mt-2">Planificado</div>
+                    </div>
+                    
+                    <div class="card p-4 text-center">
+                        <div class="text-4xl mb-2">🎯</div>
+                        <h4 class="text-lg mb-2">Q4 2025</h4>
+                        <p class="text-sm">Optimización Global</p>
+                        <div class="badge badge-secondary mt-2">Objetivo</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="text-center">
+                <h3 class="text-4xl mb-4 text-gradient">Transformemos Juntos el Futuro de Bancolombia</h3>
+                <p class="text-xl mb-6">
+                    MongoDB ofrece la plataforma de datos moderna que resuelve los desafíos actuales
+                    y prepara a Bancolombia para el futuro digital
+                </p>
+                
+                <div class="flex justify-center gap-4">
+                    <button class="btn btn-primary btn-lg animate-glow" onclick="scheduleDemo()">
+                        Agendar Demo Técnico
+                    </button>
+                    <button class="btn btn-secondary btn-lg" onclick="downloadCaseStudy()">
+                        Descargar Caso de Estudio
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overlay for Project Details -->
+    <div class="overlay" id="overlay" onclick="closeOverlay()"></div>
+
+    <!-- Footer -->
+    <footer class="section-lg" style="background: var(--color-bg-tertiary);">
+        <div class="container text-center">
+            <p class="text-secondary mb-2">MongoDB × Bancolombia - Proyectos en Transformación</p>
+            <p class="text-muted">© 2025 - Información Confidencial</p>
+        </div>
+    </footer>
+
+    <script>
+        // Loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                }, 500);
+            }, 1500);
+        });
+
+        // Matrix Rain Effect
+        function createMatrixRain() {
+            const matrix = document.getElementById('matrix');
+            const columns = Math.floor(window.innerWidth / 20);
+            
+            for (let i = 0; i < columns; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = i * 20 + 'px';
+                column.style.animationDelay = Math.random() * 10 + 's';
+                column.textContent = '01010111100101';
+                matrix.appendChild(column);
+            }
+        }
+        createMatrixRain();
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Smooth scroll
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                scrollToSection(targetId);
+            });
+        });
+
+        // Expand Project Details
+        function expandProject(projectId) {
+            const overlay = document.getElementById('overlay');
+            overlay.classList.add('active');
+            
+            // Create detailed view based on project
+            const details = getProjectDetails(projectId);
+            const detailsModal = document.createElement('div');
+            detailsModal.className = 'project-expanded';
+            detailsModal.innerHTML = details;
+            detailsModal.onclick = (e) => e.stopPropagation();
+            
+            overlay.appendChild(detailsModal);
+        }
+
+        function closeOverlay() {
+            const overlay = document.getElementById('overlay');
+            overlay.classList.remove('active');
+            overlay.innerHTML = '';
+        }
+
+        function getProjectDetails(projectId) {
+            const projects = {
+                replica: `
+                    <div class="card" style="max-height: 90vh; overflow-y: auto;">
+                        <h2 class="text-3xl mb-4 text-gradient">📊 Réplica de Saldos y Movimientos</h2>
+                        
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <h3 class="text-xl mb-2">🔴 Problema Actual</h3>
+                                <p>Pagando ~$5,000 USD mensuales por DocumentDB sin alta disponibilidad y con problemas de rendimiento.</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xl mb-2">✅ Solución MongoDB</h3>
+                                <p>Modelos de precios flexibles con auto-scaling. Sharding reduce costo por máquina mientras aumenta capacidad.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="code-block mb-4">
+                            <code>// Configuración optimizada MongoDB
+{
+  cluster: "M50-nvme",
+  sharding: { enabled: true, key: "accountId" },
+  replication: { members: 3, priority: "regional" },
+  costSaving: "40% vs DocumentDB"
+}</code>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="closeOverlay()">Cerrar</button>
+                    </div>
+                `,
+                inversiones: `
+                    <div class="card" style="max-height: 90vh; overflow-y: auto;">
+                        <h2 class="text-3xl mb-4 text-gradient">💼 Inversiones Bancolombia</h2>
+                        
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <h3 class="text-xl mb-2">🔴 Problema Actual</h3>
+                                <p>CouchBase no es stack estratégico, problemas de escalabilidad para datos de mercado en tiempo real.</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xl mb-2">✅ Solución MongoDB</h3>
+                                <p>Escalado horizontal transparente, replica sets auto-healing, Global Clusters para escritura activo-activo.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="code-block mb-4">
+                            <code>// Migración desde CouchBase
+db.portfolios.insertMany([
+  { customerId, instruments: [], 
+    performance: { daily: [], monthly: [] },
+    riskMetrics: { VaR: 0.95, sharpe: 1.2 }
+  }
+])</code>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="closeOverlay()">Cerrar</button>
+                    </div>
+                `,
+                evolucion: `
+                    <div class="card" style="max-height: 90vh; overflow-y: auto;">
+                        <h2 class="text-3xl mb-4 text-gradient">🚀 BDTL - Base de Datos de Texto Líquido</h2>
+                        <span class="status-badge migration mb-4">Proyecto EVC Evolución Digital</span>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-2xl mb-3">📋 ¿Qué es BDTL?</h3>
+                            <p class="mb-4">
+                                Un <strong>repositorio temporal</strong> soportado en base de datos que centraliza la información extraída de documentos. 
+                                Los datos líquidos almacenados son el resultado de procesos que usan habilitadores de extracción para el procesamiento 
+                                de documentos y que disponen los datos en formato JSON.
+                            </p>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-xl mb-3">🔄 Flujo del Proceso</h3>
+                            <div class="grid grid-cols-4 gap-3 text-center mb-4">
+                                <div class="card p-3">
+                                    <div class="text-2xl mb-2">📄</div>
+                                    <strong>Documentos</strong>
+                                    <p class="text-sm">Procesamiento con habilitadores de extracción</p>
+                                </div>
+                                <div class="card p-3">
+                                    <div class="text-2xl mb-2">💧</div>
+                                    <strong>Datos Líquidos</strong>
+                                    <p class="text-sm">Información en formato JSON</p>
+                                </div>
+                                <div class="card p-3">
+                                    <div class="text-2xl mb-2">🗄️</div>
+                                    <strong>BDTL</strong>
+                                    <p class="text-sm">Almacenamiento temporal centralizado</p>
+                                </div>
+                                <div class="card p-3">
+                                    <div class="text-2xl mb-2">📊</div>
+                                    <strong>LZ Analytics</strong>
+                                    <p class="text-sm">Procesos de analítica</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <h3 class="text-xl mb-3">✅ Capacidades BDTL</h3>
+                                <ul class="space-y-2">
+                                    <li>📦 <strong>Almacenamiento Temporal (6 meses)</strong></li>
+                                    <li>⚡ <strong>Carga Masiva Programada</strong></li>
+                                    <li>🔄 <strong>Actualización de Datos</strong></li>
+                                    <li>🔍 <strong>Consulta Multi-proceso</strong></li>
+                                    <li>♻️ <strong>Reúso de Información via API</strong></li>
+                                    <li>📈 <strong>Replicación a LZ (T-1)</strong></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-xl mb-3">🚀 Por qué MongoDB</h3>
+                                <ul class="space-y-2">
+                                    <li>✓ Nativo para JSON - sin transformaciones</li>
+                                    <li>✓ Esquema flexible para diferentes extractores</li>
+                                    <li>✓ TTL indexes para expiración automática (6 meses)</li>
+                                    <li>✓ Agregaciones complejas multi-proceso</li>
+                                    <li>✓ Change Streams para replicación en tiempo real</li>
+                                    <li>✓ APIs REST nativas con Atlas App Services</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="code-block mb-4">
+                            <code>// Configuración MongoDB para BDTL
+{
+  collection: "texto_liquido",
+  indexes: [
+    { createdAt: 1, expireAfterSeconds: 15552000 }, // TTL 6 meses
+    { processId: 1, documentType: 1 }, // Multi-proceso
+    { "metadata.source": 1 } // Búsqueda por fuente
+  ],
+  changeStreams: {
+    enabled: true,
+    pipeline: [
+      { $match: { operationType: "insert" } },
+      { $project: { fullDocument: 1 } }
+    ]
+  },
+  apiEndpoints: {
+    query: "/api/v1/bdtl/query",
+    bulk: "/api/v1/bdtl/bulk-insert"
+  }
+}</code>
+                        </div>
+
+                        <div class="mb-4">
+                            <h3 class="text-xl mb-3">📊 Comparativa vs SQL Server</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="card" style="border: 2px solid red;">
+                                    <h4 class="text-lg mb-2">❌ SQL Server Actual</h4>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• JSON como VARCHAR(MAX) - ineficiente</li>
+                                        <li>• Esquema rígido requiere ALTER TABLE</li>
+                                        <li>• Sin expiración automática de datos</li>
+                                        <li>• JOINs complejos para datos anidados</li>
+                                    </ul>
+                                </div>
+                                <div class="card mongodb-glow">
+                                    <h4 class="text-lg mb-2">✅ MongoDB</h4>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• JSON/BSON nativo - óptimo rendimiento</li>
+                                        <li>• Esquema dinámico sin migraciones</li>
+                                        <li>• TTL automático para 6 meses</li>
+                                        <li>• Documentos embebidos sin JOINs</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="closeOverlay()">Cerrar</button>
+                    </div>
+                `,
+                centralizacion: `
+                    <div class="card" style="max-height: 90vh; overflow-y: auto;">
+                        <h2 class="text-3xl mb-4 text-gradient">🗄️ Centralización de Información</h2>
+                        
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <h3 class="text-xl mb-2">🔴 Problema Actual</h3>
+                                <p>Modelo con múltiples colecciones referenciadas dificultando desarrollo y afectando rendimiento con operaciones tipo JOIN.</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xl mb-2">✅ Solución MongoDB</h3>
+                                <p>Modelo de documentos permite embeber datos relacionados, eliminando JOINs y mejorando localidad de datos.</p>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="closeOverlay()">Cerrar</button>
+                    </div>
+                `,
+                enriquecimiento: `
+                    <div class="card" style="max-height: 90vh; overflow-y: auto;">
+                        <h2 class="text-3xl mb-4 text-gradient">⚡ Enriquecimiento para Gestión de Fraude</h2>
+                        <span class="status-badge active mb-4">Sistema Crítico de Prevención de Fraude</span>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-2xl mb-3">🎯 Objetivo del Proyecto</h3>
+                            <p class="mb-4">
+                                Tener la mayor cantidad de datos del cliente disponibles para la iniciativa de gestión de fraude, 
+                                que evalúa transacciones a través de motores de evaluación de riesgos, proveedores externos y 
+                                modelos analíticos internos.
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4 mb-6">
+                            <div class="card" style="border: 2px solid red;">
+                                <h3 class="text-xl mb-3">🔴 Problema Actual</h3>
+                                <ul class="space-y-2">
+                                    <li>• Consultas a múltiples fuentes n veces</li>
+                                    <li>• Orquestaciones toman demasiado tiempo</li>
+                                    <li>• No se alcanzan los tiempos deseados</li>
+                                    <li>• Latencia acumulativa inaceptable</li>
+                                </ul>
+                            </div>
+                            <div class="card mongodb-glow">
+                                <h3 class="text-xl mb-3">✅ Solución MongoDB</h3>
+                                <ul class="space-y-2">
+                                    <li>• Vista unificada 360° del cliente</li>
+                                    <li>• Datos pre-agregados y enriquecidos</li>
+                                    <li>• Consultas en memoria con índices óptimos</li>
+                                    <li>• Latencia consistente <100ms</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-xl mb-3">📊 Requerimientos Técnicos</h3>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="metric-card text-center">
+                                    <div class="text-3xl font-bold text-primary">600-700ms</div>
+                                    <p class="text-sm">Tiempo máximo de orquestación</p>
+                                </div>
+                                <div class="metric-card text-center">
+                                    <div class="text-3xl font-bold text-primary">15-20M</div>
+                                    <p class="text-sm">Clientes con datos completos</p>
+                                </div>
+                                <div class="metric-card text-center">
+                                    <div class="text-3xl font-bold text-primary">15K QPS</div>
+                                    <p class="text-sm">Consultas por segundo (2025)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-xl mb-3">📈 Escalamiento Proyectado</h3>
+                            <div class="card p-4">
+                                <p><strong>Carga Inicial:</strong> 4,000-5,000 consultas por segundo</p>
+                                <p><strong>Fin de 2025:</strong> 15,000 consultas por segundo</p>
+                                <p><strong>Procesamiento:</strong> Tiempo real - sin batch processing</p>
+                            </div>
+                        </div>
+
+                        <div class="code-block mb-4">
+                            <code>// Modelo de datos enriquecidos en MongoDB
+{
+  customerId: "12345678",
+  demographics: {
+    age: 35, location: "Bogotá", segment: "Premium"
+  },
+  products: [
+    { type: "credit_card", limit: 50000000, usage: 0.45 },
+    { type: "savings", balance: 120000000 }
+  ],
+  authFactors: {
+    devices: ["mobile_trusted", "web_verified"],
+    lastLogin: ISODate("2025-01-15T10:30:00Z")
+  },
+  riskScore: {
+    current: 720,
+    history: [715, 718, 720],
+    lastUpdated: ISODate("2025-01-15T09:00:00Z")
+  },
+  transactionPatterns: {
+    avgDaily: 5,
+    avgAmount: 500000,
+    unusualActivity: false
+  }
+}
+
+// Consulta optimizada <100ms
+db.enrichedCustomers.findOne(
+  { customerId: "12345678" },
+  { projection: { riskScore: 1, authFactors: 1 } }
+)</code>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="closeOverlay()">Cerrar</button>
+                    </div>
+                `,
+                plink: `
+                    <div class="card" style="max-height: 90vh; overflow-y: auto;">
+                        <h2 class="text-3xl mb-4 text-gradient">📍 Plink - Analytics para Comercios</h2>
+                        <span class="status-badge active mb-4">Producto No Financiero - Analytics Avanzado</span>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-2xl mb-3">📋 Descripción del Producto</h3>
+                            <p class="mb-4">
+                                Administración de categorías y subcategorías para todos los datos transaccionales de las 
+                                transacciones realizadas por clientes de Bancolombia. Proporciona servicio de análisis de 
+                                datos en tiempo real para que los comercios tomen decisiones financieras y de crecimiento 
+                                basadas en la transaccionalidad de tarjetas de crédito.
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <h3 class="text-xl mb-3">📊 Características del Proyecto</h3>
+                                <ul class="space-y-2">
+                                    <li>✓ Producto no financiero</li>
+                                    <li>✓ Modelo similar a Galatea</li>
+                                    <li>✓ Grupo de usuarios reducido pero concurrente</li>
+                                    <li>✓ 3,000 usuarios simultáneos</li>
+                                    <li>✓ Fuertes analíticas de datos</li>
+                                    <li>✓ Manejo de volúmenes altos</li>
+                                    <li>✓ Migrado de ecosistemas a productos</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-xl mb-3">🔴 Desafíos Actuales</h3>
+                                <ul class="space-y-2">
+                                    <li>• Millones de registros por NIT</li>
+                                    <li>• No quieren depender de Data Lake</li>
+                                    <li>• LZ manejado por otro equipo</li>
+                                    <li>• Necesitan todo centralizado</li>
+                                    <li>• Requieren analíticas integradas</li>
+                                    <li>• Redshift sería más costoso</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-xl mb-3">🚀 Por qué MongoDB es Ideal</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="card">
+                                    <h4 class="text-lg mb-2">Capacidades Analíticas</h4>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• Aggregation Framework nativo</li>
+                                        <li>• Window Functions para análisis temporal</li>
+                                        <li>• Faceted Search para categorización</li>
+                                        <li>• Atlas Charts integrado</li>
+                                    </ul>
+                                </div>
+                                <div class="card">
+                                    <h4 class="text-lg mb-2">Gestión de Volumen</h4>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• Sharding automático por NIT</li>
+                                        <li>• Compresión Snappy/Zstd</li>
+                                        <li>• Archival con Online Archive</li>
+                                        <li>• Analytics Nodes dedicados</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="code-block mb-4">
+                            <code>// Pipeline de agregación para análisis de comercios
+db.transactions.aggregate([
+  {
+    $match: {
+      merchantId: "NIT123456",
+      date: { $gte: ISODate("2025-01-01") }
+    }
+  },
+  {
+    $facet: {
+      byCategory: [
+        { $group: {
+          _id: "$category",
+          total: { $sum: "$amount" },
+          count: { $sum: 1 },
+          avgTicket: { $avg: "$amount" }
+        }}
+      ],
+      byHour: [
+        { $group: {
+          _id: { $hour: "$timestamp" },
+          sales: { $sum: "$amount" }
+        }}
+      ],
+      trends: [
+        { $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+          daily: { $sum: "$amount" }
+        }},
+        { $setWindowFields: {
+          sortBy: { _id: 1 },
+          output: {
+            movingAvg: { $avg: "$daily", window: { range: [-6, 0] } }
+          }
+        }}
+      ]
+    }
+  },
+  { $merge: { into: "merchant_analytics_cache" } } // Pre-computar resultados
+])</code>
+                        </div>
+
+                        <div class="mb-4">
+                            <h3 class="text-xl mb-3">💰 Comparativa de Costos</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="card" style="border: 2px solid orange;">
+                                    <h4 class="text-lg mb-2">❌ Redshift</h4>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• Costos de almacenamiento separados</li>
+                                        <li>• Pago por consultas (Spectrum)</li>
+                                        <li>• ETL adicional requerido</li>
+                                        <li>• Vendor lock-in AWS</li>
+                                    </ul>
+                                </div>
+                                <div class="card mongodb-glow">
+                                    <h4 class="text-lg mb-2">✅ MongoDB Atlas</h4>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• Todo incluido en el cluster</li>
+                                        <li>• Sin costos por consulta</li>
+                                        <li>• Analíticas en tiempo real</li>
+                                        <li>• Multi-cloud flexible</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="closeOverlay()">Cerrar</button>
+                    </div>
+                `,
+                galatea: `
+                    <div class="card" style="max-height: 90vh; overflow-y: auto;">
+                        <h2 class="text-3xl mb-4 text-gradient">🔐 Galatea - Plataforma Transaccional Central</h2>
+                        <span class="status-badge active mb-4">Estrategia de Centralización 2025-2028</span>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-2xl mb-3">🎯 Visión Estratégica</h3>
+                            <p class="mb-4">
+                                Bancolombia está centralizando todos sus servicios en una nueva unidad para tener control total, 
+                                propiedad y autoridad sobre todos sus servicios y procesos. Esta es la nueva estrategia del banco 
+                                para los próximos 3 años para optimizar tiempo y maximizar su compromiso EDP con AWS.
+                            </p>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-xl mb-3">🏗️ Arquitectura de Galatea</h3>
+                            <p class="mb-4">
+                                Plataforma donde todos los equipos transversales podrán implementar sus soluciones de negocio. 
+                                Funcionalidad 100% transaccional capturando todas las transacciones de clientes naturales y jurídicos.
+                            </p>
+                            
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="metric-card text-center">
+                                    <div class="text-2xl mb-2">💳</div>
+                                    <strong>Transferencias</strong>
+                                </div>
+                                <div class="metric-card text-center">
+                                    <div class="text-2xl mb-2">💰</div>
+                                    <strong>Pagos</strong>
+                                </div>
+                                <div class="metric-card text-center">
+                                    <div class="text-2xl mb-2">🏦</div>
+                                    <strong>Retiros/Depósitos</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <h3 class="text-xl mb-3">📊 Volúmenes Esperados</h3>
+                                <ul class="space-y-2">
+                                    <li><strong>2M transacciones/día</strong> por canal</li>
+                                    <li><strong>Múltiples canales</strong> (web, móvil, ATM, oficina)</li>
+                                    <li><strong>3 meses</strong> de retención activa</li>
+                                    <li><strong>Archivado en S3</strong> post 3 meses</li>
+                                    <li><strong>100% auditable</strong> - todos los logs</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-xl mb-3">🔄 Ciclo de Vida</h3>
+                                <ol class="space-y-2">
+                                    <li>1️⃣ Captura del evento transaccional</li>
+                                    <li>2️⃣ Indexación para búsqueda rápida</li>
+                                    <li>3️⃣ Exposición a equipos internos</li>
+                                    <li>4️⃣ Disponible para auditoría del cliente</li>
+                                    <li>5️⃣ Cálculo de balances y conciliación</li>
+                                    <li>6️⃣ Archivado después de 3 meses</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-xl mb-3">🔒 Requerimientos de Seguridad</h3>
+                            <div class="card mongodb-gradient">
+                                <ul class="space-y-2">
+                                    <li>✓ Encriptación completa at-rest y in-transit</li>
+                                    <li>✓ Logs de auditoría inmutables</li>
+                                    <li>✓ Trazabilidad completa de cada transacción</li>
+                                    <li>✓ Cumplimiento regulatorio bancario</li>
+                                    <li>✓ Segregación por tipo de cliente (natural/jurídico)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="code-block mb-4">
+                            <code>// Modelo de documento para Galatea
+{
+  _id: ObjectId("..."),
+  transactionId: "TRX-2025-001234",
+  timestamp: ISODate("2025-01-15T14:30:00Z"),
+  channel: "mobile",
+  customer: {
+    id: "CC12345678",
+    type: "natural",
+    segment: "premium"
+  },
+  transaction: {
+    type: "transfer",
+    amount: 5000000,
+    currency: "COP",
+    source: { account: "savings", number: "***1234" },
+    destination: { account: "checking", bank: "Bancolombia" }
+  },
+  audit: {
+    ip: "192.168.1.1",
+    device: "iPhone14",
+    location: { lat: 4.7110, lon: -74.0721 },
+    sessionId: "sess-abc123"
+  },
+  compliance: {
+    amlCheck: "passed",
+    riskScore: 0.12,
+    flags: []
+  },
+  expireAt: ISODate("2025-04-15T14:30:00Z")
+}</code>
+                        </div>
+
+                        <div class="mb-4">
+                            <h3 class="text-xl mb-3">🚀 Ventajas de MongoDB para Galatea</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="card">
+                                    <h4 class="text-lg mb-2">Capacidades Técnicas</h4>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• Change Streams para distribución real-time</li>
+                                        <li>• TTL automático para ciclo de 3 meses</li>
+                                        <li>• Queryable Encryption para cumplimiento</li>
+                                        <li>• Integración nativa con AWS S3</li>
+                                    </ul>
+                                </div>
+                                <div class="card">
+                                    <h4 class="text-lg mb-2">Beneficios Operativos</h4>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• Sin downtime para mantenimiento</li>
+                                        <li>• Auto-scaling para picos de carga</li>
+                                        <li>• Multi-región para DR</li>
+                                        <li>• APIs REST automáticas</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="closeOverlay()">Cerrar</button>
+                    </div>
+                `,
+                tdc: `
+                    <div class="card" style="max-height: 90vh; overflow-y: auto;">
+                        <h2 class="text-3xl mb-4 text-gradient">💳 TDC - Cross-cutting Payment Methods Repository</h2>
+                        <span class="status-badge migration mb-4">Arquitectura en Diseño</span>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-2xl mb-3">🎯 La Necesidad</h3>
+                            <p class="mb-4">
+                                Una plataforma de datos que consolida y centraliza toda la información transaccional y 
+                                operacional para productos de métodos de pago, creando un repositorio transversal único.
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <h3 class="text-xl mb-3">📊 ¿Qué es?</h3>
+                                <p class="mb-3">Consolidación de información de:</p>
+                                <ul class="space-y-2">
+                                    <li>• <strong>Tarjetas de Crédito (TDC)</strong></li>
+                                    <li>• <strong>Tarjetas Débito</strong></li>
+                                    <li>• <strong>Tarjetas Prepago</strong></li>
+                                    <li>• <strong>Pagos Digitales</strong> (wallets, tokenización, suscripciones)</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-xl mb-3">🚀 ¿Para qué?</h3>
+                                <p class="mb-3">Facilitar procesos y asegurar single source of truth:</p>
+                                <ul class="space-y-2">
+                                    <li>• Generar reportería y consumo interno</li>
+                                    <li>• Lanzar campañas y realizar auditorías</li>
+                                    <li>• Consultar sin afectar sistemas core</li>
+                                    <li>• Tener fuente única desacoplada del origen</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-xl mb-3">🏗️ Principios Arquitectónicos Fundamentales</h3>
+                            
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="card">
+                                    <h4 class="text-lg mb-2">📦 Separación e Independencia por Producto</h4>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• Cada producto con su "data sheet" procesado independientemente</li>
+                                        <li>• Cambios en cores (ej. VisionPlus) no requieren rediseño</li>
+                                        <li>• Facilita movilidad de productos entre unidades</li>
+                                        <li>• <em>"We have to keep their product technology independent" - Didier</em></li>
+                                    </ul>
+                                </div>
+                                <div class="card">
+                                    <h4 class="text-lg mb-2">🔄 Replicación, Transformación y Enriquecimiento</h4>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• Solución existente para replicar desde cores</li>
+                                        <li>• "Sheets" transformados para usos específicos</li>
+                                        <li>• Flexibilidad en tecnologías (buckets, NoSQL)</li>
+                                        <li>• Proceso de transformación ya en diseño</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-xl mb-3">💡 Por qué MongoDB es el Candidato Ideal</h3>
+                            <div class="card mongodb-gradient p-4">
+                                <p class="mb-3"><strong>"MongoDB is a strong candidate"</strong> comparado con Aurora PostgreSQL</p>
+                                <ul class="space-y-2">
+                                    <li>✅ Consolida diferentes data sheets en un único punto de análisis</li>
+                                    <li>✅ Permite consultas transversales (por cliente, tipo de tarjeta, fecha)</li>
+                                    <li>✅ Soporta elasticidad horizontal y crecimiento modular</li>
+                                    <li>✅ <strong>"MongoDB makes our lives much easier" - Frank</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-xl mb-3">🔌 Consumo Multi-canal del Repositorio</h3>
+                            <div class="grid md:grid-cols-2 gap-3">
+                                <div class="metric-card">
+                                    <strong>UCS:</strong> Plataforma de soporte operacional interno
+                                </div>
+                                <div class="metric-card">
+                                    <strong>Physical Terminals:</strong> Para usuarios del banco
+                                </div>
+                                <div class="metric-card">
+                                    <strong>Power BI:</strong> Dashboards y reportería de negocio
+                                </div>
+                                <div class="metric-card">
+                                    <strong>RPA:</strong> Automatizaciones internas
+                                </div>
+                                <div class="metric-card" style="grid-column: span 2;">
+                                    <strong>APIs:</strong> Interfaces para exponer información a sistemas internos
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-xl mb-3">📈 Casos de Uso de Negocio</h3>
+                            <div class="card">
+                                <p class="mb-3">El repositorio será la base para procesos críticos internos:</p>
+                                <ul class="space-y-2">
+                                    <li>• Reportería legal u operacional y auditorías</li>
+                                    <li>• Campañas de lealtad y consumo</li>
+                                    <li>• Comparaciones contables o de reconciliación</li>
+                                    <li>• Análisis de cobranza, deuda, modelos de extractos</li>
+                                </ul>
+                                <p class="mt-3 text-primary">
+                                    <em>"We want a system that serves all products and is cross-cutting" - Didier</em>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-xl mb-3">🔮 Estrategia de Integración y Evolución</h3>
+                            <div class="card">
+                                <ul class="space-y-2">
+                                    <li>✓ Solución de replicación existente desde cores</li>
+                                    <li>✓ Capa de transformación ya en diseño (eventos, ETLs, APIs)</li>
+                                    <li>✓ Integración con unidades como CARA para exponer datos operacionales</li>
+                                    <li>✓ Evolución futura a formatos como S3 buckets + Federation</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="code-block mb-4">
+                            <code>// Modelo MongoDB para Payment Methods Repository
+{
+  _id: ObjectId("..."),
+  customerId: "CC12345678",
+  paymentMethods: [
+    {
+      type: "credit_card",
+      product: "Visa Platinum",
+      number: "****1234",
+      core: "VisionPlus",
+      dataSheet: {
+        balance: 5000000,
+        creditLimit: 20000000,
+        availableCredit: 15000000,
+        lastStatement: ISODate("2025-01-01"),
+        transactions: []
+      }
+    },
+    {
+      type: "debit_card",
+      product: "Maestro",
+      number: "****5678",
+      linkedAccounts: ["savings_001", "checking_001"]
+    },
+    {
+      type: "digital_wallet",
+      provider: "Nequi",
+      tokenized: true,
+      subscriptions: ["Netflix", "Spotify"]
+    }
+  ],
+  aggregatedMetrics: {
+    totalSpend: 8500000,
+    loyaltyPoints: 15000,
+    riskScore: 720
+  },
+  lastUpdated: ISODate("2025-01-15T10:00:00Z")
+}
+
+// Consulta transversal ejemplo
+db.paymentRepository.aggregate([
+  { $match: { "paymentMethods.type": "credit_card" } },
+  { $unwind: "$paymentMethods" },
+  { $group: {
+    _id: "$paymentMethods.product",
+    totalBalance: { $sum: "$paymentMethods.dataSheet.balance" },
+    avgCreditUsage: { $avg: {
+      $divide: ["$paymentMethods.dataSheet.balance", "$paymentMethods.dataSheet.creditLimit"]
+    }}
+  }}
+])</code>
+                        </div>
+
+                        <div class="mb-4">
+                            <h3 class="text-xl mb-3">🎯 Visión de Bancolombia - Resumen</h3>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="card text-center">
+                                    <div class="text-2xl mb-2">🔗</div>
+                                    <strong>Desacoplamiento</strong>
+                                    <p class="text-sm mt-2">Consultas transversales evitando re-ingeniería futura</p>
+                                </div>
+                                <div class="card text-center">
+                                    <div class="text-2xl mb-2">🔄</div>
+                                    <strong>Flexibilidad</strong>
+                                    <p class="text-sm mt-2">Múltiples canales de acceso y crecimiento modular</p>
+                                </div>
+                                <div class="card text-center">
+                                    <div class="text-2xl mb-2">💡</div>
+                                    <strong>Resiliencia y Evolución</strong>
+                                    <p class="text-sm mt-2">Plataforma activa que se adapta a la evolución del banco</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="closeOverlay()">Cerrar</button>
+                    </div>
+                `
+            };
+            
+            return projects[projectId] || '<div class="card"><p>Detalles no disponibles</p></div>';
+        }
+
+        // Show Comparison
+        // Show Comparison
+        function showComparison(category) {
+            // Hide all comparisons
+            document.querySelectorAll('.comparison-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Show selected comparison
+            const selectedComparison = document.getElementById(`comparison-${category}`);
+            if (selectedComparison) {
+                selectedComparison.style.display = 'block';
+            }
+            
+            // Update button styles
+            document.querySelectorAll('[onclick*="showComparison"]').forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-ghost');
+            });
+            
+            event.target.classList.remove('btn-ghost');
+            event.target.classList.add('btn-primary');
+        }
+
+        // Demo scheduling
+        function scheduleDemo() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+            `;
+            
+            modal.innerHTML = `
+                <div class="card" style="max-width: 500px; width: 90%;">
+                    <h3 class="text-2xl mb-4 text-gradient">Demo Técnico MongoDB</h3>
+                    <p class="mb-4">
+                        Nuestro equipo de arquitectos de soluciones preparará una demostración personalizada
+                        para los casos de uso específicos de Bancolombia.
+                    </p>
+                    <p class="mb-4">
+                        <strong>Incluye:</strong><br>
+                        • Migración en vivo desde DocumentDB<br>
+                        • Configuración de sharding y replicación<br>
+                        • Optimización de consultas para Plink<br>
+                        • Implementación de seguridad CS-FLE
+                    </p>
+                    <button onclick="this.parentElement.parentElement.remove()" class="btn btn-primary">
+                        Confirmar Solicitud
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Download case study
+        function downloadCaseStudy() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+            `;
+            
+            modal.innerHTML = `
+                <div class="card" style="max-width: 500px; width: 90%;">
+                    <h3 class="text-2xl mb-4 text-gradient">Caso de Estudio Detallado</h3>
+                    <p class="mb-4">
+                        Documento ejecutivo con análisis completo de los 8 proyectos identificados,
+                        comparativas técnicas y propuesta de valor.
+                    </p>
+                    <div class="flex gap-3">
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" class="btn btn-primary">
+                            Descargar PDF
+                        </button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" class="btn btn-ghost">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Add interactive hover effects
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Animate metrics on scroll
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeIn');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.timeline-node, .metric-flip-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

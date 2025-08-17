@@ -174,6 +174,10 @@
       "dest": "/clientes/bancolombia/df/costos.html"
     },
     {
+      "src": "/clientes/bancolombia/df/designreview(?:/.*)?$",
+      "dest": "/clientes/bancolombia/df/designreview.html"
+    },
+    {
       "src": "/clientes/bancolombia/bdtl/bdtl(?:/.*)?$",
       "dest": "/clientes/bancolombia/bdtl/bdtl.html"
     },
@@ -222,6 +226,11 @@
       "dest": "/clientes/bancolombia/bdtl/bp.html"
     },
     {
+      "src": "/clientes/bancolombia/bdtl/bp(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bdtl/bp.html"
+    },
+  
+    {
       "src": "/lz/lz(?:/.*)?$",
       "dest": "/lz/lz.html"
     },
@@ -236,6 +245,18 @@
     {
       "src": "/clientes/cuentas/santiq3(?:/.*)?$",
       "dest": "/clientes/cuentas/santiq3.html"
+    },
+    {
+      "src": "/clientes/bancolombia/reporteejecutivo/estrategia(?:/.*)?$",
+      "dest": "/clientes/bancolombia/reporteejecutivo/estrategia.html"
+    },
+    {
+      "src": "/clientes/bancolombia/reporteejecutivo/estrategiaf(?:/.*)?$",
+      "dest": "/clientes/bancolombia/reporteejecutivo/estrategiaf.html"
+    },
+    {
+      "src": "/clientes/bancolombia/reporteejecutivo/pactuales(?:/.*)?$",
+      "dest": "/clientes/bancolombia/reporteejecutivo/pactuales.html"
     },
     {
       "src": "/(.*)",

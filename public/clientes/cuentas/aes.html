@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mejores Prácticas de Colaboración SA-AE - MongoDB</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para formato vertical */
+        body {
+            overflow: hidden;
+            background: transparent;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-sans);
+        }
+        
+        .presentation-container {
+            width: 1080px;
+            height: 1350px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            background: var(--color-bg-primary);
+        }
+        
+        .slide {
+            width: 1080px;
+            height: 1350px;
+            position: absolute;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            padding: 80px 60px;
+        }
+        
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            flex-direction: column;
+        }
+        
+        /* Slide intro */
+        .slide-intro {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+            position: relative;
+        }
+        
+        .slide-intro::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: var(--color-primary);
+            opacity: 0.1;
+            border-radius: 50%;
+            filter: blur(120px);
+            top: -150px;
+            right: -150px;
+        }
+        
+        .main-title {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: var(--spacing-xl);
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: var(--text-2xl);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-3xl);
+        }
+        
+        /* Slide content */
+        .slide-content {
+            justify-content: flex-start;
+        }
+        
+        .slide-header {
+            margin-bottom: var(--spacing-3xl);
+            text-align: center;
+        }
+        
+        .slide-title {
+            font-size: 3rem;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.2;
+        }
+        
+        .slide-subtitle {
+            font-size: var(--text-xl);
+            color: var(--color-text-secondary);
+        }
+        
+        /* Practice cards */
+        .practice-card {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(0, 237, 100, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin-bottom: var(--spacing-xl);
+            transition: all var(--transition-base);
+        }
+        
+        .practice-card:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.2);
+        }
+        
+        .practice-title {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .practice-icon {
+            font-size: var(--text-3xl);
+        }
+        
+        .practice-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .practice-item {
+            padding: var(--spacing-md) 0;
+            padding-left: var(--spacing-2xl);
+            position: relative;
+            color: var(--color-text-secondary);
+            font-size: var(--text-lg);
+            line-height: 1.6;
+        }
+        
+        .practice-item::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--color-primary);
+            font-size: var(--text-xl);
+        }
+        
+        .practice-subitem {
+            margin-left: var(--spacing-xl);
+            margin-top: var(--spacing-sm);
+            font-size: var(--text-base);
+            opacity: 0.9;
+        }
+        
+        /* Time requirements */
+        .time-requirements {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .time-card {
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, rgba(86, 68, 212, 0.1) 100%);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            text-align: center;
+            transition: all var(--transition-base);
+        }
+        
+        .time-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.3);
+        }
+        
+        .time-value {
+            font-size: var(--text-3xl);
+            font-weight: 900;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .time-label {
+            font-size: var(--text-lg);
+            color: var(--color-text-primary);
+        }
+        
+        /* Role cards */
+        .roles-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            margin: var(--spacing-2xl) 0;
+        }
+        
+        .role-card {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            text-align: center;
+            transition: all var(--transition-base);
+        }
+        
+        .role-card:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-5px);
+        }
+        
+        .role-title {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        /* KPI grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin: var(--spacing-2xl) 0;
+        }
+        
+        .kpi-card {
+            background: var(--color-bg-secondary);
+            border-left: 4px solid var(--color-primary);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-base);
+        }
+        
+        .kpi-card:hover {
+            background: var(--color-bg-card);
+            transform: translateX(5px);
+        }
+        
+        .kpi-metric {
+            font-size: var(--text-3xl);
+            font-weight: 900;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .kpi-description {
+            font-size: var(--text-base);
+            color: var(--color-text-secondary);
+        }
+        
+        /* Warning box */
+        .warning-box {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border: 2px solid var(--color-error);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .warning-title {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--color-error);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        /* Navigation */
+        .nav-dots {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: var(--spacing-md);
+            z-index: 10;
+        }
+        
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+        
+        .nav-dot.active {
+            background: var(--color-primary);
+            transform: scale(1.5);
+        }
+        
+        /* MongoDB branding */
+        .mongodb-logo {
+            position: absolute;
+            bottom: 60px;
+            right: 60px;
+            opacity: 0.6;
+            font-size: var(--text-lg);
+            color: var(--color-text-secondary);
+        }
+        
+        /* Emphasis text */
+        .emphasis {
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+        
+        .text-small {
+            font-size: var(--text-base);
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Intro -->
+        <div class="slide slide-intro active">
+            <h1 class="main-title">Mejores Prácticas de Colaboración</h1>
+            <p class="subtitle">Solutions Architects & Account Executives</p>
+            <div style="margin-top: var(--spacing-3xl);">
+                <span class="badge badge-primary">MongoDB</span>
+                <span class="badge badge-secondary">Team Collaboration</span>
+            </div>
+        </div>
+
+        <!-- Slide 2: Manejo de Agenda -->
+        <div class="slide slide-content">
+            <div class="slide-header">
+                <h2 class="slide-title">1. Manejo de Agenda</h2>
+                <p class="slide-subtitle">Optimizando nuestro tiempo</p>
+            </div>
+            
+            <div class="practice-card">
+                <h3 class="practice-title">
+                    <span class="practice-icon">📅</span>
+                    Reuniones Semanales
+                </h3>
+                <ul class="practice-list">
+                    <li class="practice-item">Espacio fijo de <span class="emphasis">30-45 min</span></li>
+                    <li class="practice-item">Revisar oportunidades activas</li>
+                    <li class="practice-item">Estado de demos y PoCs</li>
+                    <li class="practice-item">Necesidades técnicas y bloqueos</li>
+                </ul>
+            </div>
+            
+            <div class="practice-card">
+                <h3 class="practice-title">
+                    <span class="practice-icon">⏰</span>
+                    Mejores Prácticas
+                </h3>
+                <ul class="practice-list">
+                    <li class="practice-item">Agenda enviada <span class="emphasis">24h antes</span></li>
+                    <li class="practice-item">Bloques de disponibilidad recurrentes</li>
+                    <li class="practice-item">Dejar <span class="emphasis">10-15 min</span> entre reuniones críticas</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: Conflictos de Agenda -->
+        <div class="slide slide-content">
+            <div class="slide-header">
+                <h2 class="slide-title">Conflictos de Agenda</h2>
+                <p class="slide-subtitle">Prioridades claras</p>
+            </div>
+            
+            <div class="warning-box">
+                <h3 class="warning-title">
+                    <span>⚠️</span>
+                    Reglas Inamovibles
+                </h3>
+                <ul class="practice-list">
+                    <li class="practice-item">
+                        <strong>Reuniones con clientes confirmadas</strong>
+                        <div class="practice-subitem">No se cancelan salvo fuerza mayor</div>
+                    </li>
+                    <li class="practice-item">
+                        <strong>Bloques de preparación</strong>
+                        <div class="practice-subitem">Protegidos para garantizar calidad</div>
+                    </li>
+                    <li class="practice-item">
+                        <strong>Conflictos entre clientes</strong>
+                        <div class="practice-subitem">Negociar directamente entre AEs</div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="practice-card" style="margin-top: var(--spacing-2xl);">
+                <p class="text-small" style="text-align: center; margin: 0;">
+                    💡 La calidad de entrega es nuestra prioridad.<br>
+                    Mejor reprogramar que entregar mal preparados.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Solicitud de Demos -->
+        <div class="slide slide-content">
+            <div class="slide-header">
+                <h2 class="slide-title">2. Solicitud de Demos</h2>
+                <p class="slide-subtitle">Tiempos y requisitos</p>
+            </div>
+            
+            <div class="time-requirements">
+                <div class="time-card">
+                    <div class="time-value">3 días</div>
+                    <div class="time-label">Demos Estándar</div>
+                </div>
+                <div class="time-card">
+                    <div class="time-value">5-7 días</div>
+                    <div class="time-label">Demos Personalizadas</div>
+                </div>
+                <div class="time-card">
+                    <div class="time-value">2-3 semanas</div>
+                    <div class="time-label">PoCs e Integraciones</div>
+                </div>
+            </div>
+            
+            <div class="practice-card">
+                <h3 class="practice-title">
+                    <span class="practice-icon">📋</span>
+                    Información Necesaria
+                </h3>
+                <ul class="practice-list">
+                    <li class="practice-item">Objetivo de la demo</li>
+                    <li class="practice-item">Perfil técnico de la audiencia</li>
+                    <li class="practice-item">Casos de uso y pain points</li>
+                    <li class="practice-item">Duración y formato esperado</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Comunicación -->
+        <div class="slide slide-content">
+            <div class="slide-header">
+                <h2 class="slide-title">3. Comunicación Efectiva</h2>
+                <p class="slide-subtitle">Flujo de trabajo optimizado</p>
+            </div>
+            
+            <div class="practice-card">
+                <h3 class="practice-title">
+                    <span class="practice-icon">💬</span>
+                    Canal Único por Cuenta
+                </h3>
+                <p class="text-small">Centralizar toda la información de cada oportunidad</p>
+            </div>
+            
+            <div class="practice-card">
+                <h3 class="practice-title">
+                    <span class="practice-icon">📊</span>
+                    Actualizaciones Semanales
+                </h3>
+                <ul class="practice-list">
+                    <li class="practice-item">Avances logrados</li>
+                    <li class="practice-item">Bloqueos identificados</li>
+                    <li class="practice-item">Próximos pasos definidos</li>
+                </ul>
+            </div>
+            
+            <div class="practice-card">
+                <h3 class="practice-title">
+                    <span class="practice-icon">🚨</span>
+                    Sin Sorpresas
+                </h3>
+                <p class="text-small">Comunicar inmediatamente cambios críticos o riesgos</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Roles y Expectativas -->
+        <div class="slide slide-content">
+            <div class="slide-header">
+                <h2 class="slide-title">4. Roles y Expectativas</h2>
+                <p class="slide-subtitle">Colaboración clara</p>
+            </div>
+            
+            <div class="roles-container">
+                <div class="role-card">
+                    <h3 class="role-title">Account Executive</h3>
+                    <ul class="practice-list">
+                        <li class="practice-item">Estrategia comercial</li>
+                        <li class="practice-item">Relación con cliente</li>
+                        <li class="practice-item">Contexto de negocio</li>
+                    </ul>
+                </div>
+                
+                <div class="role-card">
+                    <h3 class="role-title">Solutions Architect</h3>
+                    <ul class="practice-list">
+                        <li class="practice-item">Visión técnica</li>
+                        <li class="practice-item">Viabilidad técnica</li>
+                        <li class="practice-item">Mejores prácticas</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="practice-card" style="margin-top: var(--spacing-2xl);">
+                <h3 class="practice-title" style="text-align: center;">
+                    <span class="practice-icon">🤝</span>
+                    Colaboración
+                </h3>
+                <p class="text-small" style="text-align: center; margin: 0;">
+                    Alinear narrativa técnica y comercial<br>
+                    Revisar presentaciones antes de usarlas con cliente
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 7: KPIs -->
+        <div class="slide slide-content">
+            <div class="slide-header">
+                <h2 class="slide-title">5. KPIs de Colaboración</h2>
+                <p class="slide-subtitle">Métricas de éxito</p>
+            </div>
+            
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-metric">&lt;24h</div>
+                    <div class="kpi-description">Respuesta a solicitudes</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-metric">100%</div>
+                    <div class="kpi-description">Demos preparadas y revisadas</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-metric">&lt;48h</div>
+                    <div class="kpi-description">Cierre de acciones post-reunión</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-metric">100%</div>
+                    <div class="kpi-description">Cumplimiento tiempos mínimos</div>
+                </div>
+            </div>
+            
+            <div class="practice-card" style="margin-top: var(--spacing-3xl);">
+                <h3 class="practice-title">
+                    <span class="practice-icon">📈</span>
+                    Mejora Continua
+                </h3>
+                <ul class="practice-list">
+                    <li class="practice-item">Retroalimentación después de cada demo</li>
+                    <li class="practice-item">Revisión trimestral conjunta</li>
+                    <li class="practice-item">Ajustes basados en feedback</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 8: Cierre -->
+        <div class="slide slide-content">
+            <div class="slide-header">
+                <h2 class="slide-title">¡Trabajemos Juntos!</h2>
+                <p class="slide-subtitle">El éxito es colaborativo</p>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1;">
+                <div class="practice-card" style="text-align: center; max-width: 800px;">
+                    <h3 class="practice-title" style="justify-content: center; font-size: var(--text-3xl); margin-bottom: var(--spacing-2xl);">
+                        <span class="practice-icon">🚀</span>
+                        Claves del Éxito
+                    </h3>
+                    <p style="font-size: var(--text-xl); line-height: 1.8; color: var(--color-text-primary);">
+                        <span class="emphasis">Comunicación clara</span><br>
+                        <span class="emphasis">Preparación anticipada</span><br>
+                        <span class="emphasis">Respeto mutuo</span><br>
+                        <span class="emphasis">Foco en el cliente</span>
+                    </p>
+                </div>
+                
+                <div style="margin-top: var(--spacing-3xl);">
+                    <p class="text-gradient" style="font-size: var(--text-2xl); font-weight: 700;">
+                        SA + AE = Éxito del Cliente
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-dots">
+            <div class="nav-dot active"></div>
+            <div class="nav-dot"></div>
+            <div class="nav-dot"></div>
+            <div class="nav-dot"></div>
+            <div class="nav-dot"></div>
+            <div class="nav-dot"></div>
+            <div class="nav-dot"></div>
+            <div class="nav-dot"></div>
+        </div>
+
+        <!-- MongoDB branding -->
+        <div class="mongodb-logo">MongoDB Team</div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.nav-dot');
+        let lastKeyTime = 0;
+        const KEY_DELAY = 300;
+
+        function goToSlide(index) {
+            slides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+            
+            currentSlide = index;
+            
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+        }
+
+        // Keyboard navigation with debounce
+        document.addEventListener('keydown', function(e) {
+            const currentTime = Date.now();
+            
+            if (currentTime - lastKeyTime < KEY_DELAY) {
+                e.preventDefault();
+                return;
+            }
+            
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                if (currentSlide < slides.length - 1) {
+                    lastKeyTime = currentTime;
+                    goToSlide(currentSlide + 1);
+                }
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (currentSlide > 0) {
+                    lastKeyTime = currentTime;
+                    goToSlide(currentSlide - 1);
+                }
+            }
+        });
+
+        // Prevent keyup events
+        document.addEventListener('keyup', function(e) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+
+        // Click navigation
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('nav-dot')) {
+                return;
+            }
+            
+            if (currentSlide < slides.length - 1) {
+                goToSlide(currentSlide + 1);
+            }
+        });
+
+        // Dot navigation
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', function(e) {
+                e.stopPropagation();
+                goToSlide(index);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB × Bancolombia | Alianza Estratégica para el Futuro Digital</title>
+    <link rel="stylesheet" href="../../../styles/gomdb-global.css">
+    <style>
+        /* Animaciones personalizadas adicionales */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% { 
+                box-shadow: 0 0 30px rgba(0, 237, 100, 0.5),
+                           inset 0 0 30px rgba(0, 237, 100, 0.1);
+            }
+            50% { 
+                box-shadow: 0 0 60px rgba(0, 237, 100, 0.8),
+                           inset 0 0 50px rgba(0, 237, 100, 0.2);
+            }
+        }
+
+        @keyframes dataFlow {
+            0% { transform: translateX(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Estilos específicos para la presentación */
+        .hero-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .section-transition {
+            height: 150px;
+            background: linear-gradient(180deg, var(--color-bg-primary) 0%, transparent 50%, var(--color-bg-primary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-stream {
+            position: absolute;
+            height: 2px;
+            width: 100px;
+            background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+            animation: dataFlow 3s linear infinite;
+        }
+
+        .interactive-card {
+            transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+            transition: transform 0.6s;
+        }
+
+        .interactive-card:hover {
+            transform: perspective(1000px) rotateX(5deg) rotateY(5deg) scale(1.05);
+        }
+
+        .timeline-item {
+            opacity: 0;
+            transform: translateX(-50px);
+            animation: slideInLeft 0.8s ease-out forwards;
+        }
+
+        .stat-counter {
+            font-size: var(--text-5xl);
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        /* Navegación mejorada */
+        .nav-indicator {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: var(--z-fixed);
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--color-primary);
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: transparent;
+        }
+
+        .nav-dot.active {
+            background: var(--color-primary);
+            transform: scale(1.5);
+        }
+
+        /* Grid dinámico para métricas */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-xl);
+            margin: var(--spacing-2xl) 0;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, var(--color-bg-card) 0%, rgba(13, 42, 61, 0.3) 100%);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: glowPulse 4s ease-in-out infinite;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--color-primary), var(--color-accent), var(--color-primary));
+            border-radius: var(--radius-xl);
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s;
+        }
+
+        .metric-card:hover::before {
+            opacity: 0.3;
+        }
+
+        /* Efectos 3D para cards */
+        .card-3d {
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+        }
+
+        .card-3d-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .card-3d:hover .card-3d-inner {
+            transform: rotateY(10deg) rotateX(-10deg);
+        }
+
+        /* Loader inicial */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+
+        .loader-circle {
+            width: 100px;
+            height: 100px;
+            border: 3px solid var(--color-primary-light);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .nav-indicator {
+                display: none;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="loader-circle"></div>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="navbar" id="navbar">
+        <div class="container navbar-container">
+            <div class="navbar-logo">
+                <span class="text-gradient">MongoDB × Bancolombia</span>
+            </div>
+            <div class="navbar-links">
+                <a href="#resumen" class="navbar-link">Resumen</a>
+                <a href="#retos" class="navbar-link">Retos</a>
+                <a href="#objetivos" class="navbar-link">Objetivos</a>
+                <a href="#estrategia" class="navbar-link">Estrategia</a>
+                <a href="#mongodb" class="navbar-link">MongoDB</a>
+                <a href="#beneficios" class="navbar-link">Beneficios</a>
+                <a href="#futuro" class="navbar-link">Futuro</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Indicador de navegación lateral -->
+    <div class="nav-indicator">
+        <div class="nav-dot active" data-section="hero"></div>
+        <div class="nav-dot" data-section="resumen"></div>
+        <div class="nav-dot" data-section="retos"></div>
+        <div class="nav-dot" data-section="objetivos"></div>
+        <div class="nav-dot" data-section="estrategia"></div>
+        <div class="nav-dot" data-section="mongodb"></div>
+        <div class="nav-dot" data-section="beneficios"></div>
+        <div class="nav-dot" data-section="futuro"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        <div class="hero-particles" id="particles"></div>
+        
+        <div class="container">
+            <div class="text-center animate-fadeIn">
+                <h1 class="text-gradient mb-4">Transformación Digital con MongoDB</h1>
+                <p class="text-2xl mb-5" style="color: var(--color-text-secondary);">
+                    Potenciando el futuro financiero de Bancolombia con tecnología de vanguardia
+                </p>
+                <div class="flex justify-center gap-4">
+                    <button class="btn btn-primary btn-lg animate-glow" onclick="scrollToSection('resumen')">
+                        Comenzar Presentación
+                    </button>
+                    <button class="btn btn-secondary btn-lg" onclick="scrollToSection('mongodb')">
+                        Ver Solución MongoDB
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resumen Ejecutivo -->
+    <section class="section" id="resumen">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Resumen Ejecutivo</h2>
+            
+            <div class="card card-gradient card-bordered animate-fadeIn">
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div>
+                        <h3 class="text-3xl mb-4 text-gradient">La Oportunidad</h3>
+                        <p class="text-lg mb-4">
+                            Bancolombia, líder financiero con <span class="text-primary">30+ millones de clientes</span>, 
+                            enfrenta la transformación digital más importante de su historia. Con inversiones superiores a 
+                            <span class="text-primary">US$130 millones en tecnología</span>, el banco busca aliados estratégicos 
+                            para potenciar su evolución.
+                        </p>
+                        <div class="metric">
+                            <div class="metric-value" data-value="26">0</div>
+                            <div class="metric-label">Millones de transacciones diarias</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-3xl mb-4 text-gradient">La Solución MongoDB</h3>
+                        <p class="text-lg mb-4">
+                            MongoDB ofrece la plataforma de datos moderna que Bancolombia necesita: escalabilidad ilimitada, 
+                            flexibilidad sin precedentes y rendimiento excepcional para manejar 
+                            <span class="text-primary">3,000+ transacciones por segundo</span> en días pico.
+                        </p>
+                        <div class="metric">
+                            <div class="metric-value" data-value="99.85">0</div>
+                            <div class="metric-label">% Disponibilidad requerida</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-grid mt-6">
+                <div class="metric-card interactive-card">
+                    <h4 class="text-xl mb-2">Migración Cloud</h4>
+                    <p class="stat-counter" data-value="100">0%</p>
+                    <p class="text-secondary">Aplicaciones en AWS</p>
+                </div>
+                <div class="metric-card interactive-card">
+                    <h4 class="text-xl mb-2">Transformación Digital</h4>
+                    <p class="stat-counter" data-value="80">0%</p>
+                    <p class="text-secondary">Transacciones digitales</p>
+                </div>
+                <div class="metric-card interactive-card">
+                    <h4 class="text-xl mb-2">Inclusión Financiera</h4>
+                    <p class="stat-counter" data-value="140">0K</p>
+                    <p class="text-secondary">Personas bancarizadas</p>
+                </div>
+                <div class="metric-card interactive-card">
+                    <h4 class="text-xl mb-2">Sostenibilidad</h4>
+                    <p class="stat-counter" data-value="500">0B</p>
+                    <p class="text-secondary">COP meta 2030</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-transition">
+        <div class="data-stream" style="top: 20%;"></div>
+        <div class="data-stream" style="top: 50%; animation-delay: 1s;"></div>
+        <div class="data-stream" style="top: 80%; animation-delay: 2s;"></div>
+    </div>
+
+    <!-- Principales Retos de Negocio -->
+    <section class="section" id="retos">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Principales Retos de Negocio</h2>
+            
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="card card-3d animate-slideInLeft">
+                    <div class="card-3d-inner">
+                        <h3 class="text-2xl mb-3 flex items-center gap-2">
+                            <span class="text-4xl">🚀</span>
+                            Transformación Digital y Competencia Fintech
+                        </h3>
+                        <p class="mb-3">
+                            La digitalización acelerada y el surgimiento de fintechs obligan a Bancolombia a evolucionar rápidamente. 
+                            Los clientes demandan experiencias personalizadas 24/7.
+                        </p>
+                        <div class="badge badge-primary">Nequi: 20M+ usuarios</div>
+                    </div>
+                </div>
+
+                <div class="card card-3d animate-slideInRight">
+                    <div class="card-3d-inner">
+                        <h3 class="text-2xl mb-3 flex items-center gap-2">
+                            <span class="text-4xl">🌎</span>
+                            Inclusión Financiera y Expansión
+                        </h3>
+                        <p class="mb-3">
+                            Compromiso de eliminar brechas en acceso a servicios financieros mediante iniciativas como 
+                            "Bancolombia a la Mano" y Nequi.
+                        </p>
+                        <div class="badge badge-primary">28,200 corresponsales bancarios</div>
+                    </div>
+                </div>
+
+                <div class="card card-3d animate-slideInLeft" style="animation-delay: 0.2s;">
+                    <div class="card-3d-inner">
+                        <h3 class="text-2xl mb-3 flex items-center gap-2">
+                            <span class="text-4xl">📊</span>
+                            Entorno Económico y Rentabilidad
+                        </h3>
+                        <p class="mb-3">
+                            Retos significativos: bajo crecimiento de cartera, deterioro crediticio, altos costos de fondeo, 
+                            inflación elevada y volatilidad del dólar.
+                        </p>
+                        <div class="badge badge-secondary">Presión en utilidades</div>
+                    </div>
+                </div>
+
+                <div class="card card-3d animate-slideInRight" style="animation-delay: 0.2s;">
+                    <div class="card-3d-inner">
+                        <h3 class="text-2xl mb-3 flex items-center gap-2">
+                            <span class="text-4xl">🔒</span>
+                            Cumplimiento Regulatorio y Ciberseguridad
+                        </h3>
+                        <p class="mb-3">
+                            Exigencias regulatorias crecientes (Basilea III) y el 98% de usuarios preocupados por fraudes 
+                            digitales requieren inversión constante en seguridad.
+                        </p>
+                        <div class="badge badge-secondary">Protección 24/7</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Objetivos Estratégicos -->
+    <section class="section" id="objetivos" style="background: var(--color-bg-secondary);">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Objetivos Estratégicos y Tácticos</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="card mongodb-glow p-5 mb-4">
+                        <h3 class="text-2xl mb-3">🌱 Aliado Financiero del Desarrollo Sostenible</h3>
+                        <p>Ser "motor de crecimiento, empleo y desarrollo" económico. Meta 2030: financiar COP 500 billones en iniciativas sostenibles.</p>
+                        <div class="mt-3">
+                            <div style="background: var(--color-bg-tertiary); border-radius: var(--radius-full); height: 20px; overflow: hidden;">
+                                <div class="performance-bar" style="width: 38.6%; height: 100%;"></div>
+                            </div>
+                            <p class="text-sm mt-2">38.6% completado al 2025</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" style="animation-delay: 0.2s;">
+                    <div class="card mongodb-glow p-5 mb-4">
+                        <h3 class="text-2xl mb-3">💡 Innovación Centrada en el Cliente</h3>
+                        <p>Desde la primera tarjeta de crédito (1969) hasta transferencias con "Llaves" y pagos QR interoperables. Mejora continua para 30M+ usuarios.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item" style="animation-delay: 0.4s;">
+                    <div class="card mongodb-glow p-5 mb-4">
+                        <h3 class="text-2xl mb-3">🤝 Inclusión Financiera Masiva</h3>
+                        <p>"Crear oportunidades sin importar ubicación o ingresos". 1,100 municipios cubiertos. Crecimiento del 400% en uso de banca digital durante pandemia.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item" style="animation-delay: 0.6s;">
+                    <div class="card mongodb-glow p-5 mb-4">
+                        <h3 class="text-2xl mb-3">⚡ Eficiencia, Agilidad y Liderazgo Digital</h3>
+                        <p>Banco "100% digital, seguro y accesible". De 1 despliegue mensual a 7 diarios. Ciclos de liberación reducidos de meses a 2 semanas.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item" style="animation-delay: 0.8s;">
+                    <div class="card mongodb-glow p-5 mb-4">
+                        <h3 class="text-2xl mb-3">🛡️ Fortalecer la Seguridad y Cumplimiento</h3>
+                        <p>99.85% disponibilidad actual. Meta: <1 minuto de caída diaria. Creación del Grupo CIBEST para optimización de capital.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Estrategia Tecnológica -->
+    <section class="section" id="estrategia">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Estrategia Tecnológica Temporal</h2>
+            
+            <!-- Tabs de navegación temporal -->
+            <div class="flex justify-center gap-4 mb-6">
+                <button class="btn btn-primary" onclick="showStrategy('corto')">Corto Plazo (1-2 años)</button>
+                <button class="btn btn-ghost" onclick="showStrategy('mediano')">Mediano Plazo (3-5 años)</button>
+                <button class="btn btn-ghost" onclick="showStrategy('largo')">Largo Plazo (5+ años)</button>
+            </div>
+
+            <!-- Corto Plazo -->
+            <div id="strategy-corto" class="strategy-content">
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="card interactive-card">
+                        <h3 class="text-xl mb-3 text-gradient">☁️ Migración Total a la Nube</h3>
+                        <p class="mb-3">100% de aplicaciones migradas a AWS. Arquitectura de microservicios. Time to market reducido de meses a días.</p>
+                        <div class="metric-value text-3xl">7x</div>
+                        <div class="metric-label">Despliegues diarios</div>
+                    </div>
+                    
+                    <div class="card interactive-card">
+                        <h3 class="text-xl mb-3 text-gradient">📱 Digitalización de Experiencia</h3>
+                        <p class="mb-3">Sistema "Llave bancaria" para transferencias simplificadas. 80%+ transacciones digitales.</p>
+                        <div class="metric-value text-3xl">80%</div>
+                        <div class="metric-label">Transacciones digitales</div>
+                    </div>
+                    
+                    <div class="card interactive-card">
+                        <h3 class="text-xl mb-3 text-gradient">📊 Analítica y Nube Híbrida</h3>
+                        <p class="mb-3">Azure DevOps + GitHub Enterprise. 700+ aplicaciones. Formación de científicos de datos.</p>
+                        <div class="metric-value text-3xl">100+</div>
+                        <div class="metric-label">Proyectos en Azure</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mediano Plazo -->
+            <div id="strategy-mediano" class="strategy-content" style="display: none;">
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="card interactive-card">
+                        <h3 class="text-xl mb-3 text-gradient">🤖 IA y Datos Abiertos</h3>
+                        <p class="mb-3">Asistentes virtuales avanzados, scoring inclusivo, Open Banking cuando la regulación lo permita.</p>
+                    </div>
+                    
+                    <div class="card interactive-card">
+                        <h3 class="text-xl mb-3 text-gradient">🚀 Innovación en Productos</h3>
+                        <p class="mb-3">Plataforma de servicios amplia: Wompi, seguros digitales, marketplaces. Grupo CIBEST como holding.</p>
+                    </div>
+                    
+                    <div class="card interactive-card">
+                        <h3 class="text-xl mb-3 text-gradient">🌎 Expansión Regional</h3>
+                        <p class="mb-3">Sistemas core bancarios comunes en la nube. Apps regionales unificadas multi-país.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Largo Plazo -->
+            <div id="strategy-largo" class="strategy-content" style="display: none;">
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="card interactive-card">
+                        <h3 class="text-xl mb-3 text-gradient">⛓️ Blockchain y DeFi</h3>
+                        <p class="mb-3">Identidades digitales seguras, contratos inteligentes, criptomonedas, redes blockchain regionales.</p>
+                    </div>
+                    
+                    <div class="card interactive-card">
+                        <h3 class="text-xl mb-3 text-gradient">🔮 Banca Abierta e Integrada</h3>
+                        <p class="mb-3">Servicios financieros ubicuos, plataforma financiera como servicio, asesores virtuales inteligentes.</p>
+                    </div>
+                    
+                    <div class="card interactive-card">
+                        <h3 class="text-xl mb-3 text-gradient">🌿 Metas Sostenibles</h3>
+                        <p class="mb-3">Monitoreo en tiempo real de huella de carbono. Financiación masiva de energía renovable.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MongoDB como Aliado -->
+    <section class="section" id="mongodb" style="background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">MongoDB como Aliado Estratégico</h2>
+            
+            <div class="card card-gradient card-bordered p-6">
+                <div class="text-center mb-5">
+                    <h3 class="text-3xl mb-3">¿Por qué MongoDB para Bancolombia?</h3>
+                    <p class="text-xl">La plataforma de datos moderna que potencia la transformación digital</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-2xl mb-4 text-gradient">Capacidades Clave</h4>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <span class="text-primary text-2xl">✓</span>
+                                <div>
+                                    <strong>Escalabilidad Horizontal:</strong> Manejo de 26M+ transacciones diarias y picos de 3,000 TPS
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-primary text-2xl">✓</span>
+                                <div>
+                                    <strong>Multi-Cloud Native:</strong> MongoDB Atlas en AWS y Azure, alineado con estrategia multi-nube
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-primary text-2xl">✓</span>
+                                <div>
+                                    <strong>Esquema Flexible:</strong> Desarrollo ágil sin migraciones complejas
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-primary text-2xl">✓</span>
+                                <div>
+                                    <strong>ACID Completo:</strong> Transacciones financieras con consistencia estricta
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-2xl mb-4 text-gradient">Casos de Uso Perfectos</h4>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <span class="text-accent text-2xl">→</span>
+                                <div>
+                                    <strong>Vista 360° del Cliente:</strong> Consolidación de datos heterogéneos para personalización
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-accent text-2xl">→</span>
+                                <div>
+                                    <strong>Procesamiento en Tiempo Real:</strong> Análisis de fraude y scoring crediticio con ML
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-accent text-2xl">→</span>
+                                <div>
+                                    <strong>APIs y Open Banking:</strong> Servicios REST nativos con datos JSON
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-accent text-2xl">→</span>
+                                <div>
+                                    <strong>IoT y Big Data:</strong> Ingesta masiva de datos de sensores y dispositivos
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparativa visual -->
+            <div class="mt-6">
+                <h3 class="text-2xl text-center mb-4">MongoDB vs. Bases de Datos Tradicionales</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="card" style="border: 2px solid rgba(255,0,0,0.3);">
+                        <h4 class="text-xl mb-3" style="color: #EF4444;">❌ Bases de Datos Relacionales</h4>
+                        <ul class="space-y-2 text-secondary">
+                            <li>• Esquemas rígidos difíciles de cambiar</li>
+                            <li>• Escalabilidad vertical costosa</li>
+                            <li>• Joins complejos para datos relacionados</li>
+                            <li>• Migración compleja entre versiones</li>
+                        </ul>
+                    </div>
+                    <div class="card mongodb-glow">
+                        <h4 class="text-xl mb-3 text-primary">✅ MongoDB</h4>
+                        <ul class="space-y-2">
+                            <li>• Esquema flexible y evolutivo</li>
+                            <li>• Escalabilidad horizontal ilimitada</li>
+                            <li>• Documentos anidados sin joins</li>
+                            <li>• Actualizaciones sin downtime</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Beneficios de MongoDB -->
+    <section class="section" id="beneficios">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">Beneficios de MongoDB para Bancolombia</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="card card-3d">
+                    <div class="card-3d-inner">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-5xl">⚡</span>
+                            <h3 class="text-2xl">Escalabilidad y Grandes Volúmenes</h3>
+                        </div>
+                        <p class="mb-4">
+                            MongoDB procesa eficientemente las <strong>26 millones de transacciones diarias</strong> 
+                            (más de 3,000 TPS en picos). Su arquitectura NoSQL distribuida permite escalar horizontalmente 
+                            añadiendo nodos sin sacrificar consistencia.
+                        </p>
+                        <div class="code-block">
+                            <code>// Sharding automático para distribución de carga
+db.transactions.createIndex({ "customerId": 1 })
+sh.shardCollection("banking.transactions", { "customerId": "hashed" })</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-3d">
+                    <div class="card-3d-inner">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-5xl">🚀</span>
+                            <h3 class="text-2xl">Agilidad en Desarrollo</h3>
+                        </div>
+                        <p class="mb-4">
+                            Esquema flexible basado en JSON acelera el desarrollo. No requiere migraciones complejas 
+                            por cada cambio, permitiendo a Bancolombia mantener sus <strong>7 despliegues diarios</strong>.
+                        </p>
+                        <div class="code-block">
+                            <code>// Agregar campos dinámicamente sin migración
+db.customers.updateOne(
+  { _id: customerId },
+  { $set: { "preferences.notifications": true } }
+)</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-3d">
+                    <div class="card-3d-inner">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-5xl">👁️</span>
+                            <h3 class="text-2xl">Vista 360° del Cliente</h3>
+                        </div>
+                        <p class="mb-4">
+                            Consolidación de datos heterogéneos en documentos únicos. Almacena toda la información 
+                            del cliente en un solo lugar, simplificando consultas y habilitando personalización avanzada.
+                        </p>
+                        <div class="code-block">
+                            <code>// Documento unificado del cliente
+{
+  _id: ObjectId("..."),
+  personalInfo: { name, email, phone },
+  accounts: [ {...}, {...} ],
+  transactions: [ {...} ],
+  preferences: { ... },
+  riskScore: 750
+}</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-3d">
+                    <div class="card-3d-inner">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-5xl">🌍</span>
+                            <h3 class="text-2xl">Alta Disponibilidad Global</h3>
+                        </div>
+                        <p class="mb-4">
+                            Replicación multi-región con failover automático. Contribuye al objetivo de 
+                            <strong>99.85% de disponibilidad</strong> (menos de 1 minuto de caída diaria).
+                        </p>
+                        <div class="code-block">
+                            <code>// Configuración de replica set multi-región
+rs.conf({
+  members: [
+    { _id: 0, host: "colombia-1", priority: 2 },
+    { _id: 1, host: "panama-1", priority: 1 },
+    { _id: 2, host: "costarica-1", priority: 1 }
+  ]
+})</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métricas de impacto -->
+            <div class="card mongodb-gradient p-6">
+                <h3 class="text-2xl text-center mb-4">Impacto Proyectado con MongoDB</h3>
+                <div class="metrics-grid">
+                    <div class="text-center">
+                        <div class="text-5xl font-bold text-primary animate-pulse">50%</div>
+                        <p class="text-secondary">Reducción en tiempo de desarrollo</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-5xl font-bold text-primary animate-pulse">3x</div>
+                        <p class="text-secondary">Mejora en velocidad de consultas</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-5xl font-bold text-primary animate-pulse">40%</div>
+                        <p class="text-secondary">Ahorro en costos de infraestructura</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-5xl font-bold text-primary animate-pulse">99.99%</div>
+                        <p class="text-secondary">Disponibilidad alcanzable</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusiones y Futuro -->
+    <section class="section" id="futuro" style="background: linear-gradient(180deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 50%, var(--color-bg-primary) 100%);">
+        <div class="container">
+            <h2 class="text-gradient text-center mb-6">El Futuro Tecnológico de Bancolombia con MongoDB</h2>
+            
+            <div class="card card-gradient card-bordered p-6 mb-6">
+                <h3 class="text-3xl text-center mb-4">Conclusiones Estratégicas</h3>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-xl mb-3 text-gradient">🎯 Alineación Perfecta</h4>
+                        <p class="mb-4">
+                            MongoDB se alinea perfectamente con los objetivos de Bancolombia:
+                        </p>
+                        <ul class="space-y-2">
+                            <li>✓ Soporta la estrategia multi-cloud (AWS + Azure)</li>
+                            <li>✓ Habilita el desarrollo ágil y DevOps</li>
+                            <li>✓ Facilita la innovación en productos digitales</li>
+                            <li>✓ Prepara para Open Banking y APIs</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-xl mb-3 text-gradient">🚀 Ventajas Competitivas</h4>
+                        <p class="mb-4">
+                            Con MongoDB, Bancolombia puede:
+                        </p>
+                        <ul class="space-y-2">
+                            <li>✓ Lanzar productos 50% más rápido</li>
+                            <li>✓ Escalar sin límites técnicos</li>
+                            <li>✓ Personalizar experiencias en tiempo real</li>
+                            <li>✓ Reducir costos operativos significativamente</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Roadmap de implementación -->
+            <div class="card p-6 mb-6">
+                <h3 class="text-2xl mb-4 text-center">Roadmap de Implementación Sugerido</h3>
+                
+                <div class="timeline">
+                    <div class="flex items-center gap-4 mb-4 animate-slideInLeft">
+                        <div class="badge badge-primary">Q1 2025</div>
+                        <div>
+                            <strong>Fase 1: Proof of Concept</strong>
+                            <p class="text-secondary">Migración de sistema de gestión de clientes a MongoDB</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mb-4 animate-slideInLeft" style="animation-delay: 0.2s;">
+                        <div class="badge badge-primary">Q2 2025</div>
+                        <div>
+                            <strong>Fase 2: Implementación Core</strong>
+                            <p class="text-secondary">Despliegue de MongoDB Atlas en AWS para aplicaciones críticas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mb-4 animate-slideInLeft" style="animation-delay: 0.4s;">
+                        <div class="badge badge-primary">Q3 2025</div>
+                        <div>
+                            <strong>Fase 3: Expansión Regional</strong>
+                            <p class="text-secondary">Replicación multi-región para Centroamérica</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mb-4 animate-slideInLeft" style="animation-delay: 0.6s;">
+                        <div class="badge badge-primary">Q4 2025</div>
+                        <div>
+                            <strong>Fase 4: Innovación Avanzada</strong>
+                            <p class="text-secondary">Implementación de IA y análisis predictivo con MongoDB</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action Final -->
+            <div class="text-center">
+                <h3 class="text-4xl mb-4 text-gradient">MongoDB + Bancolombia = Futuro Digital</h3>
+                <p class="text-xl mb-6">
+                    Juntos, podemos transformar la experiencia financiera de millones de latinoamericanos
+                </p>
+                
+                <div class="flex justify-center gap-4">
+                    <button class="btn btn-primary btn-lg animate-glow" onclick="contactMongoDB()">
+                        Iniciar Conversación
+                    </button>
+                    <button class="btn btn-secondary btn-lg" onclick="downloadPresentation()">
+                        Descargar Presentación
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="section-lg" style="background: var(--color-bg-tertiary);">
+        <div class="container text-center">
+            <p class="text-secondary mb-2">MongoDB × Bancolombia - Alianza Estratégica para el Futuro Digital</p>
+            <p class="text-muted">© 2025 - Presentación Confidencial</p>
+        </div>
+    </footer>
+
+    <script>
+        // Loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+
+        // Partículas en el hero
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+
+            // Update navigation dots
+            updateNavDots();
+        });
+
+        // Navigation dots
+        function updateNavDots() {
+            const sections = document.querySelectorAll('section[id]');
+            const navDots = document.querySelectorAll('.nav-dot');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navDots.forEach(dot => {
+                dot.classList.remove('active');
+                if (dot.dataset.section === current) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+
+        // Smooth scroll with validation
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                console.warn(`Section ${sectionId} not found`);
+            }
+        }
+
+        // Navigation links smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                scrollToSection(targetId);
+            });
+        });
+
+        // Navigation dot clicks
+        document.querySelectorAll('.nav-dot').forEach(dot => {
+            dot.addEventListener('click', () => {
+                scrollToSection(dot.dataset.section);
+            });
+        });
+
+        // Counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-counter, .metric-value');
+            
+            counters.forEach(counter => {
+                const target = parseFloat(counter.dataset.value);
+                const duration = 2000;
+                const start = 0;
+                const increment = target / (duration / 16);
+                let current = start;
+                
+                const updateCounter = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.textContent = Math.floor(current) + (counter.textContent.includes('%') ? '%' : '');
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target + (counter.textContent.includes('%') ? '%' : '');
+                    }
+                };
+                
+                // Start animation when element is in viewport
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            updateCounter();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+                
+                observer.observe(counter);
+            });
+        }
+        animateCounters();
+
+        // Strategy tabs
+        function showStrategy(period) {
+            // Hide all strategies
+            document.querySelectorAll('.strategy-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Show selected strategy
+            document.getElementById(`strategy-${period}`).style.display = 'block';
+            
+            // Update button styles
+            const buttons = document.querySelectorAll('[onclick*="showStrategy"]');
+            buttons.forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-ghost');
+            });
+            
+            // Find and highlight the active button
+            buttons.forEach(btn => {
+                if (btn.getAttribute('onclick').includes(period)) {
+                    btn.classList.remove('btn-ghost');
+                    btn.classList.add('btn-primary');
+                }
+            });
+        }
+
+        // Contact MongoDB
+        function contactMongoDB() {
+            // Simulación de formulario de contacto
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: var(--color-bg-secondary); padding: 2rem; border-radius: 1rem; max-width: 500px; width: 90%;">
+                    <h3 style="color: var(--color-primary); margin-bottom: 1rem;">Contacto MongoDB Enterprise</h3>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">
+                        Gracias por su interés en MongoDB para Bancolombia. 
+                        Un especialista en soluciones financieras se pondrá en contacto en las próximas 24 horas.
+                    </p>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="background: var(--color-primary); color: var(--color-text-dark); 
+                                   padding: 0.75rem 2rem; border: none; border-radius: 2rem; 
+                                   cursor: pointer; font-weight: 600;">
+                        Entendido
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Download presentation
+        function downloadPresentation() {
+            // Simulación de descarga
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: var(--color-bg-secondary); padding: 2rem; border-radius: 1rem; max-width: 500px; width: 90%;">
+                    <h3 style="color: var(--color-primary); margin-bottom: 1rem;">Descarga de Presentación</h3>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">
+                        La presentación ejecutiva MongoDB-Bancolombia está siendo preparada en formato PDF.
+                        Incluye: Análisis completo, casos de uso, roadmap de implementación y propuesta comercial.
+                    </p>
+                    <div style="display: flex; gap: 1rem;">
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                                style="background: var(--color-primary); color: var(--color-text-dark); 
+                                       padding: 0.75rem 1.5rem; border: none; border-radius: 2rem; 
+                                       cursor: pointer; font-weight: 600;">
+                            Descargar PDF
+                        </button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                                style="background: transparent; color: var(--color-text-secondary); 
+                                       padding: 0.75rem 1.5rem; border: 2px solid var(--color-text-secondary); 
+                                       border-radius: 2rem; cursor: pointer;">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Add interactive effects to cards
+        document.querySelectorAll('.interactive-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'scale(1.05) translateY(-5px)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1) translateY(0)';
+            });
+        });
+
+        // Parallax effect for hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.hero-background');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
