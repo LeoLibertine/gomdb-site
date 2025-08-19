@@ -601,7 +601,7 @@
                     <li>✓ Análisis predictivo de riesgos</li>
                 </ul>
                 <div class="sector-metric">
-                    <span class="metric-number">80%</span>
+                    <span class="metric-number">30%</span>
                     <span class="metric-text">Reducción en tiempo de procesamiento</span>
                 </div>
             </div>
@@ -624,7 +624,7 @@
                     <li>✓ Arquitectura cloud-native</li>
                 </ul>
                 <div class="sector-metric">
-                    <span class="metric-number">5x</span>
+                    <span class="metric-number">2x</span>
                     <span class="metric-text">Más rápido que SQL</span>
                 </div>
             </div>
@@ -2971,11 +2971,11 @@ document.getElementById('info-panel-default').classList.add('active');
                         <div class="proof-section">
                             <h5 class="text-md font-bold mb-2">Caso de Éxito Comprobado</h5>
                             <div class="client-proof">
-                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='40'%3E%3Ctext x='10' y='25' font-family='Arial' font-size='16' fill='white'%3ETravelers%3C/text%3E%3C/svg%3E" alt="Travelers" />
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='40'%3E%3Ctext x='10' y='25' font-family='Arial' font-size='16' fill='white'%3EBendigo and Adelaide Bank%3C/text%3E%3C/svg%3E" alt="Bendigo and Adelaide Bank" />
                                 <p class="text-sm">
-                                    De <strong>5 apps/año</strong> a <strong>500,000 apps</strong> gracias a MongoDB
+                                    <strong>90% de reducción</strong> en el <strong>tiempo de desarrollo</strong>
                                 </p>
-                                <a href="https://www.slideshare.net/slideshow/mongodb-world-2018-from-disruption-to-transformation-document-databases-domain-driven-design-and-microservices-at-travelers-insurance/104102503" 
+                                <a href="https://www.mongodb.com/solutions/customer-case-studies/bendigo-and-adelaide-bank" 
                                    target="_blank" 
                                    class="case-link">
                                     Ver Caso Completo →
@@ -3643,21 +3643,157 @@ document.addEventListener('DOMContentLoaded', function() {
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Proyecto 1: Enriquecimiento Fraude -->
+                    <!-- Proyecto 1: Botón Bancolombia -->
                     <tr class="project-row">
                         <td class="project-name">
                             <div class="project-label">
                                 <span class="status-dot active"></span>
-                                Enriquecimiento Fraude
+                                Botón Bancolombia
+                            </div>
+                        </td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell primary" data-project="boton" data-usecase="payments">
+                            <div class="cell-content">●</div>
+                        </td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                    </tr>
+                    
+                    <!-- Proyecto 2: Corresponsal Bancario -->
+                    <tr class="project-row">
+                        <td class="project-name">
+                            <div class="project-label">
+                                <span class="status-dot active"></span>
+                                Corresponsal Bancario
+                            </div>
+                        </td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell primary" data-project="corresponsal" data-usecase="retail">
+                            <div class="cell-content">●</div>
+                        </td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                    </tr>
+                    
+                    <!-- Proyecto 3: Galatea Actions -->
+                    <tr class="project-row">
+                        <td class="project-name">
+                            <div class="project-label">
+                                <span class="status-dot active"></span>
+                                Galatea Actions
+                            </div>
+                        </td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell primary" data-project="galatea-actions" data-usecase="view360">
+                            <div class="cell-content">●</div>
+                        </td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                    </tr>
+                    
+                    <!-- Proyecto 4: Plink Categories -->
+                    <tr class="project-row">
+                        <td class="project-name">
+                            <div class="project-label">
+                                <span class="status-dot active"></span>
+                                Plink Categories
+                            </div>
+                        </td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell primary" data-project="plink-categories" data-usecase="analytics">
+                            <div class="cell-content">●</div>
+                        </td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                    </tr>
+                    
+                    <!-- Proyecto 5: Prezio -->
+                    <tr class="project-row">
+                        <td class="project-name">
+                            <div class="project-label">
+                                <span class="status-dot active"></span>
+                                Prezio
+                            </div>
+                        </td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell primary" data-project="prezio" data-usecase="analytics">
+                            <div class="cell-content">●</div>
+                        </td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                    </tr>
+                    
+                    <!-- Proyecto 6: BanBus -->
+                    <tr class="project-row">
+                        <td class="project-name">
+                            <div class="project-label">
+                                <span class="status-dot active"></span>
+                                BanBus
+                            </div>
+                        </td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell primary" data-project="banbus" data-usecase="mobile">
+                            <div class="cell-content">●</div>
+                        </td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell"></td>
+                    </tr>
+                    
+                    <!-- Proyecto 7: Enriquecimiento Monitoring -->
+                    <tr class="project-row">
+                        <td class="project-name">
+                            <div class="project-label">
+                                <span class="status-dot active"></span>
+                                Enriquecimiento Monitoring
                             </div>
                         </td>
                         <td class="matrix-cell primary" data-project="enriquecimiento" data-usecase="fraud">
                             <div class="cell-content">●</div>
                         </td>
                         <td class="matrix-cell"></td>
-                        <td class="matrix-cell secondary" data-project="enriquecimiento" data-usecase="view360">
-                            <div class="cell-content">○</div>
-                        </td>
+                        <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
@@ -3668,44 +3804,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td class="matrix-cell"></td>
                     </tr>
                     
-                    <!-- Proyecto 2: Galatea -->
+                    <!-- Proyecto 8: Query Model -->
                     <tr class="project-row">
                         <td class="project-name">
                             <div class="project-label">
                                 <span class="status-dot active"></span>
-                                Galatea Transaccional
-                            </div>
-                        </td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell primary" data-project="galatea" data-usecase="payments">
-                            <div class="cell-content">●</div>
-                        </td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell secondary" data-project="galatea" data-usecase="modernization">
-                            <div class="cell-content">○</div>
-                        </td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell secondary" data-project="galatea" data-usecase="infrastructure">
-                            <div class="cell-content">○</div>
-                        </td>
-                        <td class="matrix-cell"></td>
-                    </tr>
-                    
-                    <!-- Proyecto 3: Centralización -->
-                    <tr class="project-row">
-                        <td class="project-name">
-                            <div class="project-label">
-                                <span class="status-dot active"></span>
-                                Centralización Info
+                                Query Model
                             </div>
                         </td>
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
-                        <td class="matrix-cell primary" data-project="centralizacion" data-usecase="view360">
+                        <td class="matrix-cell"></td>
+                        <td class="matrix-cell primary" data-project="query-model" data-usecase="modernization">
                             <div class="cell-content">●</div>
                         </td>
                         <td class="matrix-cell"></td>
@@ -3715,10 +3825,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
                     </tr>
                     
-                    <!-- Proyecto 4: TDC -->
+                    <!-- Proyecto 9: TDC (lo mantengo porque lo mencionaste antes) -->
                     <tr class="project-row">
                         <td class="project-name">
                             <div class="project-label">
@@ -3727,9 +3836,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </td>
                         <td class="matrix-cell"></td>
-                        <td class="matrix-cell secondary" data-project="tdc" data-usecase="payments">
-                            <div class="cell-content">○</div>
-                        </td>
+                        <td class="matrix-cell"></td>
                         <td class="matrix-cell primary" data-project="tdc" data-usecase="view360">
                             <div class="cell-content">●</div>
                         </td>
@@ -3737,38 +3844,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
-                        <td class="matrix-cell secondary" data-project="tdc" data-usecase="retail">
-                            <div class="cell-content">○</div>
-                        </td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                    </tr>
-                    
-                    <!-- Proyecto 5: Réplica Saldos -->
-                    <tr class="project-row">
-                        <td class="project-name">
-                            <div class="project-label">
-                                <span class="status-dot active"></span>
-                                Réplica Saldos
-                            </div>
-                        </td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell primary" data-project="replica" data-usecase="modernization">
-                            <div class="cell-content">●</div>
-                        </td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
                     </tr>
                     
-                    <!-- Proyecto 6: BDTL -->
+                    <!-- Proyecto 10: BDTL (lo mantengo porque lo mencionaste antes) -->
                     <tr class="project-row">
                         <td class="project-name">
                             <div class="project-label">
@@ -3782,9 +3864,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td class="matrix-cell primary" data-project="evolucion" data-usecase="modernization">
                             <div class="cell-content">●</div>
                         </td>
-                        <td class="matrix-cell secondary" data-project="evolucion" data-usecase="analytics">
-                            <div class="cell-content">○</div>
-                        </td>
+                        <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
@@ -3793,57 +3873,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td class="matrix-cell"></td>
                     </tr>
                     
-                    <!-- Proyecto 7: Inversiones -->
-                    <tr class="project-row">
-                        <td class="project-name">
-                            <div class="project-label">
-                                <span class="status-dot migration"></span>
-                                Inversiones
-                            </div>
-                        </td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell primary" data-project="inversiones" data-usecase="modernization">
-                            <div class="cell-content">●</div>
-                        </td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell secondary" data-project="inversiones" data-usecase="investment">
-                            <div class="cell-content">○</div>
-                        </td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                    </tr>
-                    
-                    <!-- Proyecto 8: Plink -->
-                    <tr class="project-row">
-                        <td class="project-name">
-                            <div class="project-label">
-                                <span class="status-dot active"></span>
-                                Plink Analytics
-                            </div>
-                        </td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell primary" data-project="plink" data-usecase="analytics">
-                            <div class="cell-content">●</div>
-                        </td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell secondary" data-project="plink" data-usecase="retail">
-                            <div class="cell-content">○</div>
-                        </td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                        <td class="matrix-cell"></td>
-                    </tr>
-                    
-                    <!-- Fila de Oportunidades (casos de uso sin proyectos actuales) -->
+                    <!-- Fila de Oportunidades -->
                     <tr class="project-row opportunity-row">
                         <td class="project-name">
                             <div class="project-label">
@@ -3856,15 +3886,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
-                        <td class="matrix-cell opportunity-cell">
-                            <div class="cell-content">?</div>
-                        </td>
-                        <td class="matrix-cell"></td>
                         <td class="matrix-cell"></td>
                         <td class="matrix-cell opportunity-cell">
                             <div class="cell-content">?</div>
                         </td>
                         <td class="matrix-cell"></td>
+                        <td class="matrix-cell opportunity-cell">
+                            <div class="cell-content">?</div>
+                        </td>
+                        <td class="matrix-cell opportunity-cell">
+                            <div class="cell-content">?</div>
+                        </td>
                         <td class="matrix-cell opportunity-cell">
                             <div class="cell-content">?</div>
                         </td>
@@ -4318,145 +4350,226 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- SCRIPTS SECCIÓN 3 -->
 <script>
     // Datos de proyectos
+// Datos de proyectos actualizados
 const projectDetails = {
+    boton: {
+        title: "💳 Botón Bancolombia",
+        status: "VP: Entorno de Producto",
+        useCase: "Procesamiento de Pagos en Línea",
+        problem: "Necesidad de manejar alto volumen de transacciones con alta disponibilidad para pagos online.",
+        solution: "Plataforma de pagos transaccional con MongoDB para Athenea-PSE y Everest.",
+        mongoValue: [
+            "Alto volumen de transacciones con alta disponibilidad",
+            "Almacenamiento de datos estructurados y no estructurados en un solo registro",
+            "Fácil adopción de nuevos formatos de pago sin rediseñar esquema",
+            "Documentos anidados capturan detalles completos del pago"
+        ]
+    },
+    corresponsal: {
+        title: "🏪 Corresponsal Bancario (Gestor)",
+        status: "VP: Tecnología para Negocios",
+        useCase: "Retail Banking - Corresponsales",
+        problem: "Costos altos de operación y necesidad de escalar para manejar grandes volúmenes en períodos pico.",
+        solution: "Sistema de gestión de corresponsales bancarios que permite servicios financieros a través de negocios locales.",
+        mongoValue: [
+            "60% de reducción de costos",
+            "Escalabilidad horizontal para manejar grandes volúmenes",
+            "Auto-scaling durante períodos de demanda pico",
+            "Gestión eficiente de transacciones en puntos remotos"
+        ]
+    },
+    "galatea-actions": {
+        title: "🎯 Galatea Actions",
+        status: "VP: Tecnología para Negocios",
+        useCase: "Personalización de Productos",
+        problem: "Necesidad de personalización dinámica de productos y canales sin rediseñar la base de datos.",
+        solution: "Microservicio para personalización de productos según el canal y customización de grupos de productos.",
+        mongoValue: [
+            "Flexibilidad de esquema para nuevos campos de personalización",
+            "Gestión dinámica de datos con documentos anidados",
+            "Organización compleja de detalles en una sola entidad",
+            "Escalabilidad para altos volúmenes con crecimiento dinámico"
+        ]
+    },
+    "plink-categories": {
+        title: "📊 Plink Categories",
+        status: "VP: Plink",
+        useCase: "Analytics de Comportamiento",
+        problem: "Necesidad de recopilar, procesar y analizar datos de comportamiento para ofrecer productos personalizados.",
+        solution: "Aplicación de análisis de categorías para ofrecer productos/servicios basados en necesidades del cliente.",
+        mongoValue: [
+            "Alto volumen de transacciones con alta disponibilidad",
+            "Almacenamiento de datos estructurados y no estructurados",
+            "Adopción fácil de nuevos formatos de pago",
+            "Documentos anidados para detalles completos de pagos"
+        ]
+    },
+    prezio: {
+        title: "💰 Prezio",
+        status: "VP: Entorno de Producto",
+        useCase: "Analytics - Negociaciones Dinámicas",
+        problem: "Gestión de negociaciones dinámicas que evolucionan con diferentes campos a lo largo del tiempo.",
+        solution: "Sistema de negociaciones dinámicas que se incorporará a productos con campos variables.",
+        mongoValue: [
+            "Atlas Search para búsquedas complejas",
+            "Esquema flexible para campos dinámicos",
+            "Evolución del modelo sin migraciones",
+            "Integración con productos existentes"
+        ]
+    },
+    banbus: {
+        title: "🎫 BanBus",
+        status: "VP: Entorno de Producto",
+        useCase: "Mobile Banking - Travel",
+        problem: "Necesidad de una plataforma central para gestión de tickets de viaje terrestre con múltiples proveedores.",
+        solution: "Hub central para partners y proveedores de transporte terrestre, similar a Despegar pero enfocado en viajes terrestres.",
+        mongoValue: [
+            "Modelo de datos flexible para integración de proveedores",
+            "Consultas rápidas e indexación eficiente para acceso real-time",
+            "Escalabilidad horizontal para manejar grandes volúmenes de usuarios",
+            "Integración con múltiples APIs de proveedores"
+        ]
+    },
     enriquecimiento: {
-        title: "⚡ Enriquecimiento para Gestión de Fraude",
-        status: "Sistema Crítico de Prevención",
-        useCase: "Detección de Fraude + Vista 360°",
-        problem: "Orquestación de transacciones debe completarse en <600ms consultando múltiples fuentes.",
-        solution: "Vista unificada 360° del cliente con datos pre-agregados y enriquecidos.",
+        title: "⚡ Enriquecimiento Monitoring",
+        status: "VP: Entorno de Producto",
+        useCase: "Detección de Fraude y Monitoreo",
+        problem: "Complejidad en orquestación de datos para evaluación de transacciones con requisitos estrictos de rendimiento.",
+        solution: "Sistema de enriquecimiento de datos para monitoreo y evaluación de fraude en tiempo real.",
         mongoValue: [
-            "Modelo de documentos embebidos elimina JOINs",
-            "Índices compuestos para consultas ultra-rápidas",
-            "In-memory storage para datos calientes"
+            "Reducción significativa en complejidad de orquestación",
+            "Recuperación rápida de datos para cumplir requisitos de rendimiento",
+            "Cumplimiento de requisitos de evaluación de transacciones",
+            "Fortalecimiento de capacidades geográficas"
         ]
     },
-    galatea: {
-        title: "🔍 Galatea - Plataforma Transaccional",
-        status: "Estrategia 2025-2028",
-        useCase: "Procesamiento de Pagos",
-        problem: "Capturar y distribuir 2M transacciones/día por canal.",
-        solution: "Plataforma 100% transaccional centralizada.",
+    "query-model": {
+        title: "🔍 Query Model",
+        status: "VP: Entorno de Producto",
+        useCase: "Modernización - Mainframe Offload",
+        problem: "Mainframe sobrecargado con consultas operacionales que impactan el rendimiento del core.",
+        solution: "Capa de datos operacional para consultas, diseñada para descargar el mainframe sin reemplazarlo.",
         mongoValue: [
-            "Change Streams para distribución real-time",
-            "TTL automático para ciclo de 3 meses",
-            "Integración nativa con AWS S3"
-        ]
-    },
-    centralizacion: {
-        title: "🗄️ Centralización de Información",
-        status: "En Desarrollo",
-        useCase: "Vista 360° del Cliente",
-        problem: "Múltiples colecciones referenciadas con JOINs complejos.",
-        solution: "Repositorio unificado con documentos embebidos.",
-        mongoValue: [
-            "Documentos embebidos eliminan JOINs",
-            "Esquema flexible para diferentes datos",
-            "Localidad de datos mejora rendimiento"
+            "Optimización de rendimiento con múltiples tipos de índices",
+            "Compatibilidad con mainframe - arquitectura desacoplada",
+            "Escalabilidad horizontal para manejar cargas crecientes",
+            "Integración seamless con stacks modernos y APIs",
+            "Consultas avanzadas y transformaciones con aggregation framework",
+            "Flexibilidad centrada en el cliente sin esquemas rígidos"
         ]
     },
     tdc: {
-        title: "💳 TDC - Repositorio de Métodos de Pago",
+        title: "💳 TDC Repositorio",
         status: "Arquitectura en Diseño",
         useCase: "Vista 360° de Pagos",
-        problem: "Datos fragmentados entre diferentes sistemas.",
-        solution: "Consolidación de tarjetas y wallets digitales.",
+        problem: "Datos fragmentados entre diferentes sistemas y cores de tarjetas.",
+        solution: "Consolidación de tarjetas de crédito, débito, prepago y wallets digitales.",
         mongoValue: [
-            "Modelo flexible para productos de pago",
+            "Modelo flexible para diferentes productos de pago",
+            "Consultas transversales sin re-ingeniería",
             "APIs REST automáticas con Atlas",
-            "Federación con S3"
-        ]
-    },
-    replica: {
-        title: "📊 Réplica de Saldos y Movimientos",
-        status: "En Producción",
-        useCase: "Modernización y Offloading",
-        problem: "Costos de $5,000 USD/mes en DocumentDB.",
-        solution: "Migración a MongoDB Atlas.",
-        savings: "40% reducción de costos",
-        mongoValue: [
-            "Sharding reduce costo por máquina",
-            "Auto-scaling sin premium",
-            "Alta disponibilidad incluida"
+            "Federación con S3 para datos históricos"
         ]
     },
     evolucion: {
-        title: "🚀 BDTL - Base de Datos de Texto Líquido",
+        title: "🚀 BDTL Evolución Digital",
         status: "Proyecto EVC",
-        useCase: "Modernización + Analytics",
-        problem: "SQL Server con limitaciones para JSON.",
-        solution: "Repositorio temporal para texto líquido.",
+        useCase: "Modernización de Base de Datos",
+        problem: "SQL Server con limitaciones para JSON y datos no estructurados.",
+        solution: "Repositorio temporal (6 meses) para información extraída de documentos en formato JSON.",
         mongoValue: [
-            "Nativo para JSON",
-            "TTL indexes automáticos",
-            "Change Streams para replicación"
-        ]
-    },
-    inversiones: {
-        title: "💼 Inversiones Bancolombia",
-        status: "Migración desde Couchbase",
-        useCase: "Modernización Legacy",
-        problem: "Couchbase no es stack estratégico.",
-        solution: "Gestión de portafolios con MongoDB.",
-        mongoValue: [
-            "Escalado horizontal transparente",
-            "Global Clusters activo-activo",
-            "Agregaciones financieras complejas"
-        ]
-    },
-    plink: {
-        title: "📈 Plink - Analytics para Comercios",
-        status: "Producto No Financiero",
-        useCase: "Analytics Avanzado",
-        problem: "Millones de registros, analíticas pesadas.",
-        solution: "Análisis real-time para comercios.",
-        mongoValue: [
-            "Aggregation Framework nativo",
-            "Window Functions",
-            "Atlas Charts integrado"
+            "Nativo para JSON sin transformaciones",
+            "TTL indexes para expiración automática",
+            "Change Streams para replicación real-time",
+            "APIs REST nativas con Atlas App Services"
         ]
     }
 };
 
-// Función para mostrar detalles
+// Función para mostrar detalles del proyecto
 function showProjectDetail(projectId) {
     const modal = document.getElementById('projectDetailModal');
     const content = document.getElementById('modalProjectContent');
     const project = projectDetails[projectId];
     
-    if (!project) return;
+    if (!project) {
+        console.log('Proyecto no encontrado:', projectId);
+        return;
+    }
     
     let html = '<div class="project-detail-header">';
     html += '<h2 class="text-3xl mb-4 text-gradient">' + project.title + '</h2>';
     html += '<span class="badge badge-primary mb-4">' + project.status + '</span>';
     html += '</div>';
     
-    html += '<div class="mb-4">';
-    html += '<h3 class="text-xl mb-2 text-gradient">Caso de Uso</h3>';
-    html += '<p>' + project.useCase + '</p>';
+    html += '<div class="project-detail-body">';
+    
+    // Caso de uso
+    html += '<div class="mb-6">';
+    html += '<h3 class="text-xl mb-3 text-gradient">📍 Caso de Uso Principal</h3>';
+    html += '<p class="text-lg">' + project.useCase + '</p>';
     html += '</div>';
     
-    html += '<div class="grid md:grid-cols-2 gap-4 mb-4">';
-    html += '<div class="card"><h4 class="text-lg mb-2">🔴 Problema</h4>';
-    html += '<p class="text-secondary">' + project.problem + '</p></div>';
-    html += '<div class="card mongodb-glow"><h4 class="text-lg mb-2">✅ Solución</h4>';
-    html += '<p>' + project.solution + '</p></div>';
+    // Problema y Solución
+    html += '<div class="grid md:grid-cols-2 gap-6 mb-6">';
+    html += '<div class="card" style="border: 2px solid rgba(239, 68, 68, 0.5);">';
+    html += '<h4 class="text-lg mb-3">🔴 Problema Actual</h4>';
+    html += '<p class="text-secondary">' + project.problem + '</p>';
     html += '</div>';
     
-    if (project.mongoValue) {
-        html += '<div class="mb-4"><h3 class="text-xl mb-2 text-gradient">💎 Valor MongoDB</h3>';
-        html += '<ul class="space-y-2">';
+    html += '<div class="card mongodb-glow">';
+    html += '<h4 class="text-lg mb-3">✅ Solución MongoDB</h4>';
+    html += '<p>' + project.solution + '</p>';
+    html += '</div>';
+    html += '</div>';
+    
+    // Valor de MongoDB
+    if (project.mongoValue && project.mongoValue.length > 0) {
+        html += '<div class="mb-6">';
+        html += '<h3 class="text-xl mb-3 text-gradient">💎 Por qué MongoDB es la Solución Ideal</h3>';
+        html += '<div class="grid md:grid-cols-2 gap-3">';
+        
         project.mongoValue.forEach(function(value) {
-            html += '<li>✓ ' + value + '</li>';
+            html += '<div class="flex items-start gap-3 p-3 bg-primary-light rounded">';
+            html += '<span class="text-primary text-xl">✓</span>';
+            html += '<span class="text-sm">' + value + '</span>';
+            html += '</div>';
         });
-        html += '</ul></div>';
+        
+        html += '</div></div>';
     }
     
-    if (project.savings) {
-        html += '<div class="text-center p-4 bg-gradient-to-r from-green-500/20 to-green-600/20 rounded-lg">';
-        html += '<div class="text-2xl font-bold text-primary">💰 ' + project.savings + '</div>';
-        html += '</div>';
+    // Código de ejemplo según proyecto
+    if (projectId === 'boton') {
+        html += '<div class="code-block mt-6"><code>';
+        html += '// Modelo para Botón Bancolombia\n';
+        html += '{\n';
+        html += '  transactionId: "BTN-2025-001234",\n';
+        html += '  paymentMethod: "PSE",\n';
+        html += '  amount: 150000,\n';
+        html += '  merchant: { id: "M123", name: "Comercio" },\n';
+        html += '  customer: { email: "cliente@email.com" },\n';
+        html += '  status: "completed",\n';
+        html += '  metadata: { /* campos dinámicos */ }\n';
+        html += '}';
+        html += '</code></div>';
+    } else if (projectId === 'query-model') {
+        html += '<div class="code-block mt-6"><code>';
+        html += '// Query Model - Offload Mainframe\n';
+        html += 'db.customerQueries.aggregate([\n';
+        html += '  { $match: { customerId: "12345" } },\n';
+        html += '  { $lookup: {\n';
+        html += '    from: "accounts",\n';
+        html += '    localField: "accountIds",\n';
+        html += '    foreignField: "_id",\n';
+        html += '    as: "accountDetails"\n';
+        html += '  }},\n';
+        html += '  { $project: { /* optimized fields */ } }\n';
+        html += '])';
+        html += '</code></div>';
     }
+    
+    html += '</div>';
     
     content.innerHTML = html;
     modal.classList.add('active');
@@ -4470,13 +4583,13 @@ function closeProjectModal() {
     }
 }
 
-// Configurar event listeners cuando el DOM esté listo
+// Event listeners cuando el DOM esté listo
 window.addEventListener('DOMContentLoaded', function() {
-    console.log('Iniciando event listeners...');
+    console.log('Iniciando event listeners para matriz...');
     
     // Click en celdas de la matriz
-    const cells = document.querySelectorAll('.matrix-cell.primary, .matrix-cell.secondary');
-    console.log('Celdas encontradas:', cells.length);
+    const cells = document.querySelectorAll('.matrix-cell.primary');
+    console.log('Celdas con proyectos encontradas:', cells.length);
     
     cells.forEach(function(cell) {
         cell.addEventListener('click', function(e) {
@@ -4499,6 +4612,30 @@ window.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Hover effects para headers
+    const headers = document.querySelectorAll('.use-case-header');
+    headers.forEach(function(header) {
+        header.addEventListener('mouseenter', function() {
+            const useCase = this.dataset.usecase;
+            const cells = document.querySelectorAll('.matrix-cell[data-usecase="' + useCase + '"]');
+            cells.forEach(function(cell) {
+                if (cell.classList.contains('primary')) {
+                    cell.style.transform = 'scale(1.05)';
+                    cell.style.boxShadow = '0 5px 20px rgba(0, 237, 100, 0.4)';
+                }
+            });
+        });
+        
+        header.addEventListener('mouseleave', function() {
+            const useCase = this.dataset.usecase;
+            const cells = document.querySelectorAll('.matrix-cell[data-usecase="' + useCase + '"]');
+            cells.forEach(function(cell) {
+                cell.style.transform = '';
+                cell.style.boxShadow = '';
+            });
+        });
+    });
 });
 
 </script>
