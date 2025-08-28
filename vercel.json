@@ -259,8 +259,8 @@
       "dest": "/clientes/bancolombia/reporteejecutivo/pactuales.html"
     },
     {
-      "src": "/clientes/BDP/sizing(?:/.*)?$",
-      "dest": "/clientes/BDP/sizing.html"
+      "src": "/clientes/bdp/sizing(?:/.*)?$",
+      "dest": "/clientes/bdp/sizing.html"
     },
     {
       "src": "/clientes/payway/kafka(?:/.*)?$",
@@ -269,6 +269,10 @@
     {
       "src": "/clientes/payway/salesforce(?:/.*)?$",
       "dest": "/clientes/payway/salesforce.html"
+    },
+    {
+      "src": "/clientes/bdp/arquitectura(?:/.*)?$",
+      "dest": "/clientes/payway/arquitectura.svg"
     },
     
     {
