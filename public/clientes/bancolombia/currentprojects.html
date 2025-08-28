@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Use Cases at Bancolombia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 95vw;
+            max-width: 1920px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0D6E5F 0%, #1B8B6F 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 26px;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(13, 110, 95, 0.3);
+        }
+        
+        /* Highlighted Strategic Projects - Now Horizontal */
+        .highlight-projects {
+            background: linear-gradient(135deg, #FF6B6B 0%, #C44569 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .highlight-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .highlight-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .highlight-card {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .highlight-card h3 {
+            color: #C44569;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .highlight-card p {
+            font-size: 13px;
+            line-height: 1.4;
+            margin-bottom: 5px;
+        }
+        
+        .highlight-card small {
+            font-size: 11px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        /* Main content area with categories */
+        .main-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20никс;
+            margin-bottom: 25px;
+        }
+        
+        .category-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .category {
+            background: linear-gradient(135deg, #52C234 0%, #0D6E5F 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 3px 10px rgba(13, 110, 95, 0.2);
+        }
+        
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .use-case-card {
+            background: #E8F5F0;
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid #A8E6CF;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            flex: 1;
+        }
+        
+        .use-case-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-color: #52C234;
+        }
+        
+        .use-case-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #52C234, #0D6E5F);
+        }
+        
+        .card-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #0D6E5F;
+            margin-bottom: 5px;
+        }
+        
+        .card-subtitle {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .card-description {
+            color: #333;
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+        
+        .value-prop {
+            font-size: 11px;
+            color: #0D6E5F;
+            font-style: italic;
+        }
+        
+        /* Bottom strategic section - now wider */
+        .bottom-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .strategic-card {
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .strategic-focus {
+            background: linear-gradient(135deg, #52C234 0%, #0D6E5F 100%);
+            color: white;
+        }
+        
+        .query-model {
+            background: #1a1a2e;
+            color: white;
+        }
+        
+        .enrichment-card {
+            background: #E8F5F0;
+            border: 2px solid #A8E6CF;
+        }
+        
+        .strategic-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .strategic-content {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .strategic-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .strategic-content li {
+            margin-bottom: 6px;
+            padding-left: 18px;
+            position: relative;
+        }
+        
+        .strategic-content li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #52C234;
+        }
+        
+        /* Impact section - now horizontal */
+        .impact-section {
+            background: #0D2B3E;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .impact-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .impact-items {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        
+        .impact-item {
+            padding: 5px 15px;
+            margin: 3px;
+            border-left: 3px solid #52C234;
+            font-size: 13px;
+        }
+        
+        /* Legend - horizontal and compact */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 12px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        
+        .legend-box {
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+        }
+        
+        .new-badge {
+            display: inline-block;
+            background: #FF6B6B;
+            color: white;
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 6px;
+        }
+        
+        .strategic-subtitle {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            MongoDB Use Cases at Bancolombia
+        </div>
+        
+        <!-- Highlighted Strategic Projects - Horizontal Layout -->
+        <div class="highlight-projects">
+            <div class="highlight-title">🚀 Proyectos Estratégicos Principales</div>
+            <div class="highlight-grid">
+                <div class="highlight-card">
+                    <h3>BDTL<span class="new-badge" style="background: #FFA500;">EN IMPLEMENTACIÓN</span></h3>
+                    <p><strong>Repositorio Temporal de Datos Líquidos</strong></p>
+                    <p>Almacenamiento centralizado de información extraída de documentos en formato JSON para análisis y procesamiento</p>
+                    <small>VP: Fast queries, Schema flexibility</small>
+                </div>
+                <div class="highlight-card">
+                    <h3>Detección de Fraudes<span class="new-badge" style="background: #FFA500;">EN IMPLEMENTACIÓN</span></h3>
+                    <p><strong>Sistema de Orquestación Transaccional</strong></p>
+                    <p>Nueva infraestructura para análisis en tiempo real y prevención de fraudes en todos los canales digitales</p>
+                    <small>VP: Real-time processing, High throughput</small>
+                </div>
+                <div class="highlight-card">
+                    <h3>TDC Repository<span class="new-badge" style="background: #4A90E2;">EN EVALUACIÓN</span></h3>
+                    <p><strong>Repositorio Cross-cutting de Métodos de Pago</strong></p>
+                    <p>Plataforma centralizada para consolidar información de tarjetas de crédito, débito y pagos digitales</p>
+                    <small>VP: Single source of truth, High availability</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Categories Grid - 3 columns side by side -->
+        <div class="main-content">
+            <!-- Payments & Transactions Column -->
+            <div class="category-section">
+                <div class="category">Payments & Transactions</div>
+                <div class="cards-container">
+                    <div class="use-case-card">
+                        <div class="card-title">Boton Bancolombia</div>
+                        <div class="card-subtitle">Athenea - PSE | Everest</div>
+                        <div class="card-description">Transactional Button for Online Payments</div>
+                        <div class="value-prop">VP: High Transaction Volume</div>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <div class="card-title">Corresponsal Bancario</div>
+                        <div class="card-subtitle">Gestor</div>
+                        <div class="card-description">Banking correspondent management</div>
+                        <div class="value-prop">VP: 60% Cost Reduction, Horizontal Scalability</div>
+                    </div>
+                    
+                    <div class="use-case-card" style="border-color: #4A90E2; background: #E8F0FF;">
+                        <div class="card-title">TDC Repository<span class="new-badge" style="background: #4A90E2;">EVALUACIÓN</span></div>
+                        <div class="card-subtitle">Payment Methods Platform</div>
+                        <div class="card-description">Centralized repository for credit cards, debit cards, and digital payments</div>
+                        <div class="value-prop">VP: Unified data source, Decoupled architecture</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Banking Services Column -->
+            <div class="category-section">
+                <div class="category">Banking Services</div>
+                <div class="cards-container">
+                    <div class="use-case-card">
+                        <div class="card-title">Galatea</div>
+                        <div class="card-subtitle">Actions</div>
+                        <div class="card-description">Microservice for product personalization across channels</div>
+                        <div class="value-prop">VP: Schema flexibility, Dynamic data</div>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <div class="card-title">BanBus</div>
+                        <div class="card-subtitle">Travel Services</div>
+                        <div class="card-description">Application for land travel with multiple partners/providers</div>
+                        <div class="value-prop">VP: Flexible data model, Fast queries</div>
+                    </div>
+                    
+                    <div class="use-case-card" style="border-color: #FFA500; background: #FFF5E6;">
+                        <div class="card-title">Fraud Detection System<span class="new-badge" style="background: #FFA500;">IMPLEMENTANDO</span></div>
+                        <div class="card-subtitle">Transaction Orchestration</div>
+                        <div class="card-description">Real-time fraud detection and prevention infrastructure</div>
+                        <div class="value-prop">VP: Low latency, High throughput</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data & Personalization Column -->
+            <div class="category-section">
+                <div class="category">Data & Personalization</div>
+                <div class="cards-container">
+                    <div class="use-case-card">
+                        <div class="card-title">Plink</div>
+                        <div class="card-subtitle">Categories</div>
+                        <div class="card-description">Application to collect, process, and deliver behavioral data</div>
+                        <div class="value-prop">VP: High Availability, Flexible schema</div>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <div class="card-title">Prezio</div>
+                        <div class="card-subtitle">Dynamic Negotiations</div>
+                        <div class="card-description">Dynamic negotiations with varying product fields</div>
+                        <div class="value-prop">VP: Atlas Search capabilities</div>
+                    </div>
+                    
+                    <div class="use-case-card" style="border-color: #FFA500; background: #FFF5E6;">
+                        <div class="card-title">BDTL<span class="new-badge" style="background: #FFA500;">IMPLEMENTANDO</span></div>
+                        <div class="card-subtitle">Temporal Data Lake</div>
+                        <div class="card-description">Temporal repository for liquid data from document extraction</div>
+                        <div class="value-prop">VP: JSON flexibility, Fast recovery</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Strategic Focus Section - Wider -->
+        <div class="bottom-section">
+            <div class="strategic-card strategic-focus">
+                <div class="strategic-title">STRATEGIC FOCUS</div>
+                <div class="strategic-subtitle">Mainframe Offloading</div>
+                <div class="strategic-content">
+                    Query Model is a strategic initiative for mainframe modernization
+                    <br><br>
+                    Target: 200+ databases to migrate to MongoDB Atlas
+                </div>
+            </div>
+            
+            <div class="strategic-card query-model">
+                <div class="strategic-title">Query Model</div>
+                <div class="strategic-content">
+                    <ul>
+                        <li>Operational data layer for queries</li>
+                        <li>Customer-focused layer</li>
+                        <li>Complements mainframe, doesn't replace it</li>
+                        <li>VP: Optimization for query performance</li>
+                        <li>Mainframe compatibility, Scalability</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="strategic-card enrichment-card">
+                <div class="strategic-title">Enriquecimiento</div>
+                <div class="strategic-subtitle" style="color: #666;">Monitoring</div>
+                <div class="strategic-content">
+                    Data enrichment and monitoring
+                    <br><br>
+                    VP: Reduced orchestration complexity
+                    <br>Fast data recovery, Geo capabilities
+                </div>
+            </div>
+        </div>
+        
+        <!-- Business Impact - Horizontal -->
+        <div class="impact-section">
+            <div class="impact-title">BUSINESS IMPACT</div>
+            <div class="impact-items">
+                <div class="impact-item">Cost Reduction</div>
+                <div class="impact-item">Scalability</div>
+                <div class="impact-item">Developer Productivity</div>
+                <div class="impact-item">Schema Flexibility</div>
+                <div class="impact-item">Real-time Processing</div>
+                <div class="impact-item">Mainframe Modernization</div>
+            </div>
+        </div>
+        
+        <!-- Legend - Horizontal -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box" style="background: #E8F5F0; border: 2px solid #A8E6CF;"></div>
+                <span>Active MongoDB Implementations</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #1a1a2e;"></div>
+                <span>High-Priority Strategic Workload</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: linear-gradient(135deg, #52C234, #0D6E5F);"></div>
+                <span>Key Strategic Initiative</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB MCP Server - Configuración</title>
+    <style>
+/* =============================================
+   GoMDB - Sistema de Diseño Global
+   Arquitectura MongoDB para Latinoamérica
+   ============================================= */
+
+/* ============================================= 
+   1. VARIABLES CSS (Custom Properties)
+   ============================================= */
+   :root {
+    /* Colores Primarios - Basados en MongoDB */
+    --color-primary: #00ED64;           /* Verde MongoDB */
+    --color-primary-hover: #00D757;     /* Verde hover */
+    --color-primary-light: #00ED6420;   /* Verde con transparencia */
+    
+    /* Colores de Fondo */
+    --color-bg-primary: #001E2B;        /* Azul oscuro principal */
+    --color-bg-secondary: #0D2A3D;      /* Azul medio */
+    --color-bg-tertiary: #112331;       /* Azul alternativo */
+    --color-bg-card: #0D2A3D80;         /* Fondo de cards con transparencia */
+    
+    /* Colores de Acento */
+    --color-accent: #5644D4;            /* Púrpura */
+    --color-accent-light: #5644D420;    /* Púrpura con transparencia */
+    
+    /* Colores de Texto */
+    --color-text-primary: #FFFFFF;      /* Blanco */
+    --color-text-secondary: #B8C4CE;    /* Gris claro */
+    --color-text-muted: #718096;        /* Gris medio */
+    --color-text-dark: #001E2B;         /* Para texto sobre fondos claros */
+    
+    /* Colores de Estado */
+    --color-success: #00ED64;
+    --color-warning: #F59E0B;
+    --color-error: #EF4444;
+    --color-info: #3B82F6;
+    
+    /* Espaciado */
+    --spacing-xs: 0.25rem;    /* 4px */
+    --spacing-sm: 0.5rem;     /* 8px */
+    --spacing-md: 1rem;       /* 16px */
+    --spacing-lg: 1.5rem;     /* 24px */
+    --spacing-xl: 2rem;       /* 32px */
+    --spacing-2xl: 3rem;      /* 48px */
+    --spacing-3xl: 4rem;      /* 64px */
+    --spacing-4xl: 6rem;      /* 96px */
+    
+    /* Tipografía */
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+    
+    /* Tamaños de Fuente */
+    --text-xs: 0.75rem;       /* 12px */
+    --text-sm: 0.875rem;      /* 14px */
+    --text-base: 1rem;        /* 16px */
+    --text-lg: 1.125rem;      /* 18px */
+    --text-xl: 1.25rem;       /* 20px */
+    --text-2xl: 1.5rem;       /* 24px */
+    --text-3xl: 2rem;         /* 32px */
+    --text-4xl: 2.5rem;       /* 40px */
+    --text-5xl: 3rem;         /* 48px */
+    --text-6xl: 4rem;         /* 64px */
+    --text-7xl: 5rem;         /* 80px */
+    --text-8xl: 6rem;         /* 96px */
+    
+    /* Bordes y Radios */
+    --radius-sm: 0.25rem;     /* 4px */
+    --radius-md: 0.5rem;      /* 8px */
+    --radius-lg: 1rem;        /* 16px */
+    --radius-xl: 1.5rem;      /* 24px */
+    --radius-full: 9999px;    /* Circular */
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+    --shadow-glow: 0 0 40px rgba(0, 237, 100, 0.3);
+    
+    /* Transiciones */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+    
+    /* Z-Index */
+    --z-base: 1;
+    --z-dropdown: 10;
+    --z-sticky: 20;
+    --z-fixed: 30;
+    --z-modal-backdrop: 40;
+    --z-modal: 50;
+    --z-popover: 60;
+    --z-tooltip: 70;
+  }
+  
+  /* ============================================= 
+     2. RESET Y BASE
+     ============================================= */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  
+  /* ============================================= 
+     3. TIPOGRAFÍA
+     ============================================= */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  h1 {
+    font-size: clamp(var(--text-4xl), 8vw, var(--text-8xl));
+  }
+  
+  h2 {
+    font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
+  }
+  
+  h3 {
+    font-size: clamp(var(--text-2xl), 3vw, var(--text-4xl));
+  }
+  
+  h4 {
+    font-size: var(--text-2xl);
+  }
+  
+  h5 {
+    font-size: var(--text-xl);
+  }
+  
+  h6 {
+    font-size: var(--text-lg);
+  }
+  
+  p {
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-secondary);
+  }
+  
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+  
+  a:hover {
+    color: var(--color-primary-hover);
+  }
+  
+  /* Texto con gradiente */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* ============================================= 
+     4. LAYOUT Y CONTENEDORES
+     ============================================= */
+  .container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+  }
+  
+  .section {
+    padding: var(--spacing-xl) 0;
+  }
+  
+  .section-lg {
+    padding: var(--spacing-2xl) 0;
+  }
+  
+  /* ============================================= 
+     5. COMPONENTES - NAVEGACIÓN
+     ============================================= */
+  .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: var(--z-fixed);
+    background-color: rgba(0, 30, 43, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+  }
+  
+  .navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+
+  .navbar-nav {
+    display: none;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  @media (min-width: 768px) {
+    .navbar-nav {
+      display: flex;
+    }
+  }
+
+  .nav-link {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    transition: color var(--transition-base);
+    font-size: var(--text-sm);
+  }
+
+  .nav-link:hover {
+    color: var(--color-primary);
+  }
+  
+  /* ============================================= 
+     6. COMPONENTES - BOTONES
+     ============================================= */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-weight: 600;
+    font-size: var(--text-base);
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    text-decoration: none;
+  }
+  
+  .btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+
+  .btn-sm {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--text-sm);
+  }
+  
+  /* ============================================= 
+     7. COMPONENTES - CARDS
+     ============================================= */
+  .card {
+    background-color: var(--color-bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    transition: all var(--transition-base);
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .card-gradient {
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.5) 100%);
+  }
+  
+  .card-bordered {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .card-flat {
+    background-color: var(--color-bg-secondary);
+  }
+
+  .card-flat:hover {
+    transform: none;
+  }
+  
+  /* ============================================= 
+     8. COMPONENTES - HERO
+     ============================================= */
+  .hero {
+    position: relative;
+    padding-top: calc(80px + var(--spacing-2xl));
+    padding-bottom: var(--spacing-xl);
+    overflow: hidden;
+  }
+  
+  .hero-background {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 50%, var(--color-bg-primary) 100%);
+    z-index: -2;
+  }
+  
+  .hero-blur {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.2;
+    z-index: -1;
+  }
+  
+  .hero-blur-primary {
+    width: 300px;
+    height: 300px;
+    background-color: var(--color-primary);
+    top: 10%;
+    left: 5%;
+  }
+  
+  .hero-blur-accent {
+    width: 400px;
+    height: 400px;
+    background-color: var(--color-accent);
+    bottom: 10%;
+    right: 10%;
+  }
+  
+  /* ============================================= 
+     9. COMPONENTES - BADGES Y PILLS
+     ============================================= */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border-radius: var(--radius-full);
+  }
+  
+  .badge-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .badge-secondary {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+  }
+
+  .badge-warning {
+    background-color: var(--color-warning);
+    color: var(--color-text-dark);
+  }
+
+  .badge-success {
+    background-color: var(--color-success);
+    color: var(--color-text-dark);
+  }
+
+  .badge-info {
+    background-color: var(--color-info);
+    color: var(--color-text-primary);
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-base);
+  }
+
+  .pill:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .pill.active {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  /* ============================================= 
+     10. COMPONENTES - CODE
+     ============================================= */
+  .code-block {
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    font-family: var(--font-mono);
+    overflow-x: auto;
+    position: relative;
+    margin: var(--spacing-md) 0;
+  }
+
+  .code-block pre {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+  }
+
+  .code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .code-title {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    font-weight: 600;
+  }
+
+  .copy-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--color-text-secondary);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    cursor: pointer;
+    transition: all var(--transition-base);
+  }
+
+  .copy-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  /* ============================================= 
+     11. COMPONENTES - TABS
+     ============================================= */
+  .tabs {
+    margin: var(--spacing-lg) 0;
+  }
+
+  .tab-nav {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: var(--spacing-md) var(--spacing-lg);
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all var(--transition-base);
+    font-size: var(--text-sm);
+  }
+
+  .tab-btn:hover {
+    color: var(--color-text-primary);
+  }
+
+  .tab-btn.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  /* ============================================= 
+     12. COMPONENTES - STEPS
+     ============================================= */
+  .step-container {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
+  }
+
+  .step-number {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: var(--text-sm);
+  }
+
+  .step-content {
+    flex: 1;
+  }
+
+  .step-title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  /* ============================================= 
+     13. COMPONENTES - CONFIG SELECTOR
+     ============================================= */
+  .config-selector {
+    margin: var(--spacing-lg) 0;
+  }
+
+  .config-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .config-card {
+    background-color: var(--color-bg-secondary);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .config-card:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+  }
+
+  .config-card.selected {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary-light);
+  }
+
+  .config-card h4 {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  /* ============================================= 
+     14. UTILIDADES
+     ============================================= */
+  .text-left { text-align: left; }
+  .text-center { text-align: center; }
+  .text-right { text-align: right; }
+  
+  .flex { display: flex; }
+  .grid { display: grid; }
+  .items-center { align-items: center; }
+  .justify-center { justify-content: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-3 { gap: var(--spacing-md); }
+  .gap-4 { gap: var(--spacing-lg); }
+  .gap-5 { gap: var(--spacing-xl); }
+  
+  .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  
+  @media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
+  .mb-0 { margin-bottom: 0; }
+  .mb-2 { margin-bottom: var(--spacing-sm); }
+  .mb-4 { margin-bottom: var(--spacing-lg); }
+  .mt-4 { margin-top: var(--spacing-lg); }
+
+  .hidden { display: none; }
+  
+  /* ============================================= 
+     15. ANIMACIONES
+     ============================================= */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  .animate-slideInLeft {
+    animation: slideInLeft 0.6s ease-out;
+  }
+
+  /* Styles específicos para la página de configuración */
+  .slide {
+    min-height: auto;
+    padding: var(--spacing-xl) 0;
+  }
+
+  .slide:not(:first-child) {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .requirement-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin: var(--spacing-md) 0;
+  }
+
+  .check-icon {
+    color: var(--color-success);
+    font-weight: bold;
+  }
+
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-container">
+                <div class="navbar-logo">
+                    <span>🔧</span>
+                    MongoDB MCP - Configuración
+                </div>
+                <div class="navbar-nav">
+                    <a href="#prerequisites" class="nav-link">Prerrequisitos</a>
+                    <a href="#setup" class="nav-link">Configuración</a>
+                    <a href="#options" class="nav-link">Opciones</a>
+                    <a href="#security" class="nav-link">Seguridad</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        <div class="container">
+            <div class="text-center animate-fadeIn">
+                <h1 class="text-gradient">Configuración e Implementación</h1>
+                <p class="text-xl" style="max-width: 700px; margin: 0 auto;">
+                    Guía completa para instalar y configurar MongoDB MCP Server en tu entorno de desarrollo
+                </p>
+                <div style="margin-top: var(--spacing-lg);">
+                    <span class="badge badge-success">Node.js 20.19.0+</span>
+                    <span class="badge badge-info">6 Métodos de Setup</span>
+                    <span class="badge badge-warning">Configuración Segura</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prerrequisitos -->
+    <section id="prerequisites" class="slide">
+        <div class="container">
+            <h2 class="text-gradient">Prerrequisitos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="card card-bordered">
+                    <h3>Requerimientos del Sistema</h3>
+                    <div class="requirement-item">
+                        <span class="check-icon">✓</span>
+                        <div>
+                            <strong>Node.js</strong><br>
+                            <small class="text-muted">Mínimo 20.19.0, v22.12.0+ o cualquier v23+</small>
+                        </div>
+                    </div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">Verificar versión</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                        </div>
+                        <pre>node -v</pre>
+                    </div>
+                </div>
+                <div class="card card-bordered">
+                    <h3>Credenciales Requeridas</h3>
+                    <div class="requirement-item">
+                        <span class="check-icon">✓</span>
+                        <div>
+                            <strong>Cadena de Conexión MongoDB</strong><br>
+                            <small class="text-muted">Para acceso directo a datos (CRUD, consultas)</small>
+                        </div>
+                    </div>
+                    <div class="requirement-item">
+                        <span class="check-icon">✓</span>
+                        <div>
+                            <strong>Credenciales API Atlas</strong><br>
+                            <small class="text-muted">Para gestión de infraestructura (Service Account)</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Métodos de Setup -->
+    <section id="setup" class="slide">
+        <div class="container">
+            <h2 class="text-gradient">Métodos de Configuración</h2>
+            <div class="config-selector">
+                <div class="config-options grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="config-card" onclick="selectConfig('connection-string')">
+                        <h4>🔗 Cadena de Conexión</h4>
+                        <p>Acceso directo a datos con URI de MongoDB</p>
+                        <div class="badge badge-primary">Recomendado</div>
+                    </div>
+                    <div class="config-card" onclick="selectConfig('atlas-api')">
+                        <h4>☁️ API de Atlas</h4>
+                        <p>Gestión completa de infraestructura Atlas</p>
+                        <div class="badge badge-info">Avanzado</div>
+                    </div>
+                    <div class="config-card" onclick="selectConfig('docker')">
+                        <h4>🐳 Docker</h4>
+                        <p>Contenedor aislado sin instalación local</p>
+                        <div class="badge badge-secondary">Portable</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración por Cadena de Conexión -->
+            <div id="connection-string-config" class="config-content hidden">
+                <div class="card card-gradient">
+                    <h3>Configuración con Cadena de Conexión</h3>
+                    <p>Ideal para desarrollo y acceso directo a datos existentes</p>
+                    
+                    <div class="tabs">
+                        <div class="tab-nav">
+                            <button class="tab-btn active" onclick="switchTab(this, 'vscode-conn')">VS Code</button>
+                            <button class="tab-btn" onclick="switchTab(this, 'cursor-conn')">Cursor</button>
+                            <button class="tab-btn" onclick="switchTab(this, 'claude-conn')">Claude</button>
+                            <button class="tab-btn" onclick="switchTab(this, 'cli-conn')">CLI</button>
+                        </div>
+                        
+                        <div id="vscode-conn" class="tab-content active">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">settings.json (VS Code)</span>
+                                    <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                                </div>
+                                <pre>{
+  "mcpServers": {
+    "MongoDB": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mongodb-mcp-server",
+        "--connectionString",
+        "mongodb://localhost:27017/myDatabase",
+        "--readOnly"
+      ]
+    }
+  }
+}</pre>
+                            </div>
+                        </div>
+                        
+                        <div id="cursor-conn" class="tab-content">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">Cursor Configuration</span>
+                                    <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                                </div>
+                                <pre>{
+  "mcpServers": {
+    "MongoDB": {
+      "command": "npx",
+      "args": ["-y", "mongodb-mcp-server"],
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "mongodb://localhost:27017/myDatabase",
+        "MDB_MCP_READ_ONLY": "true"
+      }
+    }
+  }
+}</pre>
+                            </div>
+                        </div>
+                        
+                        <div id="claude-conn" class="tab-content">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">claude_desktop_config.json</span>
+                                    <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                                </div>
+                                <pre>{
+  "mcpServers": {
+    "MongoDB": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mongodb-mcp-server"
+      ],
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "mongodb+srv://user:pass@cluster.mongodb.net/db",
+        "MDB_MCP_READ_ONLY": "true"
+      }
+    }
+  }
+}</pre>
+                            </div>
+                        </div>
+                        
+                        <div id="cli-conn" class="tab-content">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">Comando CLI</span>
+                                    <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                                </div>
+                                <pre>npx -y mongodb-mcp-server@latest \
+  --connectionString="mongodb://localhost:27017/myDatabase" \
+  --readOnly</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración con API de Atlas -->
+            <div id="atlas-api-config" class="config-content hidden">
+                <div class="card card-gradient">
+                    <h3>Configuración con API de Atlas</h3>
+                    <p>Para gestión completa de infraestructura y aprovisionamiento de clústeres</p>
+                    
+                    <div class="card card-flat mb-4">
+                        <h4>Paso 1: Crear Service Account</h4>
+                        <div class="step-container">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <div class="step-title">Acceder a Atlas</div>
+                                <p>Ve a cloud.mongodb.com → Access Manager → Organization Access</p>
+                            </div>
+                        </div>
+                        <div class="step-container">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <div class="step-title">Crear Service Account</div>
+                                <p>Add New → Applications → Service Accounts</p>
+                                <p>Asigna solo los permisos mínimos necesarios (ver tabla de permisos)</p>
+                            </div>
+                        </div>
+                        <div class="step-container">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <div class="step-title">Guardar Credenciales</div>
+                                <p>Copia el Client ID y Client Secret inmediatamente</p>
+                                <div class="badge badge-warning">El Secret no se muestra de nuevo</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tabs">
+                        <div class="tab-nav">
+                            <button class="tab-btn active" onclick="switchTab(this, 'vscode-atlas')">VS Code</button>
+                            <button class="tab-btn" onclick="switchTab(this, 'cursor-atlas')">Cursor</button>
+                            <button class="tab-btn" onclick="switchTab(this, 'claude-atlas')">Claude</button>
+                            <button class="tab-btn" onclick="switchTab(this, 'cli-atlas')">CLI</button>
+                        </div>
+                        
+                        <div id="vscode-atlas" class="tab-content active">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">settings.json (VS Code)</span>
+                                    <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                                </div>
+                                <pre>{
+  "mcpServers": {
+    "MongoDB": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mongodb-mcp-server",
+        "--apiClientId",
+        "your-client-id",
+        "--apiClientSecret",
+        "your-client-secret",
+        "--readOnly"
+      ]
+    }
+  }
+}</pre>
+                            </div>
+                        </div>
+                        
+                        <div id="cursor-atlas" class="tab-content">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">Cursor Configuration</span>
+                                    <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                                </div>
+                                <pre>{
+  "mcpServers": {
+    "MongoDB": {
+      "command": "npx",
+      "args": ["-y", "mongodb-mcp-server"],
+      "env": {
+        "MDB_MCP_API_CLIENT_ID": "your-client-id",
+        "MDB_MCP_API_CLIENT_SECRET": "your-client-secret",
+        "MDB_MCP_READ_ONLY": "true"
+      }
+    }
+  }
+}</pre>
+                            </div>
+                        </div>
+                        
+                        <div id="claude-atlas" class="tab-content">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">claude_desktop_config.json</span>
+                                    <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                                </div>
+                                <pre>{
+  "mcpServers": {
+    "MongoDB": {
+      "command": "npx",
+      "args": ["-y", "mongodb-mcp-server"],
+      "env": {
+        "MDB_MCP_API_CLIENT_ID": "your-client-id",
+        "MDB_MCP_API_CLIENT_SECRET": "your-client-secret",
+        "MDB_MCP_READ_ONLY": "true"
+      }
+    }
+  }
+}</pre>
+                            </div>
+                        </div>
+                        
+                        <div id="cli-atlas" class="tab-content">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">Comando CLI</span>
+                                    <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                                </div>
+                                <pre>npx -y mongodb-mcp-server@latest \
+  --apiClientId="your-client-id" \
+  --apiClientSecret="your-client-secret" \
+  --readOnly</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración Docker -->
+            <div id="docker-config" class="config-content hidden">
+                <div class="card card-gradient">
+                    <h3>Configuración con Docker</h3>
+                    <p>Entorno aislado sin necesidad de instalación local de Node.js</p>
+                    
+                    <div class="tabs">
+                        <div class="tab-nav">
+                            <button class="tab-btn active" onclick="switchTab(this, 'docker-conn')">Con Conexión</button>
+                            <button class="tab-btn" onclick="switchTab(this, 'docker-atlas')">Con Atlas API</button>
+                            <button class="tab-btn" onclick="switchTab(this, 'docker-mcp')">En MCP Config</button>
+                        </div>
+                        
+                        <div id="docker-conn" class="tab-content active">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">Docker con Connection String</span>
+                                    <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                                </div>
+                                <pre>docker run --rm -i \
+  -e MDB_MCP_CONNECTION_STRING="mongodb+srv://user:pass@cluster.mongodb.net/db" \
+  -e MDB_MCP_READ_ONLY="true" \
+  mongodb/mongodb-mcp-server:latest</pre>
+                            </div>
+                        </div>
+                        
+                        <div id="docker-atlas" class="tab-content">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">Docker con Atlas API</span>
+                                    <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                                </div>
+                                <pre>docker run --rm -i \
+  -e MDB_MCP_API_CLIENT_ID="your-client-id" \
+  -e MDB_MCP_API_CLIENT_SECRET="your-client-secret" \
+  -e MDB_MCP_READ_ONLY="true" \
+  mongodb/mongodb-mcp-server:latest</pre>
+                            </div>
+                        </div>
+                        
+                        <div id="docker-mcp" class="tab-content">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">Docker en archivo MCP</span>
+                                    <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                                </div>
+                                <pre>{
+  "mcpServers": {
+    "MongoDB": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "-e",
+        "MDB_MCP_CONNECTION_STRING=mongodb+srv://user:pass@cluster.mongodb.net/db",
+        "-e",
+        "MDB_MCP_READ_ONLY=true",
+        "mongodb/mongodb-mcp-server:latest"
+      ]
+    }
+  }
+}</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Opciones de Configuración -->
+    <section id="options" class="slide">
+        <div class="container">
+            <h2 class="text-gradient">Opciones de Configuración Avanzada</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="card card-bordered">
+                    <h3>Variables de Entorno</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">Configuración via ENV</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                        </div>
+                        <pre># Credenciales
+export MDB_MCP_CONNECTION_STRING="mongodb://..."
+export MDB_MCP_API_CLIENT_ID="client-id"
+export MDB_MCP_API_CLIENT_SECRET="client-secret"
+
+# Configuración
+export MDB_MCP_READ_ONLY="true"
+export MDB_MCP_INDEX_CHECK="true"
+export MDB_MCP_LOG_PATH="/path/to/logs"</pre>
+                    </div>
+                </div>
+                
+                <div class="card card-bordered">
+                    <h3>Transporte HTTP</h3>
+                    <p>Para conexiones remotas o integración web</p>
+                    <div class="badge badge-warning mb-2">Solo para desarrollo</div>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-title">Servidor HTTP</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copiar</button>
+                        </div>
+                        <pre>npx -y mongodb-mcp-server@latest \
+  --transport http \
+  --httpHost=127.0.0.1 \
+  --httpPort=3000</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tabla de Opciones -->
+    <section class="slide">
+        <div class="container">
+            <h2 class="text-gradient">Referencia Completa de Opciones</h2>
+            <div class="card card-flat">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--color-primary);">
+                                <th style="padding: var(--spacing-md); text-align: left; color: var(--color-primary);">Opción CLI</th>
+                                <th style="padding: var(--spacing-md); text-align: left; color: var(--color-primary);">Variable ENV</th>
+                                <th style="padding: var(--spacing-md); text-align: left; color: var(--color-primary);">Descripción</th>
+                                <th style="padding: var(--spacing-md); text-align: left; color: var(--color-primary);">Default</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-md); font-family: var(--font-mono); font-size: var(--text-sm);">--connectionString</td>
+                                <td style="padding: var(--spacing-md); font-family: var(--font-mono); font-size: var(--text-sm);">MDB_MCP_CONNECTION_STRING</td>
+                                <td style="padding: var(--spacing-md);">URI de conexión a MongoDB</td>
+                                <td style="padding: var(--spacing-md); color: var(--color-text-muted);">-</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-md); font-family: var(--font-mono); font-size: var(--text-sm);">--apiClientId</td>
+                                <td style="padding: var(--spacing-md); font-family: var(--font-mono); font-size: var(--text-sm);">MDB_MCP_API_CLIENT_ID</td>
+                                <td style="padding: var(--spacing-md);">Client ID de Service Account Atlas</td>
+                                <td style="padding: var(--spacing-md); color: var(--color-text-muted);">-</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-md); font-family: var(--font-mono); font-size: var(--text-sm);">--readOnly</td>
+                                <td style="padding: var(--spacing-md); font-family: var(--font-mono); font-size: var(--text-sm);">MDB_MCP_READ_ONLY</td>
+                                <td style="padding: var(--spacing-md);">Solo operaciones de lectura y metadatos</td>
+                                <td style="padding: var(--spacing-md); color: var(--color-text-muted);">false</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-md); font-family: var(--font-mono); font-size: var(--text-sm);">--indexCheck</td>
+                                <td style="padding: var(--spacing-md); font-family: var(--font-mono); font-size: var(--text-sm);">MDB_MCP_INDEX_CHECK</td>
+                                <td style="padding: var(--spacing-md);">Forzar uso de índices en consultas</td>
+                                <td style="padding: var(--spacing-md); color: var(--color-text-muted);">false</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-md); font-family: var(--font-mono); font-size: var(--text-sm);">--disabledTools</td>
+                                <td style="padding: var(--spacing-md); font-family: var(--font-mono); font-size: var(--text-sm);">MDB_MCP_DISABLED_TOOLS</td>
+                                <td style="padding: var(--spacing-md);">Lista de herramientas a desactivar</td>
+                                <td style="padding: var(--spacing-md); color: var(--color-text-muted);">-</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: var(--spacing-md); font-family: var(--font-mono); font-size: var(--text-sm);">--transport</td>
+                                <td style="padding: var(--spacing-md); font-family: var(--font-mono); font-size: var(--text-sm);">MDB_MCP_TRANSPORT</td>
+                                <td style="padding: var(--spacing-md);">Protocolo de transporte (stdio/http)</td>
+                                <td style="padding: var(--spacing-md); color: var(--color-text-muted);">stdio</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seguridad -->
+    <section id="security" class="slide">
+        <div class="container">
+            <h2 class="text-gradient">Configuración de Seguridad</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="card card-gradient">
+                    <h3>Modo Solo Lectura</h3>
+                    <p>Restringe el servidor a operaciones de solo lectura, previniendo modificaciones accidentales</p>
+                    <div class="code-block">
+                        <pre>--readOnly</pre>
+                    </div>
+                    <div class="badge badge-success">Recomendado por defecto</div>
+                </div>
+                
+                <div class="card card-gradient">
+                    <h3>Control de Herramientas</h3>
+                    <p>Desactiva herramientas específicas o categorías completas según necesidades</p>
+                    <div class="code-block">
+                        <pre>--disabledTools create delete atlas</pre>
+                    </div>
+                    <div class="badge badge-info">Mínimo privilegio</div>
+                </div>
+                
+                <div class="card card-gradient">
+                    <h3>Verificación de Índices</h3>
+                    <p>Obliga a usar índices en todas las consultas, rechaza collection scans</p>
+                    <div class="code-block">
+                        <pre>--indexCheck</pre>
+                    </div>
+                    <div class="badge badge-warning">Rendimiento</div>
+                </div>
+            </div>
+
+            <div class="card card-bordered mt-4">
+                <h3>Permisos Atlas Recomendados</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h4>Casos de Uso Básicos</h4>
+                        <div class="requirement-item">
+                            <span class="badge badge-primary">Org Member</span>
+                            <span>Listar organizaciones/proyectos</span>
+                        </div>
+                        <div class="requirement-item">
+                            <span class="badge badge-info">Project Read Only</span>
+                            <span>Ver clústeres existentes</span>
+                        </div>
+                        <div class="requirement-item">
+                            <span class="badge badge-success">Project Cluster Manager</span>
+                            <span>Crear/gestionar clústeres</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Gestión Administrativa</h4>
+                        <div class="requirement-item">
+                            <span class="badge badge-warning">IP Access List Admin</span>
+                            <span>Gestionar listas de acceso</span>
+                        </div>
+                        <div class="requirement-item">
+                            <span class="badge badge-info">Database Access Admin</span>
+                            <span>Gestionar usuarios de BD</span>
+                        </div>
+                        <div class="requirement-item">
+                            <span class="badge badge-error">Organization Owner</span>
+                            <span>❌ Evitar - Riesgo de seguridad</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="slide">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="text-gradient">¡Listo para Comenzar!</h2>
+                <p class="text-xl mb-4">Elige tu método preferido y comienza a usar MongoDB MCP Server</p>
+                
+                <div class="flex justify-center gap-4">
+                    <button class="btn btn-primary" onclick="selectConfig('connection-string')">
+                        Configurar con Conexión
+                    </button>
+                    <button class="btn btn-secondary" onclick="selectConfig('atlas-api')">
+                        Configurar con Atlas API
+                    </button>
+                </div>
+
+                <div class="mt-4">
+                    <div class="badge badge-warning">Siempre usa --readOnly por defecto</div>
+                    <div class="badge badge-success">Permisos mínimos necesarios</div>
+                    <div class="badge badge-info">Verifica versión Node.js</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let selectedConfig = null;
+
+        function selectConfig(configType) {
+            // Limpiar selecciones anteriores
+            document.querySelectorAll('.config-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.config-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Seleccionar nueva configuración
+            selectedConfig = configType;
+            
+            // Marcar card como seleccionado
+            event.target.closest('.config-card').classList.add('selected');
+            
+            // Mostrar contenido correspondiente
+            const configContent = document.getElementById(configType + '-config');
+            if (configContent) {
+                configContent.classList.remove('hidden');
+                configContent.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function switchTab(button, tabId) {
+            // Limpiar tabs activos en este grupo
+            const tabNav = button.parentElement;
+            const tabContainer = tabNav.parentElement;
+            
+            tabNav.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            tabContainer.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Activar tab seleccionado
+            button.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function copyToClipboard(button) {
+            const codeBlock = button.closest('.code-block');
+            const preElement = codeBlock.querySelector('pre');
+            const text = preElement.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copiado';
+                button.style.color = 'var(--color-success)';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.color = '';
+                }, 2000);
+            });
+        }
+
+        // Intersection Observer para animaciones
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observar elementos animables
+        document.querySelectorAll('.card, .animate-fadeIn, .animate-slideInLeft').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Navegación smooth
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

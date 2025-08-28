@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1350">
+    <title>Arquitectura MongoDB Atlas + Kafka - Payway</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            width: 1080px;
+            height: 1350px;
+            background: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Segoe UI Emoji", Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        
+        /* Título */
+        .title {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        .title h1 {
+            font-size: 72px;
+            font-weight: 900;
+            color: #001E2B;
+            text-shadow: 3px 3px 6px rgba(255,255,255,0.9),
+                        -1px -1px 2px rgba(255,255,255,0.5);
+            margin-bottom: 15px;
+        }
+        
+        .title p {
+            font-size: 32px;
+            color: #0D2A3D;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+        }
+        
+        /* SVG Container */
+        .diagram-svg {
+            width: 100%;
+            max-width: 1000px;
+            height: 700px;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));
+        }
+        
+        /* Animaciones */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+        
+        @keyframes flowDash {
+            to {
+                stroke-dashoffset: -40;
+            }
+        }
+        
+        @keyframes glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px currentColor);
+            }
+            50% {
+                filter: drop-shadow(0 0 20px currentColor) drop-shadow(0 0 30px currentColor);
+            }
+        }
+        
+        @keyframes dataFlow {
+            0% {
+                offset-distance: 0%;
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                offset-distance: 100%;
+                opacity: 0;
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Métricas */
+        .metrics {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 900px;
+            margin-top: 50px;
+            gap: 30px;
+        }
+        
+        .metric-card {
+            background: rgba(255,255,255,0.98);
+            border: 3px solid #001E2B;
+            border-radius: 100px;
+            padding: 25px 45px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            animation: scaleIn 0.8s ease-out backwards;
+            transition: transform 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .metric-card:nth-child(1) { animation-delay: 1.5s; }
+        .metric-card:nth-child(2) { animation-delay: 1.7s; }
+        .metric-card:nth-child(3) { animation-delay: 1.9s; }
+        
+        .metric-icon {
+            font-size: 42px;
+        }
+        
+        .metric-text h4 {
+            font-size: 36px;
+            color: #001E2B;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+        
+        .metric-text p {
+            font-size: 20px;
+            color: #0D2A3D;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Título -->
+        <div class="title">
+            <h1>Arquitectura de Solución</h1>
+            <p>Pipeline MongoDB Atlas + Kafka para Payway</p>
+        </div>
+        
+        <!-- Diagrama SVG -->
+        <svg class="diagram-svg" viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+            <!-- Definiciones -->
+            <defs>
+                <!-- Gradientes -->
+                <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#00ED64;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#00A847;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#5644D4;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#3D2F9D;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#EF4444;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#DC2626;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#00ED64;stop-opacity:0.3" />
+                    <stop offset="50%" style="stop-color:#5644D4;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#00ED64;stop-opacity:0.3" />
+                </linearGradient>
+                
+                <!-- Filtros -->
+                <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                    <feOffset dx="0" dy="4" result="offsetblur"/>
+                    <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.2"/>
+                    </feComponentTransfer>
+                    <feMerge> 
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/> 
+                    </feMerge>
+                </filter>
+                
+                <!-- Marcadores de flecha -->
+                <marker id="arrowGreen" markerWidth="15" markerHeight="15" refX="14" refY="7.5" orient="auto">
+                    <polygon points="0 0, 15 7.5, 0 15" fill="#00ED64" />
+                </marker>
+                
+                <marker id="arrowRed" markerWidth="15" markerHeight="15" refX="14" refY="7.5" orient="auto">
+                    <polygon points="0 0, 15 7.5, 0 15" fill="#EF4444" />
+                </marker>
+            </defs>
+            
+            <!-- Flujo Principal Animado -->
+            <g id="mainFlow">
+                <!-- Línea principal con gradiente animado -->
+                <line x1="150" y1="350" x2="850" y2="350" 
+                      stroke="url(#flowGradient)" 
+                      stroke-width="8" 
+                      stroke-linecap="round"
+                      opacity="0.5">
+                    <animate attributeName="x1" values="150;100;150" dur="3s" repeatCount="indefinite"/>
+                    <animate attributeName="x2" values="850;900;850" dur="3s" repeatCount="indefinite"/>
+                </line>
+                
+                <!-- Líneas de conexión con animación -->
+                <path d="M 150 350 L 350 350" 
+                      stroke="#00ED64" 
+                      stroke-width="4" 
+                      stroke-dasharray="10,5"
+                      fill="none"
+                      marker-end="url(#arrowGreen)"
+                      style="animation: flowDash 2s linear infinite"/>
+                
+                <path d="M 550 350 L 750 350" 
+                      stroke="#00ED64" 
+                      stroke-width="4" 
+                      stroke-dasharray="10,5"
+                      fill="none"
+                      marker-end="url(#arrowGreen)"
+                      style="animation: flowDash 2s linear infinite"/>
+            </g>
+            
+            <!-- Nodo Kafka -->
+            <g id="kafka" transform="translate(50, 300)" style="animation: scaleIn 0.6s ease-out">
+                <rect x="0" y="0" width="200" height="100" rx="15" 
+                      fill="white" 
+                      stroke="#001E2B" 
+                      stroke-width="3"
+                      filter="url(#shadow)"/>
+                <circle cx="180" cy="20" r="15" fill="#00ED64"/>
+                <text x="165" y="27" fill="white" font-size="20" font-weight="bold">✓</text>
+                
+                <text x="100" y="35" font-size="32" font-weight="bold" text-anchor="middle" fill="#001E2B">
+                    📨 Kafka
+                </text>
+                <text x="100" y="60" font-size="18" font-weight="600" text-anchor="middle" fill="#0D2A3D">
+                    Stream de Mensajes
+                </text>
+                <text x="100" y="80" font-size="14" text-anchor="middle" fill="#718096">
+                    Topics • Particiones • HA
+                </text>
+            </g>
+            
+            <!-- Nodo Atlas Connector -->
+            <g id="connector" transform="translate(350, 300)" style="animation: scaleIn 0.8s ease-out 0.3s backwards">
+                <rect x="0" y="0" width="300" height="100" rx="15" 
+                      fill="white" 
+                      stroke="url(#purpleGradient)" 
+                      stroke-width="4"
+                      filter="url(#shadow)"/>
+                
+                <text x="150" y="35" font-size="32" font-weight="bold" text-anchor="middle" fill="#001E2B">
+                    🔌 Atlas Connector
+                </text>
+                <text x="150" y="60" font-size="18" font-weight="600" text-anchor="middle" fill="#0D2A3D">
+                    Pipeline Inteligente
+                </text>
+                <text x="150" y="80" font-size="14" text-anchor="middle" fill="#718096">
+                    SMT • Auto-retry • 100% Gestionado
+                </text>
+            </g>
+            
+            <!-- Nodo MongoDB Atlas -->
+            <g id="mongodb" transform="translate(750, 300)" style="animation: scaleIn 0.8s ease-out 0.6s backwards">
+                <rect x="0" y="0" width="200" height="100" rx="15" 
+                      fill="white" 
+                      stroke="url(#greenGradient)" 
+                      stroke-width="4"
+                      filter="url(#shadow)"/>
+                <circle cx="180" cy="20" r="15" fill="#00ED64"/>
+                <text x="165" y="27" fill="white" font-size="20" font-weight="bold">✓</text>
+                
+                <text x="100" y="35" font-size="32" font-weight="bold" text-anchor="middle" fill="#001E2B">
+                    🍃 MongoDB
+                </text>
+                <text x="100" y="60" font-size="18" font-weight="600" text-anchor="middle" fill="#0D2A3D">
+                    Atlas
+                </text>
+                <text x="100" y="80" font-size="14" text-anchor="middle" fill="#718096">
+                    Índices • Aggregation • ∞
+                </text>
+            </g>
+            
+            <!-- Schema Validation (Arriba) -->
+            <g id="validation" transform="translate(350, 100)" style="animation: scaleIn 1s ease-out 0.9s backwards">
+                <rect x="0" y="0" width="300" height="120" rx="15" 
+                      fill="rgba(255,255,255,0.98)" 
+                      stroke="#00ED64" 
+                      stroke-width="3"
+                      filter="url(#shadow)"/>
+                
+                <text x="150" y="30" font-size="24" font-weight="bold" text-anchor="middle" fill="#00684B">
+                    🛡️ Schema Validation
+                </text>
+                <text x="150" y="52" font-size="16" font-weight="600" text-anchor="middle" fill="#0D2A3D">
+                    Reglas de Negocio
+                </text>
+                <text x="150" y="72" font-size="13" text-anchor="middle" fill="#718096">
+                    • Validación nativa
+                </text>
+                <text x="150" y="88" font-size="13" text-anchor="middle" fill="#718096">
+                    • Tipos y formatos
+                </text>
+                <text x="150" y="104" font-size="13" text-anchor="middle" fill="#718096">
+                    • Centralizado
+                </text>
+            </g>
+            
+            <!-- Línea de conexión Schema Validation -->
+            <path d="M 500 300 Q 500 250 500 220" 
+                  stroke="#00ED64" 
+                  stroke-width="3" 
+                  stroke-dasharray="8,4"
+                  fill="none"
+                  opacity="0.6"
+                  style="animation: flowDash 3s linear infinite">
+            </path>
+            <text x="510" y="260" font-size="28" fill="#00ED64" style="animation: pulse 2s infinite">↑</text>
+            
+            <!-- Dead Letter Queue (Abajo) -->
+            <g id="dlq" transform="translate(350, 480)" style="animation: scaleIn 1s ease-out 1.2s backwards">
+                <rect x="0" y="0" width="300" height="120" rx="15" 
+                      fill="rgba(255,240,240,0.98)" 
+                      stroke="url(#redGradient)" 
+                      stroke-width="3"
+                      filter="url(#shadow)"/>
+                <circle cx="280" cy="20" r="15" fill="#EF4444"/>
+                <text x="280" y="27" fill="white" font-size="20" font-weight="bold">!</text>
+                
+                <text x="150" y="30" font-size="24" font-weight="bold" text-anchor="middle" fill="#991B1B">
+                    📥 Dead Letter Queue
+                </text>
+                <text x="150" y="52" font-size="16" font-weight="600" text-anchor="middle" fill="#0D2A3D">
+                    Gestión de Errores
+                </text>
+                <text x="150" y="72" font-size="13" text-anchor="middle" fill="#718096">
+                    • Captura automática
+                </text>
+                <text x="150" y="88" font-size="13" text-anchor="middle" fill="#718096">
+                    • Colección de errores
+                </text>
+                <text x="150" y="104" font-size="13" text-anchor="middle" fill="#718096">
+                    • Análisis posterior
+                </text>
+            </g>
+            
+            <!-- Línea de conexión DLQ -->
+            <path d="M 500 400 Q 500 440 500 480" 
+                  stroke="#EF4444" 
+                  stroke-width="3" 
+                  stroke-dasharray="8,4"
+                  fill="none"
+                  opacity="0.6"
+                  style="animation: flowDash 3s linear infinite">
+            </path>
+            <text x="510" y="445" font-size="28" fill="#EF4444" style="animation: pulse 2s infinite">↓</text>
+            
+            <!-- Partículas de datos animadas -->
+            <circle r="6" fill="#00ED64" style="animation: glow 2s infinite">
+                <animateMotion dur="4s" repeatCount="indefinite">
+                    <mpath href="#dataPath"/>
+                </animateMotion>
+            </circle>
+            
+            <circle r="6" fill="#5644D4" style="animation: glow 2s infinite">
+                <animateMotion dur="4s" repeatCount="indefinite" begin="1s">
+                    <mpath href="#dataPath"/>
+                </animateMotion>
+            </circle>
+            
+            <circle r="6" fill="#00ED64" style="animation: glow 2s infinite">
+                <animateMotion dur="4s" repeatCount="indefinite" begin="2s">
+                    <mpath href="#dataPath"/>
+                </animateMotion>
+            </circle>
+            
+            <!-- Path invisible para las partículas -->
+            <path id="dataPath" d="M 150 350 L 500 350 L 850 350" stroke="none" fill="none"/>
+        </svg>
+        
+        <!-- Métricas -->
+        <div class="metrics">
+            <div class="metric-card">
+                <span class="metric-icon">⚡</span>
+                <div class="metric-text">
+                    <h4>&lt; 5ms</h4>
+                    <p>Latencia</p>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <span class="metric-icon">∞</span>
+                <div class="metric-text">
+                    <h4>Sin Límites</h4>
+                    <p>Paginación</p>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <span class="metric-icon">🚀</span>
+                <div class="metric-text">
+                    <h4>100%</h4>
+                    <p>Automatizado</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

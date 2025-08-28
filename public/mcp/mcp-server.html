@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB MCP Server - Estado Actual</title>
+    <style>
+/* =============================================
+   GoMDB - Sistema de Diseño Global
+   Arquitectura MongoDB para Latinoamérica
+   ============================================= */
+
+/* ============================================= 
+   1. VARIABLES CSS (Custom Properties)
+   ============================================= */
+   :root {
+    /* Colores Primarios - Basados en MongoDB */
+    --color-primary: #00ED64;           /* Verde MongoDB */
+    --color-primary-hover: #00D757;     /* Verde hover */
+    --color-primary-light: #00ED6420;   /* Verde con transparencia */
+    
+    /* Colores de Fondo */
+    --color-bg-primary: #001E2B;        /* Azul oscuro principal */
+    --color-bg-secondary: #0D2A3D;      /* Azul medio */
+    --color-bg-tertiary: #112331;       /* Azul alternativo */
+    --color-bg-card: #0D2A3D80;         /* Fondo de cards con transparencia */
+    
+    /* Colores de Acento */
+    --color-accent: #5644D4;            /* Púrpura */
+    --color-accent-light: #5644D420;    /* Púrpura con transparencia */
+    
+    /* Colores de Texto */
+    --color-text-primary: #FFFFFF;      /* Blanco */
+    --color-text-secondary: #B8C4CE;    /* Gris claro */
+    --color-text-muted: #718096;        /* Gris medio */
+    --color-text-dark: #001E2B;         /* Para texto sobre fondos claros */
+    
+    /* Colores de Estado */
+    --color-success: #00ED64;
+    --color-warning: #F59E0B;
+    --color-error: #EF4444;
+    --color-info: #3B82F6;
+    
+    /* Espaciado */
+    --spacing-xs: 0.25rem;    /* 4px */
+    --spacing-sm: 0.5rem;     /* 8px */
+    --spacing-md: 1rem;       /* 16px */
+    --spacing-lg: 1.5rem;     /* 24px */
+    --spacing-xl: 2rem;       /* 32px */
+    --spacing-2xl: 3rem;      /* 48px */
+    --spacing-3xl: 4rem;      /* 64px */
+    --spacing-4xl: 6rem;      /* 96px */
+    
+    /* Tipografía */
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+    
+    /* Tamaños de Fuente */
+    --text-xs: 0.75rem;       /* 12px */
+    --text-sm: 0.875rem;      /* 14px */
+    --text-base: 1rem;        /* 16px */
+    --text-lg: 1.125rem;      /* 18px */
+    --text-xl: 1.25rem;       /* 20px */
+    --text-2xl: 1.5rem;       /* 24px */
+    --text-3xl: 2rem;         /* 32px */
+    --text-4xl: 2.5rem;       /* 40px */
+    --text-5xl: 3rem;         /* 48px */
+    --text-6xl: 4rem;         /* 64px */
+    --text-7xl: 5rem;         /* 80px */
+    --text-8xl: 6rem;         /* 96px */
+    
+    /* Bordes y Radios */
+    --radius-sm: 0.25rem;     /* 4px */
+    --radius-md: 0.5rem;      /* 8px */
+    --radius-lg: 1rem;        /* 16px */
+    --radius-xl: 1.5rem;      /* 24px */
+    --radius-full: 9999px;    /* Circular */
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+    --shadow-glow: 0 0 40px rgba(0, 237, 100, 0.3);
+    
+    /* Transiciones */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+    
+    /* Z-Index */
+    --z-base: 1;
+    --z-dropdown: 10;
+    --z-sticky: 20;
+    --z-fixed: 30;
+    --z-modal-backdrop: 40;
+    --z-modal: 50;
+    --z-popover: 60;
+    --z-tooltip: 70;
+  }
+  
+  /* ============================================= 
+     2. RESET Y BASE
+     ============================================= */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  
+  /* ============================================= 
+     3. TIPOGRAFÍA
+     ============================================= */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  h1 {
+    font-size: clamp(var(--text-4xl), 8vw, var(--text-8xl));
+  }
+  
+  h2 {
+    font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
+  }
+  
+  h3 {
+    font-size: clamp(var(--text-2xl), 3vw, var(--text-4xl));
+  }
+  
+  h4 {
+    font-size: var(--text-2xl);
+  }
+  
+  h5 {
+    font-size: var(--text-xl);
+  }
+  
+  h6 {
+    font-size: var(--text-lg);
+  }
+  
+  p {
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-secondary);
+  }
+  
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+  
+  a:hover {
+    color: var(--color-primary-hover);
+  }
+  
+  /* Texto con gradiente */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* ============================================= 
+     4. LAYOUT Y CONTENEDORES
+     ============================================= */
+  .container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+  }
+  
+  .section {
+    padding: var(--spacing-4xl) 0;
+  }
+  
+  .section-lg {
+    padding: var(--spacing-4xl) 0;
+  }
+  
+  @media (min-width: 768px) {
+    .section-lg {
+      padding: calc(var(--spacing-4xl) * 1.5) 0;
+    }
+  }
+  
+  /* ============================================= 
+     5. COMPONENTES - NAVEGACIÓN
+     ============================================= */
+  .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: var(--z-fixed);
+    transition: all var(--transition-slow);
+    background-color: rgba(0, 30, 43, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+  }
+  
+  .navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+  
+  /* ============================================= 
+     6. COMPONENTES - BOTONES
+     ============================================= */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-weight: 600;
+    font-size: var(--text-base);
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    text-decoration: none;
+  }
+  
+  .btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-text-muted);
+  }
+  
+  .btn-ghost:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  
+  /* ============================================= 
+     7. COMPONENTES - CARDS
+     ============================================= */
+  .card {
+    background-color: var(--color-bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    transition: all var(--transition-base);
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .card-gradient {
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.5) 100%);
+  }
+  
+  .card-bordered {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  /* ============================================= 
+     8. COMPONENTES - HERO
+     ============================================= */
+  .hero {
+    position: relative;
+    padding-top: calc(80px + var(--spacing-4xl));
+    padding-bottom: var(--spacing-4xl);
+    overflow: hidden;
+  }
+  
+  .hero-background {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 50%, var(--color-bg-primary) 100%);
+    z-index: -2;
+  }
+  
+  .hero-blur {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.2;
+    z-index: -1;
+  }
+  
+  .hero-blur-primary {
+    width: 300px;
+    height: 300px;
+    background-color: var(--color-primary);
+    top: 10%;
+    left: 5%;
+  }
+  
+  .hero-blur-accent {
+    width: 400px;
+    height: 400px;
+    background-color: var(--color-accent);
+    bottom: 10%;
+    right: 10%;
+  }
+  
+  /* ============================================= 
+     9. COMPONENTES - BADGES
+     ============================================= */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border-radius: var(--radius-full);
+  }
+  
+  .badge-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .badge-secondary {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+  }
+
+  .badge-warning {
+    background-color: var(--color-warning);
+    color: var(--color-text-dark);
+  }
+  
+  /* ============================================= 
+     10. UTILIDADES
+     ============================================= */
+  .text-left { text-align: left; }
+  .text-center { text-align: center; }
+  .text-right { text-align: right; }
+  
+  .flex { display: flex; }
+  .grid { display: grid; }
+  .items-center { align-items: center; }
+  .justify-center { justify-content: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-3 { gap: var(--spacing-md); }
+  .gap-4 { gap: var(--spacing-lg); }
+  .gap-5 { gap: var(--spacing-xl); }
+  
+  .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  
+  @media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  
+  /* ============================================= 
+     11. ANIMACIONES
+     ============================================= */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+  
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(0, 237, 100, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(0, 237, 100, 0.6);
+    }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  .animate-slideInLeft {
+    animation: slideInLeft 0.6s ease-out;
+  }
+  
+  .animate-slideInRight {
+    animation: slideInRight 0.6s ease-out;
+  }
+
+  /* ============================================= 
+     ESTILOS ESPECÍFICOS DE LA PRESENTACIÓN
+     ============================================= */
+  .slide {
+    min-height: auto;
+    padding: var(--spacing-xl) 0;
+  }
+
+  .slide:not(:first-child) {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .stat-number {
+    font-size: var(--text-6xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .capability-icon {
+    width: 60px;
+    height: 60px;
+    background-color: var(--color-primary);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--text-2xl);
+    color: var(--color-text-dark);
+  }
+
+  .tool-category {
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .tool-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .tool-item:last-child {
+    border-bottom: none;
+  }
+
+  .ecosystem-card {
+    text-align: center;
+    padding: var(--spacing-xl);
+  }
+
+  .ecosystem-logo {
+    width: 80px;
+    height: 80px;
+    background-color: var(--color-bg-tertiary);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--spacing-md);
+    font-size: var(--text-2xl);
+    color: var(--color-primary);
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+    transition: width var(--transition-slow);
+  }
+
+  .interactive-demo {
+    background-color: var(--color-bg-tertiary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin: var(--spacing-xl) 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .demo-prompt {
+    background-color: var(--color-bg-card);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    border-left: 4px solid var(--color-primary);
+  }
+
+  .demo-response {
+    background-color: rgba(0, 237, 100, 0.1);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    border-left: 4px solid var(--color-primary);
+  }
+
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-container">
+                <div class="navbar-logo">
+                    <span>🍃</span>
+                    MongoDB MCP Server
+                </div>
+                <div class="badge badge-warning">Public Preview</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero slide">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        <div class="container">
+            <div class="text-center animate-fadeIn">
+                <h1 class="text-gradient">MongoDB MCP Server</h1>
+                <p class="text-xl" style="max-width: 600px; margin: 0 auto;">
+                    El puente hacia el desarrollo agéntico: comunicación en lenguaje natural con bases de datos MongoDB e infraestructura Atlas
+                </p>
+                <div style="margin-top: var(--spacing-2xl);">
+                    <span class="badge badge-warning">Public Preview 1</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ¿Qué es MCP? -->
+    <section class="slide">
+        <div class="container">
+            <h2 class="text-center text-gradient">¿Qué es el Model Context Protocol?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5" style="margin-top: var(--spacing-2xl);">
+                <div class="card card-gradient animate-slideInLeft">
+                    <div class="capability-icon">🌐</div>
+                    <h3>Estándar Abierto</h3>
+                    <p>Protocolo universal para que los LLMs se comuniquen con sistemas externos, introducido por Anthropic</p>
+                </div>
+                <div class="card card-gradient animate-fadeIn" style="animation-delay: 0.2s;">
+                    <div class="capability-icon">🔗</div>
+                    <h3>Interoperabilidad</h3>
+                    <p>Elimina integraciones personalizadas entre agentes de IA y herramientas, creando un ecosistema unificado</p>
+                </div>
+                <div class="card card-gradient animate-slideInRight">
+                    <div class="capability-icon">🎯</div>
+                    <h3>Contextual</h3>
+                    <p>Proporciona información contextual en tiempo real desde las bases de datos para reducir alucinaciones</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Estado Actual -->
+    <section class="slide">
+        <div class="container">
+            <h2 class="text-center text-gradient">Estado Actual del MongoDB MCP Server</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5" style="margin-top: var(--spacing-2xl);">
+                <div class="card card-bordered">
+                    <h3>Estado de Desarrollo</h3>
+                    <div class="stat-number">Public Preview</div>
+                    <p>Funcional y rico en características, disponible para uso general pero en desarrollo activo</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 75%;"></div>
+                    </div>
+                    <small class="text-muted">APIs pueden cambiar antes de GA</small>
+                </div>
+                <div class="card card-bordered">
+                    <h3>Arquitectura</h3>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-md); margin: var(--spacing-lg) 0;">
+                        <div class="capability-icon" style="width: 40px; height: 40px; font-size: var(--text-lg);">🔄</div>
+                        <span>Aplicación Node.js que actúa como puente</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-md); margin: var(--spacing-lg) 0;">
+                        <div class="capability-icon" style="width: 40px; height: 40px; font-size: var(--text-lg);">💬</div>
+                        <span>Traduce lenguaje natural a comandos MongoDB</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-md); margin: var(--spacing-lg) 0;">
+                        <div class="capability-icon" style="width: 40px; height: 40px; font-size: var(--text-lg);">🔐</div>
+                        <span>Comunicación bidireccional segura</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Capacidades Principales -->
+    <section class="slide">
+        <div class="container">
+            <h2 class="text-center text-gradient">Tríada de Capacidades</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5" style="margin-top: var(--spacing-2xl);">
+                <div class="card card-gradient">
+                    <div class="capability-icon">🔍</div>
+                    <h3>Exploración de Datos</h3>
+                    <p>Operaciones CRUD, agregaciones complejas y consultas en lenguaje natural sin escribir código MongoDB</p>
+                </div>
+                <div class="card card-gradient">
+                    <div class="capability-icon">☁️</div>
+                    <h3>Administración de Atlas</h3>
+                    <p>Gestión completa de infraestructura en la nube: clústeres, usuarios, listas de acceso y configuraciones</p>
+                </div>
+                <div class="card card-gradient">
+                    <div class="capability-icon">⚡</div>
+                    <h3>Generación de Código</h3>
+                    <p>Código consciente del contexto con información de esquemas para reducir errores y alucinaciones</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Herramientas Disponibles -->
+    <section class="slide">
+        <div class="container">
+            <h2 class="text-center text-gradient">Conjunto de Herramientas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5" style="margin-top: var(--spacing-2xl);">
+                <div class="tool-category">
+                    <h3>Base de Datos (20+ herramientas)</h3>
+                    <div class="tool-item">
+                        <span>Operaciones CRUD</span>
+                        <span class="badge badge-primary">7 herramientas</span>
+                    </div>
+                    <div class="tool-item">
+                        <span>Consultas Avanzadas</span>
+                        <span class="badge badge-primary">3 herramientas</span>
+                    </div>
+                    <div class="tool-item">
+                        <span>Esquema y Metadatos</span>
+                        <span class="badge badge-primary">5 herramientas</span>
+                    </div>
+                    <div class="tool-item">
+                        <span>Gestión de Colecciones</span>
+                        <span class="badge badge-primary">5 herramientas</span>
+                    </div>
+                </div>
+                <div class="tool-category">
+                    <h3>MongoDB Atlas (10+ herramientas)</h3>
+                    <div class="tool-item">
+                        <span>Aprovisionamiento</span>
+                        <span class="badge badge-secondary">2 herramientas</span>
+                    </div>
+                    <div class="tool-item">
+                        <span>Inspección</span>
+                        <span class="badge badge-secondary">4 herramientas</span>
+                    </div>
+                    <div class="tool-item">
+                        <span>Seguridad y Acceso</span>
+                        <span class="badge badge-secondary">4 herramientas</span>
+                    </div>
+                    <div class="tool-item">
+                        <span>Conectividad</span>
+                        <span class="badge badge-secondary">1 herramienta</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Compatibilidad -->
+    <section class="slide">
+        <div class="container">
+            <h2 class="text-center text-gradient">Compatibilidad con Ecosistemas de IA</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5" style="margin-top: var(--spacing-2xl);">
+                <div class="card ecosystem-card">
+                    <div class="ecosystem-logo">🤖</div>
+                    <h3>Claude (Anthropic)</h3>
+                    <p>Integración nativa y directa a través de Claude Desktop y Claude Code CLI</p>
+                    <div class="badge badge-primary">Nativo</div>
+                </div>
+                <div class="card ecosystem-card">
+                    <div class="ecosystem-logo">🐙</div>
+                    <h3>GitHub Copilot</h3>
+                    <p>Integración a través de VS Code, utilizando modelos GPT como motor de razonamiento</p>
+                    <div class="badge badge-secondary">Compatible</div>
+                </div>
+                <div class="card ecosystem-card">
+                    <div class="ecosystem-logo">⚡</div>
+                    <h3>Cursor AI</h3>
+                    <p>Editor de código nativo de IA con soporte directo para servidores MCP</p>
+                    <div class="badge badge-secondary">Compatible</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Arquitectura Dual -->
+    <section class="slide">
+        <div class="container">
+            <h2 class="text-center text-gradient">Arquitectura de Doble Capacidad</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5" style="margin-top: var(--spacing-2xl);">
+                <div class="card card-bordered">
+                    <h3>Cadena de Conexión</h3>
+                    <div style="margin: var(--spacing-lg) 0;">
+                        <div class="capability-icon" style="width: 50px; height: 50px;">🔗</div>
+                        <h4>Plano de Datos</h4>
+                        <p>Acceso directo a datos con operaciones CRUD, consultas y agregaciones</p>
+                    </div>
+                    <div class="badge badge-primary">MongoDB URI</div>
+                    <div style="margin-top: var(--spacing-md);">
+                        <small class="text-muted">Atlas, Enterprise, Community Edition</small>
+                    </div>
+                </div>
+                <div class="card card-bordered">
+                    <h3>API de Atlas</h3>
+                    <div style="margin: var(--spacing-lg) 0;">
+                        <div class="capability-icon" style="width: 50px; height: 50px;">☁️</div>
+                        <h4>Plano de Control</h4>
+                        <p>Gestión completa de infraestructura, usuarios y configuraciones de seguridad</p>
+                    </div>
+                    <div class="badge badge-secondary">Client ID + Secret</div>
+                    <div style="margin-top: var(--spacing-md);">
+                        <small class="text-muted">Solo MongoDB Atlas</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modelo de Seguridad -->
+    <section class="slide">
+        <div class="container">
+            <h2 class="text-center text-gradient">Modelo de Seguridad por Capas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5" style="margin-top: var(--spacing-2xl);">
+                <div class="card card-gradient">
+                    <h3>Modo Solo Lectura</h3>
+                    <div class="interactive-demo">
+                        <div class="demo-prompt">--readOnly</div>
+                        <div class="demo-response">Restringe a operaciones de lectura y metadatos únicamente</div>
+                    </div>
+                    <p>Firewall a nivel de agente que ignora solicitudes de escritura</p>
+                </div>
+                <div class="card card-gradient">
+                    <h3>Cumplimiento de Índices</h3>
+                    <div class="interactive-demo">
+                        <div class="demo-prompt">--indexCheck</div>
+                        <div class="demo-response">Obliga a usar índices, rechaza collection scans</div>
+                    </div>
+                    <p>Garantiza rendimiento óptimo y previene operaciones costosas</p>
+                </div>
+                <div class="card card-gradient">
+                    <h3>Control Granular</h3>
+                    <div class="interactive-demo">
+                        <div class="demo-prompt">--disabledTools</div>
+                        <div class="demo-response">Desactiva herramientas específicas o categorías completas</div>
+                    </div>
+                    <p>Principio de mínimo privilegio aplicado a agentes de IA</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Frameworks de Integración -->
+    <section class="slide">
+        <div class="container">
+            <h2 class="text-center text-gradient">Integración con Frameworks Agénticos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5" style="margin-top: var(--spacing-2xl);">
+                <div class="card card-bordered">
+                    <h3>LangChain & LangGraph</h3>
+                    <p>Biblioteca langchain_mcp_adapters permite que agentes Python utilicen el servidor MCP mediante programación</p>
+                    <div class="interactive-demo">
+                        <div class="demo-prompt">MultiServerMCPClient</div>
+                        <div class="demo-response">Gestiona procesos del servidor en segundo plano</div>
+                    </div>
+                    <div class="badge badge-primary">Backend Ready</div>
+                </div>
+                <div class="card card-bordered">
+                    <h3>LlamaIndex</h3>
+                    <p>McpToolSpec conecta con servidores MCP para casos de uso RAG (Generación Aumentada por Recuperación)</p>
+                    <div class="interactive-demo">
+                        <div class="demo-prompt">HTTP Transport</div>
+                        <div class="demo-response">Conexión via URL del servidor</div>
+                    </div>
+                    <div class="badge badge-secondary">RAG Focused</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Casos de Uso -->
+    <section class="slide">
+        <div class="container">
+            <h2 class="text-center text-gradient">Transformación del Desarrollo</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5" style="margin-top: var(--spacing-2xl);">
+                <div class="card card-gradient">
+                    <h3>Antes: Flujo Tradicional</h3>
+                    <div style="margin: var(--spacing-lg) 0;">
+                        <div class="tool-item">
+                            <span>1. Desarrollador</span>
+                            <span>Código de aplicación</span>
+                        </div>
+                        <div class="tool-item">
+                            <span>2. DBA</span>
+                            <span>Gestión de BD</span>
+                        </div>
+                        <div class="tool-item">
+                            <span>3. DevOps</span>
+                            <span>Infraestructura</span>
+                        </div>
+                        <div class="tool-item">
+                            <span>4. Integración</span>
+                            <span>APIs manuales</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card card-gradient">
+                    <h3>Ahora: Flujo Agéntico</h3>
+                    <div class="interactive-demo">
+                        <div class="demo-prompt">"Crea un clúster, añade mi IP y dame la cadena de conexión"</div>
+                        <div class="demo-response">✅ Clúster creado<br/>✅ IP añadida<br/>✅ Cadena lista</div>
+                    </div>
+                    <p>Una sola instrucción en lenguaje natural ejecuta todo el ciclo de vida</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impacto Estratégico -->
+    <section class="slide">
+        <div class="container">
+            <h2 class="text-center text-gradient">Implicaciones Estratégicas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5" style="margin-top: var(--spacing-2xl);">
+                <div class="card card-gradient">
+                    <div class="capability-icon">👥</div>
+                    <h3>Convergencia de Roles</h3>
+                    <p>Desarrolladores pueden realizar tareas de DBA y DevOps con menor conocimiento especializado</p>
+                </div>
+                <div class="card card-gradient">
+                    <div class="capability-icon">⚡</div>
+                    <h3>Aceleración</h3>
+                    <p>Ciclos de desarrollo drasticamente más rápidos mediante automatización conversacional</p>
+                </div>
+                <div class="card card-gradient">
+                    <div class="capability-icon">🎯</div>
+                    <h3>Democratización</h3>
+                    <p>Acceso a capacidades avanzadas de base de datos sin curva de aprendizaje técnica</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Estado Futuro -->
+    <section class="slide">
+        <div class="container">
+            <h2 class="text-center text-gradient">Perspectivas Futuras</h2>
+            <div class="card card-bordered" style="max-width: 800px; margin: var(--spacing-2xl) auto 0;">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <h3>Evolución Esperada</h3>
+                        <div style="margin: var(--spacing-lg) 0;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%;"></div>
+                            </div>
+                            <small>Public Preview → GA</small>
+                        </div>
+                        <div style="margin: var(--spacing-lg) 0;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%;"></div>
+                            </div>
+                            <small>Características robustas</small>
+                        </div>
+                        <div style="margin: var(--spacing-lg) 0;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 85%;"></div>
+                            </div>
+                            <small>Mayor estabilidad</small>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Tendencia de la Industria</h3>
+                        <p>Los agentes de IA se convertirán en partes integrales del desarrollo de software</p>
+                        <p>Las bases de datos evolucionarán para soportar interacciones agénticas nativas</p>
+                        <p>MongoDB MCP Server establece el patrón a seguir</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusión -->
+    <section class="slide">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="text-gradient">MongoDB MCP Server</h2>
+                <p class="text-xl" style="max-width: 600px; margin: var(--spacing-lg) auto;">
+                    Pionero en la era del desarrollo agéntico, estableciendo un nuevo paradigma de interacción entre desarrolladores, datos e infraestructura
+                </p>
+                <div class="flex justify-center gap-4" style="margin-top: var(--spacing-2xl);">
+                    <div class="badge badge-warning">Public Preview</div>
+                    <div class="badge badge-primary">30+ Herramientas</div>
+                    <div class="badge badge-secondary">Ecosistema Amplio</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Intersection Observer para animaciones
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observar todas las cards y elementos animables
+        document.querySelectorAll('.card, .animate-fadeIn, .animate-slideInLeft, .animate-slideInRight').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Animación de las barras de progreso
+        const progressBars = document.querySelectorAll('.progress-fill');
+        const progressObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const width = entry.target.style.width;
+                    entry.target.style.width = '0%';
+                    setTimeout(() => {
+                        entry.target.style.width = width;
+                    }, 300);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        progressBars.forEach(bar => {
+            progressObserver.observe(bar);
+        });
+
+        // Smooth scrolling mejorado
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('a[href^="#"]')) {
+                e.preventDefault();
+                const target = document.querySelector(e.target.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

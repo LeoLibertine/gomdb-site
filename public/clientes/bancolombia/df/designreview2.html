@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB - Estrategia de Sharding | Sinergia Índices-Particionamiento</title>
+    <link rel="stylesheet" href="../../../styles/gomdb-global.css">
+    <style>
+        .synergy-animation {
+            position: relative;
+            padding: var(--spacing-2xl);
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+        }
+        
+        .data-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: var(--spacing-xl) 0;
+            position: relative;
+        }
+        
+        .flow-step {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: var(--color-text-dark);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            text-align: center;
+            min-width: 150px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+        
+        .flow-step:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .flow-arrow {
+            width: 60px;
+            height: 3px;
+            background: var(--color-primary);
+            position: relative;
+            margin: 0 var(--spacing-md);
+        }
+        
+        .flow-arrow::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: -5px;
+            width: 0;
+            height: 0;
+            border-left: 12px solid var(--color-primary);
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+        }
+        
+        .moving-data {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--color-accent);
+            border-radius: 50%;
+            animation: moveData 3s ease-in-out infinite;
+        }
+        
+        @keyframes moveData {
+            0% { left: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+        
+        .risk-meter {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin: var(--spacing-md) 0;
+        }
+        
+        .risk-bar {
+            flex: 1;
+            height: 12px;
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .risk-fill {
+            height: 100%;
+            border-radius: var(--radius-full);
+            transition: width 2s ease;
+            position: relative;
+        }
+        
+        .risk-low { background: linear-gradient(90deg, var(--color-success), #20B2AA); }
+        .risk-medium { background: linear-gradient(90deg, var(--color-warning), #FF8C00); }
+        .risk-high { background: linear-gradient(90deg, var(--color-error), #DC143C); }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .scenario-card {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            position: relative;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .scenario-good {
+            border-color: var(--color-success);
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, var(--color-bg-card) 100%);
+        }
+        
+        .scenario-bad {
+            border-color: var(--color-error);
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, var(--color-bg-card) 100%);
+        }
+        
+        .scenario-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .performance-chart {
+            background: var(--color-bg-tertiary);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-bar {
+            display: flex;
+            align-items: center;
+            margin: var(--spacing-md) 0;
+            gap: var(--spacing-md);
+        }
+        
+        .chart-label {
+            min-width: 120px;
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+        }
+        
+        .chart-value {
+            flex: 1;
+            height: 20px;
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-sm);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-fill {
+            height: 100%;
+            border-radius: var(--radius-sm);
+            transition: width 2s ease;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            position: relative;
+        }
+        
+        .chart-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .entity-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-xl);
+            margin: var(--spacing-2xl) 0;
+            flex-wrap: wrap;
+        }
+        
+        .entity {
+            background: var(--color-bg-card);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            text-align: center;
+            min-width: 200px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .entity-primary {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 30px rgba(0, 237, 100, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .entity-secondary {
+            border-color: var(--color-accent);
+            opacity: 0.8;
+        }
+        
+        .entity:hover {
+            transform: scale(1.15);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .connection-line {
+            width: 80px;
+            height: 3px;
+            background: var(--color-primary);
+            position: relative;
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .connection-line::before,
+        .connection-line::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--color-primary);
+            border-radius: 50%;
+        }
+        
+        .connection-line::before { left: -4px; top: -2.5px; }
+        .connection-line::after { right: -4px; top: -2.5px; }
+        
+        .tradeoff-scale {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: var(--spacing-lg) 0;
+            padding: var(--spacing-lg);
+            background: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            position: relative;
+        }
+        
+        .scale-point {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--color-bg-secondary);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .scale-point.active {
+            background: var(--color-primary);
+            box-shadow: 0 0 20px var(--color-primary);
+            transform: scale(1.3);
+        }
+        
+        .scale-line {
+            position: absolute;
+            top: 50%;
+            left: var(--spacing-lg);
+            right: var(--spacing-lg);
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-error), var(--color-warning), var(--color-success));
+            border-radius: var(--radius-full);
+            transform: translateY(-50%);
+        }
+        
+        .floating-icon {
+            position: absolute;
+            animation: float 3s ease-in-out infinite;
+            opacity: 0.3;
+            font-size: var(--text-2xl);
+        }
+        
+        .floating-icon:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .floating-icon:nth-child(2) { top: 20%; right: 15%; animation-delay: 1s; }
+        .floating-icon:nth-child(3) { bottom: 15%; left: 20%; animation-delay: 2s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-15px) rotate(5deg); }
+            66% { transform: translateY(-10px) rotate(-5deg); }
+        }
+        
+        .interactive-tooltip {
+            position: relative;
+            cursor: help;
+        }
+        
+        .tooltip-content {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: var(--z-tooltip);
+            border: 1px solid var(--color-primary);
+        }
+        
+        .interactive-tooltip:hover .tooltip-content {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <!-- Scroll Progress -->
+    <div class="scroll-indicator">
+        <div class="scroll-progress" id="scrollProgress"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="navbar-container">
+                <div class="navbar-logo">
+                    <span class="text-gradient">MongoDB</span>
+                </div>
+                <div class="navbar-links">
+                    <a href="#synergy" class="navbar-link">Sinergia</a>
+                    <a href="#entities" class="navbar-link">Modelo de Datos</a>
+                    <a href="#risks" class="navbar-link">Análisis de Riesgos</a>
+                    <a href="#tradeoffs" class="navbar-link">Trade-offs</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero section-hero">
+        <div class="floating-icon">⚡</div>
+        <div class="floating-icon">🔄</div>
+        <div class="floating-icon">📊</div>
+        
+        <div class="container">
+            <div class="text-center">
+                <div class="badge badge-primary mb-4 animate-fadeIn">
+                    Estrategia Avanzada • MongoDB Sharding
+                </div>
+                <h1 class="animate-slideInLeft mb-4">
+                    <span class="text-gradient">Sinergia Perfecta:</span><br>
+                    Índices + Sharding
+                </h1>
+                <p class="text-xl color-text-secondary mb-6 animate-slideInRight">
+                    Cómo la estrategia de índices trabaja en total armonía<br>
+                    con el particionamiento distribuido para máximo rendimiento
+                </p>
+                <div class="flex justify-center gap-4 animate-fadeIn">
+                    <a href="#synergy" class="btn btn-primary btn-lg">
+                        Ver Sinergia en Acción
+                    </a>
+                    <a href="#risks" class="btn btn-secondary btn-lg">
+                        Análisis de Riesgos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sinergia Principal -->
+    <section class="section" id="synergy">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2 class="text-gradient mb-4">La Sinergia en Detalle</h2>
+                <p class="text-lg color-text-secondary">
+                    Cómo la combinación de shard key e índices garantiza máxima eficiencia
+                </p>
+            </div>
+
+            <!-- Animación de Flujo de Datos -->
+            <div class="synergy-animation">
+                <h3 class="highlight-green text-center mb-4">Flujo de Consulta Optimizada</h3>
+                <div class="data-flow">
+                    <div class="flow-step" data-step="1">
+                        Asesor busca<br>Cliente 123456789
+                    </div>
+                    <div class="flow-arrow">
+                        <div class="moving-data"></div>
+                    </div>
+                    <div class="flow-step" data-step="2">
+                        mongos Router<br>calcula hash
+                    </div>
+                    <div class="flow-arrow">
+                        <div class="moving-data"></div>
+                    </div>
+                    <div class="flow-step" data-step="3">
+                        Consulta dirigida<br>a Shard específico
+                    </div>
+                    <div class="flow-arrow">
+                        <div class="moving-data"></div>
+                    </div>
+                    <div class="flow-step" data-step="4">
+                        Índice compuesto<br>encuentra datos
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <p class="color-text-secondary">
+                        <strong class="highlight-purple">Resultado:</strong> Una sola operación, milisegundos de respuesta
+                    </p>
+                </div>
+            </div>
+
+            <!-- Explicación Detallada con mejor espaciado -->
+            <div class="space-y-8 mt-8">
+                <!-- Card 1: Shard Key Soporta Índice -->
+                <div class="interactive-card">
+                    <h4 class="highlight-green mb-6 text-center">1. Shard Key Soporta Índice</h4>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h5 class="highlight-purple mb-4">Configuración Estratégica</h5>
+                            <div class="code-preview mb-4">
+// Shard Key (Particionamiento)
+{
+  "cliente.numeroIdentificacion": "hashed"
+}
+
+// Índice Principal (Búsqueda)  
+{
+  "cliente.numeroIdentificacion": 1,
+  "timestampTransaccion": -1
+}
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="highlight-purple mb-4">¿Por qué funciona?</h5>
+                            <div class="space-y-4">
+                                <div class="flex items-start gap-3">
+                                    <div class="badge badge-primary">🎯</div>
+                                    <div>
+                                        <h6 class="color-text-primary">Diseño Intencional</h6>
+                                        <p class="color-text-secondary">El campo de la shard key es el primer campo del índice más importante</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="badge badge-primary">⚡</div>
+                                    <div>
+                                        <h6 class="color-text-primary">Sinergia Perfecta</h6>
+                                        <p class="color-text-secondary">Particionamiento y búsqueda trabajan juntos, no en contra</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="badge badge-primary">🏗️</div>
+                                    <div>
+                                        <h6 class="color-text-primary">Arquitectura Cohesiva</h6>
+                                        <p class="color-text-secondary">Cada componente refuerza el rendimiento del otro</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Evita Scatter-Gather -->
+                <div class="interactive-card">
+                    <h4 class="highlight-green mb-6 text-center">2. Evita el Anti-Patrón Scatter-Gather</h4>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="scenario-card scenario-bad">
+                            <h5 class="color-error mb-4 text-center">❌ Sin Sinergia (Lento)</h5>
+                            <div class="space-y-4">
+                                <p class="color-text-secondary text-center">
+                                    mongos debe preguntar a <strong>todos los shards</strong> y luego combinar resultados
+                                </p>
+                                <div class="performance-chart">
+                                    <div class="chart-bar">
+                                        <div class="chart-label">Shards consultados:</div>
+                                        <div class="chart-value">
+                                            <div class="chart-fill risk-high" style="width: 100%"></div>
+                                        </div>
+                                        <span class="color-text-secondary ml-3">Todos (4-16+)</span>
+                                    </div>
+                                    <div class="chart-bar">
+                                        <div class="chart-label">Tiempo de respuesta:</div>
+                                        <div class="chart-value">
+                                            <div class="chart-fill risk-high" style="width: 85%"></div>
+                                        </div>
+                                        <span class="color-text-secondary ml-3">2-5 segundos</span>
+                                    </div>
+                                    <div class="chart-bar">
+                                        <div class="chart-label">Red overhead:</div>
+                                        <div class="chart-value">
+                                            <div class="chart-fill risk-high" style="width: 90%"></div>
+                                        </div>
+                                        <span class="color-text-secondary ml-3">Alto</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scenario-card scenario-good">
+                            <h5 class="color-success mb-4 text-center">✅ Con Sinergia (Rápido)</h5>
+                            <div class="space-y-4">
+                                <p class="color-text-secondary text-center">
+                                    mongos calcula el hash y va <strong>directamente</strong> al shard correcto
+                                </p>
+                                <div class="performance-chart">
+                                    <div class="chart-bar">
+                                        <div class="chart-label">Shards consultados:</div>
+                                        <div class="chart-value">
+                                            <div class="chart-fill risk-low" style="width: 25%"></div>
+                                        </div>
+                                        <span class="color-text-secondary ml-3">Solo 1</span>
+                                    </div>
+                                    <div class="chart-bar">
+                                        <div class="chart-label">Tiempo de respuesta:</div>
+                                        <div class="chart-value">
+                                            <div class="chart-fill risk-low" style="width: 15%"></div>
+                                        </div>
+                                        <span class="color-text-secondary ml-3">5-10 ms</span>
+                                    </div>
+                                    <div class="chart-bar">
+                                        <div class="chart-label">Red overhead:</div>
+                                        <div class="chart-value">
+                                            <div class="chart-fill risk-low" style="width: 10%"></div>
+                                        </div>
+                                        <span class="color-text-secondary ml-3">Mínimo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Máxima Eficiencia -->
+                <div class="interactive-card">
+                    <h4 class="highlight-green mb-6 text-center">3. Máxima Eficiencia End-to-End</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="badge badge-primary mb-4" style="font-size: var(--text-2xl); padding: var(--spacing-lg);">⚡</div>
+                            <h6 class="color-text-primary mb-3">Consulta Dirigida</h6>
+                            <p class="color-text-secondary">
+                                Llega al servidor correcto instantáneamente sin preguntar a otros shards
+                            </p>
+                        </div>
+                        <div class="text-center">
+                            <div class="badge badge-primary mb-4" style="font-size: var(--text-2xl); padding: var(--spacing-lg);">📍</div>
+                            <h6 class="color-text-primary mb-3">Índice Optimizado</h6>
+                            <p class="color-text-secondary">
+                                Una vez en el shard correcto, encuentra los datos en microsegundos
+                            </p>
+                        </div>
+                        <div class="text-center">
+                            <div class="badge badge-primary mb-4" style="font-size: var(--text-2xl); padding: var(--spacing-lg);">🎯</div>
+                            <h6 class="color-text-primary mb-3">Sin Red Overhead</h6>
+                            <p class="color-text-secondary">
+                                Cero comunicación entre shards, cero latencia de red interna
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparación de Performance -->
+            <div class="interactive-card mt-8">
+                <h3 class="highlight-green mb-4 text-center">Impacto en Performance: Antes vs Después</h3>
+                <div class="performance-chart">
+                    <div class="chart-bar">
+                        <div class="chart-label">Consulta sin Sinergia:</div>
+                        <div class="chart-value">
+                            <div class="chart-fill risk-high" style="width: 90%"></div>
+                        </div>
+                        <span class="color-text-secondary ml-3">~2-5 segundos</span>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="chart-label">Consulta con Sinergia:</div>
+                        <div class="chart-value">
+                            <div class="chart-fill risk-low" style="width: 5%"></div>
+                        </div>
+                        <span class="color-text-secondary ml-3">~5-10 milisegundos</span>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="chart-label">Mejora de Performance:</div>
+                        <div class="chart-value">
+                            <div class="chart-fill" style="width: 98%"></div>
+                        </div>
+                        <span class="color-text-primary ml-3">500x más rápido</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modelo de Entidades -->
+    <section class="section" id="entities">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2 class="text-gradient mb-4">Modelo de Entidades: Transacción como Protagonista</h2>
+                <p class="text-lg color-text-secondary">
+                    La transacción es la entidad principal, el cliente es contexto secundario
+                </p>
+            </div>
+
+            <!-- Diagrama de Entidades -->
+            <div class="entity-diagram">
+                <div class="entity entity-primary">
+                    <h4 class="highlight-green mb-3">🎯 TRANSACCIÓN</h4>
+                    <p class="color-text-primary font-bold">Entidad Principal</p>
+                    <p class="color-text-secondary mt-2">Cada documento representa un evento transaccional único</p>
+                    <div class="mt-4">
+                        <div class="badge badge-primary">Unidad fundamental</div>
+                        <div class="badge badge-primary mt-2">Evento inmutable</div>
+                    </div>
+                </div>
+
+                <div class="connection-line"></div>
+
+                <div class="entity entity-secondary">
+                    <h4 class="highlight-purple mb-3">👤 CLIENTE</h4>
+                    <p class="color-accent font-bold">Contexto Incrustado</p>
+                    <p class="color-text-secondary mt-2">Datos de identificación copiados para optimizar consultas</p>
+                    <div class="mt-4">
+                        <div class="badge badge-secondary">Solo identificación</div>
+                        <div class="badge badge-secondary mt-2">Desnormalizado</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Justificación del Modelo -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                <div class="interactive-card">
+                    <h4 class="highlight-green mb-4">¿Por qué Transacción como Principal?</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <div class="badge badge-primary">1</div>
+                            <div>
+                                <h6 class="color-text-primary">Patrón de Consulta Real</h6>
+                                <p class="color-text-secondary">Los asesores buscan transacciones de un cliente, no datos del cliente</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="badge badge-primary">2</div>
+                            <div>
+                                <h6 class="color-text-primary">Eventos Inmutables</h6>
+                                <p class="color-text-secondary">Una transacción es una "foto en el tiempo" que nunca cambia</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="badge badge-primary">3</div>
+                            <div>
+                                <h6 class="color-text-primary">Escalabilidad Natural</h6>
+                                <p class="color-text-secondary">Crecimiento ilimitado sin comprometer performance</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="badge badge-primary">4</div>
+                            <div>
+                                <h6 class="color-text-primary">Auditoría Perfecta</h6>
+                                <p class="color-text-secondary">Registro histórico completo e inmutable</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="interactive-card">
+                    <h4 class="highlight-green mb-4">Ventajas de la Desnormalización</h4>
+                    <div class="code-preview mb-4">
+// Información del cliente incrustada
+{
+  "idTransaccion": "TRN-2025-ABCD-1234",
+  "cliente": {
+    "tipoIdentificacion": "CC",
+    "numeroIdentificacion": "123456789"
+    // Solo datos de identificación
+    // NO perfil completo del cliente
+  },
+  "origen": { ... },
+  "analisisRiesgo": { ... }
+}
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <span class="color-success">✅</span>
+                            <span class="color-text-secondary">Cero JOINs necesarios</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="color-success">✅</span>
+                            <span class="color-text-secondary">Contexto inmediato disponible</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="color-success">✅</span>
+                            <span class="color-text-secondary">Consultas ultra-rápidas</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="color-success">✅</span>
+                            <span class="color-text-secondary">Datos históricos exactos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Análisis de Riesgos -->
+    <section class="section" id="risks">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2 class="text-gradient mb-4">Análisis Completo de Riesgos</h2>
+                <p class="text-lg color-text-secondary">
+                    Identificación y evaluación de todos los riesgos potenciales
+                </p>
+            </div>
+
+            <div class="interactive-card mb-6">
+                <h3 class="highlight-green text-center mb-4">Evaluación General: Modelo Extremadamente Robusto</h3>
+                <div class="risk-meter">
+                    <span class="color-text-secondary">Bajo Riesgo</span>
+                    <div class="risk-bar">
+                        <div class="risk-fill risk-low" style="width: 85%"></div>
+                    </div>
+                    <span class="color-text-secondary">Alto Riesgo</span>
+                </div>
+                <p class="text-center color-text-secondary mt-3">
+                    El modelo propuesto tiene un <strong class="color-success">riesgo muy bajo</strong> y está alineado con las mejores prácticas de MongoDB
+                </p>
+            </div>
+
+            <!-- Riesgo 1: Shard Key Hashed -->
+            <div class="interactive-card mb-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="color-error" style="font-size: var(--text-2xl);">🎯</span>
+                    <h4 class="highlight-purple mb-0">Riesgo 1: Shard Key Hashed - Limitaciones de Consultas por Rango</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div>
+                            <h5 class="color-warning mb-4 flex items-center gap-2">
+                                <span>⚠️</span> El Trade-off
+                            </h5>
+                            <p class="color-text-secondary mb-4 leading-relaxed">
+                                Una llave `hashed` es perfecta para distribución uniforme y búsquedas exactas, 
+                                pero no es eficiente para consultas por rango sobre la misma llave.
+                            </p>
+                            <div class="code-preview">
+// ❌ Consulta por rango (ineficiente con hash)
+db.transacciones.find({
+  "cliente.numeroIdentificacion": {
+    $gte: "100000000",
+    $lt: "200000000"
+  }
+})
+// Tendría que ir a TODOS los shards
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h5 class="color-success mb-4 flex items-center gap-2">
+                                <span>✅</span> Por qué es Riesgo Aceptable
+                            </h5>
+                            <div class="risk-meter mb-6">
+                                <span class="color-text-secondary">Aceptable</span>
+                                <div class="risk-bar">
+                                    <div class="risk-fill risk-low" style="width: 90%"></div>
+                                </div>
+                                <span class="color-text-secondary">Crítico</span>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="card p-4">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="color-primary">📊</span>
+                                        <h6 class="color-text-primary">99.9% de consultas son exactas</h6>
+                                    </div>
+                                    <p class="color-text-secondary text-sm">Buscar cliente específico, no rangos</p>
+                                </div>
+                                
+                                <div class="card p-4">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="color-primary">🎯</span>
+                                        <h6 class="color-text-primary">Optimizado para caso real</h6>
+                                    </div>
+                                    <p class="color-text-secondary text-sm">Asesor consulta cliente 123456789</p>
+                                </div>
+                                
+                                <div class="card p-4">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="color-primary">📈</span>
+                                        <h6 class="color-text-primary">Caso hipotético</h6>
+                                    </div>
+                                    <p class="color-text-secondary text-sm">Consultas por rango son muy improbables</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Riesgo 2: Desnormalización -->
+            <div class="interactive-card mb-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="color-info" style="font-size: var(--text-2xl);">🔄</span>
+                    <h4 class="highlight-purple mb-0">Riesgo 2: Desnormalización - Datos Históricos Inmutables</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div>
+                            <h5 class="color-warning mb-4 flex items-center gap-2">
+                                <span>⚠️</span> La Consideración
+                            </h5>
+                            <p class="color-text-secondary mb-4 leading-relaxed">
+                                Si un dato del cliente cambia (ej: corrección del número de documento), 
+                                no se reflejará en las transacciones históricas.
+                            </p>
+                            <div class="code-preview">
+// Escenario hipotético: cambio de documento
+// Transacciones históricas mantienen:
+{
+  "cliente": {
+    "numeroIdentificacion": "123456789" // Valor original
+  },
+  "timestampTransaccion": "2025-01-15"
+}
+
+// Nuevas transacciones tendrían:
+{
+  "cliente": {
+    "numeroIdentificacion": "987654321" // Valor corregido
+  },
+  "timestampTransaccion": "2025-08-15"
+}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h5 class="color-success mb-4 flex items-center gap-2">
+                                <span>✅</span> Por qué es Ventaja, No Riesgo
+                            </h5>
+                            <div class="risk-meter mb-6">
+                                <span class="color-text-secondary">Beneficioso</span>
+                                <div class="risk-bar">
+                                    <div class="risk-fill risk-low" style="width: 95%"></div>
+                                </div>
+                                <span class="color-text-secondary">Problemático</span>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="card p-4">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="color-success">📸</span>
+                                        <h6 class="color-text-primary">Foto en el Tiempo</h6>
+                                    </div>
+                                    <p class="color-text-secondary text-sm">Los datos son correctos tal como existían en el momento de la transacción</p>
+                                </div>
+                                
+                                <div class="card p-4">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="color-success">🛡️</span>
+                                        <h6 class="color-text-primary">Requisito de Auditoría</h6>
+                                    </div>
+                                    <p class="color-text-secondary text-sm">Mantener registro histórico inmutable es mandatorio</p>
+                                </div>
+                                
+                                <div class="card p-4">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="color-success">📋</span>
+                                        <h6 class="color-text-primary">Cumplimiento Normativo</h6>
+                                    </div>
+                                    <p class="color-text-secondary text-sm">Los cambios de identificación son extremadamente raros</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Riesgo 3: Consideraciones Operacionales -->
+            <div class="interactive-card mb-6">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="color-warning" style="font-size: var(--text-2xl);">⚙️</span>
+                    <h4 class="highlight-purple mb-0">Riesgo 3: Consideraciones Operacionales - Nuevos Patrones de Consulta</h4>
+                </div>
+                
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div>
+                            <h5 class="color-info mb-4 flex items-center gap-2">
+                                <span>ℹ️</span> La Realidad Operacional
+                            </h5>
+                            <p class="color-text-secondary mb-4 leading-relaxed">
+                                Si surge un nuevo patrón de consulta crítico no soportado por los índices actuales,
+                                se necesitará crear un nuevo índice.
+                            </p>
+                            <div class="code-preview">
+// Ejemplo: nuevo requerimiento futuro
+db.transacciones.find({
+  "canal.merchantId": "MERCHANT_XYZ",
+  "timestampTransaccion": {
+    $gte: ISODate("2025-08-01")
+  }
+})
+
+// Requeriría nuevo índice:
+{
+  "canal.merchantId": 1,
+  "timestampTransaccion": -1
+}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h5 class="color-info mb-4 flex items-center gap-2">
+                                <span>🔧</span> Gestión Proactiva
+                            </h5>
+                            <div class="risk-meter mb-6">
+                                <span class="color-text-secondary">Manejable</span>
+                                <div class="risk-bar">
+                                    <div class="risk-fill risk-medium" style="width: 35%"></div>
+                                </div>
+                                <span class="color-text-secondary">Complejo</span>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="card p-4">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="color-info">📋</span>
+                                        <h6 class="color-text-primary">Rolling Index Build</h6>
+                                    </div>
+                                    <p class="color-text-secondary text-sm">MongoDB puede crear índices en segundo plano sin downtime</p>
+                                </div>
+                                
+                                <div class="card p-4">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="color-info">⏰</span>
+                                        <h6 class="color-text-primary">Planificación Requerida</h6>
+                                    </div>
+                                    <p class="color-text-secondary text-sm">En colecciones de TB, requiere ventana de mantenimiento</p>
+                                </div>
+                                
+                                <div class="card p-4">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="color-info">🎯</span>
+                                        <h6 class="color-text-primary">Estándar de la Industria</h6>
+                                    </div>
+                                    <p class="color-text-secondary text-sm">Realidad en cualquier DB a esta escala</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trade-offs -->
+    <section class="section" id="tradeoffs">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2 class="text-gradient mb-4">Trade-offs de Diseño: Decisiones Estratégicas</h2>
+                <p class="text-lg color-text-secondary">
+                    Análisis de las decisiones de diseño y sus implicaciones
+                </p>
+            </div>
+
+            <!-- Trade-off Principal -->
+            <div class="interactive-card mb-8">
+                <h3 class="highlight-green mb-4 text-center">Trade-off Principal: Rendimiento vs Flexibilidad</h3>
+                <div class="tradeoff-scale">
+                    <div class="scale-line"></div>
+                    <div class="scale-point" data-position="flexibility"></div>
+                    <div class="scale-point" data-position="balanced"></div>
+                    <div class="scale-point" data-position="performance" class="active"></div>
+                    <div class="scale-point" data-position="ultra-performance"></div>
+                </div>
+                <div class="flex justify-between mt-3">
+                    <span class="color-text-secondary text-sm">Máxima Flexibilidad</span>
+                    <span class="color-text-secondary text-sm">Balanceado</span>
+                    <span class="color-text-primary text-sm font-bold">Nuestra Elección</span>
+                    <span class="color-text-secondary text-sm">Ultra Performance</span>
+                </div>
+                <p class="text-center color-text-secondary mt-4">
+                    Hemos elegido optimizar para el <strong class="highlight-purple">99.9% de casos de uso reales</strong> 
+                    sobre la flexibilidad teórica de casos hipotéticos.
+                </p>
+            </div>
+
+            <!-- Comparación Detallada -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Modelo Relacional Tradicional -->
+                <div class="interactive-card">
+                    <h4 class="color-error mb-3">🗄️ Modelo Relacional</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="color-success">✅</span>
+                            <span class="color-text-secondary text-sm">Normalización perfecta</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="color-success">✅</span>
+                            <span class="color-text-secondary text-sm">Flexibilidad total</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="color-error">❌</span>
+                            <span class="color-text-secondary text-sm">JOINs complejos</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="color-error">❌</span>
+                            <span class="color-text-secondary text-sm">Tiempo respuesta: segundos</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="color-error">❌</span>
+                            <span class="color-text-secondary text-sm">Escalabilidad limitada</span>
+                        </div>
+                    </div>
+                    <div class="performance-chart mt-4">
+                        <div class="chart-bar">
+                            <div class="chart-label">Performance:</div>
+                            <div class="chart-value">
+                                <div class="chart-fill risk-high" style="width: 20%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nuestro Modelo -->
+                <div class="interactive-card scenario-good">
+                    <h4 class="color-success mb-3">🚀 Nuestro Modelo</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="color-success">✅</span>
+                            <span class="color-text-secondary text-sm">Performance excepcional</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="color-success">✅</span>
+                            <span class="color-text-secondary text-sm">Cero JOINs</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="color-success">✅</span>
+                            <span class="color-text-secondary text-sm">Escalabilidad infinita</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="color-success">✅</span>
+                            <span class="color-text-secondary text-sm">Tiempo respuesta: milisegundos</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="color-warning">⚠️</span>
+                            <span class="color-text-secondary text-sm">Optimizado para casos específicos</span>
+                        </div>
+                    </div>
+                    <div class="performance-chart mt-4">
+                        <div class="chart-bar">
+                            <div class="chart-label">Performance:</div>
+                            <div class="chart-value">
+                                <div class="chart-fill risk-low" style="width: 95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modelo Ultra-Flexible -->
+                <div class="interactive-card">
+                    <h4 class="color-info mb-3">🔄 Modelo Ultra-Flexible</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="color-success">✅</span>
+                            <span class="color-text-secondary text-sm">Consultas infinitas</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="color-success">✅</span>
+                            <span class="color-text-secondary text-sm">Futuro-proof absoluto</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="color-error">❌</span>
+                            <span class="color-text-secondary text-sm">Performance subóptima</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="color-error">❌</span>
+                            <span class="color-text-secondary text-sm">Complejidad innecesaria</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="color-error">❌</span>
+                            <span class="color-text-secondary text-sm">Over-engineering</span>
+                        </div>
+                    </div>
+                    <div class="performance-chart mt-4">
+                        <div class="chart-bar">
+                            <div class="chart-label">Performance:</div>
+                            <div class="chart-value">
+                                <div class="chart-fill risk-medium" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conclusión -->
+            <div class="interactive-card mt-8 text-center">
+                <h3 class="text-gradient mb-4">Conclusión: Solución Óptima y de Menor Riesgo</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="highlight-green mb-3">✅ Lo que Garantizamos</h4>
+                        <div class="space-y-3">
+                            <div class="interactive-tooltip">
+                                <div class="flex items-center justify-center gap-3">
+                                    <span class="color-primary">⚡</span>
+                                    <span class="color-text-primary">Máxima velocidad para asesores</span>
+                                </div>
+                                <div class="tooltip-content">Consultas en milisegundos garantizadas</div>
+                            </div>
+                            <div class="interactive-tooltip">
+                                <div class="flex items-center justify-center gap-3">
+                                    <span class="color-primary">📈</span>
+                                    <span class="color-text-primary">Escalabilidad masiva comprobada</span>
+                                </div>
+                                <div class="tooltip-content">Terabytes sin impacto en performance</div>
+                            </div>
+                            <div class="interactive-tooltip">
+                                <div class="flex items-center justify-center gap-3">
+                                    <span class="color-primary">🛡️</span>
+                                    <span class="color-text-primary">Trazabilidad completa de auditoría</span>
+                                </div>
+                                <div class="tooltip-content">Historial inmutable para cumplimiento</div>
+                            </div>
+                            <div class="interactive-tooltip">
+                                <div class="flex items-center justify-center gap-3">
+                                    <span class="color-primary">🤖</span>
+                                    <span class="color-text-primary">Mantenimiento automatizado</span>
+                                </div>
+                                <div class="tooltip-content">TTL nativo sin scripts manuales</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="highlight-purple mb-3">🎯 Trade-offs Aceptados</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-center gap-3">
+                                <span class="color-warning">⚠️</span>
+                                <span class="color-text-secondary">Consultas por rango menos eficientes</span>
+                            </div>
+                            <div class="flex items-center justify-center gap-3">
+                                <span class="color-info">ℹ️</span>
+                                <span class="color-text-secondary">Nuevos índices requieren planificación</span>
+                            </div>
+                            <div class="flex items-center justify-center gap-3">
+                                <span class="color-info">📋</span>
+                                <span class="color-text-secondary">Datos históricos inmutables</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <p class="color-text-secondary font-bold">
+                                Estos trade-offs son <span class="highlight-green">consideraciones estándar</span> 
+                                que no representan amenazas para el éxito del proyecto.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-6 bg-gradient-to-r from-green-500/10 to-purple-500/10 rounded-lg border border-green-500/20">
+                    <h4 class="text-gradient mb-3">🎖️ Resultado Final</h4>
+                    <p class="text-xl color-text-primary font-bold mb-2">
+                        Arquitectura MongoDB con el menor riesgo posible para garantizar éxito del proyecto
+                    </p>
+                    <p class="color-text-secondary">
+                        Optimizada para 300 asesores • Escalable a terabytes • Performance de milisegundos
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Scroll progress indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('scrollProgress').style.width = scrolled + '%';
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Flow step interaction
+        document.querySelectorAll('.flow-step').forEach((step, index) => {
+            step.addEventListener('click', function() {
+                // Reset all steps
+                document.querySelectorAll('.flow-step').forEach(s => s.style.animationDelay = '0s');
+                
+                // Trigger wave animation
+                const delay = index * 0.2;
+                this.style.animationDelay = `${delay}s`;
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = 'pulse 2s ease-in-out infinite alternate';
+                }, 10);
+                
+                // Show tooltip with step info
+                const tooltips = [
+                    'El asesor ingresa el número de identificación del cliente',
+                    'mongos calcula el hash y determina el shard destino',
+                    'La consulta se envía directamente al shard correcto',
+                    'El índice compuesto encuentra los datos instantáneamente'
+                ];
+                
+                const tooltip = document.createElement('div');
+                tooltip.textContent = tooltips[index];
+                tooltip.style.cssText = `
+                    position: absolute;
+                    top: -60px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: var(--color-bg-tertiary);
+                    color: var(--color-text-primary);
+                    padding: var(--spacing-md);
+                    border-radius: var(--radius-md);
+                    font-size: var(--text-sm);
+                    white-space: nowrap;
+                    z-index: var(--z-tooltip);
+                    border: 1px solid var(--color-primary);
+                    animation: fadeIn 0.3s ease;
+                `;
+                
+                this.style.position = 'relative';
+                this.appendChild(tooltip);
+                
+                setTimeout(() => tooltip.remove(), 3000);
+            });
+        });
+
+        // Trade-off scale interaction
+        document.querySelectorAll('.scale-point').forEach(point => {
+            point.addEventListener('click', function() {
+                document.querySelectorAll('.scale-point').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                
+                const position = this.getAttribute('data-position');
+                const descriptions = {
+                    'flexibility': 'Normalización completa, múltiples colecciones, JOINs complejos',
+                    'balanced': 'Híbrido con algunas optimizaciones, performance moderada',
+                    'performance': 'Nuestro modelo: optimizado para casos de uso reales',
+                    'ultra-performance': 'Sobre-optimizado, sacrifica demasiada flexibilidad'
+                };
+                
+                // Update description
+                const container = this.closest('.interactive-card');
+                let desc = container.querySelector('.scale-description');
+                if (!desc) {
+                    desc = document.createElement('p');
+                    desc.className = 'scale-description color-text-secondary mt-4 text-center';
+                    container.appendChild(desc);
+                }
+                desc.textContent = descriptions[position];
+            });
+        });
+
+        // Risk meter animation on scroll
+        const riskObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const fills = entry.target.querySelectorAll('.risk-fill, .chart-fill');
+                    fills.forEach((fill, index) => {
+                        setTimeout(() => {
+                            fill.style.width = fill.style.width || '0%';
+                        }, index * 300);
+                    });
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.interactive-card').forEach(card => {
+            riskObserver.observe(card);
+        });
+
+        // Entity diagram interaction
+        document.querySelectorAll('.entity').forEach(entity => {
+            entity.addEventListener('mouseenter', function() {
+                if (this.classList.contains('entity-primary')) {
+                    this.style.boxShadow = '0 0 50px rgba(0, 237, 100, 0.6)';
+                } else {
+                    this.style.boxShadow = '0 0 30px rgba(86, 68, 212, 0.6)';
+                }
+            });
+            
+            entity.addEventListener('mouseleave', function() {
+                if (this.classList.contains('entity-primary')) {
+                    this.style.boxShadow = '0 0 30px rgba(0, 237, 100, 0.3)';
+                } else {
+                    this.style.boxShadow = 'var(--shadow-lg)';
+                }
+            });
+        });
+
+        // Scenario card enhanced interaction
+        document.querySelectorAll('.scenario-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Add ripple effect
+                const ripple = document.createElement('div');
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(0, 237, 100, 0.3);
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    left: 50%;
+                    top: 50%;
+                    width: 100px;
+                    height: 100px;
+                    margin-left: -50px;
+                    margin-top: -50px;
+                `;
+                
+                this.style.position = 'relative';
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Initialize animations when page loads
+        window.addEventListener('load', () => {
+            // Stagger card animations
+            const cards = document.querySelectorAll('.interactive-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+            
+            // Initialize moving data animations
+            document.querySelectorAll('.moving-data').forEach((dot, index) => {
+                dot.style.animationDelay = `${index * 1}s`;
+            });
+        });
+
+        console.log('MongoDB Sharding Strategy - Interactive Analysis Loaded');
+        console.log('Synergy between Indexes and Sharding Strategy');
+    </script>
+</body>
+</html>

@@ -259,6 +259,19 @@
       "dest": "/clientes/bancolombia/reporteejecutivo/pactuales.html"
     },
     {
+      "src": "/clientes/BDP/sizing(?:/.*)?$",
+      "dest": "/clientes/BDP/sizing.html"
+    },
+    {
+      "src": "/clientes/payway/kafka(?:/.*)?$",
+      "dest": "/clientes/payway/kafka.html"
+    },
+    {
+      "src": "/clientes/payway/salesforce(?:/.*)?$",
+      "dest": "/clientes/payway/salesforce.html"
+    },
+    
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
