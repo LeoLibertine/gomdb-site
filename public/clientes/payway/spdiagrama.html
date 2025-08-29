@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1350">
+    <title>Atlas Stream Processing - Arquitectura Avanzada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            width: 1080px;
+            height: 1350px;
+            background: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Segoe UI Emoji", Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        
+        /* Título */
+        .title {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        .title h1 {
+            font-size: 64px;
+            font-weight: 900;
+            color: #001E2B;
+            text-shadow: 3px 3px 6px rgba(255,255,255,0.9),
+                        -1px -1px 2px rgba(255,255,255,0.5);
+            margin-bottom: 10px;
+        }
+        
+        .title p {
+            font-size: 28px;
+            color: #0D2A3D;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+        }
+        
+        /* SVG Container */
+        .diagram-svg {
+            width: 100%;
+            max-width: 1000px;
+            height: 850px;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));
+        }
+        
+        /* Animaciones */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.05);
+            }
+        }
+        
+        @keyframes flowDash {
+            to {
+                stroke-dashoffset: -40;
+            }
+        }
+        
+        @keyframes glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px currentColor);
+            }
+            50% {
+                filter: drop-shadow(0 0 20px currentColor) drop-shadow(0 0 30px currentColor);
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes dataFlow {
+            0% {
+                offset-distance: 0%;
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                offset-distance: 100%;
+                opacity: 0;
+            }
+        }
+        
+        /* Info boxes */
+        .info-boxes {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 900px;
+            margin-top: 30px;
+            gap: 20px;
+        }
+        
+        .info-card {
+            background: rgba(255,255,255,0.98);
+            border: 3px solid #001E2B;
+            border-radius: 15px;
+            padding: 20px;
+            flex: 1;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            animation: scaleIn 0.8s ease-out backwards;
+            transition: transform 0.3s ease;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .info-card:nth-child(1) { animation-delay: 1.5s; }
+        .info-card:nth-child(2) { animation-delay: 1.7s; }
+        .info-card:nth-child(3) { animation-delay: 1.9s; }
+        
+        .info-card h4 {
+            font-size: 20px;
+            color: #001E2B;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .info-card li {
+            font-size: 14px;
+            color: #0D2A3D;
+            margin-bottom: 5px;
+            padding-left: 15px;
+            position: relative;
+        }
+        
+        .info-card li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #00ED64;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Título -->
+        <div class="title">
+            <h1>Atlas Stream Processing</h1>
+            <p>Arquitectura de Procesamiento en Tiempo Real</p>
+        </div>
+        
+        <!-- Diagrama SVG -->
+        <svg class="diagram-svg" viewBox="0 0 1000 850" xmlns="http://www.w3.org/2000/svg">
+            <!-- Definiciones -->
+            <defs>
+                <!-- Gradientes -->
+                <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#00ED64;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#00A847;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#5644D4;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#3D2F9D;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1E40AF;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#D97706;stop-opacity:1" />
+                </linearGradient>
+                
+                <!-- Filtro de sombra -->
+                <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                    <feOffset dx="0" dy="4" result="offsetblur"/>
+                    <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.2"/>
+                    </feComponentTransfer>
+                    <feMerge> 
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/> 
+                    </feMerge>
+                </filter>
+                
+                <!-- Marcadores de flecha -->
+                <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+                    <polygon points="0 0, 12 6, 0 12" fill="#3B82F6" />
+                </marker>
+                
+                <marker id="arrowGreen" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+                    <polygon points="0 0, 12 6, 0 12" fill="#00ED64" />
+                </marker>
+                
+                <marker id="arrowOrange" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+                    <polygon points="0 0, 12 6, 0 12" fill="#F59E0B" />
+                </marker>
+            </defs>
+            
+            <!-- 1. KAFKA - Origen de Datos -->
+            <g id="kafka" transform="translate(50, 350)" style="animation: scaleIn 0.6s ease-out">
+                <rect x="0" y="0" width="200" height="120" rx="15" 
+                      fill="white" 
+                      stroke="#001E2B" 
+                      stroke-width="3"
+                      filter="url(#shadow)"/>
+                
+                <text x="100" y="30" font-size="22" font-weight="bold" text-anchor="middle" fill="#001E2B">
+                    📨 Apache Kafka
+                </text>
+                <text x="100" y="50" font-size="14" font-weight="600" text-anchor="middle" fill="#0D2A3D">
+                    Origen de Datos
+                </text>
+                <text x="100" y="70" font-size="12" text-anchor="middle" fill="#718096">
+                    Topic: transacciones_raw
+                </text>
+                <text x="100" y="86" font-size="12" text-anchor="middle" fill="#718096">
+                    Eventos sin procesar
+                </text>
+                <text x="100" y="102" font-size="12" text-anchor="middle" fill="#718096">
+                    Alta disponibilidad
+                </text>
+            </g>
+            
+            <!-- 2. Connection Registry -->
+            <g id="registry" transform="translate(300, 150)" style="animation: scaleIn 0.8s ease-out 0.2s backwards">
+                <rect x="0" y="0" width="200" height="100" rx="15" 
+                      fill="rgba(255,255,255,0.98)" 
+                      stroke="url(#blueGradient)" 
+                      stroke-width="3"
+                      filter="url(#shadow)"/>
+                
+                <text x="100" y="30" font-size="18" font-weight="bold" text-anchor="middle" fill="#1E40AF">
+                    🔗 Connection Registry
+                </text>
+                <text x="100" y="52" font-size="14" font-weight="600" text-anchor="middle" fill="#0D2A3D">
+                    Configuración de Enlaces
+                </text>
+                <text x="100" y="70" font-size="12" text-anchor="middle" fill="#718096">
+                    • Conexión a Kafka
+                </text>
+                <text x="100" y="85" font-size="12" text-anchor="middle" fill="#718096">
+                    • Conexión a Atlas
+                </text>
+            </g>
+            
+            <!-- 3. Atlas Stream Processing - CEREBRO -->
+            <g id="stream-processor" transform="translate(300, 300)" style="animation: scaleIn 1s ease-out 0.4s backwards">
+                <rect x="0" y="0" width="400" height="220" rx="20" 
+                      fill="white" 
+                      stroke="url(#purpleGradient)" 
+                      stroke-width="4"
+                      filter="url(#shadow)"/>
+                
+                <text x="200" y="30" font-size="22" font-weight="bold" text-anchor="middle" fill="#001E2B">
+                    🧠 Atlas Stream Processing
+                </text>
+                <text x="200" y="50" font-size="14" font-weight="600" text-anchor="middle" fill="#5644D4">
+                    Pipeline de Agregación en Tiempo Real
+                </text>
+                
+                <!-- Etapas del Pipeline -->
+                <g transform="translate(30, 70)">
+                    <rect x="0" y="0" width="340" height="25" rx="5" fill="#F3F4F6" stroke="#5644D4" stroke-width="1"/>
+                    <text x="10" y="18" font-size="12" font-weight="600" fill="#5644D4">$match</text>
+                    <text x="70" y="18" font-size="11" fill="#0D2A3D">Valida reglas de negocio (APROBADA + USD)</text>
+                </g>
+                
+                <g transform="translate(30, 100)">
+                    <rect x="0" y="0" width="340" height="25" rx="5" fill="#F3F4F6" stroke="#5644D4" stroke-width="1"/>
+                    <text x="10" y="18" font-size="12" font-weight="600" fill="#5644D4">$lookup</text>
+                    <text x="70" y="18" font-size="11" fill="#0D2A3D">Enriquece con datos del comercio</text>
+                </g>
+                
+                <g transform="translate(30, 130)">
+                    <rect x="0" y="0" width="340" height="25" rx="5" fill="#F3F4F6" stroke="#5644D4" stroke-width="1"/>
+                    <text x="10" y="18" font-size="12" font-weight="600" fill="#5644D4">$addFields</text>
+                    <text x="70" y="18" font-size="11" fill="#0D2A3D">Calcula comisiones y transforma</text>
+                </g>
+                
+               
+                
+                <g transform="translate(30, 140)">
+                    <rect x="0" y="0" width="340" height="25" rx="5" fill="#F3F4F6" stroke="#5644D4" stroke-width="1"/>
+                    <text x="10" y="18" font-size="13" font-weight="600" fill="#5644D4">$addFields</text>
+                    <text x="80" y="18" font-size="12" fill="#0D2A3D">Calcula comisiones y transforma</text>
+                </g>
+                
+                <g transform="translate(30, 170)">
+                    <rect x="0" y="0" width="340" height="25" rx="5" fill="#F3F4F6" stroke="#5644D4" stroke-width="1"/>
+                    <text x="10" y="18" font-size="13" font-weight="600" fill="#5644D4">$merge</text>
+                    <text x="80" y="18" font-size="12" fill="#0D2A3D">Enruta a colección de destino</text>
+                </g>
+            </g>
+            
+            <!-- 4. Procesadores Paralelos -->
+            <g id="processor-valid" transform="translate(300, 550)" style="animation: scaleIn 1s ease-out 0.6s backwards">
+                <rect x="0" y="0" width="180" height="80" rx="10" 
+                      fill="rgba(255,255,255,0.98)" 
+                      stroke="#00ED64" 
+                      stroke-width="2"
+                      filter="url(#shadow)"/>
+                
+                <text x="90" y="28" font-size="16" font-weight="bold" text-anchor="middle" fill="#00684B">
+                    ✅ Procesador Válidas
+                </text>
+                <text x="90" y="48" font-size="12" text-anchor="middle" fill="#0D2A3D">
+                    Status: APROBADA
+                </text>
+                <text x="90" y="64" font-size="12" text-anchor="middle" fill="#0D2A3D">
+                    Moneda: USD
+                </text>
+            </g>
+            
+            <g id="processor-error" transform="translate(520, 550)" style="animation: scaleIn 1s ease-out 0.7s backwards">
+                <rect x="0" y="0" width="180" height="80" rx="10" 
+                      fill="rgba(255,240,240,0.98)" 
+                      stroke="#F59E0B" 
+                      stroke-width="2"
+                      filter="url(#shadow)"/>
+                
+                <text x="90" y="28" font-size="16" font-weight="bold" text-anchor="middle" fill="#92400E">
+                    ⚠️ Procesador Errores
+                </text>
+                <text x="90" y="48" font-size="12" text-anchor="middle" fill="#0D2A3D">
+                    Status: No APROBADA
+                </text>
+                <text x="90" y="64" font-size="12" text-anchor="middle" fill="#0D2A3D">
+                    Moneda: No USD
+                </text>
+            </g>
+            
+            <!-- 5. MongoDB Atlas - Destino -->
+            <g id="mongodb-collections" transform="translate(750, 300)" style="animation: scaleIn 1s ease-out 0.8s backwards">
+                <rect x="0" y="0" width="200" height="220" rx="15" 
+                      fill="white" 
+                      stroke="url(#greenGradient)" 
+                      stroke-width="4"
+                      filter="url(#shadow)"/>
+                
+                <text x="100" y="30" font-size="22" font-weight="bold" text-anchor="middle" fill="#001E2B">
+                    🍃 MongoDB Atlas
+                </text>
+                <text x="100" y="50" font-size="14" font-weight="600" text-anchor="middle" fill="#00684B">
+                    Colecciones Curadas
+                </text>
+                
+                <!-- Colección Válidas -->
+                <g transform="translate(15, 75)">
+                    <rect x="0" y="0" width="170" height="50" rx="8" fill="#E6FFFA" stroke="#00ED64" stroke-width="2"/>
+                    <text x="85" y="22" font-size="13" font-weight="600" text-anchor="middle" fill="#00684B">
+                        📁 transacciones_validas
+                    </text>
+                    <text x="85" y="40" font-size="11" text-anchor="middle" fill="#047857">
+                        Datos limpios y enriquecidos
+                    </text>
+                </g>
+                
+                <!-- Colección Errores -->
+                <g transform="translate(15, 140)">
+                    <rect x="0" y="0" width="170" height="50" rx="8" fill="#FFF7ED" stroke="#F59E0B" stroke-width="2"/>
+                    <text x="85" y="22" font-size="13" font-weight="600" text-anchor="middle" fill="#92400E">
+                        📁 transacciones_error
+                    </text>
+                    <text x="85" y="40" font-size="11" text-anchor="middle" fill="#92400E">
+                        Errores de negocio
+                    </text>
+                </g>
+            </g>
+            
+            <!-- Conexiones y Flujos -->
+            <!-- Kafka a Stream Processing -->
+            <path d="M 250 410 L 300 410" 
+                  stroke="#3B82F6" 
+                  stroke-width="3" 
+                  stroke-dasharray="8,4"
+                  fill="none"
+                  marker-end="url(#arrowBlue)"
+                  style="animation: flowDash 2s linear infinite"/>
+            
+            <!-- Registry a Stream Processing -->
+            <path d="M 400 250 L 400 300" 
+                  stroke="#3B82F6" 
+                  stroke-width="2" 
+                  stroke-dasharray="6,3"
+                  fill="none"
+                  opacity="0.6"
+                  style="animation: flowDash 3s linear infinite"/>
+            
+            <!-- Stream Processing a Procesadores -->
+            <path d="M 390 520 L 390 550" 
+                  stroke="#00ED64" 
+                  stroke-width="2" 
+                  stroke-dasharray="6,3"
+                  fill="none"
+                  marker-end="url(#arrowGreen)"
+                  opacity="0.8"
+                  style="animation: flowDash 2.5s linear infinite"/>
+            
+            <path d="M 610 520 L 610 550" 
+                  stroke="#F59E0B" 
+                  stroke-width="2" 
+                  stroke-dasharray="6,3"
+                  fill="none"
+                  marker-end="url(#arrowOrange)"
+                  opacity="0.8"
+                  style="animation: flowDash 2.5s linear infinite 0.5s"/>
+            
+            <!-- Procesadores a MongoDB -->
+            <path d="M 480 590 Q 620 590 750 380" 
+                  stroke="#00ED64" 
+                  stroke-width="2" 
+                  stroke-dasharray="6,3"
+                  fill="none"
+                  marker-end="url(#arrowGreen)"
+                  opacity="0.7"
+                  style="animation: flowDash 3s linear infinite"/>
+            
+            <path d="M 700 590 Q 740 590 750 445" 
+                  stroke="#F59E0B" 
+                  stroke-width="2" 
+                  stroke-dasharray="6,3"
+                  fill="none"
+                  marker-end="url(#arrowOrange)"
+                  opacity="0.7"
+                  style="animation: flowDash 3s linear infinite 0.5s"/>
+            
+            <!-- Stream Processing directo a MongoDB -->
+            <path d="M 700 410 L 750 410" 
+                  stroke="#5644D4" 
+                  stroke-width="3" 
+                  stroke-dasharray="8,4"
+                  fill="none"
+                  marker-end="url(#arrowBlue)"
+                  style="animation: flowDash 2s linear infinite"/>
+            
+            <!-- Partículas de datos animadas -->
+            <circle r="5" fill="#3B82F6" style="animation: glow 2s infinite">
+                <animateMotion dur="5s" repeatCount="indefinite">
+                    <mpath href="#dataPath1"/>
+                </animateMotion>
+            </circle>
+            
+            <circle r="5" fill="#00ED64" style="animation: glow 2s infinite">
+                <animateMotion dur="6s" repeatCount="indefinite" begin="1.5s">
+                    <mpath href="#dataPath2"/>
+                </animateMotion>
+            </circle>
+            
+            <circle r="5" fill="#F59E0B" style="animation: glow 2s infinite">
+                <animateMotion dur="6s" repeatCount="indefinite" begin="3s">
+                    <mpath href="#dataPath3"/>
+                </animateMotion>
+            </circle>
+            
+            <!-- Paths invisibles para las partículas -->
+            <path id="dataPath1" d="M 250 410 L 500 410 L 750 410" stroke="none" fill="none"/>
+            <path id="dataPath2" d="M 250 410 L 500 410 L 390 590 Q 620 590 750 380" stroke="none" fill="none"/>
+            <path id="dataPath3" d="M 250 410 L 500 410 L 610 590 Q 740 590 750 445" stroke="none" fill="none"/>
+            
+            <!-- Labels de flujo -->
+            <text x="275" y="400" font-size="11" fill="#3B82F6" font-weight="600">eventos raw</text>
+            <text x="720" y="400" font-size="11" fill="#5644D4" font-weight="600">procesados</text>
+        </svg>
+        
+        <!-- Información adicional -->
+        <div class="info-boxes">
+            <div class="info-card">
+                <h4>📊 Pipeline Stages</h4>
+                <ul>
+                    <li>$match: Validación</li>
+                    <li>$lookup: Enriquecimiento</li>
+                    <li>$addFields: Transformación</li>
+                    <li>$merge: Persistencia</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h4>⚡ Características</h4>
+                <ul>
+                    <li>100% Serverless</li>
+                    <li>Procesamiento paralelo</li>
+                    <li>Enrutamiento inteligente</li>
+                    <li>Sin código personalizado</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h4>✅ Beneficios</h4>
+                <ul>
+                    <li>Tiempo real garantizado</li>
+                    <li>Escalado automático</li>
+                    <li>Cero mantenimiento</li>
+                    <li>Alta disponibilidad</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

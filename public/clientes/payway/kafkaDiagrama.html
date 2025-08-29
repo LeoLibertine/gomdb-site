@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1080, height=1350">
-    <title>Arquitectura MongoDB Atlas + Kafka - Payway</title>
+    <title>Arquitectura de Ingesta Resiliente - Kafka Connect + MongoDB</title>
     <style>
         * {
             margin: 0;
@@ -35,21 +35,21 @@
         /* Título */
         .title {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
             animation: fadeInDown 1s ease-out;
         }
         
         .title h1 {
-            font-size: 72px;
+            font-size: 56px;
             font-weight: 900;
             color: #001E2B;
             text-shadow: 3px 3px 6px rgba(255,255,255,0.9),
                         -1px -1px 2px rgba(255,255,255,0.5);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         
         .title p {
-            font-size: 32px;
+            font-size: 24px;
             color: #0D2A3D;
             font-weight: 600;
             text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
@@ -59,7 +59,7 @@
         .diagram-svg {
             width: 100%;
             max-width: 1000px;
-            height: 700px;
+            height: 900px;
             filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));
         }
         
@@ -78,9 +78,11 @@
         @keyframes pulse {
             0%, 100% {
                 opacity: 1;
+                transform: scale(1);
             }
             50% {
                 opacity: 0.7;
+                transform: scale(1.05);
             }
         }
         
@@ -96,6 +98,26 @@
             }
             50% {
                 filter: drop-shadow(0 0 20px currentColor) drop-shadow(0 0 30px currentColor);
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
             }
         }
         
@@ -115,107 +137,52 @@
                 opacity: 0;
             }
         }
-        
-        @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        /* Métricas */
-        .metrics {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            max-width: 900px;
-            margin-top: 50px;
-            gap: 30px;
-        }
-        
-        .metric-card {
-            background: rgba(255,255,255,0.98);
-            border: 3px solid #001E2B;
-            border-radius: 100px;
-            padding: 25px 45px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            animation: scaleIn 0.8s ease-out backwards;
-            transition: transform 0.3s ease;
-        }
-        
-        .metric-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .metric-card:nth-child(1) { animation-delay: 1.5s; }
-        .metric-card:nth-child(2) { animation-delay: 1.7s; }
-        .metric-card:nth-child(3) { animation-delay: 1.9s; }
-        
-        .metric-icon {
-            font-size: 42px;
-        }
-        
-        .metric-text h4 {
-            font-size: 36px;
-            color: #001E2B;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-        
-        .metric-text p {
-            font-size: 20px;
-            color: #0D2A3D;
-            font-weight: 500;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Título -->
         <div class="title">
-            <h1>Arquitectura de Solución</h1>
-            <p>Pipeline MongoDB Atlas + Kafka para Payway</p>
+            <h1>Arquitectura de Ingesta Resiliente</h1>
+            <p>Kafka Connect + DLQ + Schema Validator</p>
         </div>
         
         <!-- Diagrama SVG -->
-        <svg class="diagram-svg" viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+        <svg class="diagram-svg" viewBox="0 0 1000 900" xmlns="http://www.w3.org/2000/svg">
             <!-- Definiciones -->
             <defs>
                 <!-- Gradientes -->
-                <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient id="kafkaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#2563EB;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#1E40AF;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="connectGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#6D28D9;stop-opacity:1" />
+                </linearGradient>
+                
+                <linearGradient id="mongoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" style="stop-color:#00ED64;stop-opacity:1" />
                     <stop offset="100%" style="stop-color:#00A847;stop-opacity:1" />
                 </linearGradient>
                 
-                <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#5644D4;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#3D2F9D;stop-opacity:1" />
-                </linearGradient>
-                
-                <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient id="dlqGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" style="stop-color:#EF4444;stop-opacity:1" />
                     <stop offset="100%" style="stop-color:#DC2626;stop-opacity:1" />
                 </linearGradient>
                 
-                <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#00ED64;stop-opacity:0.3" />
-                    <stop offset="50%" style="stop-color:#5644D4;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#00ED64;stop-opacity:0.3" />
+                <linearGradient id="validatorGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#D97706;stop-opacity:1" />
                 </linearGradient>
                 
-                <!-- Filtros -->
+                <!-- Filtro de sombra -->
                 <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
-                    <feOffset dx="0" dy="4" result="offsetblur"/>
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+                    <feOffset dx="0" dy="6" result="offsetblur"/>
                     <feComponentTransfer>
-                        <feFuncA type="linear" slope="0.2"/>
+                        <feFuncA type="linear" slope="0.25"/>
                     </feComponentTransfer>
                     <feMerge> 
                         <feMergeNode/>
@@ -224,229 +191,326 @@
                 </filter>
                 
                 <!-- Marcadores de flecha -->
-                <marker id="arrowGreen" markerWidth="15" markerHeight="15" refX="14" refY="7.5" orient="auto">
-                    <polygon points="0 0, 15 7.5, 0 15" fill="#00ED64" />
+                <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+                    <polygon points="0 0, 12 6, 0 12" fill="#2563EB" />
                 </marker>
                 
-                <marker id="arrowRed" markerWidth="15" markerHeight="15" refX="14" refY="7.5" orient="auto">
-                    <polygon points="0 0, 15 7.5, 0 15" fill="#EF4444" />
+                <marker id="arrowGreen" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+                    <polygon points="0 0, 12 6, 0 12" fill="#00ED64" />
+                </marker>
+                
+                <marker id="arrowRed" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+                    <polygon points="0 0, 12 6, 0 12" fill="#EF4444" />
+                </marker>
+                
+                <marker id="arrowPurple" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+                    <polygon points="0 0, 12 6, 0 12" fill="#8B5CF6" />
                 </marker>
             </defs>
             
-            <!-- Flujo Principal Animado -->
-            <g id="mainFlow">
-                <!-- Línea principal con gradiente animado -->
-                <line x1="150" y1="350" x2="850" y2="350" 
-                      stroke="url(#flowGradient)" 
-                      stroke-width="8" 
-                      stroke-linecap="round"
-                      opacity="0.5">
-                    <animate attributeName="x1" values="150;100;150" dur="3s" repeatCount="indefinite"/>
-                    <animate attributeName="x2" values="850;900;850" dur="3s" repeatCount="indefinite"/>
-                </line>
-                
-                <!-- Líneas de conexión con animación -->
-                <path d="M 150 350 L 350 350" 
-                      stroke="#00ED64" 
-                      stroke-width="4" 
-                      stroke-dasharray="10,5"
-                      fill="none"
-                      marker-end="url(#arrowGreen)"
-                      style="animation: flowDash 2s linear infinite"/>
-                
-                <path d="M 550 350 L 750 350" 
-                      stroke="#00ED64" 
-                      stroke-width="4" 
-                      stroke-dasharray="10,5"
-                      fill="none"
-                      marker-end="url(#arrowGreen)"
-                      style="animation: flowDash 2s linear infinite"/>
-            </g>
-            
-            <!-- Nodo Kafka -->
-            <g id="kafka" transform="translate(50, 300)" style="animation: scaleIn 0.6s ease-out">
-                <rect x="0" y="0" width="200" height="100" rx="15" 
+            <!-- PASO 1: Kafka Topics -->
+            <g id="kafka-topics" transform="translate(50, 350)" style="animation: scaleIn 0.6s ease-out">
+                <rect x="0" y="0" width="180" height="120" rx="15" 
                       fill="white" 
-                      stroke="#001E2B" 
+                      stroke="url(#kafkaGradient)" 
                       stroke-width="3"
                       filter="url(#shadow)"/>
-                <circle cx="180" cy="20" r="15" fill="#00ED64"/>
-                <text x="165" y="27" fill="white" font-size="20" font-weight="bold">✓</text>
                 
-                <text x="100" y="35" font-size="32" font-weight="bold" text-anchor="middle" fill="#001E2B">
-                    📨 Kafka
+                <!-- Icono moderno de streaming -->
+                <g transform="translate(90, 25)">
+                    <circle cx="0" cy="0" r="20" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+                    <path d="M -10 0 L 10 0 M -10 -7 L 10 -7 M -10 7 L 10 7" 
+                          stroke="#2563EB" stroke-width="2" stroke-linecap="round"
+                          style="animation: pulse 2s infinite"/>
+                </g>
+                
+                <text x="90" y="65" font-size="20" font-weight="bold" text-anchor="middle" fill="#001E2B">
+                    Kafka Topics
                 </text>
-                <text x="100" y="60" font-size="18" font-weight="600" text-anchor="middle" fill="#0D2A3D">
-                    Stream de Mensajes
+                <text x="90" y="85" font-size="13" text-anchor="middle" fill="#0D2A3D">
+                    Fuente de Datos
                 </text>
-                <text x="100" y="80" font-size="14" text-anchor="middle" fill="#718096">
-                    Topics • Particiones • HA
+                <text x="90" y="102" font-size="11" text-anchor="middle" fill="#718096">
+                    Transacciones entrantes
                 </text>
             </g>
             
-            <!-- Nodo Atlas Connector -->
-            <g id="connector" transform="translate(350, 300)" style="animation: scaleIn 0.8s ease-out 0.3s backwards">
-                <rect x="0" y="0" width="300" height="100" rx="15" 
+            <!-- PASO 2: Kafka Connect Framework -->
+            <g id="kafka-connect" transform="translate(280, 300)" style="animation: scaleIn 0.8s ease-out 0.2s backwards">
+                <rect x="0" y="0" width="220" height="220" rx="20" 
                       fill="white" 
-                      stroke="url(#purpleGradient)" 
+                      stroke="url(#connectGradient)" 
                       stroke-width="4"
                       filter="url(#shadow)"/>
                 
-                <text x="150" y="35" font-size="32" font-weight="bold" text-anchor="middle" fill="#001E2B">
-                    🔌 Atlas Connector
+                <!-- Icono de engranajes conectados -->
+                <g transform="translate(110, 35)">
+                    <g style="animation: rotate 8s linear infinite">
+                        <circle cx="0" cy="0" r="18" fill="none" stroke="#8B5CF6" stroke-width="3"/>
+                        <circle cx="0" cy="0" r="8" fill="#8B5CF6"/>
+                        <rect x="-4" y="-20" width="8" height="6" fill="#8B5CF6"/>
+                        <rect x="-4" y="14" width="8" height="6" fill="#8B5CF6"/>
+                        <rect x="-20" y="-4" width="6" height="8" fill="#8B5CF6"/>
+                        <rect x="14" y="-4" width="6" height="8" fill="#8B5CF6"/>
+                    </g>
+                </g>
+                
+                <text x="110" y="75" font-size="20" font-weight="bold" text-anchor="middle" fill="#001E2B">
+                    Kafka Connect
                 </text>
-                <text x="150" y="60" font-size="18" font-weight="600" text-anchor="middle" fill="#0D2A3D">
-                    Pipeline Inteligente
+                <text x="110" y="95" font-size="13" font-weight="600" text-anchor="middle" fill="#8B5CF6">
+                    MongoDB Sink Connector
                 </text>
-                <text x="150" y="80" font-size="14" text-anchor="middle" fill="#718096">
-                    SMT • Auto-retry • 100% Gestionado
+                
+                <!-- SMTs -->
+                <g transform="translate(15, 110)">
+                    <rect x="0" y="0" width="190" height="30" rx="5" fill="#F3F1FF" stroke="#8B5CF6" stroke-width="1"/>
+                    <text x="10" y="20" font-size="12" font-weight="600" fill="#6D28D9">⚙️ SMTs</text>
+                    <text x="60" y="20" font-size="11" fill="#0D2A3D">Transformaciones</text>
+                </g>
+                
+                <!-- Error Detection -->
+                <g transform="translate(15, 145)">
+                    <rect x="0" y="0" width="190" height="30" rx="5" fill="#FEF2F2" stroke="#EF4444" stroke-width="1"/>
+                    <text x="10" y="20" font-size="12" font-weight="600" fill="#DC2626">🔍 Detección</text>
+                    <text x="80" y="20" font-size="11" fill="#0D2A3D">JSON inválido</text>
+                </g>
+                
+                <!-- DLQ Config -->
+                <g transform="translate(15, 180)">
+                    <rect x="0" y="0" width="190" height="30" rx="5" fill="#FEF2F2" stroke="#EF4444" stroke-width="1"/>
+                    <text x="10" y="20" font-size="12" font-weight="600" fill="#DC2626">↪️ DLQ</text>
+                    <text x="55" y="20" font-size="11" fill="#0D2A3D">Redirección automática</text>
+                </g>
+            </g>
+            
+            <!-- PASO 3: DLQ Topic -->
+            <g id="dlq-topic" transform="translate(320, 580)" style="animation: scaleIn 1s ease-out 0.6s backwards">
+                <rect x="0" y="0" width="180" height="100" rx="15" 
+                      fill="rgba(254,242,242,0.98)" 
+                      stroke="url(#dlqGradient)" 
+                      stroke-width="3"
+                      filter="url(#shadow)"/>
+                
+                <!-- Icono de advertencia -->
+                <g transform="translate(90, 25)">
+                    <path d="M 0 -15 L -13 10 L 13 10 Z" fill="#FEE2E2" stroke="#EF4444" stroke-width="2"/>
+                    <text x="0" y="8" font-size="16" font-weight="bold" text-anchor="middle" fill="#EF4444">!</text>
+                </g>
+                
+                <text x="90" y="55" font-size="18" font-weight="bold" text-anchor="middle" fill="#991B1B">
+                    DLQ Topic
+                </text>
+                <text x="90" y="73" font-size="12" text-anchor="middle" fill="#0D2A3D">
+                    transacciones.dlq
+                </text>
+                <text x="90" y="88" font-size="11" text-anchor="middle" fill="#718096">
+                    Mensajes rechazados
                 </text>
             </g>
             
-            <!-- Nodo MongoDB Atlas -->
-            <g id="mongodb" transform="translate(750, 300)" style="animation: scaleIn 0.8s ease-out 0.6s backwards">
+            <!-- PASO 4: MongoDB Atlas con Schema Validator -->
+            <g id="mongodb-atlas" transform="translate(600, 280)" style="animation: scaleIn 1s ease-out 0.4s backwards">
+                <rect x="0" y="0" width="380" height="260" rx="20" 
+                      fill="white" 
+                      stroke="url(#mongoGradient)" 
+                      stroke-width="4"
+                      filter="url(#shadow)"/>
+                
+                <!-- Icono de base de datos con escudo -->
+                <g transform="translate(190, 35)">
+                    <ellipse cx="0" cy="-5" rx="22" ry="8" fill="#D1FAE5" stroke="#00ED64" stroke-width="2"/>
+                    <rect x="-22" y="-5" width="44" height="20" fill="#D1FAE5"/>
+                    <ellipse cx="0" cy="15" rx="22" ry="8" fill="#D1FAE5" stroke="#00ED64" stroke-width="2"/>
+                    <path d="M -22 -5 L -22 15 M 22 -5 L 22 15" stroke="#00ED64" stroke-width="2"/>
+                </g>
+                
+                <text x="190" y="75" font-size="22" font-weight="bold" text-anchor="middle" fill="#001E2B">
+                    MongoDB Atlas
+                </text>
+                <text x="190" y="95" font-size="14" font-weight="600" text-anchor="middle" fill="#00684B">
+                    Destino Final + Gobernanza
+                </text>
+                
+                <!-- Schema Validator Box -->
+                <g transform="translate(20, 110)">
+                    <rect x="0" y="0" width="340" height="130" rx="10" fill="#FEF9E7" stroke="url(#validatorGradient)" stroke-width="2"/>
+                    
+                    <g transform="translate(170, 20)">
+                        <path d="M 0 -10 L -10 0 L -10 8 L 0 14 L 10 8 L 10 0 Z" 
+                              fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
+                        <text x="0" y="5" font-size="12" font-weight="bold" text-anchor="middle" fill="#92400E">✓</text>
+                    </g>
+                    
+                    <text x="170" y="45" font-size="16" font-weight="bold" text-anchor="middle" fill="#92400E">
+                        Schema Validator
+                    </text>
+                    
+                    <text x="20" y="70" font-size="11" fill="#0D2A3D">• required: ["transaction_id", "amount"]</text>
+                    <text x="20" y="85" font-size="11" fill="#0D2A3D">• bsonType: "double" para amount</text>
+                    <text x="20" y="100" font-size="11" fill="#0D2A3D">• enum: ["USD", "ARS", "MXN"] para currency</text>
+                    <text x="20" y="115" font-size="11" fill="#0D2A3D">• minimum: 0 para validación de negocio</text>
+                </g>
+            </g>
+            
+            <!-- PASO 5: Procesamiento DLQ -->
+            <g id="dlq-processor" transform="translate(100, 730)" style="animation: scaleIn 1.2s ease-out 0.8s backwards">
                 <rect x="0" y="0" width="200" height="100" rx="15" 
-                      fill="white" 
-                      stroke="url(#greenGradient)" 
-                      stroke-width="4"
-                      filter="url(#shadow)"/>
-                <circle cx="180" cy="20" r="15" fill="#00ED64"/>
-                <text x="165" y="27" fill="white" font-size="20" font-weight="bold">✓</text>
-                
-                <text x="100" y="35" font-size="32" font-weight="bold" text-anchor="middle" fill="#001E2B">
-                    🍃 MongoDB
-                </text>
-                <text x="100" y="60" font-size="18" font-weight="600" text-anchor="middle" fill="#0D2A3D">
-                    Atlas
-                </text>
-                <text x="100" y="80" font-size="14" text-anchor="middle" fill="#718096">
-                    Índices • Aggregation • ∞
-                </text>
-            </g>
-            
-            <!-- Schema Validation (Arriba) -->
-            <g id="validation" transform="translate(350, 100)" style="animation: scaleIn 1s ease-out 0.9s backwards">
-                <rect x="0" y="0" width="300" height="120" rx="15" 
                       fill="rgba(255,255,255,0.98)" 
+                      stroke="#6B7280" 
+                      stroke-width="2"
+                      filter="url(#shadow)"/>
+                
+                <!-- Icono de procesamiento -->
+                <g transform="translate(100, 25)">
+                    <rect x="-15" y="-10" width="30" height="20" rx="3" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+                    <circle cx="0" cy="0" r="3" fill="#6B7280"/>
+                    <path d="M -8 0 L -5 0 M 5 0 L 8 0" stroke="#6B7280" stroke-width="2"/>
+                </g>
+                
+                <text x="100" y="55" font-size="16" font-weight="bold" text-anchor="middle" fill="#001E2B">
+                    Consumidor DLQ
+                </text>
+                <text x="100" y="73" font-size="12" text-anchor="middle" fill="#0D2A3D">
+                    Alertas y Registro
+                </text>
+                <text x="100" y="88" font-size="11" text-anchor="middle" fill="#718096">
+                    Gestión de errores
+                </text>
+            </g>
+            
+            <!-- Colección de destino -->
+            <g id="collection" transform="translate(750, 580)" style="animation: scaleIn 1s ease-out 0.7s backwards">
+                <rect x="0" y="0" width="180" height="100" rx="15" 
+                      fill="rgba(209,250,229,0.98)" 
                       stroke="#00ED64" 
                       stroke-width="3"
                       filter="url(#shadow)"/>
                 
-                <text x="150" y="30" font-size="24" font-weight="bold" text-anchor="middle" fill="#00684B">
-                    🛡️ Schema Validation
+                <!-- Icono de colección -->
+                <g transform="translate(90, 25)">
+                    <rect x="-18" y="-12" width="36" height="24" rx="3" fill="white" stroke="#00ED64" stroke-width="2"/>
+                    <path d="M -10 -5 L 10 -5 M -10 0 L 10 0 M -10 5 L 10 5" stroke="#00ED64" stroke-width="1.5"/>
+                </g>
+                
+                <text x="90" y="55" font-size="18" font-weight="bold" text-anchor="middle" fill="#00684B">
+                    transactions
                 </text>
-                <text x="150" y="52" font-size="16" font-weight="600" text-anchor="middle" fill="#0D2A3D">
-                    Reglas de Negocio
+                <text x="90" y="73" font-size="12" text-anchor="middle" fill="#0D2A3D">
+                    Colección validada
                 </text>
-                <text x="150" y="72" font-size="13" text-anchor="middle" fill="#718096">
-                    • Validación nativa
-                </text>
-                <text x="150" y="88" font-size="13" text-anchor="middle" fill="#718096">
-                    • Tipos y formatos
-                </text>
-                <text x="150" y="104" font-size="13" text-anchor="middle" fill="#718096">
-                    • Centralizado
+                <text x="90" y="88" font-size="11" text-anchor="middle" fill="#047857">
+                    Datos de calidad
                 </text>
             </g>
             
-            <!-- Línea de conexión Schema Validation -->
-            <path d="M 500 300 Q 500 250 500 220" 
+            <!-- Flujos y conexiones -->
+            
+            <!-- Kafka Topics -> Kafka Connect -->
+            <path d="M 230 410 L 280 410" 
+                  stroke="#2563EB" 
+                  stroke-width="3" 
+                  stroke-dasharray="8,4"
+                  fill="none"
+                  marker-end="url(#arrowBlue)"
+                  style="animation: flowDash 2s linear infinite"/>
+            
+            <!-- Kafka Connect -> MongoDB (flujo válido) -->
+            <path d="M 500 410 L 600 410" 
                   stroke="#00ED64" 
                   stroke-width="3" 
                   stroke-dasharray="8,4"
                   fill="none"
-                  opacity="0.6"
-                  style="animation: flowDash 3s linear infinite">
-            </path>
-            <text x="510" y="260" font-size="28" fill="#00ED64" style="animation: pulse 2s infinite">↑</text>
+                  marker-end="url(#arrowGreen)"
+                  style="animation: flowDash 2s linear infinite"/>
             
-            <!-- Dead Letter Queue (Abajo) -->
-            <g id="dlq" transform="translate(350, 480)" style="animation: scaleIn 1s ease-out 1.2s backwards">
-                <rect x="0" y="0" width="300" height="120" rx="15" 
-                      fill="rgba(255,240,240,0.98)" 
-                      stroke="url(#redGradient)" 
-                      stroke-width="3"
-                      filter="url(#shadow)"/>
-                <circle cx="280" cy="20" r="15" fill="#EF4444"/>
-                <text x="280" y="27" fill="white" font-size="20" font-weight="bold">!</text>
-                
-                <text x="150" y="30" font-size="24" font-weight="bold" text-anchor="middle" fill="#991B1B">
-                    📥 Dead Letter Queue
-                </text>
-                <text x="150" y="52" font-size="16" font-weight="600" text-anchor="middle" fill="#0D2A3D">
-                    Gestión de Errores
-                </text>
-                <text x="150" y="72" font-size="13" text-anchor="middle" fill="#718096">
-                    • Captura automática
-                </text>
-                <text x="150" y="88" font-size="13" text-anchor="middle" fill="#718096">
-                    • Colección de errores
-                </text>
-                <text x="150" y="104" font-size="13" text-anchor="middle" fill="#718096">
-                    • Análisis posterior
-                </text>
-            </g>
-            
-            <!-- Línea de conexión DLQ -->
-            <path d="M 500 400 Q 500 440 500 480" 
+            <!-- Kafka Connect -> DLQ (flujo de error) -->
+            <path d="M 390 520 L 410 580" 
                   stroke="#EF4444" 
                   stroke-width="3" 
                   stroke-dasharray="8,4"
                   fill="none"
-                  opacity="0.6"
-                  style="animation: flowDash 3s linear infinite">
-            </path>
-            <text x="510" y="445" font-size="28" fill="#EF4444" style="animation: pulse 2s infinite">↓</text>
+                  marker-end="url(#arrowRed)"
+                  style="animation: flowDash 2.5s linear infinite"/>
+            
+            <!-- MongoDB Schema Validator -> DLQ (rechazo) -->
+            <path d="M 790 540 Q 600 630 500 630" 
+                  stroke="#F59E0B" 
+                  stroke-width="2" 
+                  stroke-dasharray="6,3"
+                  fill="none"
+                  marker-end="url(#arrowRed)"
+                  opacity="0.8"
+                  style="animation: flowDash 3s linear infinite"/>
+            
+            <!-- MongoDB -> Collection (éxito) -->
+            <path d="M 840 540 L 840 580" 
+                  stroke="#00ED64" 
+                  stroke-width="3" 
+                  stroke-dasharray="8,4"
+                  fill="none"
+                  marker-end="url(#arrowGreen)"
+                  style="animation: flowDash 2s linear infinite"/>
+            
+            <!-- DLQ -> DLQ Processor -->
+            <path d="M 320 630 L 200 730" 
+                  stroke="#6B7280" 
+                  stroke-width="2" 
+                  stroke-dasharray="6,3"
+                  fill="none"
+                  marker-end="url(#arrowBlue)"
+                  opacity="0.7"
+                  style="animation: flowDash 3s linear infinite"/>
             
             <!-- Partículas de datos animadas -->
-            <circle r="6" fill="#00ED64" style="animation: glow 2s infinite">
-                <animateMotion dur="4s" repeatCount="indefinite">
-                    <mpath href="#dataPath"/>
+            <circle r="5" fill="#2563EB" style="animation: glow 2s infinite">
+                <animateMotion dur="5s" repeatCount="indefinite">
+                    <mpath href="#validPath"/>
                 </animateMotion>
             </circle>
             
-            <circle r="6" fill="#5644D4" style="animation: glow 2s infinite">
-                <animateMotion dur="4s" repeatCount="indefinite" begin="1s">
-                    <mpath href="#dataPath"/>
+            <circle r="5" fill="#EF4444" style="animation: glow 2s infinite">
+                <animateMotion dur="6s" repeatCount="indefinite" begin="2s">
+                    <mpath href="#errorPath"/>
                 </animateMotion>
             </circle>
             
-            <circle r="6" fill="#00ED64" style="animation: glow 2s infinite">
-                <animateMotion dur="4s" repeatCount="indefinite" begin="2s">
-                    <mpath href="#dataPath"/>
-                </animateMotion>
-            </circle>
+            <!-- Paths invisibles para las partículas -->
+            <path id="validPath" d="M 230 410 L 390 410 L 790 410 L 840 580" stroke="none" fill="none"/>
+            <path id="errorPath" d="M 230 410 L 390 410 L 410 630" stroke="none" fill="none"/>
             
-            <!-- Path invisible para las partículas -->
-            <path id="dataPath" d="M 150 350 L 500 350 L 850 350" stroke="none" fill="none"/>
+            <!-- Labels de flujo -->
+            <text x="255" y="400" font-size="11" fill="#2563EB" font-weight="600">eventos</text>
+            <text x="550" y="400" font-size="11" fill="#00ED64" font-weight="600">válidos</text>
+            <text x="420" y="555" font-size="11" fill="#EF4444" font-weight="600">errores</text>
+            <text x="650" y="600" font-size="11" fill="#F59E0B" font-weight="600">rechazados</text>
+            
+            <!-- Indicadores de paso -->
+            <g transform="translate(50, 50)">
+                <circle cx="0" cy="0" r="20" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+                <text x="0" y="5" font-size="14" font-weight="bold" text-anchor="middle" fill="#2563EB">1</text>
+            </g>
+            
+            <g transform="translate(280, 50)">
+                <circle cx="0" cy="0" r="20" fill="#F3F1FF" stroke="#8B5CF6" stroke-width="2"/>
+                <text x="0" y="5" font-size="14" font-weight="bold" text-anchor="middle" fill="#8B5CF6">2</text>
+            </g>
+            
+            <g transform="translate(500, 50)">
+                <circle cx="0" cy="0" r="20" fill="#FEF2F2" stroke="#EF4444" stroke-width="2"/>
+                <text x="0" y="5" font-size="14" font-weight="bold" text-anchor="middle" fill="#EF4444">3</text>
+            </g>
+            
+            <g transform="translate(720, 50)">
+                <circle cx="0" cy="0" r="20" fill="#D1FAE5" stroke="#00ED64" stroke-width="2"/>
+                <text x="0" y="5" font-size="14" font-weight="bold" text-anchor="middle" fill="#00ED64">4</text>
+            </g>
+            
+            <g transform="translate(940, 50)">
+                <circle cx="0" cy="0" r="20" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+                <text x="0" y="5" font-size="14" font-weight="bold" text-anchor="middle" fill="#6B7280">5</text>
+            </g>
         </svg>
-        
-        <!-- Métricas -->
-        <div class="metrics">
-            <div class="metric-card">
-                <span class="metric-icon">⚡</span>
-                <div class="metric-text">
-                    <h4>&lt; 5ms</h4>
-                    <p>Latencia</p>
-                </div>
-            </div>
-            
-            <div class="metric-card">
-                <span class="metric-icon">∞</span>
-                <div class="metric-text">
-                    <h4>Sin Límites</h4>
-                    <p>Paginación</p>
-                </div>
-            </div>
-            
-            <div class="metric-card">
-                <span class="metric-icon">🚀</span>
-                <div class="metric-text">
-                    <h4>100%</h4>
-                    <p>Automatizado</p>
-                </div>
-            </div>
-        </div>
     </div>
 </body>
 </html>

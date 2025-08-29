@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payway - Arquitectura de Ingesta y Procesamiento en Tiempo Real</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para esta presentación */
+        .architecture-flow {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .flow-step {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(0, 237, 100, 0.05) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-md) 0;
+            position: relative;
+            transition: all var(--transition-base);
+        }
+        
+        .flow-step:hover {
+            transform: translateX(10px);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .current-challenge {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .solution-highlight {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(0, 237, 100, 0.05) 100%);
+            border: 2px solid rgba(0, 237, 100, 0.3);
+        }
+        
+        .kafka-icon, .mongodb-icon, .asp-icon {
+            font-size: var(--text-4xl);
+            text-align: center;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .pipeline-stage {
+            background-color: var(--color-bg-tertiary);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin: var(--spacing-sm) 0;
+            font-family: var(--font-mono);
+            overflow-x: auto;
+            position: relative;
+        }
+        
+        .pipeline-stage::before {
+            content: attr(data-stage);
+            position: absolute;
+            top: var(--spacing-xs);
+            right: var(--spacing-sm);
+            background-color: var(--color-primary);
+            color: var(--color-text-dark);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            font-weight: 600;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .before-after {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .flow-arrow {
+            text-align: center;
+            color: var(--color-primary);
+            font-size: var(--text-2xl);
+            margin: var(--spacing-md) 0;
+        }
+        
+        .interactive-demo {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .transaction-flow {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background-color: var(--color-bg-card);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-sm) 0;
+            transition: all var(--transition-base);
+        }
+        
+        .transaction-flow:hover {
+            transform: scale(1.02);
+        }
+        
+        .status-valid {
+            border-left: 4px solid var(--color-success);
+        }
+        
+        .status-error {
+            border-left: 4px solid var(--color-error);
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .solution-table {
+            background-color: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .table-header {
+            background-color: var(--color-bg-secondary);
+            padding: var(--spacing-lg);
+            font-weight: 700;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: var(--spacing-md);
+        }
+        
+        .table-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: var(--spacing-md);
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .assembly-line {
+            background: linear-gradient(90deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 50%, var(--color-bg-secondary) 100%);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+            position: relative;
+        }
+        
+        .assembly-line::before {
+            content: '🏭 Línea de Ensamblaje Inteligente y Automatizada';
+            position: absolute;
+            top: var(--spacing-md);
+            left: var(--spacing-lg);
+            background-color: var(--color-accent);
+            color: var(--color-text-primary);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-container">
+                <div class="navbar-logo">
+                    <span class="text-gradient">MongoDB</span>
+                    <span>Payway</span>
+                </div>
+                <div class="navbar-links">
+                    <a href="#reto" class="navbar-link">Reto Actual</a>
+                    <a href="#arquitectura" class="navbar-link">Arquitectura</a>
+                    <a href="#procesamiento" class="navbar-link">Procesamiento</a>
+                    <a href="#beneficios" class="navbar-link">Beneficios</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="text-center">
+                <div class="badge badge-primary mb-4">
+                    🏗️ Arquitectura Moderna
+                </div>
+                <h1 class="text-gradient mb-4">
+                    Ingesta y Procesamiento en Tiempo Real
+                </h1>
+                <h2 class="mb-6">
+                    MongoDB Atlas + Kafka + Stream Processing para Payway
+                </h2>
+                <p class="text-xl mb-6" style="max-width: 900px; margin: 0 auto;">
+                    Arquitectura diseñada específicamente para resolver los retos de mantenimiento de código personalizado, eliminando consumidores complejos y moviendo toda la lógica a una plataforma gestionada, potente y escalable.
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a href="#reto" class="btn btn-primary btn-lg">Ver Reto Actual</a>
+                    <a href="#arquitectura" class="btn btn-secondary btn-lg">Explorar Solución</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Current Challenge Section -->
+    <section id="reto" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <div class="badge badge-secondary mb-3">🔧 Situación Actual</div>
+                <h2 class="text-gradient mb-4">El Reto Actual de Payway</h2>
+                <p class="text-lg text-secondary">
+                    Arquitectura robusta pero compleja que requiere mantenimiento constante
+                </p>
+            </div>
+
+            <div class="assembly-line">
+                <div class="flow-step current-challenge" style="margin-top: 3rem;">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="kafka-icon">🔄</div>
+                        <div>
+                            <h3 class="mb-2">1. Fuente de Datos</h3>
+                            <p class="mb-0">Las transacciones llegan a través de tópicos de Apache Kafka</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <div class="flow-step current-challenge">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="mongodb-icon">⚙️</div>
+                        <div>
+                            <h3 class="mb-2">2. Procesamiento Personalizado</h3>
+                            <p class="mb-2">Consumidores de Kafka desarrollados y mantenidos "en código"</p>
+                            <div class="grid md:grid-cols-2 gap-4 mt-4">
+                                <div class="card">
+                                    <h4 class="text-primary mb-2">✅ Validaciones</h4>
+                                    <p class="text-sm">Verifican formatos de campo, valores esperados</p>
+                                </div>
+                                <div class="card">
+                                    <h4 class="text-primary mb-2">🔀 Enrutamiento</h4>
+                                    <p class="text-sm">Deciden si la transacción es correcta o tiene errores</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <div class="flow-step current-challenge">
+                    <div class="flex items-center gap-4">
+                        <div class="asp-icon">🎯</div>
+                        <div>
+                            <h3 class="mb-2">3. Destino Final</h3>
+                            <p class="mb-0">OpenSearch (índice principal) o manejo de errores (DLQ)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-bordered text-center">
+                <h3 class="text-gradient mb-3">⚠️ El Principal Desafío</h3>
+                <p class="text-xl mb-4">
+                    <span style="color: #EF4444;">Mantenimiento del código personalizado</span><br>
+                    Cada cambio en reglas de negocio requiere desarrollo, pruebas y despliegue
+                </p>
+                <div class="badge badge-secondary">
+                    Consume tiempo y recursos constantemente
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Solution -->
+    <section id="arquitectura" class="section" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <div class="text-center mb-6">
+                <div class="badge badge-primary mb-3">✨ La Solución</div>
+                <h2 class="text-gradient mb-4">MongoDB Atlas + Kafka + Atlas Stream Processing</h2>
+                <p class="text-lg text-secondary">
+                    Reemplaza la necesidad de mantener consumidores personalizados
+                </p>
+            </div>
+
+            <div class="card card-gradient mb-6">
+                <h3 class="text-center mb-4">🏭 Línea de Ensamblaje Inteligente y Automatizada</h3>
+                <p class="text-center text-lg">
+                    Esta solución mueve toda la lógica a una plataforma gestionada, potente y escalable
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Paso 1 -->
+                <div class="card solution-highlight">
+                    <div class="kafka-icon">📡</div>
+                    <h3 class="text-primary mb-3">Paso 1: Fuente de Datos</h3>
+                    <h4 class="mb-3">(Sin Cambios)</h4>
+                    <p class="mb-4">
+                        Kafka como Origen: Payway seguiría publicando sus transacciones en sus tópicos de Kafka existentes.
+                    </p>
+                    <div class="badge badge-primary">
+                        No hay cambios en sistemas centrales
+                    </div>
+                </div>
+
+                <!-- Paso 2 -->
+                <div class="card solution-highlight">
+                    <div class="mongodb-icon">🧠</div>
+                    <h3 class="text-primary mb-3">Paso 2: Ingesta Inteligente</h3>
+                    <h4 class="mb-3">(El Corazón)</h4>
+                    <div class="mb-4">
+                        <p class="mb-2"><strong>Conector de Kafka:</strong> El "brazo" que toma mensajes en tiempo real</p>
+                        <p class="mb-2"><strong>Atlas Stream Processing:</strong> El "cerebro" que procesa antes de la BD</p>
+                    </div>
+                    <div class="badge badge-primary">
+                        100% gestionado y escalable
+                    </div>
+                </div>
+
+                <!-- Paso 3 -->
+                <div class="card solution-highlight">
+                    <div class="asp-icon">🗃️</div>
+                    <h3 class="text-primary mb-3">Paso 3: Almacenamiento</h3>
+                    <h4 class="mb-3">(Optimizado)</h4>
+                    <p class="mb-4">
+                        MongoDB Atlas almacena datos limpios, validados y listos. Resuelve problema de paginado y habilita consultas instantáneas.
+                    </p>
+                    <div class="badge badge-primary">
+                        Datos listos para liquidación y reportería
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stream Processing Details -->
+    <section id="procesamiento" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <div class="badge badge-primary mb-3">🧠 Atlas Stream Processing</div>
+                <h2 class="text-gradient mb-4">El Cerebro de la Operación</h2>
+                <p class="text-lg text-secondary">
+                    Pipeline que replica y mejora toda la lógica de negocio de Payway
+                </p>
+            </div>
+
+            <div class="interactive-demo">
+                <h3 class="mb-4">🔍 Procesamiento en 3 Etapas</h3>
+                
+                <!-- Etapa 1: Validación -->
+                <div class="card mb-4">
+                    <h4 class="text-primary mb-3">1. Validación de Datos</h4>
+                    <p class="mb-3">Etapa <code>$match</code> para filtrar y verificar transacciones</p>
+                    
+                    <div class="pipeline-stage" data-stage="$match">
+<pre style="color: var(--color-text-primary); margin: 0; padding-top: 1rem;">
+<span style="color: #6B7280;">// Ejemplo de validación en ASP para Payway</span>
+{
+  <span style="color: var(--color-primary);">"$match"</span>: {
+    <span style="color: var(--color-accent);">"source.transaction.amount"</span>: { <span style="color: var(--color-primary);">"$gt"</span>: <span style="color: #F59E0B;">0</span> },
+    <span style="color: var(--color-accent);">"payment_method_id"</span>: { <span style="color: var(--color-primary);">"$in"</span>: [<span style="color: #F59E0B;">30, 31, 45</span>] }
+  }
+}
+</pre>
+                    </div>
+                    
+                    <p class="text-sm text-secondary mt-3">
+                        ✅ Verifica que el monto sea positivo y el método de pago válido
+                    </p>
+                </div>
+
+                <!-- Etapa 2: Transformación -->
+                <div class="card mb-4">
+                    <h4 class="text-primary mb-3">2. Transformación y Enriquecimiento</h4>
+                    <p class="mb-3">Etapas <code>$addFields</code> o <code>$set</code> para limpiar y enriquecer datos</p>
+                    
+                    <div class="pipeline-stage" data-stage="$addFields">
+<pre style="color: var(--color-text-primary); margin: 0; padding-top: 1rem;">
+<span style="color: #6B7280;">// Transformación de datos para Payway</span>
+{
+  <span style="color: var(--color-primary);">"$addFields"</span>: {
+    <span style="color: var(--color-accent);">"transaction_date"</span>: { <span style="color: var(--color-primary);">"$dateFromString"</span>: { 
+      <span style="color: var(--color-accent);">"dateString"</span>: <span style="color: var(--color-accent);">"$date_string"</span> 
+    }},
+    <span style="color: var(--color-accent);">"processing_timestamp"</span>: <span style="color: var(--color-primary);">"$$NOW"</span>
+  }
+}
+</pre>
+                    </div>
+                    
+                    <p class="text-sm text-secondary mt-3">
+                        🔄 Convierte strings a Date nativo BSON y añade timestamp de procesamiento
+                    </p>
+                </div>
+
+                <!-- Etapa 3: Enrutamiento -->
+                <div class="card">
+                    <h4 class="text-primary mb-3">3. Enrutamiento Condicional</h4>
+                    <p class="mb-3">Etapa <code>$merge</code> decide dinámicamente el destino</p>
+                    
+                    <div class="before-after">
+                        <div class="transaction-flow status-valid">
+                            <div>✅</div>
+                            <div>
+                                <strong>Transacciones Válidas</strong><br>
+                                <span class="text-sm text-secondary">→ payway.transactions</span>
+                            </div>
+                        </div>
+                        
+                        <div class="transaction-flow status-error">
+                            <div>❌</div>
+                            <div>
+                                <strong>Transacciones con Error</strong><br>
+                                <span class="text-sm text-secondary">→ payway.transactions_errors</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-4" style="background-color: var(--color-accent-light);">
+                        <p class="text-center mb-0">
+                            <strong>🔄 Funciona exactamente como una Dead Letter Queue</strong><br>
+                            <span class="text-sm">Permite analizar y reprocesar transacciones fallidas sin detener el flujo principal</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-6">
+                <div class="btn btn-primary" onclick="simulateProcessing()" style="cursor: pointer;">
+                    ▶️ Simular Procesamiento de Transacciones
+                </div>
+            </div>
+
+            <div id="processing-demo" class="card" style="display: none; margin-top: 2rem;">
+                <h4 class="mb-3">📊 Simulación de Procesamiento</h4>
+                <div id="transaction-results"></div>
+                <div class="metric-grid mt-4">
+                    <div class="metric">
+                        <div class="metric-value" id="valid-count">0</div>
+                        <div class="metric-label">Transacciones Válidas</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="error-count">0</div>
+                        <div class="metric-label">Transacciones con Error</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="processed-count">0</div>
+                        <div class="metric-label">Total Procesadas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="beneficios" class="section" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <div class="text-center mb-6">
+                <div class="badge badge-primary mb-3">🎯 Resumen de Beneficios</div>
+                <h2 class="text-gradient mb-4">Cómo Resuelve los Retos de Payway</h2>
+            </div>
+
+            <div class="solution-table">
+                <div class="table-header">
+                    <div>Reto de Payway</div>
+                    <div>Cómo lo Resuelve la Arquitectura MongoDB Atlas + ASP</div>
+                </div>
+                
+                <div class="table-row">
+                    <div class="text-secondary">
+                        <strong>Mantenimiento de código de consumidores</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--color-primary);">Se elimina por completo.</span> La lógica se define en pipelines JSON dentro de una plataforma 100% gestionada.
+                    </div>
+                </div>
+                
+                <div class="table-row">
+                    <div class="text-secondary">
+                        <strong>Validaciones de negocio complejas</strong>
+                    </div>
+                    <div>
+                        Se implementan con la potencia y flexibilidad del <span style="color: var(--color-primary);">Aggregation Framework de MongoDB</span> dentro de ASP.
+                    </div>
+                </div>
+                
+                <div class="table-row">
+                    <div class="text-secondary">
+                        <strong>Manejo de transacciones con errores (DLQ)</strong>
+                    </div>
+                    <div>
+                        Se logra mediante el <span style="color: var(--color-primary);">enrutamiento condicional de ASP</span>, enviando datos fallidos a una colección dedicada para su análisis.
+                    </div>
+                </div>
+                
+                <div class="table-row">
+                    <div class="text-secondary">
+                        <strong>Necesidad de performance para liquidaciones</strong>
+                    </div>
+                    <div>
+                        Los datos limpios aterrizan en una colección optimizada con <span style="color: var(--color-primary);">índices de base de datos</span> para consultas de ultra baja latencia.
+                    </div>
+                </div>
+                
+                <div class="table-row">
+                    <div class="text-secondary">
+                        <strong>Limitaciones de reportería (paginado)</strong>
+                    </div>
+                    <div>
+                        Se resuelve nativamente con las capacidades de consulta de MongoDB, permitiendo <span style="color: var(--color-primary);">paginar sobre conjuntos de datos masivos</span>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="benefits-grid">
+                <div class="card metric mongodb-glow">
+                    <div class="metric-value">📦</div>
+                    <div class="metric-label">Moderniza el Proceso</div>
+                    <p class="mt-3 text-sm">
+                        Actualiza la arquitectura de ingesta de datos
+                    </p>
+                </div>
+
+                <div class="card metric mongodb-glow">
+                    <div class="metric-value">⚙️</div>
+                    <div class="metric-label">Simplifica Drásticamente</div>
+                    <p class="mt-3 text-sm">
+                        Reduce la complejidad operativa
+                    </p>
+                </div>
+
+                <div class="card metric mongodb-glow">
+                    <div class="metric-value">📊</div>
+                    <div class="metric-label">Base de Datos Limpia</div>
+                    <p class="mt-3 text-sm">
+                        Optimizada para casos transaccionales y analítica
+                    </p>
+                </div>
+
+                <div class="card metric mongodb-glow">
+                    <div class="metric-value">🔧</div>
+                    <div class="metric-label">Reduce Carga Operativa</div>
+                    <p class="mt-3 text-sm">
+                        Menos mantenimiento de código personalizado
+                    </p>
+                </div>
+            </div>
+
+            <div class="card card-gradient text-center mt-6">
+                <h3 class="text-gradient mb-4">Conclusión</h3>
+                <p class="text-xl mb-4">
+                    Esta arquitectura no solo moderniza el proceso de ingesta de datos de Payway, sino que también lo <span style="color: var(--color-primary);">simplifica drásticamente</span>, reduce la carga operativa y crea una base de datos limpia y optimizada, lista para servir tanto a sus casos de uso transaccionales más exigentes como a sus necesidades de búsqueda y analítica.
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a href="#procesamiento" class="btn btn-primary">Ver Procesamiento</a>
+                    <a href="#" class="btn btn-secondary">Contactar Equipo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="section" style="background-color: var(--color-bg-tertiary);">
+        <div class="container text-center">
+            <div class="text-gradient text-2xl mb-4">MongoDB</div>
+            <p class="text-secondary mb-4">
+                Arquitectura MongoDB para Latinoamérica - Ingesta y Procesamiento en Tiempo Real para Payway
+            </p>
+            <div class="badge badge-secondary">
+                MongoDB Atlas + Kafka + Stream Processing
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Transaction processing simulation
+        function simulateProcessing() {
+            const demoSection = document.getElementById('processing-demo');
+            const resultsContainer = document.getElementById('transaction-results');
+            const validCount = document.getElementById('valid-count');
+            const errorCount = document.getElementById('error-count');
+            const processedCount = document.getElementById('processed-count');
+            
+            demoSection.style.display = 'block';
+            resultsContainer.innerHTML = '';
+            
+            let valid = 0;
+            let errors = 0;
+            let processed = 0;
+            
+            const transactions = [
+                { id: 'TXN001', amount: 150.50, payment_method: 30, status: 'valid' },
+                { id: 'TXN002', amount: -50.00, payment_method: 31, status: 'error' },
+                { id: 'TXN003', amount: 750.25, payment_method: 99, status: 'error' },
+                { id: 'TXN004', amount: 300.00, payment_method: 45, status: 'valid' },
+                { id: 'TXN005', amount: 125.75, payment_method: 30, status: 'valid' },
+                { id: 'TXN006', amount: 0, payment_method: 31, status: 'error' }
+            ];
+            
+            transactions.forEach((txn, index) => {
+                setTimeout(() => {
+                    const flowDiv = document.createElement('div');
+                    flowDiv.className = `transaction-flow ${txn.status === 'valid' ? 'status-valid' : 'status-error'}`;
+                    
+                    const statusIcon = txn.status === 'valid' ? '✅' : '❌';
+                    const destination = txn.status === 'valid' ? 'payway.transactions

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payway - Solución MongoDB para Paginación Sin Límites</title>
+    <link rel="stylesheet" href="../../styles/gomdb-global.css">
+    <style>
+        /* Estilos específicos para esta presentación */
+        .problem-highlight {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .solution-highlight {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(0, 237, 100, 0.05) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+        }
+        
+        .comparison-table {
+            background-color: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            background-color: var(--color-bg-secondary);
+            padding: var(--spacing-lg);
+            font-weight: 700;
+        }
+        
+        .table-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: var(--spacing-md);
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .code-snippet {
+            background-color: var(--color-bg-tertiary);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            font-family: var(--font-mono);
+            overflow-x: auto;
+            position: relative;
+        }
+        
+        .code-snippet::before {
+            content: 'MongoDB JavaScript';
+            position: absolute;
+            top: var(--spacing-sm);
+            right: var(--spacing-md);
+            background-color: var(--color-primary);
+            color: var(--color-text-dark);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            font-weight: 600;
+        }
+        
+        .interactive-demo {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .progress-bar {
+            background-color: var(--color-bg-tertiary);
+            border-radius: var(--radius-full);
+            height: 8px;
+            overflow: hidden;
+            margin: var(--spacing-md) 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            border-radius: var(--radius-full);
+            transition: width var(--transition-slow);
+        }
+        
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .limitation-box {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            text-align: center;
+        }
+        
+        .solution-box {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(0, 237, 100, 0.05) 100%);
+            border: 2px solid rgba(0, 237, 100, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            text-align: center;
+        }
+        
+        .analogy-section {
+            background: linear-gradient(135deg, var(--color-accent-light) 0%, rgba(86, 68, 212, 0.05) 100%);
+            border: 1px solid rgba(86, 68, 212, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .chef-emoji {
+            font-size: var(--text-4xl);
+            text-align: center;
+            margin-bottom: var(--spacing-md);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-container">
+                <div class="navbar-logo">
+                    <span class="text-gradient">MongoDB</span>
+                    <span>Payway</span>
+                </div>
+                <div class="navbar-links">
+                    <a href="#problema" class="navbar-link">El Desafío</a>
+                    <a href="#solucion" class="navbar-link">Solución MongoDB</a>
+                    <a href="#demo" class="navbar-link">Demostración</a>
+                    <a href="#beneficios" class="navbar-link">Beneficios</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="text-center">
+                <div class="badge badge-primary mb-4">
+                    🚧 Desafío Técnico Crítico
+                </div>
+                <h1 class="text-gradient mb-4">
+                    Eliminando el Límite de 10,000 Registros
+                </h1>
+                <h2 class="mb-6">
+                    MongoDB Atlas: La Solución para Reportes Masivos sin Restricciones
+                </h2>
+                <p class="text-xl mb-6" style="max-width: 800px; margin: 0 auto;">
+                    Descubre cómo MongoDB Atlas resuelve fundamentalmente el desafío de paginación sobre grandes volúmenes de datos, eliminando el límite de 10,000 registros presente en OpenSearch y habilitando la generación de reportes masivos.
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a href="#problema" class="btn btn-primary btn-lg">Ver el Desafío</a>
+                    <a href="#solucion" class="btn btn-secondary btn-lg">Explorar Solución</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section id="problema" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <div class="badge badge-secondary mb-3">🚧 El Problema Actual</div>
+                <h2 class="text-gradient mb-4">El Límite de Paginación en OpenSearch</h2>
+                <p class="text-lg text-secondary">
+                    El equipo de Payway identificó un bloqueo técnico significativo en su arquitectura actual
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="card problem-highlight">
+                    <h3 class="mb-3">⚠️ El Problema Técnico</h3>
+                    <p class="mb-4">
+                        OpenSearch impone un límite en la suma de los parámetros de paginación <code>(from + size)</code>, previniendo consultas a páginas "profundas" en el conjunto de datos.
+                    </p>
+                    <div class="limitation-box">
+                        <div class="metric-value" style="color: #EF4444;">10,000</div>
+                        <div class="metric-label">Límite máximo de registros</div>
+                    </div>
+                </div>
+
+                <div class="card problem-highlight">
+                    <h3 class="mb-3">💼 El Impacto de Negocio</h3>
+                    <p class="mb-4">
+                        Este límite representa un bloqueo insuperable para la generación de reportes a gran escala. El proceso de exportación en lotes no puede acceder a registros más allá de esta marca.
+                    </p>
+                    <div class="limitation-box">
+                        <div class="metric-value" style="color: #EF4444;">∞</div>
+                        <div class="metric-label">Reportes masivos bloqueados</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-bordered">
+                <h3 class="mb-3">🔍 ¿Por Qué Existe Este Límite?</h3>
+                <p class="mb-4">
+                    La razón de este límite en sistemas como OpenSearch es que "saltar" un gran número de documentos es una operación de alto costo que puede impactar el rendimiento del clúster, ya que requiere cargar y descartar todos los registros previos en cada solicitud.
+                </p>
+                <div class="text-center">
+                    <div class="badge badge-secondary">
+                        index.max_result_window = 10,000 (configuración por defecto)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section id="solucion" class="section" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <div class="text-center mb-6">
+                <div class="badge badge-primary mb-3">✅ La Solución</div>
+                <h2 class="text-gradient mb-4">MongoDB Atlas: Arquitectura para Escalabilidad</h2>
+                <p class="text-lg text-secondary">
+                    MongoDB Atlas está diseñado para manejar grandes volúmenes de datos de manera nativa
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="card solution-highlight">
+                    <h3 class="mb-3">📄 Paginación Tradicional</h3>
+                    <h4 class="text-primary mb-2">Flexibilidad con $skip y $limit</h4>
+                    <p class="mb-4">
+                        MongoDB no impone un límite artificial en la profundidad de la paginación. Utilizando los operadores <code>$skip</code> y <code>$limit</code> dentro del Aggregation Framework.
+                    </p>
+                    <div class="solution-box">
+                        <div class="metric-value">∞</div>
+                        <div class="metric-label">Sin límites de paginación</div>
+                    </div>
+                </div>
+
+                <div class="card solution-highlight">
+                    <h3 class="mb-3">🚀 Paginación de Alto Rendimiento</h3>
+                    <h4 class="text-primary mb-2">El Método Keyset para Escalabilidad Extrema</h4>
+                    <p class="mb-4">
+                        Técnica superior conocida como Keyset Pagination (o "Seek Method"). Se proporciona un "marcador" del último documento visto en lugar de contar documentos.
+                    </p>
+                    <div class="solution-box">
+                        <div class="metric-value">⚡</div>
+                        <div class="metric-label">Rendimiento constante</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="comparison-table mb-6">
+                <div class="table-header text-center">
+                    <h3>Comparación: OpenSearch vs MongoDB Atlas</h3>
+                </div>
+                <div class="table-row" style="background-color: var(--color-bg-tertiary); font-weight: 600;">
+                    <div>Característica</div>
+                    <div style="color: #EF4444;">OpenSearch</div>
+                    <div style="color: var(--color-primary);">MongoDB Atlas</div>
+                </div>
+                <div class="table-row">
+                    <div>Límite de Paginación</div>
+                    <div style="color: #EF4444;">10,000 registros</div>
+                    <div style="color: var(--color-primary);">Sin límites</div>
+                </div>
+                <div class="table-row">
+                    <div>Reportes Masivos</div>
+                    <div style="color: #EF4444;">❌ Bloqueados</div>
+                    <div style="color: var(--color-primary);">✅ Habilitados</div>
+                </div>
+                <div class="table-row">
+                    <div>Rendimiento en Páginas Profundas</div>
+                    <div style="color: #EF4444;">Se degrada</div>
+                    <div style="color: var(--color-primary);">Constante con Keyset</div>
+                </div>
+                <div class="table-row">
+                    <div>Flexibilidad</div>
+                    <div style="color: #EF4444;">Limitada</div>
+                    <div style="color: var(--color-primary);">Total</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <div class="badge badge-primary mb-3">💻 Demostración Práctica</div>
+                <h2 class="text-gradient mb-4">Código MongoDB en Acción</h2>
+                <p class="text-lg text-secondary">
+                    La solución al bloqueo se demuestra con una simple consulta de agregación
+                </p>
+            </div>
+
+            <div class="interactive-demo">
+                <h3 class="mb-4">🔓 Desbloqueando los 10,000+ Registros</h3>
+                <p class="mb-4">
+                    Consulta para obtener 100 registros, empezando desde la posición 10,001:
+                </p>
+                
+                <div class="code-snippet mb-4">
+<pre style="color: var(--color-text-primary); margin: 0;">
+<span style="color: #6B7280;">// Consulta para obtener 100 registros, empezando desde la posición 10,001</span>
+<span style="color: var(--color-text-secondary);">db.transacciones.aggregate</span>([
+  <span style="color: #6B7280;">// 1. Es crucial ordenar primero para una paginación consistente</span>
+  { <span style="color: var(--color-primary);">$sort</span>: { <span style="color: var(--color-accent);">timestamp</span>: <span style="color: #F59E0B;">-1</span> } },
+
+  <span style="color: #6B7280;">// 2. Nos saltamos los 10,000 registros que OpenSearch limita</span>
+  { <span style="color: var(--color-primary);">$skip</span>: <span style="color: #F59E0B;">10000</span> },
+
+  <span style="color: #6B7280;">// 3. Devolvemos la siguiente "página" de 100 resultados</span>
+  { <span style="color: var(--color-primary);">$limit</span>: <span style="color: #F59E0B;">100</span> }
+]);
+</pre>
+                </div>
+
+                <div class="flex justify-center mb-4">
+                    <div class="btn btn-primary" onclick="simulatePagination()" style="cursor: pointer;">
+                        ▶️ Simular Paginación MongoDB
+                    </div>
+                </div>
+
+                <div id="pagination-demo" class="card" style="display: none;">
+                    <h4 class="mb-3">📊 Resultados de la Simulación</h4>
+                    <div class="progress-bar mb-3">
+                        <div class="progress-fill" id="progress" style="width: 0%"></div>
+                    </div>
+                    <div id="demo-results" class="text-center">
+                        <div class="metric-grid">
+                            <div class="metric">
+                                <div class="metric-value" id="current-record">0</div>
+                                <div class="metric-label">Registro Actual</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" id="total-records">1,000,000</div>
+                                <div class="metric-label">Total de Registros</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" id="page-number">0</div>
+                                <div class="metric-label">Página Actual</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Memory Analogy Section -->
+    <section class="section" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <div class="analogy-section">
+                <div class="text-center mb-6">
+                    <div class="chef-emoji">👨‍🍳</div>
+                    <h2 class="text-gradient mb-4">Analogía de la Cocina: El "Working Set"</h2>
+                    <p class="text-lg">
+                        Entendiendo cómo MongoDB maneja la memoria de manera inteligente
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6 mb-6">
+                    <div class="card">
+                        <h4 class="text-primary mb-3">🍽️ La Mesa de Trabajo (RAM)</h4>
+                        <p>
+                            La memoria RAM es la mesa de trabajo de un chef donde coloca los ingredientes y herramientas que usa constantemente para cocinar muy rápido.
+                        </p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4 class="text-primary mb-3">🏪 La Despensa (Disco Duro)</h4>
+                        <p>
+                            El disco duro es la despensa donde se guardan todos los ingredientes. Si necesita algo raro, tiene que ir a buscarla (más lento).
+                        </p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4 class="text-primary mb-3">📋 Working Set</h4>
+                        <p>
+                            Es la porción de datos e índices que se accede con más frecuencia. MongoDB trata de mantener todo el Working Set en RAM.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card card-bordered text-center">
+                    <h3 class="mb-3">🎯 La Pregunta Clave</h3>
+                    <p class="text-xl mb-4">
+                        No es "¿cuántos registros caben?", sino: <br>
+                        <span class="text-gradient">"¿Tengo suficiente RAM para mi Working Set?"</span>
+                    </p>
+                    <div class="badge badge-primary">
+                        Si tus consultas frecuentes operan sobre 20 GB → necesitas más de 20 GB de RAM
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="beneficios" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <div class="badge badge-primary mb-3">🎯 Beneficios para Payway</div>
+                <h2 class="text-gradient mb-4">Resumen de Beneficios</h2>
+            </div>
+
+            <div class="metric-grid">
+                <div class="card metric mongodb-glow">
+                    <div class="metric-value">🔓</div>
+                    <div class="metric-label">Desbloqueo de Casos de Uso Críticos</div>
+                    <p class="mt-3 text-sm">
+                        Habilita la generación de reportes masivos sin límites
+                    </p>
+                </div>
+
+                <div class="card metric mongodb-glow">
+                    <div class="metric-value">🎛️</div>
+                    <div class="metric-label">Flexibilidad Total</div>
+                    <p class="mt-3 text-sm">
+                        Múltiples estrategias de paginación para diferentes necesidades
+                    </p>
+                </div>
+
+                <div class="card metric mongodb-glow">
+                    <div class="metric-value">🏗️</div>
+                    <div class="metric-label">Arquitectura a Prueba de Futuro</div>
+                    <p class="mt-3 text-sm">
+                        Herramientas para sistemas de alto rendimiento escalables
+                    </p>
+                </div>
+
+                <div class="card metric mongodb-glow">
+                    <div class="metric-value">⚡</div>
+                    <div class="metric-label">Eficiencia Superior</div>
+                    <p class="mt-3 text-sm">
+                        Keyset evita degradación de rendimiento en paginación profunda
+                    </p>
+                </div>
+            </div>
+
+            <div class="card card-gradient text-center mt-6">
+                <h3 class="text-gradient mb-4">Conclusión</h3>
+                <p class="text-xl mb-4">
+                    MongoDB Atlas no solo elimina la limitación actual de paginación, sino que proporciona un conjunto de herramientas robustas y escalables para garantizar que los requisitos de acceso a datos de Payway puedan cumplirse de manera eficiente y fiable.
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a href="#demo" class="btn btn-primary">Ver Demostración</a>
+                    <a href="#" class="btn btn-secondary">Contactar Equipo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="section" style="background-color: var(--color-bg-tertiary);">
+        <div class="container text-center">
+            <div class="text-gradient text-2xl mb-4">MongoDB</div>
+            <p class="text-secondary mb-4">
+                Arquitectura MongoDB para Latinoamérica - Soluciones Escalables para Payway
+            </p>
+            <div class="badge badge-secondary">
+                Sistema de Diseño Global - MongoDB Atlas
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Pagination simulation
+        function simulatePagination() {
+            const demoSection = document.getElementById('pagination-demo');
+            const progressBar = document.getElementById('progress');
+            const currentRecord = document.getElementById('current-record');
+            const pageNumber = document.getElementById('page-number');
+            
+            demoSection.style.display = 'block';
+            
+            let record = 0;
+            let page = 0;
+            const totalRecords = 1000000;
+            const recordsPerPage = 100;
+            const targetRecord = 50000; // Simulate going to record 50,000
+            
+            const interval = setInterval(() => {
+                record += 1000;
+                page = Math.floor(record / recordsPerPage);
+                
+                currentRecord.textContent = record.toLocaleString();
+                pageNumber.textContent = page;
+                progressBar.style.width = ((record / targetRecord) * 100) + '%';
+                
+                if (record >= targetRecord) {
+                    clearInterval(interval);
+                    currentRecord.style.color = 'var(--color-primary)';
+                    pageNumber.style.color = 'var(--color-primary)';
+                    
+                    // Show success message
+                    setTimeout(() => {
+                        const successBadge = document.createElement('div');
+                        successBadge.className = 'badge badge-primary mt-3';
+                        successBadge.innerHTML = '✅ ¡Paginación exitosa más allá de 10,000 registros!';
+                        document.getElementById('demo-results').appendChild(successBadge);
+                    }, 500);
+                }
+            }, 50);
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeIn');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards and sections
+        document.querySelectorAll('.card, .metric').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
