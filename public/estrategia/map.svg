@@ -1,0 +1,509 @@
+<svg viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradientes oscuros elegantes -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e27;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1f3a;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="greenGlow">
+      <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#00ff88;stop-opacity:0" />
+    </radialGradient>
+    
+    <radialGradient id="redGlow">
+      <stop offset="0%" style="stop-color:#ff3366;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ff3366;stop-opacity:0" />
+    </radialGradient>
+    
+    <radialGradient id="yellowGlow">
+      <stop offset="0%" style="stop-color:#ffaa00;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ffaa00;stop-opacity:0" />
+    </radialGradient>
+
+    <!-- Filtros de brillo -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Pattern para el fondo -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1a2547" stroke-width="0.5" opacity="0.3"/>
+    </pattern>
+  </defs>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap');
+    
+    .account-card {
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .account-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .metric-dot {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .status-indicator {
+      animation: rotate 20s linear infinite;
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .glow-effect {
+      animation: glowing 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes glowing {
+      from { filter: brightness(1); }
+      to { filter: brightness(1.2); }
+    }
+
+    .progress-ring {
+      transform-origin: center;
+      animation: dash 2s ease-in-out infinite;
+    }
+    
+    @keyframes dash {
+      0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+      }
+      50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35;
+      }
+      100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124;
+      }
+    }
+  </style>
+
+  <!-- Fondo oscuro con patrón -->
+  <rect width="1400" height="900" fill="url(#bgGradient)"/>
+  <rect width="1400" height="900" fill="url(#grid)"/>
+
+  <!-- Título principal -->
+  <text x="700" y="50" text-anchor="middle" fill="#ffffff" font-family="Inter, sans-serif" font-size="32" font-weight="700">
+    MongoDB Territory Account Map
+  </text>
+  <text x="700" y="80" text-anchor="middle" fill="#8892b0" font-family="Inter, sans-serif" font-size="16">
+    Account Status Overview · Q4 2024
+  </text>
+
+  <!-- Indicadores de estado globales -->
+  <g transform="translate(100, 120)">
+    <rect x="0" y="0" width="1200" height="80" rx="10" fill="#1a2547" fill-opacity="0.5"/>
+    
+    <!-- Total Accounts -->
+    <g transform="translate(150, 40)">
+      <circle cx="0" cy="0" r="25" fill="#2a3f5f" stroke="#00d4ff" stroke-width="2"/>
+      <text x="0" y="5" text-anchor="middle" fill="#00d4ff" font-size="18" font-weight="600">10</text>
+      <text x="0" y="-40" text-anchor="middle" fill="#8892b0" font-size="12">Total Accounts</text>
+    </g>
+    
+    <!-- Atlas Validated -->
+    <g transform="translate(350, 40)">
+      <circle cx="0" cy="0" r="25" fill="#1a4d3a" stroke="#00ff88" stroke-width="2"/>
+      <text x="0" y="5" text-anchor="middle" fill="#00ff88" font-size="18" font-weight="600">10</text>
+      <text x="0" y="-40" text-anchor="middle" fill="#8892b0" font-size="12">Atlas Validated</text>
+    </g>
+    
+    <!-- SQL Migration -->
+    <g transform="translate(550, 40)">
+      <circle cx="0" cy="0" r="25" fill="#4d1a1a" stroke="#ff3366" stroke-width="2"/>
+      <text x="0" y="5" text-anchor="middle" fill="#ff3366" font-size="18" font-weight="600">5</text>
+      <text x="0" y="-40" text-anchor="middle" fill="#8892b0" font-size="12">Pending Migration</text>
+    </g>
+    
+    <!-- DevDay/TechDay -->
+    <g transform="translate(750, 40)">
+      <circle cx="0" cy="0" r="25" fill="#4d3a1a" stroke="#ffaa00" stroke-width="2"/>
+      <text x="0" y="5" text-anchor="middle" fill="#ffaa00" font-size="18" font-weight="600">4</text>
+      <text x="0" y="-40" text-anchor="middle" fill="#8892b0" font-size="12">Planning DevDay</text>
+    </g>
+    
+    <!-- CIO Access -->
+    <g transform="translate(950, 40)">
+      <circle cx="0" cy="0" r="25" fill="#1a4d3a" stroke="#00ff88" stroke-width="2"/>
+      <text x="0" y="5" text-anchor="middle" fill="#00ff88" font-size="18" font-weight="600">2</text>
+      <text x="0" y="-40" text-anchor="middle" fill="#8892b0" font-size="12">CIO Access</text>
+    </g>
+  </g>
+
+  <!-- Cards de cuentas en diseño hexagonal -->
+  <g transform="translate(100, 250)">
+    <!-- Fila 1 -->
+    <!-- Bancolombia -->
+    <g class="account-card" transform="translate(0, 0)">
+      <rect x="0" y="0" width="280" height="160" rx="15" fill="#1a2547" stroke="#00ff88" stroke-width="2" filter="url(#glow)"/>
+      <text x="20" y="30" fill="#ffffff" font-size="18" font-weight="600">Bancolombia</text>
+      <text x="20" y="50" fill="#00ff88" font-size="12">AWS - Competitor</text>
+      
+      <!-- Status indicators -->
+      <g transform="translate(20, 70)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">DevDay ✓</text>
+      </g>
+      <g transform="translate(20, 90)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Atlas Validated ✓</text>
+      </g>
+      <g transform="translate(20, 110)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">SQL Migration ✓</text>
+      </g>
+      <g transform="translate(150, 70)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">PS Access ✓</text>
+      </g>
+      <g transform="translate(150, 90)">
+        <circle cx="10" cy="10" r="5" fill="#ffaa00" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Eng Access ⚡</text>
+      </g>
+      <g transform="translate(150, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">CIO Access ✗</text>
+      </g>
+      
+      <!-- Progress bar -->
+      <rect x="20" y="140" width="240" height="4" rx="2" fill="#1a2547"/>
+      <rect x="20" y="140" width="180" height="4" rx="2" fill="#00ff88" opacity="0.8"/>
+    </g>
+
+    <!-- ETB -->
+    <g class="account-card" transform="translate(300, 0)">
+      <rect x="0" y="0" width="280" height="160" rx="15" fill="#1a2547" stroke="#ffaa00" stroke-width="2" filter="url(#glow)"/>
+      <text x="20" y="30" fill="#ffffff" font-size="18" font-weight="600">ETB</text>
+      <text x="20" y="50" fill="#ffaa00" font-size="12">Azure - Neutral</text>
+      
+      <g transform="translate(20, 70)">
+        <circle cx="10" cy="10" r="5" fill="#ffaa00" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">DevDay Planning</text>
+      </g>
+      <g transform="translate(20, 90)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Atlas Validated ✓</text>
+      </g>
+      <g transform="translate(20, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">SQL Migration ✗</text>
+      </g>
+      <g transform="translate(150, 70)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">PS Access ✓</text>
+      </g>
+      <g transform="translate(150, 90)">
+        <circle cx="10" cy="10" r="5" fill="#ffaa00" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Eng Access ⚡</text>
+      </g>
+      <g transform="translate(150, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">CIO Access ✗</text>
+      </g>
+      
+      <!-- Progress bar -->
+      <rect x="20" y="140" width="240" height="4" rx="2" fill="#1a2547"/>
+      <rect x="20" y="140" width="180" height="4" rx="2" fill="#00ff88" opacity="0.8"/>
+    </g>
+
+    <!-- Seguros Bolivar -->
+    <g class="account-card" transform="translate(600, 0)">
+      <rect x="0" y="0" width="280" height="160" rx="15" fill="#1a2547" stroke="#ff3366" stroke-width="2" filter="url(#glow)"/>
+      <text x="20" y="30" fill="#ffffff" font-size="18" font-weight="600">Seguros Bolivar</text>
+      <text x="20" y="50" fill="#ff3366" font-size="12">AWS - Neutral</text>
+      
+      <g transform="translate(20, 70)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">DevDay ✓</text>
+      </g>
+      <g transform="translate(20, 90)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Atlas Validated ✓</text>
+      </g>
+      <g transform="translate(20, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">SQL Migration ✗</text>
+      </g>
+      <g transform="translate(150, 70)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">PS Access ✗</text>
+      </g>
+      <g transform="translate(150, 90)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Eng Access ✗</text>
+      </g>
+      <g transform="translate(150, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">CIO Access ✗</text>
+      </g>
+      
+      <rect x="20" y="140" width="240" height="4" rx="2" fill="#1a2547"/>
+      <rect x="20" y="140" width="80" height="4" rx="2" fill="#ff3366" opacity="0.8"/>
+    </g>
+
+    <!-- Payway -->
+    <g class="account-card" transform="translate(900, 0)">
+      <rect x="0" y="0" width="280" height="160" rx="15" fill="#1a2547" stroke="#ffaa00" stroke-width="2" filter="url(#glow)"/>
+      <text x="20" y="30" fill="#ffffff" font-size="18" font-weight="600">Payway</text>
+      <text x="20" y="50" fill="#ffaa00" font-size="12">TBD</text>
+      
+      <g transform="translate(20, 70)">
+        <circle cx="10" cy="10" r="5" fill="#ffaa00" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">DevDay Planning</text>
+      </g>
+      <g transform="translate(20, 90)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Atlas Validated ✓</text>
+      </g>
+      <g transform="translate(20, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ffaa00" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">SQL Migration TBD</text>
+      </g>
+      <g transform="translate(150, 70)">
+        <circle cx="10" cy="10" r="5" fill="#ffaa00" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">PS In Progress</text>
+      </g>
+      <g transform="translate(150, 90)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Eng Access ✗</text>
+      </g>
+      <g transform="translate(150, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">CIO Access ✗</text>
+      </g>
+      
+      <rect x="20" y="140" width="240" height="4" rx="2" fill="#1a2547"/>
+      <rect x="20" y="140" width="100" height="4" rx="2" fill="#ffaa00" opacity="0.8"/>
+    </g>
+
+    <!-- Fila 2 -->
+    <!-- Teamcore -->
+    <g class="account-card" transform="translate(0, 180)">
+      <rect x="0" y="0" width="280" height="160" rx="15" fill="#1a2547" stroke="#ff3366" stroke-width="2" filter="url(#glow)"/>
+      <text x="20" y="30" fill="#ffffff" font-size="18" font-weight="600">Teamcore</text>
+      <text x="20" y="50" fill="#ff3366" font-size="12">AWS - Neutral</text>
+      
+      <g transform="translate(20, 70)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">No DevDay</text>
+      </g>
+      <g transform="translate(20, 90)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Atlas Validated ✓</text>
+      </g>
+      <g transform="translate(20, 110)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">SQL Migration ✓</text>
+      </g>
+      <g transform="translate(150, 70)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">PS Access ✗</text>
+      </g>
+      <g transform="translate(150, 90)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Eng Access ✗</text>
+      </g>
+      <g transform="translate(150, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">CIO Access ✗</text>
+      </g>
+      
+      <rect x="20" y="140" width="240" height="4" rx="2" fill="#1a2547"/>
+      <rect x="20" y="140" width="60" height="4" rx="2" fill="#ff3366" opacity="0.8"/>
+    </g>
+
+    <!-- Kushki -->
+    <g class="account-card" transform="translate(300, 180)">
+      <rect x="0" y="0" width="280" height="160" rx="15" fill="#1a2547" stroke="#00ff88" stroke-width="2" filter="url(#glow)"/>
+      <text x="20" y="30" fill="#ffffff" font-size="18" font-weight="600">Kushki</text>
+      <text x="20" y="50" fill="#00ff88" font-size="12">AWS - Competitor</text>
+      
+      <g transform="translate(20, 70)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">DevDay ✓</text>
+      </g>
+      <g transform="translate(20, 90)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Atlas Validated ✓</text>
+      </g>
+      <g transform="translate(20, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">SQL Migration ✗</text>
+      </g>
+      <g transform="translate(150, 70)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">PS Access ✓</text>
+      </g>
+      <g transform="translate(150, 90)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Eng Access ✓</text>
+      </g>
+      <g transform="translate(150, 110)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">CIO Access ✓</text>
+      </g>
+      
+      <rect x="20" y="140" width="240" height="4" rx="2" fill="#1a2547"/>
+      <rect x="20" y="140" width="200" height="4" rx="2" fill="#00ff88" opacity="0.8"/>
+    </g>
+
+    <!-- Sunat -->
+    <g class="account-card" transform="translate(600, 180)">
+      <rect x="0" y="0" width="280" height="160" rx="15" fill="#1a2547" stroke="#ffaa00" stroke-width="2" filter="url(#glow)"/>
+      <text x="20" y="30" fill="#ffffff" font-size="18" font-weight="600">Sunat</text>
+      <text x="20" y="50" fill="#ffaa00" font-size="12">Azure - Neutral</text>
+      
+      <g transform="translate(20, 70)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">DevDay ✓</text>
+      </g>
+      <g transform="translate(20, 90)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Atlas Validated ✓</text>
+      </g>
+      <g transform="translate(20, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">SQL Migration ✗</text>
+      </g>
+      <g transform="translate(150, 70)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">PS Access ✗</text>
+      </g>
+      <g transform="translate(150, 90)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Eng Access ✗</text>
+      </g>
+      <g transform="translate(150, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">CIO Access ✗</text>
+      </g>
+      
+      <rect x="20" y="140" width="240" height="4" rx="2" fill="#1a2547"/>
+      <rect x="20" y="140" width="80" height="4" rx="2" fill="#ffaa00" opacity="0.8"/>
+    </g>
+
+    <!-- Banco Rep Dominicana -->
+    <g class="account-card" transform="translate(900, 180)">
+      <rect x="0" y="0" width="280" height="160" rx="15" fill="#1a2547" stroke="#ffaa00" stroke-width="2" filter="url(#glow)"/>
+      <text x="20" y="30" fill="#ffffff" font-size="16" font-weight="600">Banco Rep Dominicana</text>
+      <text x="20" y="50" fill="#ffaa00" font-size="12">TBD</text>
+      
+      <g transform="translate(20, 70)">
+        <circle cx="10" cy="10" r="5" fill="#ffaa00" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">DevDay Planning</text>
+      </g>
+      <g transform="translate(20, 90)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Atlas Validated ✓</text>
+      </g>
+      <g transform="translate(20, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ffaa00" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">SQL Migration TBD</text>
+      </g>
+      <g transform="translate(150, 70)">
+        <circle cx="10" cy="10" r="5" fill="#ffaa00" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">PS In Progress</text>
+      </g>
+      <g transform="translate(150, 90)">
+        <circle cx="10" cy="10" r="5" fill="#ffaa00" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Eng Expanding</text>
+      </g>
+      <g transform="translate(150, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">CIO Access ✗</text>
+      </g>
+      
+      <rect x="20" y="140" width="240" height="4" rx="2" fill="#1a2547"/>
+      <rect x="20" y="140" width="100" height="4" rx="2" fill="#ffaa00" opacity="0.8"/>
+    </g>
+
+    <!-- Fila 3 -->
+    <!-- Porvenir -->
+    <g class="account-card" transform="translate(150, 360)">
+      <rect x="0" y="0" width="280" height="160" rx="15" fill="#1a2547" stroke="#ffaa00" stroke-width="2" filter="url(#glow)"/>
+      <text x="20" y="30" fill="#ffffff" font-size="18" font-weight="600">Porvenir</text>
+      <text x="20" y="50" fill="#ffaa00" font-size="12">AWS - Competitor</text>
+      
+      <g transform="translate(20, 70)">
+        <circle cx="10" cy="10" r="5" fill="#ffaa00" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">DevDay Planning</text>
+      </g>
+      <g transform="translate(20, 90)">
+        <circle cx="10" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Atlas Validated ✓</text>
+      </g>
+      <g transform="translate(20, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">SQL Migration ✗</text>
+         </g>
+      <g transform="translate(150, 70)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">PS Access ✗</text>
+      </g>
+    <g transform="translate(150, 90)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">Eng Access ✗</text>
+      </g>
+      <g transform="translate(150, 110)">
+        <circle cx="10" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="25" y="14" fill="#8892b0" font-size="11">CIO Access ✗</text>
+      </g>
+      
+      <rect x="20" y="140" width="240" height="4" rx="2" fill="#1a2547"/>
+      <rect x="20" y="140" width="100" height="4" rx="2" fill="#ffaa00" opacity="0.8"/>
+    </g>
+     <!-- Fila 3 -->
+    <!-- NCBJ -->
+    <g class="account-card" transform="translate(150, 360)">
+      <rect x="400" y="0" width="280" height="160" rx="15" fill="#1a2547" stroke="#ffaa00" stroke-width="2" filter="url(#glow)"/>
+      <text x="420" y="30" fill="#ffffff" font-size="18" font-weight="600">NCBJ</text>
+      <text x="420" y="50" fill="#ffaa00" font-size="12">AWS - Neutral</text>
+      
+     <g transform="translate(20, 70)">
+        <circle cx="410" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="425" y="14" fill="#8892b0" font-size="11">DevDay ✓</text>
+      </g>
+      <g transform="translate(20, 90)">
+        <circle cx="410" cy="10" r="5" fill="#00ff88" class="metric-dot"/>
+        <text x="425" y="14" fill="#8892b0" font-size="11">Atlas Validated ✓</text>
+      </g>
+      <g transform="translate(20, 110)">
+        <circle cx="410" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="425" y="14" fill="#8892b0" font-size="11">SQL Migration ✗</text>
+      </g>
+      <g transform="translate(150, 70)">
+        <circle cx="410" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="425" y="14" fill="#8892b0" font-size="11">PS Access ✗</text>
+      </g>
+      <g transform="translate(150, 90)">
+        <circle cx="410" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="425" y="14" fill="#8892b0" font-size="11">Eng Access ✗</text>
+      </g>
+      <g transform="translate(150, 110)">
+        <circle cx="410" cy="10" r="5" fill="#ff3366" class="metric-dot"/>
+        <text x="425" y="14" fill="#8892b0" font-size="11">CIO Access ✗</text>
+      </g>
+      
+      <rect x="420" y="140" width="240" height="4" rx="2" fill="#1a2547"/>
+      <rect x="420" y="140" width="80" height="4" rx="2" fill="#ff3366" opacity="0.8"/>
+    </g>
+ </g>
+</svg>

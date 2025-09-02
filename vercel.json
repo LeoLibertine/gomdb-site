@@ -178,6 +178,10 @@
       "dest": "/clientes/bancolombia/df/designreview.html"
     },
     {
+      "src": "/clientes/bancolombia/df/designreview2(?:/.*)?$",
+      "dest": "/clientes/bancolombia/df/designreview2.html"
+    },
+    {
       "src": "/clientes/bancolombia/bdtl/bdtl(?:/.*)?$",
       "dest": "/clientes/bancolombia/bdtl/bdtl.html"
     },
@@ -267,6 +271,14 @@
       "dest": "/clientes/payway/kafka.html"
     },
     {
+      "src": "/clientes/payway/paginacion(?:/.*)?$",
+      "dest": "/clientes/payway/paginacion.html"
+    },
+    {
+      "src": "/clientes/payway/spkafka(?:/.*)?$",
+      "dest": "/clientes/payway/spkafka.html"
+    },
+    {
       "src": "/clientes/payway/salesforce(?:/.*)?$",
       "dest": "/clientes/payway/salesforce.html"
     },
@@ -274,6 +286,7 @@
       "src": "/clientes/bdp/arquitectura(?:/.*)?$",
       "dest": "/clientes/payway/arquitectura.svg"
     },
+    
     
     {
       "src": "/(.*)",

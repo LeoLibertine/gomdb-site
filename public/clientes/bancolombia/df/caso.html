@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB - Detección de Fraudes Bancolombia</title>
+    <style>
+        /* =============================================
+   GoMDB - Sistema de Diseño Global
+   Arquitectura MongoDB para Latinoamérica
+   ============================================= */
+
+/* ============================================= 
+   1. VARIABLES CSS (Custom Properties)
+   ============================================= */
+   :root {
+    /* Colores Primarios - Basados en MongoDB */
+    --color-primary: #00ED64;           /* Verde MongoDB */
+    --color-primary-hover: #00D757;     /* Verde hover */
+    --color-primary-light: #00ED6420;   /* Verde con transparencia */
+    
+    /* Colores de Fondo */
+    --color-bg-primary: #001E2B;        /* Azul oscuro principal */
+    --color-bg-secondary: #0D2A3D;      /* Azul medio */
+    --color-bg-tertiary: #112331;       /* Azul alternativo */
+    --color-bg-card: #0D2A3D80;         /* Fondo de cards con transparencia */
+    
+    /* Colores de Acento */
+    --color-accent: #5644D4;            /* Púrpura */
+    --color-accent-light: #5644D420;    /* Púrpura con transparencia */
+    
+    /* Colores de Texto */
+    --color-text-primary: #FFFFFF;      /* Blanco */
+    --color-text-secondary: #B8C4CE;    /* Gris claro */
+    --color-text-muted: #718096;        /* Gris medio */
+    --color-text-dark: #001E2B;         /* Para texto sobre fondos claros */
+    
+    /* Colores de Estado */
+    --color-success: #00ED64;
+    --color-warning: #F59E0B;
+    --color-error: #EF4444;
+    --color-info: #3B82F6;
+    
+    /* Espaciado */
+    --spacing-xs: 0.25rem;    /* 4px */
+    --spacing-sm: 0.5rem;     /* 8px */
+    --spacing-md: 1rem;       /* 16px */
+    --spacing-lg: 1.5rem;     /* 24px */
+    --spacing-xl: 2rem;       /* 32px */
+    --spacing-2xl: 3rem;      /* 48px */
+    --spacing-3xl: 4rem;      /* 64px */
+    --spacing-4xl: 6rem;      /* 96px */
+    
+    /* Tipografía */
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+    
+    /* Tamaños de Fuente */
+    --text-xs: 0.75rem;       /* 12px */
+    --text-sm: 0.875rem;      /* 14px */
+    --text-base: 1rem;        /* 16px */
+    --text-lg: 1.125rem;      /* 18px */
+    --text-xl: 1.25rem;       /* 20px */
+    --text-2xl: 1.5rem;       /* 24px */
+    --text-3xl: 2rem;         /* 32px */
+    --text-4xl: 2.5rem;       /* 40px */
+    --text-5xl: 3rem;         /* 48px */
+    --text-6xl: 4rem;         /* 64px */
+    --text-7xl: 5rem;         /* 80px */
+    --text-8xl: 6rem;         /* 96px */
+    
+    /* Bordes y Radios */
+    --radius-sm: 0.25rem;     /* 4px */
+    --radius-md: 0.5rem;      /* 8px */
+    --radius-lg: 1rem;        /* 16px */
+    --radius-xl: 1.5rem;      /* 24px */
+    --radius-full: 9999px;    /* Circular */
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+    --shadow-glow: 0 0 40px rgba(0, 237, 100, 0.3);
+    
+    /* Transiciones */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+    
+    /* Z-Index */
+    --z-base: 1;
+    --z-dropdown: 10;
+    --z-sticky: 20;
+    --z-fixed: 30;
+    --z-modal-backdrop: 40;
+    --z-modal: 50;
+    --z-popover: 60;
+    --z-tooltip: 70;
+  }
+  
+  /* ============================================= 
+     2. RESET Y BASE
+     ============================================= */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* ============================================= 
+     3. TIPOGRAFÍA
+     ============================================= */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  h1 {
+    font-size: clamp(var(--text-4xl), 8vw, var(--text-8xl));
+  }
+  
+  h2 {
+    font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
+  }
+  
+  h3 {
+    font-size: clamp(var(--text-2xl), 3vw, var(--text-4xl));
+  }
+  
+  h4 {
+    font-size: var(--text-2xl);
+  }
+  
+  h5 {
+    font-size: var(--text-xl);
+  }
+  
+  h6 {
+    font-size: var(--text-lg);
+  }
+  
+  p {
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-secondary);
+  }
+  
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+  
+  a:hover {
+    color: var(--color-primary-hover);
+  }
+  
+  /* Texto con gradiente */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* ============================================= 
+     4. LAYOUT Y CONTENEDORES
+     ============================================= */
+  .container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+  }
+  
+  .section {
+    padding: var(--spacing-4xl) 0;
+  }
+  
+  .section-lg {
+    padding: var(--spacing-4xl) 0;
+  }
+  
+  @media (min-width: 768px) {
+    .section-lg {
+      padding: calc(var(--spacing-4xl) * 1.5) 0;
+    }
+  }
+  
+  /* ============================================= 
+     5. COMPONENTES - NAVEGACIÓN
+     ============================================= */
+  .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: var(--z-fixed);
+    transition: all var(--transition-slow);
+  }
+  
+  .navbar-scrolled {
+    background-color: rgba(0, 30, 43, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+  }
+  
+  .navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+  
+  .navbar-links {
+    display: none;
+    gap: var(--spacing-xl);
+  }
+  
+  @media (min-width: 768px) {
+    .navbar-links {
+      display: flex;
+    }
+  }
+  
+  .navbar-link {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    transition: color var(--transition-base);
+  }
+  
+  .navbar-link:hover {
+    color: var(--color-text-primary);
+  }
+  
+  /* ============================================= 
+     6. COMPONENTES - BOTONES
+     ============================================= */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-weight: 600;
+    font-size: var(--text-base);
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    text-decoration: none;
+  }
+  
+  .btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-text-muted);
+  }
+  
+  .btn-ghost:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  
+  /* Tamaños de botones */
+  .btn-sm {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--text-sm);
+  }
+  
+  .btn-lg {
+    padding: var(--spacing-lg) var(--spacing-2xl);
+    font-size: var(--text-lg);
+  }
+  
+  /* ============================================= 
+     7. COMPONENTES - CARDS
+     ============================================= */
+  .card {
+    background-color: var(--color-bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    transition: all var(--transition-base);
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .card-gradient {
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.5) 100%);
+  }
+  
+  .card-bordered {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  /* ============================================= 
+     8. COMPONENTES - HERO
+     ============================================= */
+  .hero {
+    position: relative;
+    padding-top: calc(80px + var(--spacing-4xl));
+    padding-bottom: var(--spacing-4xl);
+    overflow: hidden;
+  }
+  
+  .hero-background {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 50%, var(--color-bg-primary) 100%);
+    z-index: -2;
+  }
+  
+  .hero-blur {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.2;
+    z-index: -1;
+  }
+  
+  .hero-blur-primary {
+    width: 300px;
+    height: 300px;
+    background-color: var(--color-primary);
+    top: 10%;
+    left: 5%;
+  }
+  
+  .hero-blur-accent {
+    width: 400px;
+    height: 400px;
+    background-color: var(--color-accent);
+    bottom: 10%;
+    right: 10%;
+  }
+  
+  /* ============================================= 
+     9. COMPONENTES - BADGES
+     ============================================= */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border-radius: var(--radius-full);
+  }
+  
+  .badge-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .badge-secondary {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+  }
+  
+  /* ============================================= 
+     10. COMPONENTES - GRÁFICOS Y MÉTRICAS
+     ============================================= */
+  .metric {
+    transition: transform var(--transition-base);
+    cursor: pointer;
+  }
+  
+  .metric:hover {
+    transform: scale(1.05);
+  }
+  
+  .metric-value {
+    font-size: var(--text-5xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .metric-label {
+    color: var(--color-text-secondary);
+    font-size: var(--text-base);
+  }
+  
+  .chart-container {
+    background-color: var(--color-bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+  }
+  
+  /* ============================================= 
+     11. UTILIDADES
+     ============================================= */
+  /* Espaciado */
+  .mt-0 { margin-top: 0; }
+  .mt-1 { margin-top: var(--spacing-xs); }
+  .mt-2 { margin-top: var(--spacing-sm); }
+  .mt-3 { margin-top: var(--spacing-md); }
+  .mt-4 { margin-top: var(--spacing-lg); }
+  .mt-5 { margin-top: var(--spacing-xl); }
+  .mt-6 { margin-top: var(--spacing-2xl); }
+  
+  .mb-0 { margin-bottom: 0; }
+  .mb-1 { margin-bottom: var(--spacing-xs); }
+  .mb-2 { margin-bottom: var(--spacing-sm); }
+  .mb-3 { margin-bottom: var(--spacing-md); }
+  .mb-4 { margin-bottom: var(--spacing-lg); }
+  .mb-5 { margin-bottom: var(--spacing-xl); }
+  .mb-6 { margin-bottom: var(--spacing-2xl); }
+  
+  /* Alineación de texto */
+  .text-left { text-align: left; }
+  .text-center { text-align: center; }
+  .text-right { text-align: right; }
+  
+  /* Display */
+  .hidden { display: none; }
+  .block { display: block; }
+  .inline-block { display: inline-block; }
+  .flex { display: flex; }
+  .inline-flex { display: inline-flex; }
+  .grid { display: grid; }
+  
+  /* Flex utilities */
+  .items-center { align-items: center; }
+  .items-start { align-items: flex-start; }
+  .items-end { align-items: flex-end; }
+  .justify-center { justify-content: center; }
+  .justify-between { justify-content: space-between; }
+  .justify-around { justify-content: space-around; }
+  .flex-wrap { flex-wrap: wrap; }
+  .gap-1 { gap: var(--spacing-xs); }
+  .gap-2 { gap: var(--spacing-sm); }
+  .gap-3 { gap: var(--spacing-md); }
+  .gap-4 { gap: var(--spacing-lg); }
+  .gap-5 { gap: var(--spacing-xl); }
+  
+  /* Grid */
+  .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  
+  @media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  
+  /* ============================================= 
+     12. ANIMACIONES
+     ============================================= */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+  
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(0, 237, 100, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(0, 237, 100, 0.6);
+    }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  .animate-slideInLeft {
+    animation: slideInLeft 0.6s ease-out;
+  }
+  
+  .animate-slideInRight {
+    animation: slideInRight 0.6s ease-out;
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+  
+  /* ============================================= 
+     13. RESPONSIVO
+     ============================================= */
+  /* Mobile First - Breakpoints */
+  @media (min-width: 640px) {
+    .container {
+      padding: 0 var(--spacing-xl);
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .hide-mobile {
+      display: none;
+    }
+    
+    .show-desktop {
+      display: block;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    h1 {
+      font-size: var(--text-7xl);
+    }
+    
+    h2 {
+      font-size: var(--text-5xl);
+    }
+  }
+  
+  /* ============================================= 
+     14. MODO OSCURO (ya es el default)
+     ============================================= */
+  /* Puedes agregar un modo claro en el futuro */
+  .light-mode {
+    --color-bg-primary: #FFFFFF;
+    --color-bg-secondary: #F7FAFC;
+    --color-text-primary: #001E2B;
+    --color-text-secondary: #4A5568;
+  }
+  
+  /* ============================================= 
+     15. UTILIDADES ESPECIALES PARA MONGODB
+     ============================================= */
+  .mongodb-glow {
+    box-shadow: 0 0 40px rgba(0, 237, 100, 0.3);
+  }
+  
+  .mongodb-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  }
+  
+  .code-block {
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    font-family: var(--font-mono);
+    overflow-x: auto;
+  }
+  
+  .performance-bar {
+    height: 100%;
+    background: linear-gradient(to top, var(--color-primary), rgba(0, 237, 100, 0.3));
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    transition: all var(--transition-base);
+  }
+  
+  .performance-bar:hover {
+    background: linear-gradient(to top, var(--color-primary-hover), rgba(0, 215, 87, 0.4));
+  }
+
+  /* Estilos específicos para esta página */
+  .flow-step {
+    position: relative;
+    padding: var(--spacing-lg);
+    border-left: 3px solid var(--color-primary);
+    margin-bottom: var(--spacing-lg);
+    transition: all var(--transition-base);
+  }
+
+  .flow-step:hover {
+    border-left-color: var(--color-accent);
+    transform: translateX(8px);
+  }
+
+  .flow-step::before {
+    content: attr(data-step);
+    position: absolute;
+    left: -20px;
+    top: var(--spacing-md);
+    width: 40px;
+    height: 40px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--color-text-dark);
+    font-size: var(--text-lg);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-xl);
+    margin: var(--spacing-2xl) 0;
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, var(--color-bg-card), rgba(86, 68, 212, 0.1));
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all var(--transition-base);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-glow);
+    border-color: var(--color-primary);
+  }
+
+  .stat-number {
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    display: block;
+  }
+
+  .architecture-diagram {
+    background: var(--color-bg-card);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-2xl);
+    margin: var(--spacing-2xl) 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .arch-node {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    color: var(--color-text-dark);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-base);
+  }
+
+  .arch-node:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    margin: var(--spacing-2xl) 0;
+  }
+
+  .benefit-card {
+    position: relative;
+    padding: var(--spacing-2xl);
+    background: linear-gradient(135deg, var(--color-bg-secondary), rgba(13, 42, 61, 0.8));
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(0, 237, 100, 0.2);
+    transition: all var(--transition-base);
+  }
+
+  .benefit-card:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 237, 100, 0.2);
+  }
+
+  .benefit-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--text-2xl);
+  }
+
+  .timeline {
+    position: relative;
+    padding: var(--spacing-2xl) 0;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-primary);
+    transform: translateX(-50%);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: var(--spacing-2xl);
+    width: 45%;
+  }
+
+  .timeline-item:nth-child(odd) {
+    left: 0;
+  }
+
+  .timeline-item:nth-child(even) {
+    left: 55%;
+  }
+
+  .timeline-content {
+    background: var(--color-bg-card);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .timeline-date {
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: var(--text-sm);
+  }
+
+  @media (max-width: 768px) {
+    .timeline::before {
+      left: 20px;
+    }
+    
+    .timeline-item {
+      width: calc(100% - 40px);
+      left: 40px !important;
+    }
+  }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container navbar-container">
+            <div class="navbar-logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <path d="M20 0L37.32 10V30L20 40L2.68 30V10L20 0Z" fill="#00ED64"/>
+                    <path d="M20 8L8 14V26L20 32L32 26V14L20 8Z" fill="#001E2B"/>
+                </svg>
+                MongoDB
+            </div>
+            <div class="navbar-links">
+                <a href="#caso-uso" class="navbar-link">Caso de Uso</a>
+                <a href="#arquitectura" class="navbar-link">Arquitectura</a>
+                <a href="#beneficios" class="navbar-link">Beneficios</a>
+                <a href="#timeline" class="navbar-link">Timeline</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="text-center">
+                <div class="badge badge-primary mb-4">
+                    <span>🛡️</span>
+                    Sistema de Detección de Fraudes
+                </div>
+                <h1 class="text-gradient animate-fadeIn">
+                    MongoDB para Bancolombia
+                </h1>
+                <p class="text-xl mb-6 animate-fadeIn" style="animation-delay: 0.2s;">
+                    Protegiendo millones de transacciones con la potencia de MongoDB. 
+                    Un sistema de monitoreo transaccional robusto, escalable y en tiempo real.
+                </p>
+                <div class="flex justify-center gap-4 animate-fadeIn" style="animation-delay: 0.4s;">
+                    <a href="#caso-uso" class="btn btn-primary btn-lg">Explorar Caso de Uso</a>
+                    <a href="#arquitectura" class="btn btn-secondary btn-lg">Ver Arquitectura</a>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid animate-fadeIn" style="animation-delay: 0.6s;">
+                <div class="stat-card">
+                    <span class="stat-number">500</span>
+                    <div class="metric-label">Transacciones/segundo</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">1.3B</span>
+                    <div class="metric-label">Registros en 3 meses</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">10TB</span>
+                    <div class="metric-label">Volumen de datos</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">1,200</span>
+                    <div class="metric-label">Asesores concurrentes</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Caso de Uso Section -->
+    <section id="caso-uso" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2>El Desafío de Bancolombia</h2>
+                <p class="text-xl">Un nuevo sistema que reemplaza la solución actual con capacidades superiores</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-5">
+                <div class="card animate-slideInLeft">
+                    <h3>🎯 Objetivo Principal</h3>
+                    <p>Crear un sistema de monitoreo transaccional robusto que procese todas las transacciones de canales digitales, las enriquezca con datos adicionales, y las evalúe en tiempo real contra motores de detección de fraude.</p>
+                </div>
+
+                <div class="card animate-slideInRight">
+                    <h3>⚡ Requerimientos Críticos</h3>
+                    <p>El sistema debe manejar un volumen masivo de 400-500 transacciones por segundo, almacenar hasta 600 campos por transacción, y soportar consultas de 1,200 asesores trabajando 24/7.</p>
+                </div>
+            </div>
+
+            <!-- Flujo del Proceso -->
+            <div class="mt-6">
+                <h3 class="text-center mb-4">Flujo del Sistema</h3>
+                <div class="grid gap-0">
+                    <div class="flow-step animate-fadeIn" data-step="1" style="animation-delay: 0.1s;">
+                        <h4>Recepción de Transacciones</h4>
+                        <p>Todas las transacciones de canales digitales llegan al sistema en tiempo real</p>
+                    </div>
+                    
+                    <div class="flow-step animate-fadeIn" data-step="2" style="animation-delay: 0.2s;">
+                        <h4>Enriquecimiento de Datos</h4>
+                        <p>Se transforman, normalizan y agregan datos adicionales a cada transacción</p>
+                    </div>
+                    
+                    <div class="flow-step animate-fadeIn" data-step="3" style="animation-delay: 0.3s;">
+                        <h4>Análisis de Riesgo</h4>
+                        <p>Las transacciones enriquecidas se envían al motor de riesgos para evaluación</p>
+                    </div>
+                    
+                    <div class="flow-step animate-fadeIn" data-step="4" style="animation-delay: 0.4s;">
+                        <h4>Decisión y Almacenamiento</h4>
+                        <p>Se recibe la respuesta (aprobar/declinar) y se almacena todo en MongoDB</p>
+                    </div>
+                    
+                    <div class="flow-step animate-fadeIn" data-step="5" style="animation-delay: 0.5s;">
+                        <h4>Consulta por Asesores</h4>
+                        <p>Los asesores pueden consultar el historial para gestionar casos de fraude</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Arquitectura Section -->
+    <section id="arquitectura" class="section-lg">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2>Arquitectura MongoDB</h2>
+                <p class="text-xl">Diseño optimizado para alta performance y escalabilidad</p>
+            </div>
+
+            <div class="architecture-diagram">
+                <div class="grid md:grid-cols-3 gap-4 items-center">
+                    <div class="text-center">
+                        <div class="arch-node mb-3">Canales Digitales</div>
+                        <p class="text-sm text-muted">Apps móviles, Web, ATMs</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="arch-node mb-3">MongoDB Cluster</div>
+                        <p class="text-sm text-muted">Sharded + Replica Sets</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="arch-node mb-3">Call Center</div>
+                        <p class="text-sm text-muted">1,200 asesores</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modelo de Datos -->
+            <div class="mt-6">
+                <h3 class="text-center mb-4">Modelo de Datos Recomendado</h3>
+                <div class="code-block">
+                    <pre><code>{
+  "_id": ObjectId("..."),
+  "transaction_id": "TXN-2024-001234567",
+  "customer_id": "12345678",
+  "customer_document": {
+    "type": "CC",
+    "number": "12345678"
+  },
+  "transaction_data": {
+    "amount": 150000,
+    "currency": "COP",
+    "channel": "mobile_app",
+    "timestamp": ISODate("2024-03-15T10:30:00Z"),
+    "merchant": "Amazon Colombia"
+  },
+  "enriched_data": {
+    "location": { "lat": 4.7110, "lng": -74.0721 },
+    "device_fingerprint": "...",
+    "behavior_score": 0.85
+  },
+  "risk_assessment": {
+    "decision": "approved",
+    "score": 0.23,
+    "rules_triggered": [],
+    "processed_at": ISODate("2024-03-15T10:30:01Z")
+  },
+  "created_at": ISODate("2024-03-15T10:30:00Z"),
+  "shard_key": "12345678"
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Estrategia de Sharding -->
+            <div class="mt-6">
+                <h3>Estrategia de Sharding</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="card">
+                        <h4>🔑 Shard Key: customer_id</h4>
+                        <p>Distribuye los datos de manera equilibrada y co-localiza las transacciones de cada cliente en el mismo shard para consultas eficientes.</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>📊 Índices Compuestos</h4>
+                        <p>Índices optimizados para los patrones de consulta: {customer_id: 1, created_at: -1} y {transaction_id: 1}.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Beneficios Section -->
+    <section id="beneficios" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2>¿Por Qué MongoDB es Perfecto?</h2>
+                <p class="text-xl">Las ventajas clave que hacen de MongoDB la elección ideal</p>
+            </div>
+
+            <div class="benefits-grid">
+                <div class="benefit-card animate-fadeIn" style="animation-delay: 0.1s;">
+                    <div class="benefit-icon">⚡</div>
+                    <h4>Alta Performance de Escritura</h4>
+                    <p>MongoDB está optimizado para manejar 500+ transacciones por segundo con su arquitectura de escritura en memoria y persistencia asíncrona.</p>
+                </div>
+
+                <div class="benefit-card animate-fadeIn" style="animation-delay: 0.2s;">
+                    <div class="benefit-icon">🔧</div>
+                    <h4>Esquema Flexible</h4>
+                    <p>Evolución de 300 a 600 campos sin migraciones costosas. MongoDB permite agregar nuevos campos sin afectar el rendimiento.</p>
+                </div>
+
+                <div class="benefit-card animate-fadeIn" style="animation-delay: 0.3s;">
+                    <div class="benefit-icon">📈</div>
+                    <h4>Escalabilidad Horizontal</h4>
+                    <p>Sharding nativo permite manejar 10TB+ de datos distribuyendo la carga across múltiples servidores de manera transparente.</p>
+                </div>
+
+                <div class="benefit-card animate-fadeIn" style="animation-delay: 0.4s;">
+                    <div class="benefit-icon">🎯</div>
+                    <h4>Consultas Optimizadas</h4>
+                    <p>Las consultas por customer_id + fecha son extremadamente eficientes gracias al co-location de datos en el mismo shard.</p>
+                </div>
+
+                <div class="benefit-card animate-fadeIn" style="animation-delay: 0.5s;">
+                    <div class="benefit-icon">💾</div>
+                    <h4>Modelo de Documentos</h4>
+                    <p>Cada transacción es una entidad autocontenida, eliminando la necesidad de JOINs complejos entre múltiples tablas.</p>
+                </div>
+
+                <div class="benefit-card animate-fadeIn" style="animation-delay: 0.6s;">
+                    <div class="benefit-icon">🛡️</div>
+                    <h4>Alta Disponibilidad</h4>
+                    <p>Replica Sets garantizan 99.99% uptime, crítico para un sistema de detección de fraude que opera 24/7.</p>
+                </div>
+            </div>
+
+            <!-- Comparación con Alternativas -->
+            <div class="mt-6">
+                <h3 class="text-center mb-4">MongoDB vs Alternativas</h3>
+                <div class="card">
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="text-center">
+                            <h4 class="text-primary">MongoDB</h4>
+                            <ul class="text-left mt-3">
+                                <li>✅ Esquema flexible</li>
+                                <li>✅ Sharding nativo</li>
+                                <li>✅ Alta escritura</li>
+                                <li>✅ Documentos JSON</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="text-center">
+                            <h4 class="text-warning">SQL Tradicional</h4>
+                            <ul class="text-left mt-3">
+                                <li>❌ Migraciones costosas</li>
+                                <li>❌ JOINs complejos</li>
+                                <li>⚠️ Sharding manual</li>
+                                <li>⚠️ Escalado vertical</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="text-center">
+                            <h4 class="text-info">Cassandra/HBase</h4>
+                            <ul class="text-left mt-3">
+                                <li>✅ Alta escritura</li>
+                                <li>❌ Consultas limitadas</li>
+                                <li>❌ Complejidad operacional</li>
+                                <li>❌ Curva de aprendizaje</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section id="timeline" class="section-lg">
+        <div class="container">
+            <div class="text-center mb-6">
+                <h2>Plan de Implementación</h2>
+                <p class="text-xl">Roadmap para puesta en producción - Noviembre 2024</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item animate-slideInLeft">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Semana 1-2 (Sprint Actual)</div>
+                        <h4>Definición de Arquitectura</h4>
+                        <p>Modelo de datos, shard key, índices y configuración del cluster MongoDB Atlas.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item animate-slideInRight">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Semana 3-4</div>
+                        <h4>Desarrollo e Integración</h4>
+                        <p>Implementación de APIs, conectores con canales digitales y motor de riesgo.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item animate-slideInLeft">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Semana 5-6</div>
+                        <h4>Pruebas de Carga</h4>
+                        <p>Validación de performance con 500 TPS y pruebas de consultas concurrentes.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item animate-slideInRight">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Semana 7-8</div>
+                        <h4>Piloto y Ajustes</h4>
+                        <p>Piloto con volumen reducido, monitoreo y optimizaciones finales.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item animate-slideInLeft">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Fin de Noviembre</div>
+                        <h4>🚀 Go Live</h4>
+                        <p>Puesta en producción del sistema completo con monitoreo 24/7.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Urgencia -->
+            <div class="text-center mt-6">
+                <div class="card mongodb-glow">
+                    <h3 class="text-gradient">⏰ Factor Crítico: Tiempo</h3>
+                    <p class="text-lg mb-4">
+                        Con sprints semanales y fecha límite en noviembre, la definición de arquitectura 
+                        debe completarse <strong>esta semana</strong> para no bloquear el desarrollo.
+                    </p>
+                    <div class="badge badge-primary">
+                        Decisión requerida: Miércoles
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="section">
+        <div class="container text-center">
+            <div class="card mongodb-gradient">
+                <h2 class="mb-4">¿Listo para Transformar la Detección de Fraude?</h2>
+                <p class="text-lg mb-6">
+                    MongoDB Atlas ofrece la plataforma perfecta para el sistema de monitoreo transaccional de Bancolombia.
+                    Con escalabilidad comprobada, flexibilidad de esquema y performance excepcional.
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a href="#" class="btn btn-primary btn-lg">Contactar MongoDB</a>
+                    <a href="#" class="btn btn-ghost btn-lg">Documentación Técnica</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeIn');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards and timeline items
+        document.querySelectorAll('.card, .timeline-item, .stat-card, .benefit-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Counter animation for stats
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 20);
+        }
+
+        // Animate stats when they come into view
+        const statsObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const number = entry.target.querySelector('.stat-number');
+                    const value = number.textContent;
+                    if (value.includes('B')) {
+                        animateCounter(number, parseFloat(value) * 1000);
+                    } else if (value.includes('TB')) {
+                        animateCounter(number, parseInt(value));
+                    } else {
+                        animateCounter(number, parseInt(value.replace(/,/g, '')));
+                    }
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat-card').forEach(el => {
+            statsObserver.observe(el);
+        });
+    </script>
+</body>
+</html>
