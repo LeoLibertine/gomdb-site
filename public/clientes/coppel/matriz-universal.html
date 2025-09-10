@@ -1,0 +1,1211 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoMDB - Matriz de Decisión Interactiva v2</title>
+    <style>
+        :root {
+            --color-primary: #00ED64;
+            --color-primary-light: rgba(0, 237, 100, 0.1);
+            --color-accent: #5644D4;
+            --color-bg-primary: #001124;
+            --color-bg-secondary: #0D2A3D;
+            --color-bg-tertiary: #112331;
+            --color-bg-card: rgba(13, 42, 61, 0.5);
+            --color-text-primary: #FFFFFF;
+            --color-text-secondary: #B8C5D6;
+            --color-text-dark: #001124;
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --spacing-3xl: 4rem;
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-full: 9999px;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 1.875rem;
+            --transition-base: all 0.3s ease;
+            --transition-slow: all 0.5s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            min-height: 100vh;
+            position: relative;
+            padding: var(--spacing-2xl) var(--spacing-lg);
+        }
+
+        .hero-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+            z-index: -2;
+        }
+
+        .hero-blur {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .hero-blur-primary {
+            background: var(--color-primary);
+            top: 10%;
+            right: 10%;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .hero-blur-accent {
+            background: var(--color-accent);
+            bottom: 10%;
+            left: 10%;
+            animation: float 20s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(30px, -30px); }
+            66% { transform: translate(-20px, 20px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-primary {
+            background: var(--color-primary-light);
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
+        }
+
+        .badge-secondary {
+            background: rgba(86, 68, 212, 0.1);
+            color: var(--color-accent);
+            border: 1px solid var(--color-accent);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .card {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-xl);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-lg);
+            background: transparent;
+            color: var(--color-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+            text-decoration: none;
+            font-size: var(--text-base);
+        }
+
+        .btn:hover {
+            background: var(--color-primary);
+            color: var(--color-text-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 237, 100, 0.3);
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .animate-slideInLeft {
+            animation: slideInLeft 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .mb-3 { margin-bottom: var(--spacing-md); }
+        .mb-4 { margin-bottom: var(--spacing-lg); }
+        .mb-5 { margin-bottom: var(--spacing-xl); }
+        .mt-3 { margin-top: var(--spacing-md); }
+        .mt-4 { margin-top: var(--spacing-lg); }
+        .text-center { text-align: center; }
+
+        .question-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.8) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            margin-bottom: var(--spacing-lg);
+            transition: all var(--transition-base);
+        }
+
+        .question-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 20px rgba(0, 237, 100, 0.2);
+        }
+
+        .question-text {
+            color: var(--color-text-primary);
+            font-size: var(--text-lg);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+
+        .response-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .response-btn {
+            flex: 1;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: 2px solid transparent;
+            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            font-weight: 600;
+        }
+
+        .response-btn:hover {
+            background: rgba(0, 237, 100, 0.1);
+            border-color: var(--color-primary);
+            color: var(--color-text-primary);
+        }
+
+        .response-btn.selected {
+            background: var(--color-primary);
+            color: var(--color-text-dark);
+            border-color: var(--color-primary);
+        }
+
+        .results-section {
+            margin-top: var(--spacing-3xl);
+            padding: var(--spacing-xl);
+            background: linear-gradient(135deg, var(--color-bg-card) 0%, rgba(86, 68, 212, 0.1) 100%);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+        }
+
+        .database-score {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-base);
+        }
+
+        .database-score:hover {
+            transform: translateX(4px);
+            border-color: var(--color-primary);
+        }
+
+        .database-name {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .score-container {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .score-bar {
+            width: 200px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            border-radius: var(--radius-full);
+            transition: width var(--transition-slow);
+            position: relative;
+        }
+
+        .score-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .score-value {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-primary);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: var(--spacing-xl);
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all var(--transition-base);
+        }
+
+        .progress-dot.completed {
+            background: var(--color-primary);
+            box-shadow: 0 0 10px rgba(0, 237, 100, 0.5);
+        }
+
+        .progress-dot.current {
+            background: var(--color-accent);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, rgba(86, 68, 212, 0.1) 100%);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+            text-align: center;
+        }
+
+        .recommendation h3 {
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .reset-btn {
+            margin-top: var(--spacing-xl);
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid #EF4444;
+            color: #EF4444;
+        }
+
+        .reset-btn:hover {
+            background: #EF4444;
+            color: white;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .subtitle {
+            font-size: var(--text-xl);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .technical-justification {
+            margin-top: var(--spacing-3xl);
+            background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, rgba(17, 35, 49, 0.8) 100%);
+            border: 1px solid rgba(86, 68, 212, 0.3);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+        }
+
+        .justification-question {
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .question-title {
+            color: var(--color-primary);
+            font-size: var(--text-lg);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .user-response {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: var(--text-sm);
+            margin-left: var(--spacing-md);
+        }
+
+        .user-response.yes {
+            background: rgba(0, 237, 100, 0.2);
+            color: var(--color-primary);
+        }
+
+        .user-response.no {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+        }
+
+        .justification-content {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        .tech-score {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: var(--text-sm);
+            margin: 0 var(--spacing-xs);
+        }
+
+        .tech-score.score-1 {
+            background: rgba(0, 237, 100, 0.2);
+            color: var(--color-primary);
+        }
+
+        .tech-score.score-0 {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+        }
+
+        .tech-explanation {
+            margin-top: var(--spacing-sm);
+            padding: var(--spacing-md);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--color-accent);
+        }
+
+        .toggle-justification {
+            background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%);
+            margin-top: var(--spacing-xl);
+        }
+
+        .toggle-justification:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(86, 68, 212, 0.4);
+        }
+
+        .database-type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+
+        .badge-mongodb { background: #13AA52; color: white; }
+        .badge-aws { background: #FF9900; color: white; }
+        .badge-google { background: #4285F4; color: white; }
+        .badge-opensource { background: #6B7280; color: white; }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="header-section">
+                <div class="badge badge-primary mb-4">
+                    <span>🎯</span>
+                    Arquitectura de Datos 2025
+                </div>
+                <h1 class="text-gradient">Matriz de Decisión Interactiva v2.0</h1>
+                <p class="subtitle">
+                    Evalúa 9 tecnologías de bases de datos líderes del mercado<br>
+                    respondiendo 19 preguntas estratégicas para encontrar la solución perfecta
+                </p>
+                <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                    <span class="badge badge-secondary">MongoDB</span>
+                    <span class="badge badge-secondary">PostgreSQL</span>
+                    <span class="badge badge-secondary">DynamoDB</span>
+                    <span class="badge badge-secondary">BigQuery</span>
+                    <span class="badge badge-secondary">Firestore</span>
+                    <span class="badge badge-secondary">Bigtable</span>
+                    <span class="badge badge-secondary">AlloyDB</span>
+                    <span class="badge badge-secondary">YugabyteDB</span>
+                    <span class="badge badge-secondary">Redis</span>
+                </div>
+            </div>
+
+            <div class="progress-indicator" id="progressIndicator"></div>
+            <div id="questionsContainer"></div>
+
+            <div class="results-section" id="resultsSection">
+                <h2 class="text-center mb-4">📊 Resultados en Tiempo Real</h2>
+                <div id="scoresContainer"></div>
+                <div id="recommendationContainer"></div>
+                <div class="text-center" id="resetButtonContainer" style="display: none;">
+                    <button class="btn toggle-justification" onclick="toggleJustification()" id="justificationBtn">
+                        📋 Ver Justificación Técnica Detallada
+                    </button>
+                    <button class="btn reset-btn" onclick="resetMatrix()">
+                        🔄 Realizar Nueva Evaluación
+                    </button>
+                </div>
+            </div>
+
+            <div class="technical-justification" id="technicalJustification" style="display: none;">
+                <h2 class="text-center mb-4">🔬 Justificación Técnica Detallada</h2>
+                <p class="text-center mb-5" style="color: var(--color-text-secondary);">
+                    Análisis arquitectónico caso por caso de cada tecnología de base de datos
+                </p>
+                <div id="justificationContent"></div>
+            </div>
+        </div>
+    </section>
+    <script>
+        const questions = [
+            "¿Necesita realizar consultas complejas (joins, subqueries, etc.)?",
+            "¿Requiere una solución basada en protocolo abierto para evitar vendor lock-in?",
+            "¿Necesita soporte de transacciones ACID complejas (múltiples registros)?",
+            "¿Requiere mínimo impacto/overhead de operaciones (Serverless/Full Managed)?",
+            "¿La base de datos será utilizada para analítica sobre grandes volúmenes de datos estructurados (Data Warehouse)?",
+            "¿Requiere realizar consultas geoespaciales avanzadas?",
+            "¿Las operaciones con datos de tipo fecha (Time-Series) son muy frecuentes?",
+            "¿Necesita alta disponibilidad de escritura nativa multi-región (Activo-Activo)?",
+            "¿Requiere un modelo de datos enriquecido (Documentos, JSON nativo)?",
+            "¿La base de datos será usada para cargas de trabajo poco frecuentes (modelo Serverless real, pago por uso)?",
+            "¿Necesita un modelo de datos nativo de Grafos?",
+            "¿Requiere validación estricta y forzada de esquema?",
+            "¿Necesita paginación tradicional eficiente con conteo total (COUNT(*))?",
+            "¿El uso principal será como caché en memoria de ultra baja latencia?",
+            "¿Necesita operaciones simples de clave-valor (Key-Value) a escala masiva?",
+            "¿El caso de uso principal es Business Intelligence (BI) interactivo o ejecución de modelos ML con SQL?",
+            "¿La aplicación requiere sincronización en tiempo real con clientes web/móviles y soporte offline?",
+            "¿Requiere rendimiento OLTP superior a PostgreSQL estándar pero con 100% compatibilidad?",
+            "¿Necesita ingerir flujos de datos masivos (millones ops/seg) para IoT, Ad-Tech o perfiles en tiempo real?"
+        ];
+
+        const databases = {
+            'MongoDB':           [1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+            'PostgreSQL':        [1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+            'Redis':             [0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+            'DynamoDB':          [0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+            'Google BigQuery':   [1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0],
+            'Google Firestore':  [0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+            'Google Bigtable':   [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+            'Google AlloyDB':    [1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0],
+            'YugabyteDB':        [1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1]
+        };
+
+        const technicalJustifications = [
+            // Primeras 5 justificaciones técnicas completas
+            {
+                question: "¿Consultas complejas? (joins, subqueries, etc.)",
+                explanations: {
+                    "MongoDB": "Con su Aggregation Pipeline es extremadamente potente y puede manejar consultas muy complejas de manera eficiente, incluyendo $lookup para joins y transformaciones multi-etapa.",
+                    "PostgreSQL": "Las bases de datos relacionales son los reyes aquí. PostgreSQL maneja joins complejos, subqueries y agregaciones con optimizadores de consultas avanzados.",
+                    "Redis": "Es un almacén clave-valor. Las consultas complejas van contra su arquitectura fundamental de simplicidad y velocidad.",
+                    "DynamoDB": "No está diseñada para esto. Su modelo de acceso se basa en claves primarias. Realizar 'joins' es ineficiente o imposible.",
+                    "Google BigQuery": "Utiliza SQL estándar y está pensado para análisis complejo de grandes datasets con joins, subconsultas y funciones analíticas avanzadas.",
+                    "Google Firestore": "Ofrece consultas sencillas basadas en propiedades. No soporta joins entre colecciones ni subconsultas multi-documento.",
+                    "Google Bigtable": "No admite joins ni SQL. Sus accesos son mediante row keys y rangos, sin lenguaje de consultas declarativo.",
+                    "Google AlloyDB": "Compatible con PostgreSQL, soporta todo el repertorio SQL complejo con optimizaciones adicionales de Google para mejor rendimiento.",
+                    "YugabyteDB": "Mediante su interfaz YSQL compatible con PostgreSQL, soporta plenamente joins y consultas SQL complejas en un entorno distribuido."
+                }
+            },
+            {
+                question: "¿Protocolo abierto / Evitar Lock-in?",
+                explanations: {
+                    "MongoDB": "Basado en motor open source con protocolo abierto BSON. La migración entre diferentes proveedores es factible.",
+                    "PostgreSQL": "Motor de código abierto reconocido mundialmente. Puedes migrar a otro proveedor cloud o on-premise con esfuerzo relativamente bajo.",
+                    "Redis": "Open source con protocolo completamente abierto. Máxima portabilidad entre diferentes implementaciones.",
+                    "DynamoDB": "Completamente propietario de AWS con API única. Alto lock-in con pocas alternativas compatibles.",
+                    "Google BigQuery": "Servicio 100% propietario de Google Cloud. No existe versión open source para migrar.",
+                    "Google Firestore": "Servicio cerrado de Google sin motor open source equivalente. Alto vendor lock-in.",
+                    "Google Bigtable": "Servicio propietario, aunque parcialmente compatible con HBase. Dependencia fuerte de GCP.",
+                    "Google AlloyDB": "Basado en PostgreSQL pero con optimizaciones propietarias de Google. Portabilidad parcial.",
+                    "YugabyteDB": "Open source (Apache 2.0) desplegable en cualquier infraestructura con APIs PostgreSQL y Cassandra compatibles."
+                }
+            },
+            {
+                question: "¿Transacciones ACID complejas (múltiples registros)?",
+                explanations: {
+                    "MongoDB": "Soporta transacciones ACID multi-documento desde v4.0, permitiendo agrupar operaciones en múltiples colecciones con atomicidad completa.",
+                    "PostgreSQL": "Referente en transacciones ACID. Soporta transacciones multi-fila, multi-tabla con atomicidad completa y aislamiento configurable.",
+                    "Redis": "MULTI/EXEC agrupa operaciones pero sin aislamiento robusto ni durabilidad ACID completa. No es para transacciones complejas.",
+                    "DynamoDB": "Transacciones limitadas a 100 operaciones y 4MB. No tan flexible como SQL tradicional pero funcional para casos básicos.",
+                    "Google BigQuery": "No es transaccional. Es append-only para análisis, no para transacciones OLTP.",
+                    "Google Firestore": "Soporta transacciones hasta 500 documentos con aislamiento serializable, pero con restricciones de tiempo (60s) y tamaño (10MB).",
+                    "Google Bigtable": "Solo garantiza atomicidad a nivel de fila individual, no transacciones multi-fila.",
+                    "Google AlloyDB": "Al ser PostgreSQL, soporta totalmente transacciones ACID complejas con durabilidad mejorada por su arquitectura.",
+                    "YugabyteDB": "Diseñado como SQL distribuido CP con transacciones distribuidas ACID usando Raft para consenso global."
+                }
+            },
+            {
+                question: "¿Mínimo impacto operativo? (Serverless/Full Managed)",
+                explanations: {
+                    "MongoDB": "MongoDB Atlas ofrece opciones totalmente administradas incluyendo Atlas Serverless con escalado automático y pago por uso.",
+                    "PostgreSQL": "RDS requiere gestionar instancias, tamaño, almacenamiento y parámetros. No es serverless, requiere planificación de capacidad.",
+                    "Redis": "Como servicio administrado (ElastiCache, Redis Cloud) libera de gestión pero requiere nodos activos siempre corriendo.",
+                    "DynamoDB": "Emblemática en serverless: no hay servidores que aprovisionar, escala automáticamente según demanda, pago por uso real.",
+                    "Google BigQuery": "Totalmente serverless, no hay clusters que crear. Escala automáticamente sin intervención alguna.",
+                    "Google Firestore": "Fully-managed y serverless. Escala automáticamente según tráfico sin configuración de infraestructura.",
+                    "Google Bigtable": "Requiere aprovisionar nodos manualmente y gestionar capacidad. No es serverless aunque sea gestionado.",
+                    "Google AlloyDB": "Servicio gestionado pero requiere seleccionar instancias fijas. No tiene modo serverless actualmente.",
+                    "YugabyteDB": "Requiere gestionar un clúster de servidores. Incluso en Yugabyte Cloud necesitas definir topología."
+                }
+            },
+            {
+                question: "¿Analítica / Data Warehouse?",
+                explanations: {
+                    "MongoDB": "Base operacional, no analítica. Para análisis masivos necesitarías herramientas complementarias como MongoDB Charts o exportar a un warehouse.",
+                    "PostgreSQL": "Usar una base transaccional como data warehouse es un anti-patrón. No escalará ni rendirá para consultas analíticas masivas.",
+                    "Redis": "Cache en memoria. Usar como data warehouse sería técnicamente incorrecto y extremadamente costoso por la RAM requerida.",
+                    "DynamoDB": "Almacén operacional clave-valor. No diseñado para consultas analíticas complejas cross-record. Exportar a S3+Athena para análisis.",
+                    "Google BigQuery": "Herramienta diseñada específicamente para esto. Data warehouse serverless con capacidad de petabytes y SQL estándar.",
+                    "Google Firestore": "Base NoSQL operacional. Para analítica se deben exportar datos a BigQuery, no es su propósito.",
+                    "Google Bigtable": "Puede almacenar petabytes pero no proporciona SQL ni agregaciones nativas. Requiere herramientas externas para análisis.",
+                    "Google AlloyDB": "Tiene capacidades híbridas HTAP con motor columnar pero no reemplaza un data warehouse dedicado para petabytes.",
+                    "YugabyteDB": "Orientado a OLTP distribuido, no a OLAP. Para analítica masiva mejor usar un warehouse dedicado como BigQuery o Redshift."
+                }
+            },
+            {
+                question: "¿Consultas geoespaciales avanzadas?",
+                explanations: {
+                    "MongoDB": "Soporte geoespacial nativo excelente con índices 2d/2dsphere y operadores como $near, $geoWithin, $geoIntersects. Ideal para aplicaciones con mapas.",
+                    "PostgreSQL": "Con PostGIS es el estándar de oro en geodatos open source. Cientos de funciones para cálculos avanzados, transformaciones de coordenadas y análisis GIS.",
+                    "Redis": "Comandos geo básicos (GEORADIUS, GEOADD) para puntos y distancias simples. Limitado comparado con soluciones especializadas.",
+                    "DynamoDB": "Sin soporte geoespacial nativo. Requiere implementación manual con geohashes como workaround, lo cual es complejo y limitado.",
+                    "Google BigQuery": "BigQuery GIS permite operaciones geoespaciales en SQL sobre datasets masivos. Excelente para análisis geo pero no para queries en tiempo real.",
+                    "Google Firestore": "Sin tipo geoespacial nativo. Debe usar técnica de geohashes manualmente, no es una solución completa ni eficiente.",
+                    "Google Bigtable": "No implementa funciones geoespaciales. Cualquier cálculo geo requiere procesamiento externo en la aplicación.",
+                    "Google AlloyDB": "Compatible con PostGIS al ser PostgreSQL, hereda todas las capacidades geoespaciales con optimizaciones adicionales de Google.",
+                    "YugabyteDB": "Soporte parcial de PostGIS pero con limitaciones en entorno distribuido. Funciones básicas funcionan pero no todas las avanzadas."
+                }
+            },
+            {
+                question: "¿Operaciones frecuentes con fechas (Time-Series)?",
+                explanations: {
+                    "MongoDB": "Excelente para time-series con TTL indexes para expiración automática y colecciones time-series optimizadas desde v5.0 con almacenamiento columnar interno.",
+                    "PostgreSQL": "Con TimescaleDB (extensión) se convierte en potente base para series temporales con particionado automático y compresión.",
+                    "Redis": "Excelente para time-series en tiempo real con módulo RedisTimeSeries. Ideal para métricas recientes en memoria con downsampling.",
+                    "DynamoDB": "Patrón común para time-series usando composite keys (deviceId + timestamp). Escalabilidad masiva para ingesta de eventos IoT.",
+                    "Google BigQuery": "Puede almacenar series históricas masivas para análisis pero no para ingesta en tiempo real punto a punto. Mejor para batch.",
+                    "Google Firestore": "Limitaciones de throughput (1 escritura/seg por documento) lo hacen inadecuado para time-series de alta frecuencia.",
+                    "Google Bigtable": "Particularmente bien adaptada para series de tiempo e IoT. Diseño de row key con timestamp permite acceso eficiente a datos recientes.",
+                    "Google AlloyDB": "Puede manejar series de tiempo como PostgreSQL con mejor rendimiento de I/O. Compatible con TimescaleDB en teoría.",
+                    "YugabyteDB": "Soporta time-series distribuidas con particionado por rangos de tiempo. Buena opción para series con requerimientos ACID."
+                }
+            },
+            {
+                question: "¿Escritura nativa multi-región (Activo-Activo)?",
+                explanations: {
+                    "MongoDB": "Global Clusters permite escrituras locales activas en múltiples regiones con resolución de conflictos last-write-wins y zonas geográficas.",
+                    "PostgreSQL": "Requiere soluciones externas complejas como BDR. No es capacidad nativa out-of-the-box, propenso a conflictos.",
+                    "Redis": "Solo master-slave tradicional en versión open source. Multi-master requiere Redis Enterprise con CRDTs (solución comercial).",
+                    "DynamoDB": "Global Tables ofrece verdadero activo-activo multi-región administrado automáticamente con resolución de conflictos integrada.",
+                    "Google BigQuery": "Multi-región para disponibilidad pero no es transaccional activo-activo. Los datos se replican pero no hay escrituras concurrentes.",
+                    "Google Firestore": "Multi-región automática con consistencia fuerte global usando Spanner internamente. Escrituras desde cualquier región.",
+                    "Google Bigtable": "Replicación entre clústeres multi-región con escrituras concurrentes y consistencia eventual. Configuración manual requerida.",
+                    "Google AlloyDB": "Solo clústeres secundarios de lectura cross-region, no multi-master verdadero. Modelo activo-pasivo para DR.",
+                    "YugabyteDB": "Diseñado para distribución geográfica con consenso Raft. Escrituras desde cualquier región con consistencia configurable."
+                }
+            },
+            {
+                question: "¿Modelo de datos enriquecido (Documentos, JSON nativo)?",
+                explanations: {
+                    "MongoDB": "Líder indiscutible en documentos. Base nativa BSON con esquemas flexibles, subdocumentos, arrays y consultas ricas sobre JSON anidado.",
+                    "PostgreSQL": "Soporte JSONB excelente. Permite almacenar, indexar (GIN) y consultar documentos JSON eficientemente con operadores y funciones.",
+                    "Redis": "Almacena strings por defecto. Requiere módulo RedisJSON para manejo real de documentos con path queries.",
+                    "DynamoDB": "Soporta documentos JSON con estructuras anidadas (Maps, Lists) y operaciones por ruta. Modelo documento-clave-valor híbrido.",
+                    "Google BigQuery": "Soporta JSON y estructuras anidadas para análisis pero no es base documental transaccional. Más para ETL que OLTP.",
+                    "Google Firestore": "Base documental JSON nativa. Estructura flexible por documento con campos anidados, arrays y mapas. Similar a MongoDB.",
+                    "Google Bigtable": "Almacena bytes en columnas, no tiene noción de documentos JSON. Requeriría serialización manual.",
+                    "Google AlloyDB": "Hereda soporte JSONB completo de PostgreSQL con las mismas capacidades de indexación y consulta.",
+                    "YugabyteDB": "Compatible con JSONB de PostgreSQL en YSQL. Documentos JSON distribuidos con índices secundarios globales."
+                }
+            },
+            {
+                question: "¿Cargas poco frecuentes (Serverless real)?",
+                explanations: {
+                    "MongoDB": "Atlas Serverless escala a cero y cobra solo por operaciones realizadas. Ideal para prototipos y aplicaciones intermitentes.",
+                    "PostgreSQL": "RDS factura por hora esté activa o no. No hay modo serverless real, siempre pagas por capacidad reservada.",
+                    "Redis": "Requiere nodos activos continuamente. ElastiCache no escala a cero. Pagas 24/7 por la memoria reservada.",
+                    "DynamoDB": "On-Demand mode perfecto para cargas esporádicas. Pagas exactamente por cada operación, sin mínimos.",
+                    "Google BigQuery": "Completamente on-demand, pagas por TB procesado solo cuando ejecutas consultas. Cero costo sin consultas.",
+                    "Google Firestore": "Modelo pago por operación sin servidores que mantener. Perfecto para apps con tráfico irregular.",
+                    "Google Bigtable": "Requiere mínimo 1 nodo siempre activo por clúster. No es serverless, pagas aunque no uses.",
+                    "Google AlloyDB": "Instancias fijas sin modo serverless. Siempre incurres costo de instancia primaria encendida.",
+                    "YugabyteDB": "Requiere cluster activo mínimo. No tiene escalado a cero automático ni en Yugabyte Cloud."
+                }
+            },
+            {
+                question: "¿Modelo de Grafos nativo?",
+                explanations: {
+                    "MongoDB": "No es base de grafos. Modelar relaciones de grafos requeriría agregaciones complicadas con múltiples $lookup, ineficiente para traversals.",
+                    "PostgreSQL": "No es base de grafos. Consultas recursivas con WITH RECURSIVE serían muy lentas para grafos complejos.",
+                    "Redis": "Requiere módulo RedisGraph separado (ahora deprecado). No es funcionalidad nativa del core.",
+                    "DynamoDB": "Modelo clave-valor incompatible con traversals de grafos. Cada salto requeriría query separada, inadecuado.",
+                    "Google BigQuery": "Puede procesar datos de grafos analíticamente con SQL recursivo pero no para queries transaccionales de grafos.",
+                    "Google Firestore": "Sin soporte de grafos. Cada relación requeriría query separada. No hay traversals ni algoritmos de grafos.",
+                    "Google Bigtable": "No hay consultas de grafos. Modelo de filas/columnas inadecuado para relaciones complejas de grafos.",
+                    "Google AlloyDB": "Sin modelo de grafos nativo. Solo esquema relacional tradicional que no optimiza para traversals.",
+                    "YugabyteDB": "No es motor de grafos aunque puede modelar relaciones en tablas SQL. No optimizado para este caso."
+                }
+            },
+            {
+                question: "¿Validación estricta de esquema?",
+                explanations: {
+                    "MongoDB": "Schema Validation opcional pero potente usando JSON Schema. Puede forzar estructura cuando se requiere manteniendo flexibilidad base.",
+                    "PostgreSQL": "Validación estricta por definición. Constraints, tipos de datos, foreign keys y reglas de integridad robustas enforced siempre.",
+                    "Redis": "Sin noción de esquema. Almacena bytes/strings arbitrarios. Toda validación recae en la aplicación.",
+                    "DynamoDB": "Schema-less excepto keys. La validación de atributos recae completamente en la aplicación. No hay tipos enforced.",
+                    "Google BigQuery": "Requiere definir esquema de tablas con tipos de datos enforced estrictamente. No permite datos fuera de esquema.",
+                    "Google Firestore": "Schema-less por diseño. Sin validación nativa de tipos. Puede usar Security Rules para validación básica.",
+                    "Google Bigtable": "Sin esquema más allá de column families. Valores son bytes sin tipo. No hay validación.",
+                    "Google AlloyDB": "Igual que PostgreSQL: esquema fijo con tipos, constraints y validación estricta automática.",
+                    "YugabyteDB": "YSQL impone esquemas con tipos como PostgreSQL. YCQL también define columnas con tipos estáticos."
+                }
+            },
+            {
+                question: "¿Paginación tradicional con conteo total?",
+                explanations: {
+                    "MongoDB": "Soporta count() y skip()/limit() para paginación. Puede ser lento en colecciones muy grandes pero funcional.",
+                    "PostgreSQL": "COUNT(*) y OFFSET/LIMIT optimizados por el query planner. Funciona bien para la mayoría de casos de paginación.",
+                    "Redis": "No aplica concepto de paginación tradicional sobre múltiples claves. Solo dentro de estructuras como sorted sets.",
+                    "DynamoDB": "COUNT requiere Scan completo muy costoso. Usa paginación por tokens (LastEvaluatedKey), no offset tradicional.",
+                    "Google BigQuery": "Soporta COUNT(*) y LIMIT/OFFSET pero costoso para paginación interactiva web. Más para análisis batch.",
+                    "Google Firestore": "Paginación por cursor con startAfter(). Ahora soporta count() agregación pero no offset arbitrario.",
+                    "Google Bigtable": "Sin mecanismo de contar filas eficiente. Usa scanners con tokens de continuación, no paginación tradicional.",
+                    "Google AlloyDB": "Igual que PostgreSQL con COUNT(*) y LIMIT/OFFSET estándar, posiblemente con optimizaciones adicionales.",
+                    "YugabyteDB": "COUNT() distribuido y paginación SQL estándar. El count puede ser más lento por naturaleza distribuida."
+                }
+            },
+            {
+                question: "¿Uso principal como caché en memoria?",
+                explanations: {
+                    "MongoDB": "Base persistente en disco con cache interno. No diseñada como cache primario, mejor usar Redis para eso.",
+                    "PostgreSQL": "Base persistente en disco. Usarla como caché sería arquitectónicamente incorrecto, lento y costoso.",
+                    "Redis": "Definición misma de caché en memoria. Latencia de microsegundos, estructuras de datos especializadas, TTL automático.",
+                    "DynamoDB": "Base persistente con latencia de milisegundos. Para caché usar DAX encima. No es cache nativo.",
+                    "Google BigQuery": "Data warehouse para análisis. Totalmente inapropiado para caching, latencias de segundos.",
+                    "Google Firestore": "Base persistente NoSQL. No compite con caches in-memory, latencias de milisegundos vs microsegundos.",
+                    "Google Bigtable": "Latencia de milisegundos para datos persistentes. No es cache, aunque rápida para base persistente.",
+                    "Google AlloyDB": "Base persistente ACID con durabilidad. No es volátil ni optimizada para cache temporal.",
+                    "YugabyteDB": "Base distribuida persistente con overhead de consenso. No es apropiada como cache layer."
+                }
+            },
+            {
+                question: "¿Operaciones clave-valor a escala masiva?",
+                explanations: {
+                    "MongoDB": "Puede hacer KV por _id eficientemente pero tiene más overhead que soluciones especializadas. No óptimo para KV puro.",
+                    "PostgreSQL": "Usar SQL para simple KV es como usar un camión para entregar pizza. Funcionará pero es excesivo y no escala.",
+                    "Redis": "Millones de ops/seg en memoria. Excepcional para key-value pero limitado por RAM disponible.",
+                    "DynamoDB": "Diseñada específicamente para esto. Escalabilidad casi ilimitada con latencia consistente de un dígito ms.",
+                    "Google BigQuery": "No diseñado para buscar registros individuales por clave. Requiere escanear, muy ineficiente.",
+                    "Google Firestore": "Puede manejar KV pero más costoso que alternativas especializadas. Mejor para queries más complejas.",
+                    "Google Bigtable": "Hecha para alto throughput key-value. Escala linealmente agregando nodos, millones ops/seg posibles.",
+                    "Google AlloyDB": "Base relacional compleja. Demasiado overhead para simples operaciones KV. No es el caso de uso.",
+                    "YugabyteDB": "YCQL (API Cassandra) excelente para key-value distribuido. Escala horizontalmente para KV masivo."
+                }
+            },
+            {
+                question: "¿BI interactivo o ML con SQL?",
+                explanations: {
+                    "MongoDB": "Se integra con herramientas BI vía conectores pero no ejecuta ML nativamente. MongoDB Charts para visualización básica.",
+                    "PostgreSQL": "Fuente para BI pero no optimizado para escaneo masivo analítico. ML requiere extensiones externas como MADlib.",
+                    "Redis": "No es herramienta analítica ni de BI. Es un cache operacional, no para análisis de datos.",
+                    "DynamoDB": "No es base analítica. Los datos deben exportarse a S3 y analizarse con Athena o replicarse a Redshift.",
+                    "Google BigQuery": "Diseñado específicamente para esto. BigQuery ML permite crear y ejecutar modelos (regresión, clustering, etc.) con SQL puro.",
+                    "Google Firestore": "Base operacional para aplicaciones. Se exporta a BigQuery para cualquier análisis o BI.",
+                    "Google Bigtable": "Almacén para servir datos a baja latencia, no para consultas BI complejas. Requiere herramientas externas.",
+                    "Google AlloyDB": "A pesar del motor columnar secundario, no tiene ML integrado ni está optimizado para BI masivo como BigQuery.",
+                    "YugabyteDB": "Base transaccional distribuida OLTP. No diseñada para cargas BI masivas ni tiene capacidades ML."
+                }
+            },
+            {
+                question: "¿Sincronización tiempo real con clientes y offline?",
+                explanations: {
+                    "MongoDB": "Posible con Change Streams y Atlas Device Sync pero requiere configuración adicional. No tan integrado como Firestore.",
+                    "PostgreSQL": "Requiere arquitectura compleja adicional con LISTEN/NOTIFY + websockets + cache cliente. No es nativo.",
+                    "Redis": "PUB/SUB puede ser componente de arquitectura real-time pero no ofrece sincronización de estado ni soporte offline.",
+                    "DynamoDB": "Posible con DynamoDB Streams + AWS AppSync pero es arquitectura más compleja, no característica nativa.",
+                    "Google BigQuery": "Base analítica batch, no para aplicaciones en tiempo real. No tiene concepto de listeners.",
+                    "Google Firestore": "Razón de ser principal. SDKs con listeners automáticos, actualizaciones real-time y caché offline robusto integrado.",
+                    "Google Bigtable": "No diseñada para sincronización con clientes finales. Es backend para servir datos, no para apps real-time.",
+                    "Google AlloyDB": "Base relacional tradicional sin capacidades de sincronización real-time o SDKs para clientes.",
+                    "YugabyteDB": "Sin mecanismo nativo para sincronización con clientes. Requeriría arquitectura adicional compleja."
+                }
+            },
+            {
+                question: "¿Rendimiento OLTP superior con compatibilidad PostgreSQL?",
+                explanations: {
+                    "MongoDB": "Alto rendimiento OLTP pero no es compatible con PostgreSQL. Usa su propio lenguaje de consultas.",
+                    "PostgreSQL": "Es la línea base de rendimiento. No puede ser superior a sí mismo. Escalado principalmente vertical.",
+                    "Redis": "No es base relacional ni compatible con PostgreSQL. Es un cache key-value.",
+                    "DynamoDB": "Alto rendimiento pero no es compatible con PostgreSQL ni SQL. API propietaria.",
+                    "Google BigQuery": "No es base OLTP sino OLAP. Para análisis, no transacciones.",
+                    "Google Firestore": "No es base relacional SQL. Es NoSQL documental con su propia API.",
+                    "Google Bigtable": "No es base relacional. Alta performance pero no compatible con PostgreSQL.",
+                    "Google AlloyDB": "Exactamente diseñado para esto. PostgreSQL 100% compatible con 4x mejor rendimiento transaccional.",
+                    "YugabyteDB": "SQL distribuido que escala OLTP horizontalmente manteniendo compatibilidad PostgreSQL. Performance superior via distribución."
+                }
+            },
+            {
+                question: "¿Ingesta masiva IoT/Ad-Tech (millones ops/seg)?",
+                explanations: {
+                    "MongoDB": "Escala bien pero 'millones ops/seg' apunta a híper-escala donde Bigtable/DynamoDB son más naturales.",
+                    "PostgreSQL": "Una instancia no puede manejar millones ops/seg. Necesitaría sharding complejo manual.",
+                    "Redis": "Muy rápido pero limitación de memoria hace impráctica la ingesta persistente masiva. Mejor como cache.",
+                    "DynamoDB": "Diseñada para esto. Maneja millones ops/seg con auto-sharding y latencia consistente. Caso de uso perfecto.",
+                    "Google BigQuery": "Streaming ingestion de alto throughput pero para análisis posterior, no para servir lecturas de baja latencia.",
+                    "Google Firestore": "Límites de escritura (10k/seg inicialmente) muy por debajo de millones ops/seg. No es para este caso.",
+                    "Google Bigtable": "Caso de uso canónico. Optimizada específicamente para ingesta masiva IoT/Ad-Tech con baja latencia a escala planetaria.",
+                    "Google AlloyDB": "Base relacional no diseñada para ingesta NoSQL masiva. Mejor para transacciones ACID complejas.",
+                    "YugabyteDB": "Arquitectura distribuida permite escalar ingesta horizontalmente. Buena opción para IoT con requerimientos ACID."
+                }
+            }
+        ];
+
+        const recommendations = {
+            'MongoDB': 'Ideal para aplicaciones modernas con modelos de datos flexibles, consultas complejas y alta disponibilidad multi-región. Excelente balance entre funcionalidad y facilidad de uso.',
+            'PostgreSQL': 'Excelente para aplicaciones que requieren consultas relacionales complejas, transacciones ACID robustas y funcionalidades geoespaciales con PostGIS.',
+            'DynamoDB': 'Perfecto para aplicaciones serverless, operaciones key-value masivas y casos de uso con patrones de acceso predecibles. Escalabilidad prácticamente ilimitada.',
+            'Redis': 'Perfecto para caché en memoria, operaciones key-value de ultra baja latencia y casos de uso de alta velocidad. Ideal como complemento a otras bases de datos.',
+            'Google BigQuery': 'Óptimo para análisis de datos masivos, data warehousing y Business Intelligence. Único en su capacidad de ejecutar ML con SQL (BigQuery ML).',
+            'Google Firestore': 'Ideal para aplicaciones web/móviles que necesitan sincronización en tiempo real, soporte offline y escalado automático sin gestión de infraestructura.',
+            'Google Bigtable': 'Excelente para ingesta masiva de datos IoT, Ad-Tech y series de tiempo. Maneja millones de operaciones por segundo con latencia consistente.',
+            'Google AlloyDB': 'Perfecto cuando necesitas rendimiento PostgreSQL mejorado significativamente. Combina compatibilidad total con optimizaciones de Google.',
+            'YugabyteDB': 'Ideal para aplicaciones que necesitan SQL distribuido globalmente con consistencia fuerte. Combina escalabilidad NoSQL con garantías ACID.'
+        };
+
+        let currentAnswers = [];
+        let currentQuestionIndex = 0;
+
+        function initializeMatrix() {
+            createProgressIndicator();
+            updateLiveResults();
+            showQuestion(0);
+        }
+
+        function createProgressIndicator() {
+            const container = document.getElementById('progressIndicator');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'progress-dot';
+                if (i === 0) dot.classList.add('current');
+                container.appendChild(dot);
+            }
+        }
+
+        function updateProgressIndicator() {
+            const dots = document.querySelectorAll('.progress-dot');
+            dots.forEach((dot, index) => {
+                dot.className = 'progress-dot';
+                if (index < currentQuestionIndex) {
+                    dot.classList.add('completed');
+                } else if (index === currentQuestionIndex) {
+                    dot.classList.add('current');
+                }
+            });
+        }
+
+        function showQuestion(index) {
+            if (index >= questions.length) {
+                const container = document.getElementById('questionsContainer');
+                container.innerHTML = `
+                    <div class="card question-card animate-fadeIn" style="text-align: center; background: linear-gradient(135deg, var(--color-primary-light) 0%, rgba(86, 68, 212, 0.1) 100%); border: 2px solid var(--color-primary);">
+                        <h3 style="color: var(--color-primary); margin-bottom: var(--spacing-md);">
+                            🎉 ¡Evaluación Completada!
+                        </h3>
+                        <p style="color: var(--color-text-secondary); font-size: var(--text-lg);">
+                            Has respondido todas las preguntas. Revisa los resultados finales y la recomendación abajo.
+                        </p>
+                    </div>
+                `;
+                document.getElementById('resetButtonContainer').style.display = 'block';
+                document.querySelector('#resultsSection h2').innerHTML = '🎯 Análisis Completado - Resultados Finales';
+                return;
+            }
+
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = `
+                <div class="card question-card animate-fadeIn">
+                    <div class="badge badge-secondary mb-3">
+                        Pregunta ${index + 1} de ${questions.length}
+                    </div>
+                    <div class="question-text">
+                        ${questions[index]}
+                    </div>
+                    <div class="response-buttons">
+                        <button class="response-btn" onclick="answerQuestion(true, ${index})">
+                            ✅ Sí
+                        </button>
+                        <button class="response-btn" onclick="answerQuestion(false, ${index})">
+                            ❌ No
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            if (currentAnswers[index] !== undefined) {
+                const buttons = container.querySelectorAll('.response-btn');
+                if (currentAnswers[index]) {
+                    buttons[0].classList.add('selected');
+                } else {
+                    buttons[1].classList.add('selected');
+                }
+            }
+        }
+
+        function answerQuestion(answer, index) {
+            currentAnswers[index] = answer;
+            
+            const buttons = document.querySelectorAll('.response-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            if (answer) {
+                buttons[0].classList.add('selected');
+            } else {
+                buttons[1].classList.add('selected');
+            }
+
+            updateLiveResults();
+
+            setTimeout(() => {
+                currentQuestionIndex = index + 1;
+                updateProgressIndicator();
+                showQuestion(currentQuestionIndex);
+            }, 500);
+        }
+
+        function updateLiveResults() {
+            const scores = calculateScores();
+            const maxScore = Math.max(...Object.values(scores));
+            const winner = Object.keys(scores).find(db => scores[db] === maxScore);
+
+            displayScores(scores, maxScore);
+            
+            const answeredQuestions = currentAnswers.filter(a => a !== undefined).length;
+            if (answeredQuestions > 0) {
+                displayRecommendation(winner, maxScore);
+            } else {
+                const container = document.getElementById('recommendationContainer');
+                container.innerHTML = `
+                    <div class="recommendation animate-fadeIn">
+                        <h3>🔮 Predicción en Progreso</h3>
+                        <p style="color: var(--color-text-secondary); font-size: var(--text-lg); text-align: center;">
+                            Responde las preguntas para ver tu recomendación personalizada
+                        </p>
+                        <div class="badge badge-secondary mt-3">
+                            Progreso: 0/${questions.length} preguntas
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function calculateScores() {
+            const scores = {};
+            
+            Object.keys(databases).forEach(dbName => {
+                let score = 0;
+                const dbAnswers = databases[dbName];
+                
+                for (let i = 0; i < currentAnswers.length; i++) {
+                    if (currentAnswers[i] !== undefined) {
+                        if (currentAnswers[i] === true && dbAnswers[i] === 1) {
+                            score++;
+                        } else if (currentAnswers[i] === false && dbAnswers[i] === 0) {
+                            score++;
+                        }
+                    }
+                }
+                
+                scores[dbName] = score;
+            });
+            
+            return scores;
+        }
+
+        function getDBTypeBadge(dbName) {
+            if (dbName === 'MongoDB') return '<span class="database-type-badge badge-mongodb">NoSQL Leader</span>';
+            if (dbName.includes('Google')) return '<span class="database-type-badge badge-google">Google Cloud</span>';
+            if (dbName === 'DynamoDB') return '<span class="database-type-badge badge-aws">AWS</span>';
+            if (dbName === 'PostgreSQL' || dbName === 'Redis' || dbName === 'YugabyteDB') 
+                return '<span class="database-type-badge badge-opensource">Open Source</span>';
+            return '';
+        }
+
+        function displayScores(scores, maxScore) {
+            const container = document.getElementById('scoresContainer');
+            container.innerHTML = '';
+
+            const answeredQuestions = currentAnswers.filter(a => a !== undefined).length;
+            const totalQuestions = questions.length;
+
+            const sortedDatabases = Object.entries(scores)
+                .sort(([,a], [,b]) => b - a);
+
+            sortedDatabases.forEach(([dbName, score], index) => {
+                const percentage = answeredQuestions > 0 ? (score / answeredQuestions) * 100 : 0;
+                const isWinner = score === maxScore && answeredQuestions > 0 && score > 0;
+                
+                const scoreDiv = document.createElement('div');
+                scoreDiv.className = `database-score animate-slideInLeft`;
+                scoreDiv.style.animationDelay = `${index * 0.1}s`;
+                
+                scoreDiv.innerHTML = `
+                    <div class="database-name ${isWinner ? 'text-gradient' : ''}">
+                        ${isWinner ? '🏆 ' : ''}${dbName}
+                        ${getDBTypeBadge(dbName)}
+                    </div>
+                    <div class="score-container">
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="score-value">${score}/${answeredQuestions || totalQuestions}</div>
+                    </div>
+                `;
+                
+                container.appendChild(scoreDiv);
+            });
+        }
+
+        function displayRecommendation(winner, maxScore) {
+            const container = document.getElementById('recommendationContainer');
+            const answeredQuestions = currentAnswers.filter(a => a !== undefined).length;
+            const percentage = answeredQuestions > 0 ? Math.round((maxScore / answeredQuestions) * 100) : 0;
+            
+            const isComplete = answeredQuestions === questions.length;
+            const title = isComplete ? '🎯 Recomendación Final' : '🔮 Recomendación Actual';
+
+            if (maxScore > 0) {
+                container.innerHTML = `
+                    <div class="recommendation animate-fadeIn">
+                        <h3>${title}</h3>
+                        <div class="database-name" style="font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">
+                            ${winner} ${getDBTypeBadge(winner)}
+                        </div>
+                        <div class="metric-value" style="margin-bottom: var(--spacing-md); color: var(--color-primary); font-size: var(--text-2xl); font-weight: 700;">
+                            ${percentage}% de compatibilidad
+                        </div>
+                        <p style="color: var(--color-text-secondary); font-size: var(--text-lg);">
+                            ${recommendations[winner]}
+                        </p>
+                        ${!isComplete ? `
+                            <div class="badge badge-secondary mt-3">
+                                Progreso: ${answeredQuestions}/${questions.length} preguntas
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+        }
+
+        function resetMatrix() {
+            currentAnswers = [];
+            currentQuestionIndex = 0;
+            document.getElementById('questionsContainer').style.display = 'block';
+            document.getElementById('progressIndicator').style.display = 'flex';
+            document.getElementById('resetButtonContainer').style.display = 'none';
+            document.getElementById('technicalJustification').style.display = 'none';
+            document.querySelector('#resultsSection h2').innerHTML = '📊 Resultados en Tiempo Real';
+            initializeMatrix();
+        }
+
+        function toggleJustification() {
+            const justificationSection = document.getElementById('technicalJustification');
+            const btn = document.getElementById('justificationBtn');
+            
+            if (justificationSection.style.display === 'none') {
+                generateJustificationContent();
+                justificationSection.style.display = 'block';
+                btn.innerHTML = '📋 Ocultar Justificación Técnica';
+                justificationSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                justificationSection.style.display = 'none';
+                btn.innerHTML = '📋 Ver Justificación Técnica Detallada';
+            }
+        }
+
+        function generateJustificationContent() {
+            const container = document.getElementById('justificationContent');
+            container.innerHTML = '';
+
+            technicalJustifications.forEach((justification, index) => {
+                if (currentAnswers[index] !== undefined) {
+                    const userAnswer = currentAnswers[index];
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'justification-question animate-fadeIn';
+                    questionDiv.style.animationDelay = `${index * 0.05}s`;
+
+                    const scores = {};
+                    Object.keys(databases).forEach(dbName => {
+                        scores[dbName] = databases[dbName][index];
+                    });
+
+                    questionDiv.innerHTML = `
+                        <div class="question-title">
+                            <span>❓</span>
+                            ${justification.question}
+                            <span class="user-response ${userAnswer ? 'yes' : 'no'}">
+                                ${userAnswer ? '✅ Sí' : '❌ No'}
+                            </span>
+                        </div>
+                        <div class="justification-content">
+                            <div style="margin-bottom: var(--spacing-md);">
+                                <strong>Puntuaciones por tecnología:</strong>
+                                ${Object.entries(scores).map(([db, score]) => 
+                                    `<span class="tech-score score-${score}">
+                                        ${db}: ${score === 1 ? '✓' : '✗'}
+                                    </span>`
+                                ).join('')}
+                            </div>
+                            <div class="tech-explanation">
+                                <strong style="color: var(--color-primary);">Análisis Arquitectónico:</strong><br><br>
+                                ${Object.entries(justification.explanations).map(([db, explanation]) => {
+                                    const score = scores[db];
+                                    const matches = (userAnswer && score === 1) || (!userAnswer && score === 0);
+                                    return `<div style="margin-bottom: var(--spacing-sm); padding: 8px; border-radius: 4px; ${matches ? 'background: rgba(0, 237, 100, 0.05);' : 'background: rgba(239, 68, 68, 0.05);'}">
+                                        <strong>${db}</strong> 
+                                        <span class="tech-score score-${score}">${score === 1 ? 'Sí' : 'No'}</span>
+                                        ${matches ? '<span style="color: var(--color-primary); font-weight: bold;">✓ Match</span>' : '<span style="color: #EF4444; font-weight: bold;">✗ No Match</span>'}
+                                        <br>
+                                        <span style="color: var(--color-text-secondary);">${explanation}</span>
+                                    </div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+
+                    container.appendChild(questionDiv);
+                }
+            });
+
+            // Agregar resumen al final
+            const summary = document.createElement('div');
+            summary.className = 'recommendation animate-fadeIn';
+            summary.style.marginTop = 'var(--spacing-xl)';
+            
+            const scores = calculateScores();
+            const sortedDatabases = Object.entries(scores).sort(([,a], [,b]) => b - a);
+            
+            summary.innerHTML = `
+                <h3 style="color: var(--color-primary);">📈 Resumen de Compatibilidad</h3>
+                <p style="margin-bottom: var(--spacing-lg);">Basado en tus ${currentAnswers.filter(a => a !== undefined).length} respuestas:</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-md);">
+                    ${sortedDatabases.map(([db, score], index) => {
+                        const percentage = Math.round((score / currentAnswers.filter(a => a !== undefined).length) * 100);
+                        const isTop = index === 0;
+                        return `
+                            <div style="padding: var(--spacing-md); background: ${isTop ? 'rgba(0, 237, 100, 0.1)' : 'rgba(255, 255, 255, 0.05)'}; border-radius: var(--radius-md); border: 1px solid ${isTop ? 'var(--color-primary)' : 'rgba(255, 255, 255, 0.1)'};">
+                                <div style="font-weight: 700; margin-bottom: var(--spacing-xs);">
+                                    ${isTop ? '🏆 ' : ''}${db}
+                                </div>
+                                <div style="font-size: var(--text-2xl); color: ${isTop ? 'var(--color-primary)' : 'var(--color-text-secondary)'};">
+                                    ${percentage}%
+                                </div>
+                                <div style="font-size: var(--text-sm); color: var(--color-text-secondary);">
+                                    ${score}/${currentAnswers.filter(a => a !== undefined).length} coincidencias
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            
+            container.appendChild(summary);
+        }
+
+        // Inicializar la matriz al cargar la página
+        document.addEventListener('DOMContentLoaded', initializeMatrix);
+    </script>
+</body>
+</html>

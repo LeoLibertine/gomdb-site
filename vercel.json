@@ -182,6 +182,10 @@
       "dest": "/clientes/bancolombia/df/designreview2.html"
     },
     {
+      "src": "/clientes/bancolombia/df/caso(?:/.*)?$",
+      "dest": "/clientes/bancolombia/df/caso.html"
+    },
+    {
       "src": "/clientes/bancolombia/bdtl/bdtl(?:/.*)?$",
       "dest": "/clientes/bancolombia/bdtl/bdtl.html"
     },
@@ -285,6 +289,10 @@
     {
       "src": "/clientes/bdp/arquitectura(?:/.*)?$",
       "dest": "/clientes/payway/arquitectura.svg"
+    },
+    {
+      "src": "/clientes/coppel/matriz-universal(?:/.*)?$",
+      "dest": "/clientes/payway/matriz-universal.html"
     },
     
     
