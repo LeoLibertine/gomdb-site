@@ -292,7 +292,11 @@
     },
     {
       "src": "/clientes/coppel/matriz-universal(?:/.*)?$",
-      "dest": "/clientes/payway/matriz-universal.html"
+      "dest": "/clientes/coppel/matriz-universal.html"
+    },
+    {
+      "src": "/clientes/bancolombia/flappy(?:/.*)?$",
+      "dest": "/clientes/bancolombia/flappyl.html"
     },
     
     

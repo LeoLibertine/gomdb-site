@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crystal Quest - Aventura Mágica</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #6C63FF;
+            --secondary-color: #FF6B9D;
+            --accent-color: #FFD93D;
+            --bg-gradient-1: #667eea;
+            --bg-gradient-2: #764ba2;
+            --text-light: #ffffff;
+            --text-dark: #2d3436;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Partículas animadas de fondo */
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.4;
+            }
+            90% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        #gameContainer {
+            width: 95%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        #gameHeader {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #gameHeader::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: moveGrid 10s linear infinite;
+        }
+        
+        @keyframes moveGrid {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(20px, 20px);
+            }
+        }
+        
+        h1 {
+            color: var(--text-light);
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        #stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            color: var(--text-light);
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s;
+        }
+        
+        .stat:hover {
+            transform: scale(1.05);
+        }
+        
+        #menuScreen, #gameScreen, #settingsScreen {
+            padding: 40px;
+            min-height: 500px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        #menuScreen.active, #gameScreen.active, #settingsScreen.active {
+            display: block;
+        }
+        
+        #menuScreen {
+            text-align: center;
+        }
+        
+        .menu-title {
+            font-size: 2em;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .btn {
+            padding: 18px 40px;
+            font-size: 1.2em;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 10px 25px rgba(108, 99, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(108, 99, 255, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent-color), #FFA502);
+            box-shadow: 0 10px 25px rgba(255, 217, 61, 0.3);
+        }
+        
+        .btn-accent:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255, 217, 61, 0.4);
+        }
+        
+        #gameCanvas {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(180deg, #87CEEB 0%, #98FB98 100%);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .game-element {
+            position: absolute;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        #player {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FF6B9D, #FFA502);
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 10;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .crystal {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #A8E6CF, #7FD8BE);
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+            animation: spin 3s linear infinite, glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @keyframes glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px rgba(168, 230, 207, 0.8));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px rgba(168, 230, 207, 1));
+            }
+        }
+        
+        .platform {
+            background: linear-gradient(135deg, #8B4513, #A0522D);
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+        
+        .cloud {
+            background: white;
+            border-radius: 100px;
+            opacity: 0.8;
+            animation: drift 20s infinite linear;
+        }
+        
+        @keyframes drift {
+            from {
+                transform: translateX(-100px);
+            }
+            to {
+                transform: translateX(calc(100% + 100px));
+            }
+        }
+        
+        #puzzleArea {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            min-height: 150px;
+            box-shadow: inset 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .puzzle-title {
+            font-size: 1.3em;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .puzzle-options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .puzzle-btn {
+            padding: 12px 25px;
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 25px;
+            color: var(--primary-color);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .puzzle-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        #gameControls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        #settingsScreen {
+            text-align: center;
+        }
+        
+        .settings-group {
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            border-radius: 15px;
+        }
+        
+        .settings-group h3 {
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .color-options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .color-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid white;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .color-btn.active {
+            border-color: var(--accent-color);
+            transform: scale(1.1);
+        }
+        
+        #audioToggle {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #00C851, #00BFA5);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px;
+        }
+        
+        #audioToggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 200, 81, 0.3);
+        }
+        
+        #audioToggle.muted {
+            background: linear-gradient(135deg, #FF5252, #FF1744);
+        }
+        
+        .achievement {
+            position: fixed;
+            top: 20px;
+            right: -400px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            font-weight: 600;
+            font-size: 1.1em;
+            z-index: 1000;
+            animation: slideInAchievement 3s ease-in-out;
+        }
+        
+        @keyframes slideInAchievement {
+            0% {
+                right: -400px;
+            }
+            20%, 80% {
+                right: 20px;
+            }
+            100% {
+                right: -400px;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            #gameCanvas {
+                height: 300px;
+            }
+            
+            .control-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas de fondo -->
+    <div id="particles"></div>
+    
+    <div id="gameContainer">
+        <div id="gameHeader">
+            <h1>🌟 Crystal Quest 🌟</h1>
+            <div id="stats">
+                <div class="stat">💎 Cristales: <span id="crystalCount">0</span></div>
+                <div class="stat">🏆 Nivel: <span id="level">1</span></div>
+                <div class="stat">⭐ Puntos: <span id="score">0</span></div>
+            </div>
+        </div>
+        
+        <!-- Pantalla de Menú -->
+        <div id="menuScreen" class="active">
+            <h2 class="menu-title">¡Bienvenido a Crystal Quest!</h2>
+            <p style="color: #666; margin-bottom: 30px; font-size: 1.1em;">
+                Explora mundos mágicos, resuelve acertijos y colecciona cristales brillantes
+            </p>
+            <div class="menu-buttons">
+                <button class="btn btn-primary" onclick="startGame()">
+                    🎮 Jugar
+                </button>
+                <button class="btn btn-secondary" onclick="showSettings()">
+                    ⚙️ Configuración
+                </button>
+                <button class="btn btn-accent" onclick="showTutorial()">
+                    📖 Tutorial
+                </button>
+            </div>
+        </div>
+        
+        <!-- Pantalla de Juego -->
+        <div id="gameScreen">
+            <div id="gameCanvas">
+                <div id="player" class="game-element"></div>
+            </div>
+            
+            <div id="puzzleArea">
+                <div class="puzzle-title">¡Resuelve el acertijo!</div>
+                <div id="puzzleContent"></div>
+            </div>
+            
+            <div id="gameControls">
+                <button class="control-btn" onclick="movePlayer('left')">←</button>
+                <button class="control-btn" onclick="movePlayer('up')">↑</button>
+                <button class="control-btn" onclick="movePlayer('down')">↓</button>
+                <button class="control-btn" onclick="movePlayer('right')">→</button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="showMenu()">
+                    🏠 Menú Principal
+                </button>
+            </div>
+        </div>
+        
+        <!-- Pantalla de Configuración -->
+        <div id="settingsScreen">
+            <h2 style="color: var(--text-dark); margin-bottom: 30px;">⚙️ Configuración</h2>
+            
+            <div class="settings-group">
+                <h3>🎨 Tema de Color</h3>
+                <div class="color-options">
+                    <div class="color-btn active" style="background: linear-gradient(135deg, #667eea, #764ba2)" onclick="changeTheme('purple')"></div>
+                    <div class="color-btn" style="background: linear-gradient(135deg, #f093fb, #f5576c)" onclick="changeTheme('pink')"></div>
+                    <div class="color-btn" style="background: linear-gradient(135deg, #4facfe, #00f2fe)" onclick="changeTheme('blue')"></div>
+                    <div class="color-btn" style="background: linear-gradient(135deg, #43e97b, #38f9d7)" onclick="changeTheme('green')"></div>
+                    <div class="color-btn" style="background: linear-gradient(135deg, #fa709a, #fee140)" onclick="changeTheme('sunset')"></div>
+                </div>
+            </div>
+            
+            <div class="settings-group">
+                <h3>🌍 Fondo del Juego</h3>
+                <div class="color-options">
+                    <div class="color-btn" style="background: linear-gradient(180deg, #87CEEB, #98FB98)" onclick="changeBackground('sky')"></div>
+                    <div class="color-btn" style="background: linear-gradient(180deg, #1e3c72, #2a5298)" onclick="changeBackground('ocean')"></div>
+                    <div class="color-btn" style="background: linear-gradient(180deg, #ff9a9e, #fecfef)" onclick="changeBackground('candy')"></div>
+                    <div class="color-btn" style="background: linear-gradient(180deg, #a8edea, #fed6e3)" onclick="changeBackground('pastel')"></div>
+                </div>
+            </div>
+            
+            <button id="audioToggle" onclick="toggleAudio()">
+                🔊 Sonido: ON
+            </button>
+            
+            <div>
+                <button class="btn btn-primary" onclick="showMenu()">
+                    ← Volver
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Variables del juego
+        let crystals = 0;
+        let level = 1;
+        let score = 0;
+        let playerPos = { x: 50, y: 320 };
+        let audioEnabled = true;
+        let currentPuzzle = null;
+        let gameElements = [];
+        
+        // Sistema de audio simple
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioContext = null;
+        
+        function playSound(frequency, duration) {
+            if (!audioEnabled || !audioContext) return;
+            
+            try {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration);
+            } catch (e) {
+                console.log('Audio no disponible');
+            }
+        }
+        
+        // Crear partículas de fondo
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 20 + 10 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 20 + 20) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Inicialización
+        window.onload = function() {
+            createParticles();
+            try {
+                audioContext = new AudioContext();
+            } catch (e) {
+                console.log('Audio Context no disponible');
+            }
+        };
+        
+        // Navegación entre pantallas
+        function showScreen(screenId) {
+            document.querySelectorAll('#menuScreen, #gameScreen, #settingsScreen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+        
+        function showMenu() {
+            showScreen('menuScreen');
+            playSound(400, 0.2);
+        }
+        
+        function showSettings() {
+            showScreen('settingsScreen');
+            playSound(500, 0.2);
+        }
+        
+        function startGame() {
+            showScreen('gameScreen');
+            initGame();
+            playSound(600, 0.3);
+        }
+        
+        // Inicializar juego
+        function initGame() {
+            const canvas = document.getElementById('gameCanvas');
+            
+            // Limpiar elementos anteriores
+            document.querySelectorAll('.crystal, .platform, .cloud').forEach(el => el.remove());
+            
+            // Crear nubes decorativas
+            for (let i = 0; i < 3; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud game-element';
+                cloud.style.width = (Math.random() * 80 + 60) + 'px';
+                cloud.style.height = (Math.random() * 30 + 20) + 'px';
+                cloud.style.top = (Math.random() * 150) + 'px';
+                cloud.style.left = (Math.random() * 800) + 'px';
+                cloud.style.animationDelay = (Math.random() * 10) + 's';
+                canvas.appendChild(cloud);
+            }
+            
+            // Crear plataformas
+            createPlatform(100, 300, 150, 20);
+            createPlatform(300, 250, 120, 20);
+            createPlatform(500, 200, 150, 20);
+            createPlatform(700, 280, 100, 20);
+            
+            // Crear cristales
+            createCrystal(150, 250);
+            createCrystal(350, 200);
+            createCrystal(550, 150);
+            createCrystal(730, 230);
+            
+            // Posicionar jugador
+            updatePlayerPosition();
+            
+            // Generar primer acertijo
+            generatePuzzle();
+        }
+        
+        function createPlatform(x, y, width, height) {
+            const platform = document.createElement('div');
+            platform.className = 'platform game-element';
+            platform.style.left = x + 'px';
+            platform.style.top = y + 'px';
+            platform.style.width = width + 'px';
+            platform.style.height = height + 'px';
+            document.getElementById('gameCanvas').appendChild(platform);
+        }
+        
+        function createCrystal(x, y) {
+            const crystal = document.createElement('div');
+            crystal.className = 'crystal game-element';
+            crystal.style.left = x + 'px';
+            crystal.style.top = y + 'px';
+            crystal.onclick = function() {
+                collectCrystal(crystal);
+            };
+            document.getElementById('gameCanvas').appendChild(crystal);
+        }
+        
+        function collectCrystal(crystal) {
+            const playerEl = document.getElementById('player');
+            const crystalRect = crystal.getBoundingClientRect();
+            const playerRect = playerEl.getBoundingClientRect();
+            
+            const distance = Math.sqrt(
+                Math.pow(crystalRect.left - playerRect.left, 2) + 
+                Math.pow(crystalRect.top - playerRect.top, 2)
+            );
+            
+            if (distance < 100) {
+                crystal.style.transform = 'scale(1.5)';
+                crystal.style.opacity = '0';
+                setTimeout(() => crystal.remove(), 300);
+                
+                crystals++;
+                score += 100;
+                updateStats();
+                playSound(800, 0.3);
+                
+                if (crystals % 4 === 0) {
+                    levelUp();
+                }
+                
+                showAchievement('¡Cristal Colectado! +100 puntos');
+            } else {
+                showAchievement('¡Acércate más al cristal!');
+            }
+        }
+        
+        function movePlayer(direction) {
+            const step = 40;
+            const canvas = document.getElementById('gameCanvas');
+            const canvasRect = canvas.getBoundingClientRect();
+            
+            switch(direction) {
+                case 'left':
+                    playerPos.x = Math.max(0, playerPos.x - step);
+                    break;
+                case 'right':
+                    playerPos.x = Math.min(canvasRect.width - 60, playerPos.x + step);
+                    break;
+                case 'up':
+                    playerPos.y = Math.max(0, playerPos.y - step);
+                    break;
+                case 'down':
+                    playerPos.y = Math.min(340, playerPos.y + step);
+                    break;
+            }
+            
+            updatePlayerPosition();
+            playSound(300, 0.1);
+        }
+        
+        function updatePlayerPosition() {
+            const player = document.getElementById('player');
+            player.style.left = playerPos.x + 'px';
+            player.style.top = playerPos.y + 'px';
+        }
+        
+        // Manejo de teclado
+        document.addEventListener('keydown', function(e) {
+            if (document.getElementById('gameScreen').classList.contains('active')) {
+                switch(e.key) {
+                    case 'ArrowLeft':
+                        movePlayer('left');
+                        break;
+                    case 'ArrowRight':
+                        movePlayer('right');
+                        break;
+                    case 'ArrowUp':
+                        movePlayer('up');
+                        break;
+                    case 'ArrowDown':
+                        movePlayer('down');
+                        break;
+                }
+            }
+        });
+        
+        // Sistema de acertijos
+        const puzzles = [
+            {
+                question: "¿Cuál es el color del cielo en un día despejado?",
+                options: ["Rojo", "Azul", "Verde", "Amarillo"],
+                correct: 1
+            },
+            {
+                question: "¿Cuántos lados tiene un triángulo?",
+                options: ["2", "3", "4", "5"],
+                correct: 1
+            },
+            {
+                question: "¿Qué animal dice 'miau'?",
+                options: ["Perro", "Vaca", "Gato", "Pájaro"],
+                correct: 2
+            },
+            {
+                question: "¿Cuál es el resultado de 5 + 3?",
+                options: ["7", "8", "9", "10"],
+                correct: 1
+            },
+            {
+                question: "¿En qué estación caen las hojas?",
+                options: ["Primavera", "Verano", "Otoño", "Invierno"],
+                correct: 2
+            }
+        ];
+        
+        function generatePuzzle() {
+            currentPuzzle = puzzles[Math.floor(Math.random() * puzzles.length)];
+            const puzzleContent = document.getElementById('puzzleContent');
+            
+            puzzleContent.innerHTML = `
+                <p style="color: #555; margin-bottom: 20px; font-size: 1.1em;">${currentPuzzle.question}</p>
+                <div class="puzzle-options">
+                    ${currentPuzzle.options.map((option, index) => 
+                        `<button class="puzzle-btn" onclick="checkAnswer(${index})">${option}</button>`
+                    ).join('')}
+                </div>
+            `;
+        }
+
+        function checkAnswer(index) {
+            if (index === currentPuzzle.correct) {
+                score += 50;
+                updateStats();
+                showAchievement('¡Correcto! +50 puntos');
+                playSound(1000, 0.4);
+                setTimeout(generatePuzzle, 2000);
+            } else {
+                showAchievement('Inténtalo de nuevo');
+                playSound(200, 0.3);
+            }
+        }
+
+        function levelUp() {
+            level++;
+            updateStats();
+            showAchievement(`¡NIVEL ${level} DESBLOQUEADO!`);
+            playSound(1200, 0.5);
+            
+            // Reiniciar el nivel con más cristales
+            setTimeout(() => {
+                initGame();
+            }, 2000);
+        }
+
+        function updateStats() {
+            document.getElementById('crystalCount').textContent = crystals;
+            document.getElementById('level').textContent = level;
+            document.getElementById('score').textContent = score;
+        }
+
+        function showAchievement(text) {
+            const achievement = document.createElement('div');
+            achievement.className = 'achievement';
+            achievement.textContent = text;
+            document.body.appendChild(achievement);
+            
+            setTimeout(() => {
+                achievement.remove();
+            }, 3000);
+        }
+
+        // Configuración de temas
+        function changeTheme(theme) {
+            const root = document.documentElement;
+            
+            // Remover clase active de todos los botones de color
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Agregar clase active al botón seleccionado
+            event.target.classList.add('active');
+            
+            switch(theme) {
+                case 'purple':
+                    root.style.setProperty('--bg-gradient-1', '#667eea');
+                    root.style.setProperty('--bg-gradient-2', '#764ba2');
+                    root.style.setProperty('--primary-color', '#6C63FF');
+                    root.style.setProperty('--secondary-color', '#FF6B9D');
+                    break;
+                case 'pink':
+                    root.style.setProperty('--bg-gradient-1', '#f093fb');
+                    root.style.setProperty('--bg-gradient-2', '#f5576c');
+                    root.style.setProperty('--primary-color', '#f5576c');
+                    root.style.setProperty('--secondary-color', '#f093fb');
+                    break;
+                case 'blue':
+                    root.style.setProperty('--bg-gradient-1', '#4facfe');
+                    root.style.setProperty('--bg-gradient-2', '#00f2fe');
+                    root.style.setProperty('--primary-color', '#4facfe');
+                    root.style.setProperty('--secondary-color', '#00f2fe');
+                    break;
+                case 'green':
+                    root.style.setProperty('--bg-gradient-1', '#43e97b');
+                    root.style.setProperty('--bg-gradient-2', '#38f9d7');
+                    root.style.setProperty('--primary-color', '#43e97b');
+                    root.style.setProperty('--secondary-color', '#38f9d7');
+                    break;
+                case 'sunset':
+                    root.style.setProperty('--bg-gradient-1', '#fa709a');
+                    root.style.setProperty('--bg-gradient-2', '#fee140');
+                    root.style.setProperty('--primary-color', '#fa709a');
+                    root.style.setProperty('--secondary-color', '#fee140');
+                    break;
+            }
+            
+            playSound(600, 0.2);
+        }
+
+        function changeBackground(bg) {
+            const canvas = document.getElementById('gameCanvas');
+            
+            switch(bg) {
+                case 'sky':
+                    canvas.style.background = 'linear-gradient(180deg, #87CEEB 0%, #98FB98 100%)';
+                    break;
+                case 'ocean':
+                    canvas.style.background = 'linear-gradient(180deg, #1e3c72 0%, #2a5298 100%)';
+                    break;
+                case 'candy':
+                    canvas.style.background = 'linear-gradient(180deg, #ff9a9e 0%, #fecfef 100%)';
+                    break;
+                case 'pastel':
+                    canvas.style.background = 'linear-gradient(180deg, #a8edea 0%, #fed6e3 100%)';
+                    break;
+            }
+            
+            playSound(500, 0.2);
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const btn = document.getElementById('audioToggle');
+            
+            if (audioEnabled) {
+                btn.textContent = '🔊 Sonido: ON';
+                btn.classList.remove('muted');
+                playSound(800, 0.3);
+            } else {
+                btn.textContent = '🔇 Sonido: OFF';
+                btn.classList.add('muted');
+            }
+        }
+
+        function showTutorial() {
+            const tutorialText = `
+                🎮 CÓMO JUGAR:
+                
+                1. Usa las flechas del teclado o los botones en pantalla para mover tu personaje
+                2. Acércate a los cristales brillantes y haz clic en ellos para colectarlos
+                3. Resuelve los acertijos para ganar puntos extra
+                4. Colecciona 4 cristales para subir de nivel
+                5. ¡Personaliza los colores y fondos en Configuración!
+                
+                ¡Diviértete explorando!
+            `;
+            
+            alert(tutorialText);
+            playSound(700, 0.3);
+        }
+    </script>
+</body>
+</html>
