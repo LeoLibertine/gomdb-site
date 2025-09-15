@@ -296,7 +296,11 @@
     },
     {
       "src": "/clientes/bancolombia/flappy(?:/.*)?$",
-      "dest": "/clientes/bancolombia/flappyl.html"
+      "dest": "/clientes/bancolombia/flappy.html"
+    },
+    {
+      "src": "/estrategia/estrategiafi(?:/.*)?$",
+      "dest": "/estrategia/estrategiafi.html"
     },
     
     
