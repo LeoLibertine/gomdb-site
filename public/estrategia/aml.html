@@ -1,0 +1,4758 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prevención de Fraude y AML usando Atlas Vector Search</title>
+    
+    <style>
+        /* Variables de colores MongoDB - Modo Claro */
+        :root {
+            --mongodb-green: #00ED64;
+            --mongodb-green-dark: #00684A;
+            --mongodb-green-light: #E3FCF7;
+            --mongodb-forest: #001E2B;
+            --mongodb-slate: #0F1938;
+            --mongodb-white: #FFFFFF;
+            --mongodb-background: #FCFCFC;
+            --mongodb-gray-light-1: #F9FBFA;
+            --mongodb-gray-light-2: #F4F6F5;
+            --mongodb-gray-light-3: #E8EDEB;
+            --mongodb-gray: #B8C4C2;
+            --mongodb-gray-dark: #5C6C75;
+            --mongodb-text-primary: #001E2B;
+            --mongodb-text-secondary: #5C6C75;
+            --mongodb-border: #E8EDEB;
+            --mongodb-shadow: rgba(0, 30, 43, 0.08);
+        }
+
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--mongodb-white);
+            color: var(--mongodb-text-primary);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Contenedor principal */
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, var(--mongodb-white) 0%, var(--mongodb-gray-light-1) 100%);
+        }
+
+        /* Estilos para las secciones/slides */
+        .slide {
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 40px 60px;
+            background: var(--mongodb-white);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide.prev {
+            transform: translateX(-100%);
+        }
+
+        /* Contenido del slide */
+        .slide-content {
+            max-width: 1400px;
+            width: 100%;
+            height: 85vh;
+            text-align: center;
+            animation: fadeInUp 0.8s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Títulos */
+        h1 {
+            font-size: 4.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--mongodb-forest);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        h1 .accent {
+            color: var(--mongodb-green);
+        }
+
+        h2 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            color: var(--mongodb-forest);
+            margin-bottom: 25px;
+            letter-spacing: -0.01em;
+        }
+
+        h3 {
+            font-size: 2.2rem;
+            font-weight: 500;
+            color: var(--mongodb-text-primary);
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            color: var(--mongodb-text-secondary);
+            margin-bottom: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Navegación */
+        .navigation {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: var(--mongodb-white);
+            border: 2px solid var(--mongodb-green);
+            color: var(--mongodb-green);
+            padding: 14px 28px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px var(--mongodb-shadow);
+        }
+
+        .nav-btn:hover {
+            background: var(--mongodb-green);
+            color: var(--mongodb-white);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 237, 100, 0.25);
+        }
+
+        /* Indicadores de progreso */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--mongodb-gray-light-3);
+            z-index: 1000;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Contador de slides */
+        .slide-counter {
+            position: fixed;
+            top: 35px;
+            right: 40px;
+            font-size: 1.1rem;
+            color: var(--mongodb-text-secondary);
+            z-index: 1000;
+            font-weight: 500;
+            background: var(--mongodb-white);
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px var(--mongodb-shadow);
+        }
+
+        /* Logo MongoDB */
+        .mongodb-logo {
+            position: fixed;
+            top: 30px;
+            left: 40px;
+            width: 300px;
+            z-index: 1000;
+        }
+
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Efectos de fondo */
+        .background-pattern {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: 
+                radial-gradient(circle at 20% 50%, var(--mongodb-green) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, var(--mongodb-green) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, var(--mongodb-green) 0%, transparent 50%);
+        }
+
+        /* Estilos para contenido especial */
+        .highlight {
+            color: var(--mongodb-green);
+            font-weight: 600;
+        }
+
+        .stat-box {
+            background: var(--mongodb-gray-light-1);
+            border: 1px solid var(--mongodb-border);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 20px;
+            display: inline-block;
+            min-width: 250px;
+            box-shadow: 0 2px 8px var(--mongodb-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px var(--mongodb-shadow);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--mongodb-green);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--mongodb-text-secondary);
+        }
+
+        .code-block {
+            background: var(--mongodb-forest);
+            color: var(--mongodb-white);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px auto;
+            text-align: left;
+            font-family: 'Monaco', 'Courier New', monospace;
+            box-shadow: 0 4px 16px var(--mongodb-shadow);
+            max-width: 900px;
+        }
+
+        .feature-card {
+            background: var(--mongodb-white);
+            border: 1px solid var(--mongodb-border);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 15px;
+            display: inline-block;
+            width: 300px;
+            vertical-align: top;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px var(--mongodb-shadow);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px var(--mongodb-shadow);
+            border-color: var(--mongodb-green);
+        }
+
+        /* Placeholder para secciones futuras */
+        .section-placeholder {
+            width: 100%;
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed var(--mongodb-gray);
+            border-radius: 16px;
+            background: var(--mongodb-gray-light-2);
+            color: var(--mongodb-text-secondary);
+        }
+
+        /* Botones de acción */
+        .action-btn {
+            background: var(--mongodb-green);
+            color: var(--mongodb-white);
+            padding: 16px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            box-shadow: 0 4px 12px rgba(0, 237, 100, 0.2);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 237, 100, 0.3);
+            background: var(--mongodb-green-dark);
+        }
+
+        /* Grid layout para contenido */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px auto;
+            max-width: 1000px;
+        }
+        /* Estilos adicionales para Slides 1 y 2 */
+
+/* Slide 1 - Título e Introducción */
+.main-title {
+    font-size: 3.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+    animation: slideInFromTop 1s ease;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: var(--mongodb-green);
+    color: var(--mongodb-white);
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 30px;
+    animation: fadeIn 0.8s ease;
+}
+
+.subtitle-large {
+    animation: fadeIn 1s ease 0.2s both;
+}
+
+.key-insight-box {
+    background: linear-gradient(135deg, var(--mongodb-gray-light-1) 0%, var(--mongodb-gray-light-2) 100%);
+    border: 2px solid var(--mongodb-green);
+    border-radius: 20px;
+    padding: 25px 35px;
+    margin: 40px auto;
+    max-width: 800px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    animation: slideInFromBottom 1s ease 0.4s both;
+    box-shadow: 0 4px 20px rgba(0, 237, 100, 0.1);
+}
+
+.insight-icon {
+    font-size: 2.5rem;
+    animation: bounce 2s infinite;
+}
+
+.industries-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 50px;
+    flex-wrap: wrap;
+    animation: fadeIn 1s ease 0.6s both;
+}
+
+.industry-card {
+    background: var(--mongodb-white);
+    border: 2px solid var(--mongodb-border);
+    border-radius: 16px;
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px var(--mongodb-shadow);
+}
+
+.industry-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--mongodb-green);
+    box-shadow: 0 8px 25px rgba(0, 237, 100, 0.15);
+}
+
+.industry-icon {
+    font-size: 2.5rem;
+}
+
+.industry-card span {
+    font-weight: 600;
+    color: var(--mongodb-text-primary);
+}
+
+/* Partículas flotantes */
+.floating-particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--mongodb-green);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: floatParticle var(--duration) linear infinite;
+    animation-delay: var(--delay);
+}
+
+/* Slide 2 - El Desafío */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin: 50px auto;
+    max-width: 1200px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--mongodb-white) 0%, var(--mongodb-gray-light-1) 100%);
+    border: 2px solid var(--mongodb-border);
+    border-radius: 20px;
+    padding: 35px 25px;
+    text-align: center;
+    transition: all 0.4s ease;
+    animation: slideInFromBottom 0.8s ease both;
+    box-shadow: 0 4px 15px var(--mongodb-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card.large-stat {
+    grid-column: span 2;
+    background: linear-gradient(135deg, var(--mongodb-green-light) 0%, var(--mongodb-gray-light-1) 100%);
+}
+
+.stat-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(0, 237, 100, 0.2);
+    border-color: var(--mongodb-green);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(0, 237, 100, 0.05), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+    opacity: 0;
+}
+
+.stat-card:hover::before {
+    animation: shine 0.6s ease;
+}
+
+.stat-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    animation: bounce 3s infinite;
+}
+
+.stat-value {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--mongodb-green);
+    margin: 15px 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--mongodb-text-primary);
+    margin-bottom: 8px;
+}
+
+.stat-sublabel {
+    font-size: 0.95rem;
+    color: var(--mongodb-text-secondary);
+}
+
+.alert-box {
+    background: linear-gradient(135deg, #FFF4E5 0%, #FFE4B5 100%);
+    border: 2px solid #FFA500;
+    border-radius: 20px;
+    padding: 25px 35px;
+    margin: 50px auto 30px;
+    max-width: 900px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    animation: slideInFromBottom 1s ease 0.6s both;
+    box-shadow: 0 4px 20px rgba(255, 165, 0, 0.15);
+}
+
+.alert-icon {
+    font-size: 2.5rem;
+    animation: pulse 2s infinite;
+}
+
+.alert-content {
+    flex: 1;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--mongodb-text-primary);
+}
+
+/* Animaciones adicionales */
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInFromBottom {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes floatParticle {
+    0% {
+        transform: translate(0, 100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% { opacity: 0.3; }
+    90% { opacity: 0.3; }
+    100% {
+        transform: translate(100vw, -100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+@keyframes shine {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Responsive para los nuevos slides */
+@media (max-width: 768px) {
+    .main-title { font-size: 2.5rem; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .stat-card.large-stat { grid-column: span 1; }
+    .industries-container { flex-direction: column; align-items: center; }
+}
+
+
+    </style>
+</head>
+<body>
+    <!-- Patrón de fondo -->
+    <div class="background-pattern"></div>
+
+    <!-- Logo MongoDB - Agrega tu imagen  aquí -->
+    <img src="../img/mongodb-logo-vector-2022.png" 
+     alt="MongoDB Logo" 
+     class="mongodb-logo" 
+     width="500" 
+     height="auto">
+
+    <!-- Barra de progreso -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- Contador de slides -->
+    <div class="slide-counter">
+        <span id="currentSlide">1</span> / <span id="totalSlides">1</span>
+    </div>
+
+    <!-- Contenedor de presentación -->
+    <div class="presentation-container" id="presentationContainer">
+        
+       <!-- Slide 1: Título e Introducción -->
+<div class="slide active" data-slide="1">
+    <div class="slide-content">
+        <div style="position: relative; width: 100%; max-width: 1200px;">
+            <!-- Partículas animadas de fondo -->
+            <div class="floating-particles">
+                <span class="particle" style="--delay: 0s; --duration: 15s;"></span>
+                <span class="particle" style="--delay: 2s; --duration: 20s;"></span>
+                <span class="particle" style="--delay: 4s; --duration: 18s;"></span>
+            </div>
+            
+            <!-- Contenido principal -->
+            <div style="position: relative; z-index: 10;">
+                <div class="hero-badge">SOLUCIÓN EMPRESARIAL</div>
+                
+                <h1 class="main-title" style="margin-bottom: 20px;">
+                    Revolucionando la Detección de 
+                    <span class="gradient-text">Fraudes y AML</span><br>
+                    con MongoDB Atlas Vector Search
+                </h1>
+                
+                <p class="subtitle-large" style="font-size: 1.6rem; color: var(--mongodb-text-secondary); margin: 30px auto; max-width: 900px;">
+                    Combinando analítica en tiempo real y búsqueda semántica 
+                    para combatir el crimen financiero
+                </p>
+                
+                <!-- Punto clave con animación -->
+                <div class="key-insight-box">
+                    <div class="insight-icon">🚀</div>
+                    <p style="margin: 0; font-size: 1.2rem;">
+                        <strong>MongoDB Atlas</strong> es una plataforma lista para IA que permite 
+                        construir y escalar aplicaciones inteligentes
+                    </p>
+                </div>
+                
+                <!-- Industrias aplicables -->
+                <div class="industries-container">
+                    <div class="industry-card">
+                        <div class="industry-icon">🏦</div>
+                        <span>Servicios Financieros</span>
+                    </div>
+                    <div class="industry-card">
+                        <div class="industry-icon">🛡️</div>
+                        <span>Seguros</span>
+                    </div>
+                    <div class="industry-card">
+                        <div class="industry-icon">🛒</div>
+                        <span>Retail</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 2: El Desafío del Fraude y AML -->
+<div class="slide" data-slide="2">
+    <div class="slide-content">
+        <div style="width: 100%; max-width: 1400px;">
+            <h2 style="margin-bottom: 40px;">
+                El Desafío del <span class="gradient-text">Fraude y AML</span>
+            </h2>
+            
+            <p style="font-size: 1.4rem; color: var(--mongodb-text-secondary); margin-bottom: 50px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+                El fraude y el AML son preocupaciones importantes que afectan a las instituciones financieras, 
+                desde la banca comercial hasta los mercados de capitales
+            </p>
+            
+            <!-- Estadísticas con animación -->
+            <div class="stats-grid">
+                <div class="stat-card large-stat">
+                    <div class="stat-icon">🌍</div>
+                    <div class="stat-value" data-value="5">$0T</div>
+                    <div class="stat-label">Pérdidas Globales Anuales por Fraude</div>
+                    <div class="stat-sublabel">Impacto mundial total</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">💳</div>
+                    <div class="stat-value" data-value="27.5">$0B</div>
+                    <div class="stat-label">Fraude con Tarjetas de Crédito</div>
+                    <div class="stat-sublabel">Solo en EE.UU. anualmente</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value" data-value="25">$0B</div>
+                    <div class="stat-label">Lavado de Dinero (AML)</div>
+                    <div class="stat-sublabel">Solo en EE.UU. anualmente</div>
+                </div>
+            </div>
+            
+            <!-- Mensaje de alerta -->
+            <div class="alert-box">
+                <div class="alert-icon">⚠️</div>
+                <div class="alert-content">
+                    <strong>Crecimiento del Riesgo:</strong> El volumen y la complejidad de las transacciones 
+                    facilitan a los ciberdelincuentes ocultar el fraude y cometer lavado de dinero
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 3: Evolución de los Sistemas de Detección de Riesgos -->
+<div class="slide" data-slide="3">
+    <div class="slide-content">
+        <h2 style="margin-bottom: 50px;">Evolución de los Sistemas de <span class="accent">Detección de Riesgos</span></h2>
+        
+        <!-- Timeline Container -->
+        <div class="evolution-timeline">
+            <!-- Risk 1.0 -->
+            <div class="timeline-item" data-risk="1">
+                <div class="timeline-year">1994</div>
+                <div class="timeline-card risk-1">
+                    <div class="card-header">
+                        <div class="risk-badge">RIESGO 1.0</div>
+                        <div class="card-icon">📋</div>
+                    </div>
+                    <h3>Técnicas Basadas en Reglas</h3>
+                    <div class="card-content">
+                        <p>Sistemas simples con reglas predefinidas</p>
+                        <div class="feature-example">
+                            <code>if (transacción > $10,000) {
+    bloquear();
+}</code>
+                        </div>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Reglas Estáticas</span>
+                            <span class="tech-tag">Umbrales Fijos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk 2.0 -->
+            <div class="timeline-item" data-risk="2">
+                <div class="timeline-year">2010</div>
+                <div class="timeline-card risk-2">
+                    <div class="card-header">
+                        <div class="risk-badge">RIESGO 2.0</div>
+                        <div class="card-icon">📊</div>
+                    </div>
+                    <h3>Analítica Predictiva y ML</h3>
+                    <div class="card-content">
+                        <p>Big data analytics y modelos predictivos para detectar anomalías</p>
+                        <div class="feature-list">
+                            <div class="feature-item">✓ Modelos predictivos</div>
+                            <div class="feature-item">✓ Detección de anomalías</div>
+                            <div class="feature-item">✓ Big data analytics</div>
+                        </div>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Machine Learning</span>
+                            <span class="tech-tag">Big Data</span>
+                            <span class="tech-tag">Predictive Analytics</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk 3.0 -->
+            <div class="timeline-item" data-risk="3">
+                <div class="timeline-year">HOY</div>
+                <div class="timeline-card risk-3 featured">
+                    <div class="card-header">
+                        <div class="risk-badge premium">RIESGO 3.0</div>
+                        <div class="card-icon">🚀</div>
+                    </div>
+                    <h3>Gen AI y Vector Search</h3>
+                    <div class="card-content">
+                        <p>Tecnologías de vanguardia combinando IA Generativa y búsqueda semántica</p>
+                        <div class="feature-list">
+                            <div class="feature-item">✓ Vector Search en tiempo real</div>
+                            <div class="feature-item">✓ Datos estructurados y no estructurados</div>
+                            <div class="feature-item">✓ Detección adaptativa con IA</div>
+                        </div>
+                        <div class="tech-tags">
+                            <span class="tech-tag premium">MongoDB Atlas</span>
+                            <span class="tech-tag premium">Vector Search</span>
+                            <span class="tech-tag premium">Gen AI</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connecting Line -->
+            <div class="timeline-line"></div>
+        </div>
+
+        <!-- Bottom Message -->
+        <div class="evolution-message">
+            <p style="font-size: 1.2rem; margin-top: 40px;">
+                <span class="highlight">La evolución continúa:</span> De reglas simples a inteligencia artificial avanzada
+            </p>
+        </div>
+    </div>
+</div>
+
+
+<style>
+/* Estilos específicos para el Slide 3 */
+.evolution-timeline {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.timeline-line {
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        var(--mongodb-gray) 0%, 
+        var(--mongodb-green) 50%, 
+        var(--mongodb-green) 100%);
+    z-index: 0;
+    opacity: 0;
+    animation: expandLine 1s ease 0.5s forwards;
+}
+
+@keyframes expandLine {
+    to {
+        opacity: 1;
+    }
+}
+
+.timeline-item {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.timeline-item[data-risk="1"] {
+    animation: slideInUp 0.6s ease 0.3s forwards;
+}
+
+.timeline-item[data-risk="2"] {
+    animation: slideInUp 0.6s ease 0.6s forwards;
+}
+
+.timeline-item[data-risk="3"] {
+    animation: slideInUp 0.6s ease 0.9s forwards;
+}
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.timeline-year {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--mongodb-green);
+    margin-bottom: 20px;
+    padding: 8px 20px;
+    background: var(--mongodb-white);
+    border: 2px solid var(--mongodb-green);
+    border-radius: 25px;
+    position: relative;
+}
+
+.timeline-card {
+    background: var(--mongodb-white);
+    border-radius: 20px;
+    padding: 25px;
+    width: 320px;
+    min-height: 380px;
+    box-shadow: 0 4px 20px rgba(0, 30, 43, 0.1);
+    border: 2px solid var(--mongodb-border);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.timeline-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--mongodb-gray);
+    transition: all 0.3s ease;
+}
+
+.timeline-card.risk-1::before {
+    background: var(--mongodb-gray);
+}
+
+.timeline-card.risk-2::before {
+    background: linear-gradient(90deg, var(--mongodb-gray) 0%, var(--mongodb-green) 100%);
+}
+
+.timeline-card.risk-3::before {
+    background: var(--mongodb-green);
+}
+
+.timeline-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 237, 100, 0.2);
+    border-color: var(--mongodb-green);
+}
+
+.timeline-card.featured {
+    border-color: var(--mongodb-green);
+    background: linear-gradient(135deg, var(--mongodb-white) 0%, var(--mongodb-green-light) 100%);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.risk-badge {
+    background: var(--mongodb-gray-light-2);
+    color: var(--mongodb-text-primary);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.risk-badge.premium {
+    background: linear-gradient(135deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+    color: var(--mongodb-white);
+}
+
+.card-icon {
+    font-size: 2rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+.timeline-card h3 {
+    font-size: 1.5rem;
+    color: var(--mongodb-forest);
+    margin-bottom: 15px;
+}
+
+.card-content p {
+    font-size: 1rem;
+    color: var(--mongodb-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.feature-example {
+    background: var(--mongodb-forest);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.feature-example code {
+    color: var(--mongodb-green);
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 0.9rem;
+    white-space: pre;
+}
+
+.feature-list {
+    margin: 20px 0;
+}
+
+.feature-item {
+    background: var(--mongodb-gray-light-1);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin: 8px 0;
+    color: var(--mongodb-text-primary);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    background: var(--mongodb-green-light);
+    transform: translateX(5px);
+}
+
+.tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.tech-tag {
+    background: var(--mongodb-gray-light-2);
+    color: var(--mongodb-text-secondary);
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.tech-tag.premium {
+    background: var(--mongodb-green-light);
+    color: var(--mongodb-green-dark);
+    font-weight: 600;
+}
+
+.tech-tag:hover {
+    transform: scale(1.05);
+    background: var(--mongodb-green);
+    color: var(--mongodb-white);
+}
+
+.evolution-message {
+    text-align: center;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.5s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Efecto de partículas para Risk 3.0 */
+.timeline-card.risk-3::after {
+    content: '✨';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .evolution-timeline {
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .timeline-line {
+        width: 3px;
+        height: 80%;
+        top: 10%;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+    }
+    
+    .timeline-card {
+        width: 100%;
+        max-width: 400px;
+    }
+}
+</style>
+
+<script>
+// JavaScript para interactividad del Slide 3
+document.addEventListener('DOMContentLoaded', function() {
+    // Agregar interactividad a las tarjetas
+    const timelineCards = document.querySelectorAll('.timeline-card');
+    
+    timelineCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            // Efecto de hover mejorado
+            this.style.transform = 'translateY(-10px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+        
+        // Click para mostrar más detalles (opcional)
+        card.addEventListener('click', function() {
+            // Remover clase active de todas las tarjetas
+            timelineCards.forEach(c => c.classList.remove('active-card'));
+            // Agregar clase active a la tarjeta clickeada
+            this.classList.add('active-card');
+        });
+    });
+});
+</script>
+
+
+<!-- Slide 4: Limitaciones de los Métodos Tradicionales -->
+<div class="slide" data-slide="4">
+    <div class="slide-content">
+        <h2 style="margin-bottom: 40px;">Limitaciones de los Métodos Tradicionales</h2>
+        <p style="font-size: 1.3rem; margin-bottom: 40px; color: var(--mongodb-text-secondary);">
+            Riesgos 1.0 y 2.0: Por qué seguimos perdiendo dinero
+        </p>
+        
+        <div class="limitations-grid">
+            <!-- Tarjeta 1: Silos de Datos -->
+            <div class="limitation-card" data-delay="0">
+                <div class="limitation-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="6" height="8" stroke="currentColor" stroke-width="2" rx="1"/>
+                        <rect x="9" y="3" width="6" height="8" stroke="currentColor" stroke-width="2" rx="1"/>
+                        <rect x="15" y="3" width="6" height="8" stroke="currentColor" stroke-width="2" rx="1"/>
+                        <path d="M6 11V20M12 11V20M18 11V20" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+                    </svg>
+                </div>
+                <h3>Silos de Datos</h3>
+                <p>Múltiples sistemas de pago y bases de datos separadas dificultan obtener una vista integral del cliente, crucial para la prevención del fraude.</p>
+                <div class="impact-indicator">
+                    <span class="impact-level high">Alto Impacto</span>
+                </div>
+            </div>
+
+            <!-- Tarjeta 2: Esfuerzo de Ingeniería -->
+            <div class="limitation-card" data-delay="200">
+                <div class="limitation-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7V12C2 16.5 4.23 20.68 7.62 21.78C9.17 22.28 10.59 22.03 12 21.03C13.41 22.03 14.83 22.28 16.38 21.78C19.77 20.68 22 16.5 22 12V7L12 2Z" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h3>Ingeniería de Características</h3>
+                <p>Los sistemas basados en reglas y ML requieren gran sobrecarga de ingeniería para mantener los modelos relevantes y actualizados.</p>
+                <div class="impact-indicator">
+                    <span class="impact-level high">Alto Costo</span>
+                </div>
+            </div>
+
+            <!-- Tarjeta 3: Lentitud en Innovación -->
+            <div class="limitation-card" data-delay="400">
+                <div class="limitation-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h3>Innovación Lenta</h3>
+                <p>La mezcla de tecnologías (on-prem, cloud, legacy) dificulta la innovación. Nuevos métodos de fraude como <span class="highlight">deep fakes</span> pueden tomar 3-4 meses en abordarse.</p>
+                <div class="impact-indicator">
+                    <span class="impact-level medium">3-4 Meses</span>
+                </div>
+            </div>
+
+            <!-- Tarjeta 4: Falsos Positivos -->
+            <div class="limitation-card" data-delay="600">
+                <div class="limitation-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" stroke-width="2"/>
+                        <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="17" r="1" fill="currentColor"/>
+                    </svg>
+                </div>
+                <h3>Falsos Positivos</h3>
+                <p>Transacciones legítimas bloqueadas por ubicación geográfica o IP diferente, resultando en una pobre experiencia del cliente.</p>
+                <div class="impact-indicator">
+                    <span class="impact-level critical">Experiencia -</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen visual interactivo -->
+        <div class="summary-box">
+            <div class="summary-stat">
+                <span class="stat-icon">💰</span>
+                <span class="stat-text">Pérdidas continuas a pesar de inversiones masivas</span>
+            </div>
+            <div class="summary-stat">
+                <span class="stat-icon">⚡</span>
+                <span class="stat-text">Necesidad de soluciones en tiempo real</span>
+            </div>
+            <div class="summary-stat">
+                <span class="stat-icon">🔄</span>
+                <span class="stat-text">Evolución hacia Risk 3.0 con IA Generativa</span>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+
+/* Estilos para Slide 4 - Limitaciones */
+.limitations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin: 40px auto;
+    max-width: 1200px;
+}
+
+.limitation-card {
+    background: var(--mongodb-white);
+    border: 2px solid var(--mongodb-border);
+    border-radius: 20px;
+    padding: 30px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: slideInUp 0.6s ease forwards;
+    animation-delay: var(--delay, 0ms);
+}
+
+.limitation-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--mongodb-green), var(--mongodb-green-dark));
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.limitation-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(0, 30, 43, 0.12);
+    border-color: var(--mongodb-green);
+}
+
+.limitation-card:hover::before {
+    transform: scaleX(1);
+}
+
+.limitation-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 20px;
+    color: var(--mongodb-green);
+    opacity: 0;
+    animation: fadeInScale 0.6s ease forwards;
+    animation-delay: calc(var(--delay, 0ms) + 200ms);
+}
+
+.limitation-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.limitation-card h3 {
+    font-size: 1.5rem;
+    color: var(--mongodb-forest);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.limitation-card p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--mongodb-text-secondary);
+    margin-bottom: 20px;
+}
+
+.impact-indicator {
+    margin-top: auto;
+}
+
+.impact-level {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.impact-level.high {
+    background: rgba(255, 87, 34, 0.1);
+    color: #ff5722;
+}
+
+.impact-level.medium {
+    background: rgba(255, 152, 0, 0.1);
+    color: #ff9800;
+}
+
+.impact-level.critical {
+    background: rgba(244, 67, 54, 0.1);
+    color: #f44336;
+}
+
+.summary-box {
+    margin-top: 50px;
+    padding: 30px;
+    background: linear-gradient(135deg, var(--mongodb-gray-light-1) 0%, var(--mongodb-gray-light-2) 100%);
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards;
+    animation-delay: 1s;
+}
+
+.summary-stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: var(--mongodb-white);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--mongodb-shadow);
+    transition: transform 0.3s ease;
+}
+
+.summary-stat:hover {
+    transform: scale(1.05);
+}
+
+.stat-icon {
+    font-size: 1.8rem;
+}
+
+.stat-text {
+    font-size: 1rem;
+    color: var(--mongodb-text-primary);
+    font-weight: 500;
+    max-width: 200px;
+}
+
+/* Animaciones para Slide 4 */
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInScale {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Variables de delay para animación escalonada */
+.limitation-card[data-delay="0"] {
+    --delay: 0ms;
+}
+
+.limitation-card[data-delay="200"] {
+    --delay: 200ms;
+}
+
+.limitation-card[data-delay="400"] {
+    --delay: 400ms;
+}
+
+.limitation-card[data-delay="600"] {
+    --delay: 600ms;
+}
+
+/* Efecto de pulso en hover para los iconos */
+.limitation-card:hover .limitation-icon {
+    animation: pulse 1s ease infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .limitations-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .summary-box {
+        flex-direction: column;
+    }
+    
+    .summary-stat {
+        width: 100%;
+    }
+}
+ </style>
+
+<!-- Slide 5: Atlas Vector Search - El Siguiente Paso en la Evolución -->
+<div class="slide" data-slide="5">
+    <div class="slide-content">
+        <div class="header-section">
+            <h1 class="main-title">
+                <span class="mongodb-text">Atlas</span>
+                <span class="vector-text">Vector Search</span>
+            </h1>
+            <p class="subtitle-evolution">El Siguiente Paso en la Evolución del Machine Learning para Combatir el Fraude</p>
+        </div>
+        
+        <div class="evolution-container">
+            <!-- Características principales -->
+            <div class="features-grid">
+                <!-- Precisión Mejorada -->
+                <div class="feature-card enhanced" data-feature="precision">
+                    <div class="feature-header">
+                        <div class="feature-icon-container">
+                            <div class="icon-pulse"></div>
+                            <span class="feature-icon">🎯</span>
+                        </div>
+                        <h3>Precisión Mejorada</h3>
+                    </div>
+                    <div class="feature-body">
+                        <p>Captura <strong>patrones complejos y de alta dimensión</strong> que los modelos basados en reglas o ML tradicionales a menudo pasan por alto</p>
+                        <div class="feature-highlight">
+                            <span class="highlight-icon">✨</span>
+                            <span>Analiza el contexto completo de las transacciones</span>
+                        </div>
+                        <div class="accuracy-comparison">
+                            <div class="comparison-item old">
+                                <span class="label">ML Tradicional</span>
+                                <div class="bar" data-value="75"></div>
+                                <span class="value">75%</span>
+                            </div>
+                            <div class="comparison-item new">
+                                <span class="label">Vector Search</span>
+                                <div class="bar" data-value="95"></div>
+                                <span class="value">95%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detección en Tiempo Real -->
+                <div class="feature-card enhanced" data-feature="realtime">
+                    <div class="feature-header">
+                        <div class="feature-icon-container">
+                            <div class="icon-pulse"></div>
+                            <span class="feature-icon">⚡</span>
+                        </div>
+                        <h3>Detección en Tiempo Real</h3>
+                    </div>
+                    <div class="feature-body">
+                        <p>Identifica <strong>nuevos esquemas de fraude más rápido</strong> mediante detección de anomalías en tiempo real</p>
+                        <div class="feature-highlight">
+                            <span class="highlight-icon">🔄</span>
+                            <span>Sin necesidad de reentrenamiento constante del modelo</span>
+                        </div>
+                        <div class="realtime-indicator">
+                            <div class="indicator-pulse"></div>
+                            <span class="indicator-text">Procesando...</span>
+                            <div class="speed-metrics">
+                                <span class="metric"><strong>&lt;100ms</strong> latencia</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Escalabilidad Dinámica -->
+                <div class="feature-card enhanced" data-feature="scalability">
+                    <div class="feature-header">
+                        <div class="feature-icon-container">
+                            <div class="icon-pulse"></div>
+                            <span class="feature-icon">📈</span>
+                        </div>
+                        <h3>Escalabilidad Dinámica</h3>
+                    </div>
+                    <div class="feature-body">
+                        <p>Se adapta sin esfuerzo a <strong>conjuntos de datos en crecimiento</strong> y patrones de fraude en evolución</p>
+                        <div class="feature-highlight">
+                            <span class="highlight-icon">🚀</span>
+                            <span>Marco anti-fraude más flexible y preparado para el futuro</span>
+                        </div>
+                        <div class="scalability-visual">
+                            <div class="scale-nodes">
+                                <div class="node active"></div>
+                                <div class="node active"></div>
+                                <div class="node active"></div>
+                                <div class="node"></div>
+                                <div class="node"></div>
+                            </div>
+                            <span class="scale-label">Auto-escalado dinámico</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Integración Unificada de Datos -->
+            <div class="data-integration-section">
+                <h3 class="integration-title">Integración Unificada de Datos</h3>
+                <div class="integration-diagram">
+                    <div class="data-types">
+                        <div class="data-type structured" data-animate="1">
+                            <div class="type-icon">📊</div>
+                            <div class="type-label">Estructurados</div>
+                            <div class="type-examples">
+                                <span>• Transacciones</span>
+                                <span>• Métricas</span>
+                                <span>• IDs</span>
+                            </div>
+                        </div>
+                        
+                        <div class="data-type unstructured" data-animate="2">
+                            <div class="type-icon">📝</div>
+                            <div class="type-label">No Estructurados</div>
+                            <div class="type-examples">
+                                <span>• Texto libre</span>
+                                <span>• Documentos</span>
+                                <span>• Logs</span>
+                            </div>
+                        </div>
+                        
+                        <div class="data-type semi-structured" data-animate="3">
+                            <div class="type-icon">🔗</div>
+                            <div class="type-label">Semi-estructurados</div>
+                            <div class="type-examples">
+                                <span>• JSON</span>
+                                <span>• XML</span>
+                                <span>• APIs</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Nodo Central -->
+                    <div class="central-node">
+                        <div class="node-core">
+                            <svg viewBox="0 0 200 200" class="vector-logo">
+                                <defs>
+                                    <linearGradient id="vectorGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:var(--mongodb-green);stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:var(--mongodb-green-dark);stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="100" cy="100" r="90" fill="none" stroke="url(#vectorGradient)" stroke-width="3" opacity="0.3"/>
+                                <circle cx="100" cy="100" r="70" fill="none" stroke="url(#vectorGradient)" stroke-width="3" opacity="0.5"/>
+                                <circle cx="100" cy="100" r="50" fill="none" stroke="url(#vectorGradient)" stroke-width="3" opacity="0.7"/>
+                                <circle cx="100" cy="100" r="30" fill="url(#vectorGradient)"/>
+                            </svg>
+                            <span class="node-label">Vector<br>Search</span>
+                        </div>
+                        <div class="connection-lines">
+                            <div class="line line-1"></div>
+                            <div class="line line-2"></div>
+                            <div class="line line-3"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- MongoDB Atlas Badge -->
+                <div class="atlas-badge-container">
+                    <div class="atlas-badge">
+                        <span class="badge-icon">🍃</span>
+                        <span class="badge-text">Powered by MongoDB Atlas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos específicos para Slide 5 */
+.header-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.main-title {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.mongodb-text {
+    color: var(--mongodb-forest);
+    font-weight: 700;
+}
+
+.vector-text {
+    background: linear-gradient(135deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.3); }
+}
+
+.subtitle-evolution {
+    font-size: 1.3rem;
+    color: var(--mongodb-text-secondary);
+    font-style: italic;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.evolution-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-bottom: 50px;
+}
+
+.feature-card.enhanced {
+    background: var(--mongodb-white);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 6px 25px var(--mongodb-shadow);
+    border: 2px solid transparent;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transform: translateY(30px);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card.enhanced::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.feature-card.enhanced:hover::before {
+    transform: scaleX(1);
+}
+
+.slide.active .feature-card[data-feature="precision"] {
+    animation: slideInUp 0.6s ease forwards;
+    animation-delay: 0.2s;
+}
+
+.slide.active .feature-card[data-feature="realtime"] {
+    animation: slideInUp 0.6s ease forwards;
+    animation-delay: 0.4s;
+}
+
+.slide.active .feature-card[data-feature="scalability"] {
+    animation: slideInUp 0.6s ease forwards;
+    animation-delay: 0.6s;
+}
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.feature-card.enhanced:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 237, 100, 0.2);
+    border-color: var(--mongodb-green);
+}
+
+.feature-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.feature-icon-container {
+    position: relative;
+    width: 50px;
+    height: 50px;
+}
+
+.icon-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--mongodb-green);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(1.3);
+        opacity: 0;
+    }
+}
+
+.feature-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    z-index: 1;
+}
+
+.feature-header h3 {
+    color: var(--mongodb-forest);
+    font-size: 1.3rem;
+    margin: 0;
+}
+
+.feature-body p {
+    font-size: 0.95rem;
+    color: var(--mongodb-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.feature-body strong {
+    color: var(--mongodb-forest);
+    font-weight: 700;
+}
+
+.feature-highlight {
+    background: var(--mongodb-green-light);
+    padding: 12px 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+    font-size: 0.9rem;
+    border-left: 3px solid var(--mongodb-green);
+}
+
+.highlight-icon {
+    font-size: 1.2rem;
+}
+
+.accuracy-comparison {
+    margin-top: 20px;
+}
+
+.comparison-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.comparison-item .label {
+    font-size: 0.85rem;
+    width: 100px;
+    color: var(--mongodb-text-secondary);
+}
+
+.comparison-item .bar {
+    flex: 1;
+    height: 8px;
+    background: var(--mongodb-gray-light-3);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.comparison-item .bar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1.5s ease;
+}
+
+.comparison-item.old .bar::after {
+    background: var(--mongodb-gray);
+    width: 0;
+}
+
+.comparison-item.new .bar::after {
+    background: linear-gradient(90deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+    width: 0;
+}
+
+.slide.active .comparison-item.old .bar::after {
+    width: 75%;
+}
+
+.slide.active .comparison-item.new .bar::after {
+    width: 95%;
+}
+
+.comparison-item .value {
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.comparison-item.new .value {
+    color: var(--mongodb-green);
+}
+
+.realtime-indicator {
+    background: var(--mongodb-forest);
+    color: var(--mongodb-white);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    position: relative;
+}
+
+.indicator-pulse {
+    width: 10px;
+    height: 10px;
+    background: var(--mongodb-green);
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 10px;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.indicator-text {
+    font-size: 0.9rem;
+}
+
+.speed-metrics {
+    margin-top: 8px;
+}
+
+.metric {
+    font-size: 0.85rem;
+    color: var(--mongodb-green);
+}
+
+.scalability-visual {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.scale-nodes {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.node {
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--mongodb-gray);
+    border-radius: 50%;
+    background: var(--mongodb-gray-light-2);
+    transition: all 0.3s ease;
+}
+
+.node.active {
+    background: var(--mongodb-green);
+    border-color: var(--mongodb-green);
+    animation: nodeActivate 2s ease infinite;
+}
+
+@keyframes nodeActivate {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.scale-label {
+    font-size: 0.85rem;
+    color: var(--mongodb-text-secondary);
+    font-style: italic;
+}
+
+.data-integration-section {
+    background: linear-gradient(135deg, var(--mongodb-gray-light-1) 0%, var(--mongodb-white) 100%);
+    border-radius: 25px;
+    padding: 40px;
+    position: relative;
+    box-shadow: 0 8px 30px var(--mongodb-shadow);
+}
+
+.integration-title {
+    text-align: center;
+    color: var(--mongodb-forest);
+    font-size: 1.8rem;
+    margin-bottom: 35px;
+}
+
+.integration-diagram {
+    position: relative;
+    min-height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.data-types {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    position: absolute;
+    top: 0;
+}
+
+.data-type {
+    background: var(--mongodb-white);
+    border-radius: 15px;
+    padding: 20px;
+    width: 180px;
+    box-shadow: 0 4px 15px var(--mongodb-shadow);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.slide.active .data-type[data-animate="1"] {
+    animation: fadeInDown 0.6s ease forwards;
+    animation-delay: 0.8s;
+}
+
+.slide.active .data-type[data-animate="2"] {
+    animation: fadeInDown 0.6s ease forwards;
+    animation-delay: 1s;
+}
+
+.slide.active .data-type[data-animate="3"] {
+    animation: fadeInDown 0.6s ease forwards;
+    animation-delay: 1.2s;
+}
+
+@keyframes fadeInDown {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.data-type:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px rgba(0, 237, 100, 0.15);
+}
+
+.type-icon {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.type-label {
+    font-weight: 700;
+    color: var(--mongodb-forest);
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.type-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.type-examples span {
+    font-size: 0.8rem;
+    color: var(--mongodb-text-secondary);
+}
+
+.central-node {
+    position: relative;
+    z-index: 10;
+    margin-top: 100px;
+}
+
+.node-core {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vector-logo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    animation: rotate 15s linear infinite;
+}
+
+.vector-logo circle {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.node-label {
+    position: relative;
+    z-index: 1;
+    color: var(--mongodb-white);
+    font-weight: 700;
+    font-size: 1.3rem;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.connection-lines {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.line {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--mongodb-green) 50%, transparent 100%);
+    transform-origin: center;
+}
+
+.line-1 {
+    width: 150px;
+    top: 50%;
+    left: -150px;
+    transform: rotate(-30deg);
+}
+
+.line-2 {
+    width: 150px;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) rotate(-90deg);
+}
+
+.line-3 {
+    width: 150px;
+    top: 50%;
+    right: -150px;
+    transform: rotate(30deg);
+}
+
+.atlas-badge-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.atlas-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--mongodb-green);
+    color: var(--mongodb-white);
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 20px rgba(0, 237, 100, 0.3);
+    animation: float 3s ease-in-out infinite;
+}
+
+.badge-icon {
+    font-size: 1.3rem;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+</style>
+
+<script>
+// Script específico para Slide 5
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación de hover para las feature cards
+    const featureCards = document.querySelectorAll('.slide[data-slide="5"] .feature-card');
+    
+    featureCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            const icon = this.querySelector('.feature-icon');
+            if (icon) {
+                icon.style.transform = 'translate(-50%, -50%) scale(1.2)';
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            const icon = this.querySelector('.feature-icon');
+            if (icon) {
+                icon.style.transform = 'translate(-50%, -50%) scale(1)';
+            }
+        });
+    });
+    
+    // Observer para activar animaciones cuando el slide sea visible
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.target.classList.contains('active') && 
+                mutation.target.getAttribute('data-slide') === '5') {
+                
+                // Animar las barras de comparación
+                setTimeout(() => {
+                    const bars = mutation.target.querySelectorAll('.comparison-item .bar');
+                    bars.forEach(bar => {
+                        bar.classList.add('animate');
+                    });
+                }, 500);
+                
+                // Animar los nodos de escalabilidad
+                const nodes = mutation.target.querySelectorAll('.node');
+                let delay = 0;
+                nodes.forEach((node, index) => {
+                    if (index < 3) {
+                        setTimeout(() => {
+                            node.classList.add('active');
+                        }, delay);
+                        delay += 200;
+                    }
+                });
+                
+                // Simular activación de más nodos
+                setTimeout(() => {
+                    nodes[3].classList.add('active');
+                    setTimeout(() => {
+                        nodes[4].classList.add('active');
+                    }, 300);
+                }, 2000);
+            }
+        });
+    });
+    
+    const slide5 = document.querySelector('[data-slide="5"]');
+    if (slide5) {
+        observer.observe(slide5, { attributes: true, attributeFilter: ['class'] });
+    }
+});
+</script>
+
+    <!-- Slide 7: Flujo de Trabajo Multi-Modal de Detección -->
+<div class="slide" data-slide="7">
+    <div class="slide-content">
+        <h2>Flujo de Trabajo Multi-Modal de Detección</h2>
+        <p class="subtitle-text">La detección de fraude y AML requiere múltiples métodos y un enfoque multi-modal</p>
+        
+        <div class="workflow-container">
+            <h3>Proceso de Detección: Control Function 1.0 a 3.0</h3>
+            
+            <div class="workflow-steps">
+                <!-- Step 1 -->
+                <div class="workflow-step" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Aplicación de Reglas</h4>
+                        <p>Se aplican primero las reglas basadas en el consumidor/sistema</p>
+                        <span class="risk-badge risk-1">Riesgo 1.0</span>
+                    </div>
+                    <div class="step-arrow">→</div>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="workflow-step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Análisis Predictivo</h4>
+                        <p>Se utilizan modelos de ML para determinar la probabilidad de fraude</p>
+                        <span class="risk-badge risk-2">Riesgo 2.0</span>
+                    </div>
+                    <div class="step-arrow">→</div>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="workflow-step expanded" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Búsqueda Vectorial (Cross-Validation)</h4>
+                        <span class="risk-badge risk-3">Riesgo 3.0</span>
+                        <ul class="vector-process">
+                            <li class="process-item">
+                                <span class="process-icon">◈</span>
+                                El texto agregado de la transacción entrante se utiliza para generar <em>embeddings</em>
+                            </li>
+                            <li class="process-item">
+                                <span class="process-icon">◈</span>
+                                Se utiliza <strong>Atlas Vector Search</strong> para analizar estos <em>embeddings</em> comparándolos con transacciones previas similares marcadas como sospechosas
+                            </li>
+                            <li class="process-item">
+                                <span class="process-icon">◈</span>
+                                El motor de búsqueda semántica (ej. algoritmo de votación) determina si la transacción se encuentra dentro del umbral de alto riesgo
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="step-arrow">→</div>
+                </div>
+                
+                <!-- Step 4: Result -->
+                <div class="workflow-result">
+                    <div class="step-number">✓</div>
+                    <div class="step-content">
+                        <h4>Resultado</h4>
+                        <div class="result-options">
+                            <div class="result-box reject">
+                                <span class="result-icon">⛔</span>
+                                <p><strong>Fraudulenta/Sospechosa:</strong><br>Transacción rechazada</p>
+                            </div>
+                            <div class="result-box approve">
+                                <span class="result-icon">✅</span>
+                                <p><strong>Legítima:</strong><br>Transacción aprobada</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Visualización animada del flujo -->
+        <div class="flow-animation">
+            <div class="flow-dot" id="flowDot"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos específicos para Slide 7 */
+.subtitle-text {
+    font-size: 1.3rem;
+    color: var(--mongodb-text-secondary);
+    margin-bottom: 40px;
+    font-style: italic;
+}
+
+.workflow-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.workflow-container h3 {
+    color: var(--mongodb-forest);
+    margin-bottom: 35px;
+    font-size: 1.8rem;
+}
+
+.workflow-steps {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+    padding: 20px 0;
+}
+
+.workflow-step {
+    flex: 1;
+    position: relative;
+    background: var(--mongodb-white);
+    border: 2px solid var(--mongodb-border);
+    border-radius: 16px;
+    padding: 25px 20px;
+    margin: 0 10px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    min-height: 200px;
+}
+
+.workflow-step:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(0, 237, 100, 0.15);
+    border-color: var(--mongodb-green);
+}
+
+.workflow-step.expanded {
+    flex: 1.5;
+    background: linear-gradient(135deg, var(--mongodb-gray-light-1) 0%, var(--mongodb-white) 100%);
+    border-color: var(--mongodb-green);
+    box-shadow: 0 8px 24px rgba(0, 237, 100, 0.1);
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    background: var(--mongodb-green);
+    color: var(--mongodb-white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    animation: pulse 2s infinite;
+}
+
+.step-content h4 {
+    font-size: 1.2rem;
+    color: var(--mongodb-forest);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.step-content p {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--mongodb-text-secondary);
+    margin-bottom: 15px;
+}
+
+.risk-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.risk-1 {
+    background: var(--mongodb-gray-light-2);
+    color: var(--mongodb-gray-dark);
+}
+
+.risk-2 {
+    background: #FFF4E6;
+    color: #B07C0C;
+}
+
+.risk-3 {
+    background: var(--mongodb-green-light);
+    color: var(--mongodb-green-dark);
+}
+
+.step-arrow {
+    position: absolute;
+    right: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    color: var(--mongodb-green);
+    z-index: 1;
+    animation: float 2s ease-in-out infinite;
+}
+
+.vector-process {
+    list-style: none;
+    margin-top: 20px;
+    padding: 0;
+}
+
+.process-item {
+    margin: 12px 0;
+    padding-left: 30px;
+    position: relative;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--mongodb-text-primary);
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+}
+
+.process-item:nth-child(1) { animation-delay: 0.2s; }
+.process-item:nth-child(2) { animation-delay: 0.4s; }
+.process-item:nth-child(3) { animation-delay: 0.6s; }
+
+.process-icon {
+    position: absolute;
+    left: 0;
+    top: 2px;
+    color: var(--mongodb-green);
+    font-size: 1.2rem;
+}
+
+.process-item em {
+    color: var(--mongodb-green);
+    font-style: normal;
+    font-weight: 600;
+}
+
+.process-item strong {
+    color: var(--mongodb-forest);
+    font-weight: 700;
+}
+
+.workflow-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.workflow-result .step-number {
+    background: linear-gradient(135deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+}
+
+.workflow-result .step-content {
+    margin-top: 20px;
+}
+
+.result-options {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.result-box {
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    min-width: 140px;
+    transition: all 0.3s ease;
+}
+
+.result-box.reject {
+    background: #FEE;
+    border: 2px solid #FCC;
+}
+
+.result-box.approve {
+    background: var(--mongodb-green-light);
+    border: 2px solid var(--mongodb-green);
+}
+
+.result-box:hover {
+    transform: scale(1.05);
+}
+
+.result-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.result-box p {
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.flow-animation {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 4px;
+    background: var(--mongodb-gray-light-3);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.flow-dot {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: var(--mongodb-green);
+    border-radius: 50%;
+    top: -8px;
+    left: -20px;
+    box-shadow: 0 0 20px rgba(0, 237, 100, 0.5);
+    animation: flowMove 8s linear infinite;
+}
+
+@keyframes flowMove {
+    0% { left: -20px; }
+    100% { left: calc(100% + 20px); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animaciones interactivas */
+.slide.active .workflow-step {
+    animation: slideInStep 0.6s ease forwards;
+    opacity: 0;
+}
+
+.slide.active .workflow-step:nth-child(1) { animation-delay: 0.1s; }
+.slide.active .workflow-step:nth-child(2) { animation-delay: 0.3s; }
+.slide.active .workflow-step:nth-child(3) { animation-delay: 0.5s; }
+.slide.active .workflow-result { animation-delay: 0.7s; }
+
+@keyframes slideInStep {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+</style>
+
+<script>
+// Script específico para Slide 7
+document.addEventListener('DOMContentLoaded', function() {
+    // Agregar interactividad a los pasos del workflow
+    const workflowSteps = document.querySelectorAll('.workflow-step');
+    
+    workflowSteps.forEach((step, index) => {
+        step.addEventListener('mouseenter', function() {
+            // Resaltar el paso actual
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+            
+            // Animar el número del paso
+            const stepNumber = this.querySelector('.step-number');
+            if (stepNumber) {
+                stepNumber.style.animation = 'pulse 0.5s ease';
+            }
+        });
+        
+        step.addEventListener('mouseleave', function() {
+            // Restaurar el estado normal
+            if (!this.classList.contains('expanded')) {
+                this.style.transform = 'translateY(0) scale(1)';
+            } else {
+                this.style.transform = 'translateY(0) scale(1)';
+            }
+        });
+        
+        // Click para expandir detalles
+        step.addEventListener('click', function() {
+            workflowSteps.forEach(s => s.classList.remove('expanded'));
+            this.classList.add('expanded');
+        });
+    });
+    
+    // Reiniciar animaciones cuando el slide se active
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.target.classList.contains('active') && 
+                mutation.target.getAttribute('data-slide') === '7') {
+                // Reiniciar animaciones
+                const processItems = mutation.target.querySelectorAll('.process-item');
+                processItems.forEach((item, index) => {
+                    item.style.animation = 'none';
+                    setTimeout(() => {
+                        item.style.animation = `fadeInUp 0.6s ease forwards`;
+                        item.style.animationDelay = `${0.2 + (index * 0.2)}s`;
+                    }, 100);
+                });
+            }
+        });
+    });
+    
+    const slide7 = document.querySelector('[data-slide="7"]');
+    if (slide7) {
+        observer.observe(slide7, { attributes: true, attributeFilter: ['class'] });
+    }
+});
+</script>
+
+
+<!-- Slide 8: Extensión a la Lucha contra el Lavado de Dinero (AML) -->
+<div class="slide" data-slide="8">
+    <div class="slide-content">
+        <h2>Extensión a la Lucha contra el Lavado de Dinero (AML)</h2>
+        <p class="subtitle-text">El AML se beneficia del mismo concepto, aunque presenta complejidades relacionales adicionales</p>
+        
+        <div class="aml-container">
+            <!-- Sección principal dividida en dos columnas -->
+            <div class="aml-grid">
+                <!-- Columna izquierda: Desafío Relacional -->
+                <div class="aml-section challenge-section">
+                    <h3><span class="section-icon">⚠️</span> AML: Un Desafío Relacional</h3>
+                    <div class="challenge-cards">
+                        <div class="challenge-card" data-animate="1">
+                            <div class="card-icon">👤</div>
+                            <h4>Identidades Sintéticas</h4>
+                            <p>A menudo involucra la creación de identidades sintéticas y el desvío de dinero a cuentas <em>offshore</em></p>
+                            <div class="risk-indicator high">Alto Riesgo</div>
+                        </div>
+                        
+                        <div class="challenge-card" data-animate="2">
+                            <div class="card-icon">🔗</div>
+                            <h4>Relaciones Complejas</h4>
+                            <p>Las transacciones de AML pueden implicar <strong>múltiples partes y relaciones complicadas</strong></p>
+                            <div class="transaction-flow">
+                                <span class="flow-node">Origen</span>
+                                <span class="flow-arrow">→</span>
+                                <span class="flow-node multiple">Múltiples Intermediarios</span>
+                                <span class="flow-arrow">→</span>
+                                <span class="flow-node">Beneficiarios</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Columna derecha: Vector Search en AML -->
+                <div class="aml-section solution-section">
+                    <h3><span class="section-icon">🔍</span> Uso de Vector Search en AML</h3>
+                    <div class="vector-steps">
+                        <div class="vector-step" data-step="1">
+                            <div class="step-header">
+                                <span class="step-num">1</span>
+                                <h4>Arquitectura de Plantilla</h4>
+                            </div>
+                            <p>Se aplica una arquitectura de plantilla similar para ingerir datos</p>
+                        </div>
+                        
+                        <div class="vector-step" data-step="2">
+                            <div class="step-header">
+                                <span class="step-num">2</span>
+                                <h4>Captura Completa de Datos</h4>
+                            </div>
+                            <p>Se capturan los datos de la transacción de principio a fin, incluyendo todas las <strong>identidades involucradas</strong> y los datos relevantes</p>
+                        </div>
+                        
+                        <div class="vector-step" data-step="3">
+                            <div class="step-header">
+                                <span class="step-num">3</span>
+                                <h4>Vectorización Enriquecida</h4>
+                            </div>
+                            <p>Se vectorizan las relaciones y los perfiles de riesgo, incorporando también información no estructurada</p>
+                            <div class="data-sources">
+                                <div class="data-source">
+                                    <span class="source-icon">📰</span>
+                                    <span>Noticias Negativas</span>
+                                </div>
+                                <div class="data-source">
+                                    <span class="source-icon">📡</span>
+                                    <span>RSS Feeds</span>
+                                </div>
+                                <div class="data-source">
+                                    <span class="source-icon">👥</span>
+                                    <span>Perfiles de Participantes</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Visualización de red AML -->
+            <div class="aml-network-visualization">
+                <h3>Detección de Patrones de Lavado con MongoDB Atlas</h3>
+                <div class="network-container">
+                    <svg id="amlNetwork" viewBox="0 0 800 300">
+                        <!-- Se llenará dinámicamente con JavaScript -->
+                    </svg>
+                </div>
+                <div class="detection-status">
+                    <span class="status-indicator"></span>
+                    <span class="status-text">Analizando patrones de transacción...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos específicos para Slide 8 */
+.aml-container {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.aml-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.aml-section {
+    background: var(--mongodb-white);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 20px var(--mongodb-shadow);
+    transition: all 0.3s ease;
+}
+
+.aml-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px var(--mongodb-shadow);
+}
+
+.aml-section h3 {
+    color: var(--mongodb-forest);
+    font-size: 1.6rem;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-icon {
+    font-size: 1.8rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+.challenge-section {
+    background: linear-gradient(135deg, #FFF8F8 0%, var(--mongodb-white) 100%);
+    border: 2px solid #FFE5E5;
+}
+
+.solution-section {
+    background: linear-gradient(135deg, var(--mongodb-green-light) 0%, var(--mongodb-white) 100%);
+    border: 2px solid var(--mongodb-green);
+}
+
+.challenge-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.challenge-card {
+    background: var(--mongodb-white);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+.slide.active .challenge-card[data-animate="1"] {
+    animation: slideInLeft 0.6s ease forwards;
+    animation-delay: 0.2s;
+}
+
+.slide.active .challenge-card[data-animate="2"] {
+    animation: slideInLeft 0.6s ease forwards;
+    animation-delay: 0.4s;
+}
+
+@keyframes slideInLeft {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.challenge-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    animation: pulse 2s infinite;
+}
+
+.challenge-card h4 {
+    color: var(--mongodb-forest);
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.challenge-card p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--mongodb-text-secondary);
+    margin-bottom: 15px;
+}
+
+.challenge-card em {
+    color: #D32F2F;
+    font-style: italic;
+}
+
+.challenge-card strong {
+    color: var(--mongodb-forest);
+    font-weight: 700;
+}
+
+.risk-indicator {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.risk-indicator.high {
+    background: #FFEBEE;
+    color: #C62828;
+    border: 1px solid #EF5350;
+}
+
+.transaction-flow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 15px;
+    padding: 12px;
+    background: var(--mongodb-gray-light-2);
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.flow-node {
+    padding: 6px 10px;
+    background: var(--mongodb-white);
+    border-radius: 6px;
+    border: 1px solid var(--mongodb-border);
+    white-space: nowrap;
+}
+
+.flow-node.multiple {
+    background: #FFF3E0;
+    border-color: #FFB74D;
+    font-weight: 600;
+}
+
+.flow-arrow {
+    color: var(--mongodb-green);
+    font-weight: bold;
+}
+
+.vector-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.vector-step {
+    background: var(--mongodb-white);
+    border-radius: 12px;
+    padding: 18px;
+    border-left: 4px solid var(--mongodb-green);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateX(20px);
+}
+
+.slide.active .vector-step[data-step="1"] {
+    animation: slideInRight 0.6s ease forwards;
+    animation-delay: 0.3s;
+}
+
+.slide.active .vector-step[data-step="2"] {
+    animation: slideInRight 0.6s ease forwards;
+    animation-delay: 0.5s;
+}
+
+.slide.active .vector-step[data-step="3"] {
+    animation: slideInRight 0.6s ease forwards;
+    animation-delay: 0.7s;
+}
+
+@keyframes slideInRight {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.vector-step:hover {
+    transform: translateX(-5px);
+    box-shadow: 0 4px 15px rgba(0, 237, 100, 0.15);
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.step-num {
+    width: 28px;
+    height: 28px;
+    background: var(--mongodb-green);
+    color: var(--mongodb-white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.vector-step h4 {
+    color: var(--mongodb-forest);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.vector-step p {
+    font-size: 0.9rem;
+    color: var(--mongodb-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.data-sources {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.data-source {
+    background: var(--mongodb-gray-light-1);
+    padding: 8px 14px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--mongodb-text-primary);
+    border: 1px solid var(--mongodb-border);
+    transition: all 0.2s ease;
+}
+
+.data-source:hover {
+    background: var(--mongodb-green-light);
+    border-color: var(--mongodb-green);
+    transform: translateY(-2px);
+}
+
+.source-icon {
+    font-size: 1.1rem;
+}
+
+.aml-network-visualization {
+    background: var(--mongodb-forest);
+    border-radius: 20px;
+    padding: 30px;
+    margin-top: 30px;
+    box-shadow: 0 8px 30px rgba(0, 30, 43, 0.15);
+}
+
+.aml-network-visualization h3 {
+    color: var(--mongodb-white);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+}
+
+.network-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+}
+
+#amlNetwork {
+    width: 100%;
+    height: 100%;
+}
+
+.detection-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background: rgba(0, 237, 100, 0.1);
+    border-radius: 30px;
+    border: 1px solid var(--mongodb-green);
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    background: var(--mongodb-green);
+    border-radius: 50%;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.status-text {
+    color: var(--mongodb-green);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+</style>
+
+<script>
+// Script específico para Slide 8
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para crear la visualización de red AML
+    function createAMLNetwork() {
+        const svg = document.getElementById('amlNetwork');
+        if (!svg) return;
+        
+        // Limpiar SVG existente
+        svg.innerHTML = '';
+        
+        // Definir nodos y conexiones
+        const nodes = [
+            { id: 1, x: 100, y: 150, label: 'Origen', risk: 'low' },
+            { id: 2, x: 250, y: 80, label: 'Shell Co. 1', risk: 'medium' },
+            { id: 3, x: 250, y: 220, label: 'Shell Co. 2', risk: 'medium' },
+            { id: 4, x: 400, y: 100, label: 'Intermediario', risk: 'high' },
+            { id: 5, x: 400, y: 200, label: 'Cuenta Offshore', risk: 'high' },
+            { id: 6, x: 550, y: 80, label: 'Beneficiario 1', risk: 'high' },
+            { id: 7, x: 550, y: 150, label: 'Beneficiario 2', risk: 'high' },
+            { id: 8, x: 550, y: 220, label: 'Beneficiario 3', risk: 'high' },
+            { id: 9, x: 700, y: 150, label: 'Destino Final', risk: 'critical' }
+        ];
+        
+        const connections = [
+            { from: 1, to: 2 },
+            { from: 1, to: 3 },
+            { from: 2, to: 4 },
+            { from: 3, to: 5 },
+            { from: 4, to: 6 },
+            { from: 4, to: 7 },
+            { from: 5, to: 7 },
+            { from: 5, to: 8 },
+            { from: 6, to: 9 },
+            { from: 7, to: 9 },
+            { from: 8, to: 9 }
+        ];
+        
+        // Crear conexiones
+        connections.forEach((conn, index) => {
+            const fromNode = nodes.find(n => n.id === conn.from);
+            const toNode = nodes.find(n => n.id === conn.to);
+            
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', fromNode.x);
+            line.setAttribute('y1', fromNode.y);
+            line.setAttribute('x2', toNode.x);
+            line.setAttribute('y2', toNode.y);
+            line.setAttribute('stroke', '#00ED64');
+            line.setAttribute('stroke-width', '2');
+            line.setAttribute('opacity', '0');
+            line.style.animation = `fadeIn 0.5s ease forwards`;
+            line.style.animationDelay = `${index * 0.1}s`;
+            
+            svg.appendChild(line);
+        });
+        
+        // Crear nodos
+        nodes.forEach((node, index) => {
+            const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            g.style.opacity = '0';
+            g.style.animation = `fadeIn 0.5s ease forwards`;
+            g.style.animationDelay = `${index * 0.15 + 0.5}s`;
+            
+            // Círculo del nodo
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', node.x);
+            circle.setAttribute('cy', node.y);
+            circle.setAttribute('r', '25');
+            
+            // Color según nivel de riesgo
+            const colors = {
+                low: '#4CAF50',
+                medium: '#FFA726',
+                high: '#EF5350',
+                critical: '#B71C1C'
+            };
+            circle.setAttribute('fill', colors[node.risk] || '#00ED64');
+            circle.setAttribute('stroke', '#FFFFFF');
+            circle.setAttribute('stroke-width', '3');
+            circle.style.cursor = 'pointer';
+            
+            // Texto del nodo
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', node.x);
+            text.setAttribute('y', node.y + 40);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('fill', '#FFFFFF');
+            text.setAttribute('font-size', '11');
+            text.setAttribute('font-weight', '500');
+            text.textContent = node.label;
+            
+            // Animación de pulso para nodos de alto riesgo
+            if (node.risk === 'high' || node.risk === 'critical') {
+                circle.style.animation = 'nodePulse 2s infinite';
+            }
+            
+            g.appendChild(circle);
+            g.appendChild(text);
+            svg.appendChild(g);
+            
+            // Interacción hover
+            g.addEventListener('mouseenter', function() {
+                circle.setAttribute('r', '30');
+                circle.setAttribute('fill-opacity', '0.8');
+            });
+            
+            g.addEventListener('mouseleave', function() {
+                circle.setAttribute('r', '25');
+                circle.setAttribute('fill-opacity', '1');
+            });
+        });
+    }
+    
+    // Crear la visualización cuando el slide esté activo
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.target.classList.contains('active') && 
+                mutation.target.getAttribute('data-slide') === '8') {
+                setTimeout(createAMLNetwork, 200);
+                
+                // Actualizar el estado de detección
+                setTimeout(() => {
+                    const statusText = mutation.target.querySelector('.status-text');
+                    if (statusText) {
+                        statusText.textContent = 'Patrón sospechoso detectado - Alto riesgo de AML';
+                        statusText.style.color = '#FFB74D';
+                    }
+                }, 3000);
+            }
+        });
+    });
+    
+    const slide8 = document.querySelector('[data-slide="8"]');
+    if (slide8) {
+        observer.observe(slide8, { attributes: true, attributeFilter: ['class'] });
+    }
+});
+
+// Agregar estilos de animación adicionales
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+        }
+    }
+    
+    @keyframes nodePulse {
+        0%, 100% {
+            transform: scale(1);
+            filter: brightness(1);
+        }
+        50% {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+        }
+    }
+`;
+document.head.appendChild(styleSheet);
+</script>
+
+<!-- Slide 9: La Próxima Frontera: RAG y LLMs -->
+<div class="slide" data-slide="9">
+    <div class="slide-content">
+        <h2>La Próxima Frontera: <span class="gradient-text">RAG y LLMs</span></h2>
+        <p class="subtitle-text">Los desarrolladores buscan incluir la arquitectura RAG (<em>Retrieval Augmented Generation</em>) y modelos de lenguaje grandes (LLMs) para mejorar la precisión del Riesgo 3.0</p>
+        
+        <div class="rag-container">
+            <!-- Pipeline visual de RAG -->
+            <div class="rag-pipeline">
+                <div class="pipeline-step" data-step="1">
+                    <div class="step-icon-container">
+                        <div class="step-icon">🧠</div>
+                        <div class="step-number">1</div>
+                    </div>
+                    <div class="step-content">
+                        <h3>Verificación LLM</h3>
+                        <p>Se puede usar un LLM propietario, entrenado con:</p>
+                        <ul class="training-list">
+                            <li><span class="list-icon">📊</span> Datos específicos del dominio</li>
+                            <li><span class="list-icon">📈</span> Historial de transacciones</li>
+                            <li><span class="list-icon">📚</span> Estudios de casos de fraude</li>
+                        </ul>
+                    </div>
+                    <div class="pipeline-connector">→</div>
+                </div>
+
+                <div class="pipeline-step" data-step="2">
+                    <div class="step-icon-container">
+                        <div class="step-icon">🎯</div>
+                        <div class="step-number">2</div>
+                    </div>
+                    <div class="step-content">
+                        <h3>Mejora de la Precisión</h3>
+                        <p>El LLM puede verificar las transacciones fraudulentas detectadas</p>
+                        <div class="accuracy-meter">
+                            <div class="meter-label">Precisión de Detección</div>
+                            <div class="meter-bar">
+                                <div class="meter-fill" data-value="95"></div>
+                            </div>
+                            <div class="meter-value">95%</div>
+                        </div>
+                    </div>
+                    <div class="pipeline-connector">→</div>
+                </div>
+
+                <div class="pipeline-step" data-step="3">
+                    <div class="step-icon-container">
+                        <div class="step-icon">💬</div>
+                        <div class="step-number">3</div>
+                    </div>
+                    <div class="step-content">
+                        <h3>Contexto Adicional</h3>
+                        <p>Se combina la información de la detección con los datos de gestión de casos</p>
+                        <div class="context-sources">
+                            <div class="context-item">
+                                <span class="context-icon">📞</span>
+                                <span>Registros de servicio al cliente</span>
+                            </div>
+                            <div class="context-item">
+                                <span class="context-icon">📝</span>
+                                <span>Interacciones comprador-vendedor</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección central destacada -->
+            <div class="core-foundation">
+                <div class="foundation-content">
+                    <div class="foundation-icon">
+                        <svg viewBox="0 0 100 100" class="vector-icon">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--mongodb-green)" stroke-width="2" opacity="0.3"/>
+                            <circle cx="50" cy="50" r="35" fill="none" stroke="var(--mongodb-green)" stroke-width="2" opacity="0.5"/>
+                            <circle cx="50" cy="50" r="25" fill="none" stroke="var(--mongodb-green)" stroke-width="2" opacity="0.7"/>
+                            <circle cx="50" cy="50" r="15" fill="var(--mongodb-green)"/>
+                        </svg>
+                    </div>
+                    <h3>Vector Search es la Base</h3>
+                    <p><strong>Vector Search</strong> es el paso fundamental y el ingrediente principal (el "núcleo") para cualquier arquitectura de IA Generativa</p>
+                    <div class="foundation-benefits">
+                        <div class="benefit-card">
+                            <span class="benefit-icon">⚡</span>
+                            <span>Búsqueda Semántica</span>
+                        </div>
+                        <div class="benefit-card">
+                            <span class="benefit-icon">🔗</span>
+                            <span>Conexión con LLMs</span>
+                        </div>
+                        <div class="benefit-card">
+                            <span class="benefit-icon">📊</span>
+                            <span>Datos Contextuales</span>
+                        </div>
+                        <div class="benefit-card">
+                            <span class="benefit-icon">🚀</span>
+                            <span>Tiempo Real</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diagrama de arquitectura RAG -->
+            <div class="rag-architecture">
+                <h4>Arquitectura RAG con MongoDB Atlas</h4>
+                <div class="architecture-flow">
+                    <div class="arch-component input">
+                        <span class="comp-icon">📥</span>
+                        <span>Consulta</span>
+                    </div>
+                    <div class="arch-arrow">→</div>
+                    <div class="arch-component vector">
+                        <span class="comp-icon">🔍</span>
+                        <span>Vector Search</span>
+                        <span class="comp-badge">MongoDB Atlas</span>
+                    </div>
+                    <div class="arch-arrow">→</div>
+                    <div class="arch-component retrieval">
+                        <span class="comp-icon">📚</span>
+                        <span>Documentos Relevantes</span>
+                    </div>
+                    <div class="arch-arrow">→</div>
+                    <div class="arch-component llm">
+                        <span class="comp-icon">🤖</span>
+                        <span>LLM</span>
+                    </div>
+                    <div class="arch-arrow">→</div>
+                    <div class="arch-component output">
+                        <span class="comp-icon">✅</span>
+                        <span>Respuesta Mejorada</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos específicos para Slide 9 */
+.gradient-text {
+    background: linear-gradient(135deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+.rag-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.rag-pipeline {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.pipeline-step {
+    background: var(--mongodb-white);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 20px var(--mongodb-shadow);
+    position: relative;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.slide.active .pipeline-step[data-step="1"] {
+    animation: fadeInUp 0.6s ease forwards;
+    animation-delay: 0.2s;
+}
+
+.slide.active .pipeline-step[data-step="2"] {
+    animation: fadeInUp 0.6s ease forwards;
+    animation-delay: 0.4s;
+}
+
+.slide.active .pipeline-step[data-step="3"] {
+    animation: fadeInUp 0.6s ease forwards;
+    animation-delay: 0.6s;
+}
+
+.pipeline-step:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 237, 100, 0.15);
+}
+
+.step-icon-container {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+}
+
+.step-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--mongodb-green-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+.step-number {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 24px;
+    height: 24px;
+    background: var(--mongodb-green);
+    color: var(--mongodb-white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.pipeline-step h3 {
+    color: var(--mongodb-forest);
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.pipeline-step p {
+    font-size: 0.95rem;
+    color: var(--mongodb-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.training-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.training-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 0.9rem;
+    color: var(--mongodb-text-primary);
+}
+
+.list-icon {
+    font-size: 1.1rem;
+}
+
+.pipeline-connector {
+    position: absolute;
+    right: -35px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    color: var(--mongodb-green);
+    font-weight: bold;
+    z-index: 1;
+    animation: pulse 2s infinite;
+}
+
+.accuracy-meter {
+    margin-top: 15px;
+}
+
+.meter-label {
+    font-size: 0.85rem;
+    color: var(--mongodb-text-secondary);
+    margin-bottom: 8px;
+}
+
+.meter-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--mongodb-gray-light-3);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.meter-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+    width: 0%;
+    border-radius: 4px;
+    transition: width 2s ease;
+}
+
+.slide.active .meter-fill {
+    width: 95%;
+}
+
+.meter-value {
+    text-align: right;
+    margin-top: 5px;
+    font-weight: 700;
+    color: var(--mongodb-green);
+    font-size: 1.1rem;
+}
+
+.context-sources {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.context-item {
+    background: var(--mongodb-gray-light-1);
+    padding: 10px 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.context-item:hover {
+    background: var(--mongodb-green-light);
+    transform: translateX(5px);
+}
+
+.context-icon {
+    font-size: 1.2rem;
+}
+
+.core-foundation {
+    background: linear-gradient(135deg, var(--mongodb-forest) 0%, #0A2540 100%);
+    border-radius: 20px;
+    padding: 40px;
+    margin: 40px 0;
+    box-shadow: 0 10px 40px rgba(0, 30, 43, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.core-foundation::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(0, 237, 100, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(0, 237, 100, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.foundation-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.foundation-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+    position: relative;
+}
+
+.vector-icon {
+    width: 100%;
+    height: 100%;
+    animation: rotate 10s linear infinite;
+}
+
+.vector-icon circle {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.foundation-content h3 {
+    color: var(--mongodb-white);
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.foundation-content p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto 30px;
+    line-height: 1.6;
+}
+
+.foundation-content strong {
+    color: var(--mongodb-green);
+}
+
+.foundation-benefits {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.benefit-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 237, 100, 0.3);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.benefit-card:hover {
+    background: rgba(0, 237, 100, 0.2);
+    transform: translateY(-5px);
+    border-color: var(--mongodb-green);
+}
+
+.benefit-icon {
+    font-size: 1.8rem;
+    display: block;
+}
+
+.benefit-card span:last-child {
+    color: var(--mongodb-white);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.rag-architecture {
+    background: var(--mongodb-gray-light-1);
+    border-radius: 16px;
+    padding: 30px;
+    margin-top: 30px;
+}
+
+.rag-architecture h4 {
+    text-align: center;
+    color: var(--mongodb-forest);
+    font-size: 1.3rem;
+    margin-bottom: 25px;
+}
+
+.architecture-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 20px 10px;
+}
+
+.arch-component {
+    background: var(--mongodb-white);
+    border: 2px solid var(--mongodb-border);
+    border-radius: 12px;
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.arch-component:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px var(--mongodb-shadow);
+}
+
+.arch-component.input {
+    border-color: #2196F3;
+    background: #E3F2FD;
+}
+
+.arch-component.vector {
+    border-color: var(--mongodb-green);
+    background: var(--mongodb-green-light);
+}
+
+.arch-component.retrieval {
+    border-color: #FF9800;
+    background: #FFF3E0;
+}
+
+.arch-component.llm {
+    border-color: #9C27B0;
+    background: #F3E5F5;
+}
+
+.arch-component.output {
+    border-color: #4CAF50;
+    background: #E8F5E9;
+}
+
+.comp-icon {
+    font-size: 1.5rem;
+}
+
+.comp-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: var(--mongodb-green);
+    color: var(--mongodb-white);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.arch-arrow {
+    font-size: 1.5rem;
+    color: var(--mongodb-green);
+    font-weight: bold;
+    animation: pulse 2s infinite;
+}
+
+.arch-component span:not(.comp-icon):not(.comp-badge) {
+    font-size: 0.85rem;
+    text-align: center;
+    color: var(--mongodb-text-primary);
+    font-weight: 500;
+}
+</style>
+
+<script>
+// Script específico para Slide 9
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación de las métricas de precisión
+    function animateAccuracy() {
+        const meterFills = document.querySelectorAll('.slide[data-slide="9"] .meter-fill');
+        meterFills.forEach(fill => {
+            const value = fill.dataset.value;
+            if (value) {
+                setTimeout(() => {
+                    fill.style.width = value + '%';
+                }, 500);
+            }
+        });
+    }
+    
+    // Efecto hover en los componentes del pipeline
+    const pipelineSteps = document.querySelectorAll('.slide[data-slide="9"] .pipeline-step');
+    pipelineSteps.forEach(step => {
+        step.addEventListener('mouseenter', function() {
+            const icon = this.querySelector('.step-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1.1) rotate(10deg)';
+            }
+        });
+        
+        step.addEventListener('mouseleave', function() {
+            const icon = this.querySelector('.step-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1) rotate(0deg)';
+            }
+        });
+    });
+    
+    // Animación de los beneficios al hacer hover
+    const benefitCards = document.querySelectorAll('.benefit-card');
+    benefitCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.addEventListener('mouseenter', function() {
+            const icon = this.querySelector('.benefit-icon');
+            if (icon) {
+                icon.style.animation = 'bounce 0.5s ease';
+                setTimeout(() => {
+                    icon.style.animation = '';
+                }, 500);
+            }
+        });
+    });
+    
+    // Observer para activar animaciones cuando el slide sea visible
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.target.classList.contains('active') && 
+                mutation.target.getAttribute('data-slide') === '9') {
+                animateAccuracy();
+                
+                // Animar los componentes de la arquitectura
+                const archComponents = mutation.target.querySelectorAll('.arch-component');
+                archComponents.forEach((comp, index) => {
+                    comp.style.opacity = '0';
+                    comp.style.transform = 'scale(0.8)';
+                    setTimeout(() => {
+                        comp.style.transition = 'all 0.4s ease';
+                        comp.style.opacity = '1';
+                        comp.style.transform = 'scale(1)';
+                    }, 100 + (index * 100));
+                });
+            }
+        });
+    });
+    
+    const slide9 = document.querySelector('[data-slide="9"]');
+    if (slide9) {
+        observer.observe(slide9, { attributes: true, attributeFilter: ['class'] });
+    }
+});
+
+// Animación adicional para el ícono de vector
+const bounceStyle = document.createElement('style');
+bounceStyle.textContent = `
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+`;
+document.head.appendChild(bounceStyle);
+</script>
+
+<!-- Slide 10: ¿Por qué MongoDB para la Prevención de Fraude y AML? -->
+<div class="slide" data-slide="10">
+    <div class="slide-content">
+        <h2>¿Por qué MongoDB para la Prevención de Fraude y AML?</h2>
+        <div class="main-statement">
+            <div class="statement-icon">🛠️</div>
+            <p class="statement-text"><strong>MongoDB no ofrece solo una herramienta, sino un kit de herramientas completo</strong></p>
+            <span class="platform-badge">Developer Data Platform</span>
+        </div>
+        
+        <div class="mongodb-benefits-container">
+            <h3 class="benefits-title">Ventajas de la Plataforma MongoDB Atlas</h3>
+            
+            <div class="benefits-grid">
+                <!-- Ventaja 1: Sin Sobrecarga Operacional -->
+                <div class="benefit-tile" data-benefit="1">
+                    <div class="benefit-header">
+                        <div class="benefit-icon-wrapper">
+                            <span class="benefit-icon">☁️</span>
+                        </div>
+                        <h4>Sin Sobrecarga Operacional</h4>
+                    </div>
+                    <div class="benefit-content">
+                        <p>Plataforma moderna, multi-nube y completamente gestionada (<em>fully managed</em>)</p>
+                        <div class="benefit-features">
+                            <span class="feature-tag">Multi-nube</span>
+                            <span class="feature-tag">Fully Managed</span>
+                            <span class="feature-tag">Moderna</span>
+                        </div>
+                    </div>
+                    <div class="benefit-visual">
+                        <div class="cloud-icons">
+                            <span class="cloud-icon aws">AWS</span>
+                            <span class="cloud-icon gcp">GCP</span>
+                            <span class="cloud-icon azure">Azure</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ventaja 2: Escalabilidad Sencilla -->
+                <div class="benefit-tile" data-benefit="2">
+                    <div class="benefit-header">
+                        <div class="benefit-icon-wrapper">
+                            <span class="benefit-icon">📈</span>
+                        </div>
+                        <h4>Escalabilidad Sencilla</h4>
+                    </div>
+                    <div class="benefit-content">
+                        <p>Arquitectura escalable que se adapta a conjuntos de datos crecientes</p>
+                        <div class="scalability-highlight">
+                            <span class="highlight-icon">🔍</span>
+                            <span>Nodos de búsqueda dedicados (<em>Search Nodes</em>) para el aislamiento de la carga de trabajo</span>
+                        </div>
+                    </div>
+                    <div class="benefit-visual">
+                        <div class="scale-animation">
+                            <div class="scale-bar"></div>
+                            <div class="scale-bar"></div>
+                            <div class="scale-bar"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ventaja 3: Integración con IA -->
+                <div class="benefit-tile" data-benefit="3">
+                    <div class="benefit-header">
+                        <div class="benefit-icon-wrapper">
+                            <span class="benefit-icon">🤖</span>
+                        </div>
+                        <h4>Integración Tightly Integrada con IA</h4>
+                    </div>
+                    <div class="benefit-content">
+                        <p>La plataforma se integra estrechamente con el ecosistema de IA</p>
+                        <div class="ai-integration">
+                            <span class="integration-badge">💰 Ahorro en costos de integración</span>
+                            <p class="integration-note">MongoDB no es una compañía de LLMs - integración abierta con cualquier proveedor</p>
+                        </div>
+                    </div>
+                    <div class="benefit-visual">
+                        <div class="ai-ecosystem">
+                            <div class="ai-node">OpenAI</div>
+                            <div class="ai-node">Anthropic</div>
+                            <div class="ai-node">Cohere</div>
+                            <div class="ai-node center">MongoDB</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ventaja 4: Vista Única -->
+                <div class="benefit-tile" data-benefit="4">
+                    <div class="benefit-header">
+                        <div class="benefit-icon-wrapper">
+                            <span class="benefit-icon">👁️</span>
+                        </div>
+                        <h4>Creación de una Vista Única</h4>
+                    </div>
+                    <div class="benefit-content">
+                        <p>Facilita la creación de una vista única en torno a:</p>
+                        <ul class="view-list">
+                            <li>Un cliente completo</li>
+                            <li>Las partes de una transacción</li>
+                        </ul>
+                        <p class="crucial-text">Crucial en el espacio de fraude y AML</p>
+                    </div>
+                    <div class="benefit-visual">
+                        <div class="single-view-diagram">
+                            <div class="view-center">360°</div>
+                            <div class="view-orbit"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conclusión -->
+            <div class="conclusion-section">
+                <div class="conclusion-icon">✨</div>
+                <h3>Conclusión</h3>
+                <p>Utilizar MongoDB permite a las organizaciones crear soluciones de detección de fraude y AML más <strong>flexibles</strong> y <strong>preparadas para el futuro</strong></p>
+                <div class="future-ready-badges">
+                    <span class="ready-badge">🚀 Innovación Continua</span>
+                    <span class="ready-badge">🔮 Preparado para el Futuro</span>
+                    <span class="ready-badge">⚡ Respuesta en Tiempo Real</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos específicos para Slide 10 */
+.main-statement {
+    text-align: center;
+    margin: 30px auto 40px;
+    padding: 30px;
+    background: linear-gradient(135deg, var(--mongodb-green-light) 0%, rgba(0, 237, 100, 0.05) 100%);
+    border-radius: 20px;
+    border: 2px solid var(--mongodb-green);
+    position: relative;
+    max-width: 800px;
+}
+
+.statement-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.statement-text {
+    font-size: 1.4rem;
+    color: var(--mongodb-forest);
+    margin: 0;
+}
+
+.platform-badge {
+    display: inline-block;
+    background: var(--mongodb-green);
+    color: var(--mongodb-white);
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 700;
+    margin-top: 15px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 237, 100, 0.3);
+}
+
+.mongodb-benefits-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.benefits-title {
+    text-align: center;
+    color: var(--mongodb-forest);
+    font-size: 1.8rem;
+    margin-bottom: 35px;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.benefit-tile {
+    background: var(--mongodb-white);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 6px 25px var(--mongodb-shadow);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transform: translateY(30px);
+    position: relative;
+    overflow: hidden;
+}
+
+.benefit-tile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.benefit-tile:hover::before {
+    transform: scaleX(1);
+}
+
+.slide.active .benefit-tile[data-benefit="1"] {
+    animation: slideInUp 0.6s ease forwards;
+    animation-delay: 0.2s;
+}
+
+.slide.active .benefit-tile[data-benefit="2"] {
+    animation: slideInUp 0.6s ease forwards;
+    animation-delay: 0.4s;
+}
+
+.slide.active .benefit-tile[data-benefit="3"] {
+    animation: slideInUp 0.6s ease forwards;
+    animation-delay: 0.6s;
+}
+
+.slide.active .benefit-tile[data-benefit="4"] {
+    animation: slideInUp 0.6s ease forwards;
+    animation-delay: 0.8s;
+}
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.benefit-tile:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 40px rgba(0, 237, 100, 0.2);
+}
+
+.benefit-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.benefit-icon-wrapper {
+    width: 50px;
+    height: 50px;
+    background: var(--mongodb-green-light);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.benefit-tile:hover .benefit-icon-wrapper {
+    background: var(--mongodb-green);
+    transform: rotate(10deg) scale(1.1);
+}
+
+.benefit-icon {
+    font-size: 1.8rem;
+}
+
+.benefit-tile:hover .benefit-icon {
+    animation: bounce 0.5s ease;
+}
+
+.benefit-header h4 {
+    color: var(--mongodb-forest);
+    font-size: 1.3rem;
+    margin: 0;
+}
+
+.benefit-content {
+    margin-bottom: 20px;
+}
+
+.benefit-content p {
+    font-size: 1rem;
+    color: var(--mongodb-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.benefit-content em {
+    color: var(--mongodb-green-dark);
+    font-style: italic;
+}
+
+.benefit-features {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.feature-tag {
+    background: var(--mongodb-gray-light-2);
+    color: var(--mongodb-text-primary);
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid var(--mongodb-border);
+}
+
+.scalability-highlight {
+    background: var(--mongodb-green-light);
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    font-size: 0.9rem;
+}
+
+.highlight-icon {
+    font-size: 1.3rem;
+}
+
+.ai-integration {
+    margin-top: 15px;
+}
+
+.integration-badge {
+    display: inline-block;
+    background: #FFF3E0;
+    color: #E65100;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.integration-note {
+    font-size: 0.85rem;
+    color: var(--mongodb-text-secondary);
+    font-style: italic;
+    margin-top: 8px;
+}
+
+.view-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.view-list li {
+    padding: 8px 0;
+    padding-left: 25px;
+    position: relative;
+    font-size: 0.95rem;
+    color: var(--mongodb-text-primary);
+}
+
+.view-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--mongodb-green);
+    font-weight: bold;
+}
+
+.crucial-text {
+    font-weight: 600;
+    color: var(--mongodb-green-dark);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 10px;
+}
+
+.benefit-visual {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cloud-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.cloud-icon {
+    padding: 8px 12px;
+    background: var(--mongodb-gray-light-2);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.cloud-icon:hover {
+    transform: translateY(-5px);
+    background: var(--mongodb-green-light);
+}
+
+.scale-animation {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+.scale-bar {
+    width: 20px;
+    background: var(--mongodb-green);
+    border-radius: 4px 4px 0 0;
+    animation: scaleGrow 2s ease-in-out infinite;
+}
+
+.scale-bar:nth-child(1) {
+    height: 30px;
+    animation-delay: 0s;
+}
+
+.scale-bar:nth-child(2) {
+    height: 50px;
+    animation-delay: 0.2s;
+}
+
+.scale-bar:nth-child(3) {
+    height: 70px;
+    animation-delay: 0.4s;
+}
+
+@keyframes scaleGrow {
+    0%, 100% {
+        transform: scaleY(0.8);
+    }
+    50% {
+        transform: scaleY(1.2);
+    }
+}
+
+.ai-ecosystem {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 180px;
+}
+
+.ai-node {
+    background: var(--mongodb-gray-light-2);
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.ai-node.center {
+    grid-column: span 2;
+    background: var(--mongodb-green);
+    color: var(--mongodb-white);
+    font-weight: 700;
+}
+
+.ai-node:not(.center):hover {
+    background: var(--mongodb-green-light);
+    transform: scale(1.1);
+}
+
+.single-view-diagram {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.view-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: var(--mongodb-green);
+    color: var(--mongodb-white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    z-index: 2;
+}
+
+.view-orbit {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 3px dotted var(--mongodb-green);
+    border-radius: 50%;
+    animation: rotate 8s linear infinite;
+}
+
+.conclusion-section {
+    background: linear-gradient(135deg, var(--mongodb-forest) 0%, #0A2540 100%);
+    color: var(--mongodb-white);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 30, 43, 0.3);
+}
+
+.conclusion-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0, 237, 100, 0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+.conclusion-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        filter: brightness(1);
+    }
+    50% {
+        transform: scale(1.2) rotate(180deg);
+        filter: brightness(1.5);
+    }
+}
+
+.conclusion-section h3 {
+    color: var(--mongodb-green);
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.conclusion-section p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.conclusion-section strong {
+    color: var(--mongodb-green);
+    font-weight: 700;
+}
+
+.future-ready-badges {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+}
+
+.ready-badge {
+    background: rgba(0, 237, 100, 0.2);
+    border: 2px solid var(--mongodb-green);
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.ready-badge:hover {
+    background: var(--mongodb-green);
+    color: var(--mongodb-forest);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 237, 100, 0.4);
+}
+</style>
+
+<script>
+// Script específico para Slide 10
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación de los tiles al hover
+    const benefitTiles = document.querySelectorAll('.slide[data-slide="10"] .benefit-tile');
+    
+    benefitTiles.forEach(tile => {
+        tile.addEventListener('mouseenter', function() {
+            // Animar el ícono
+            const icon = this.querySelector('.benefit-icon');
+            if (icon) {
+                icon.style.animation = 'bounce 0.5s ease';
+                setTimeout(() => {
+                    icon.style.animation = '';
+                }, 500);
+            }
+            
+            // Resaltar las características
+            const tags = this.querySelectorAll('.feature-tag');
+            tags.forEach((tag, index) => {
+                setTimeout(() => {
+                    tag.style.background = 'var(--mongodb-green-light)';
+                    tag.style.borderColor = 'var(--mongodb-green)';
+                }, index * 50);
+            });
+        });
+        
+        tile.addEventListener('mouseleave', function() {
+            const tags = this.querySelectorAll('.feature-tag');
+            tags.forEach(tag => {
+                tag.style.background = '';
+                tag.style.borderColor = '';
+            });
+        });
+    });
+    
+    // Observer para activar animaciones cuando el slide sea visible
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.target.classList.contains('active') && 
+                mutation.target.getAttribute('data-slide') === '10') {
+                
+                // Animar el badge de plataforma
+                const platformBadge = mutation.target.querySelector('.platform-badge');
+                if (platformBadge) {
+                    platformBadge.style.animation = 'pulse 2s ease infinite';
+                }
+                
+                // Animar las barras de escalabilidad
+                const scaleBars = mutation.target.querySelectorAll('.scale-bar');
+                scaleBars.forEach((bar, index) => {
+                    bar.style.animation = `scaleGrow 2s ease-in-out infinite`;
+                    bar.style.animationDelay = `${index * 0.2}s`;
+                });
+                
+                // Animar el diagrama de vista única
+                const viewOrbit = mutation.target.querySelector('.view-orbit');
+                if (viewOrbit) {
+                    viewOrbit.style.animation = 'rotate 8s linear infinite';
+                }
+            }
+        });
+    });
+    
+    const slide10 = document.querySelector('[data-slide="10"]');
+    if (slide10) {
+        observer.observe(slide10, { attributes: true, attributeFilter: ['class'] });
+    }
+    
+    // Efecto de hover en los cloud icons
+    const cloudIcons = document.querySelectorAll('.cloud-icon');
+    cloudIcons.forEach(icon => {
+        icon.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px) scale(1.1)';
+        });
+        
+        icon.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+        });
+    });
+});
+
+// Animación adicional de bounce
+if (!document.querySelector('#bounceKeyframes')) {
+    const bounceStyle = document.createElement('style');
+    bounceStyle.id = 'bounceKeyframes';
+    bounceStyle.textContent = `
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            25% {
+                transform: translateY(-10px);
+            }
+            75% {
+                transform: translateY(5px);
+            }
+        }
+    `;
+    document.head.appendChild(bounceStyle);
+}
+</script>
+
+
+    <!-- Navegación -->
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">
+            <span style="margin-right: 5px;">←</span> Anterior
+        </button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">
+            Siguiente <span style="margin-left: 5px;">→</span>
+        </button>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        let currentSlideIndex = 0;
+        let totalSlides = 1;
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSlideCount();
+            updateProgressBar();
+            
+            // Navegación con teclado
+            document.addEventListener('keydown', handleKeyPress);
+            
+            // Animación inicial
+            setTimeout(() => {
+                document.querySelector('.slide.active .slide-content').style.animation = 'fadeInUp 0.8s ease';
+            }, 100);
+        });
+
+        // Función para cambiar slides
+        function changeSlide(direction) {
+            const slides = document.querySelectorAll('.slide');
+            
+            // Ocultar slide actual
+            slides[currentSlideIndex].classList.remove('active');
+            
+            // Solo agregar clase 'prev' si vamos hacia adelante
+            if (direction === 1) {
+                slides[currentSlideIndex].classList.add('prev');
+            }
+            
+            // Actualizar índice
+            currentSlideIndex += direction;
+            
+            // Límites
+            if (currentSlideIndex >= slides.length) {
+                currentSlideIndex = 0;
+            } else if (currentSlideIndex < 0) {
+                currentSlideIndex = slides.length - 1;
+            }
+            
+            // Mostrar nuevo slide
+            setTimeout(() => {
+                slides.forEach(slide => {
+                    slide.classList.remove('active', 'prev');
+                });
+                slides[currentSlideIndex].classList.add('active');
+                
+                // Reiniciar animación del contenido
+                const content = slides[currentSlideIndex].querySelector('.slide-content');
+                content.style.animation = 'none';
+                setTimeout(() => {
+                    content.style.animation = 'fadeInUp 0.8s ease';
+                }, 10);
+                
+                updateSlideCounter();
+                updateProgressBar();
+            }, 50);
+        }
+
+        // Navegación con teclado
+        function handleKeyPress(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                changeSlide(-1);
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                goToSlide(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                goToSlide(document.querySelectorAll('.slide').length - 1);
+            }
+        }
+
+        // Ir a un slide específico
+        function goToSlide(index) {
+            const slides = document.querySelectorAll('.slide');
+            if (index >= 0 && index < slides.length) {
+                slides[currentSlideIndex].classList.remove('active');
+                currentSlideIndex = index;
+                slides[currentSlideIndex].classList.add('active');
+                updateSlideCounter();
+                updateProgressBar();
+            }
+        }
+
+        // Actualizar contador de slides
+        function updateSlideCounter() {
+            document.getElementById('currentSlide').textContent = currentSlideIndex + 1;
+        }
+
+        // Actualizar total de slides
+        function updateSlideCount() {
+            const slides = document.querySelectorAll('.slide');
+            totalSlides = slides.length;
+            document.getElementById('totalSlides').textContent = totalSlides;
+        }
+
+        // Actualizar barra de progreso
+        function updateProgressBar() {
+            const progress = ((currentSlideIndex + 1) / totalSlides) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Función para agregar nuevas secciones (la usarás más adelante)
+        function addSection(slideNumber, content) {
+            const container = document.getElementById('presentationContainer');
+            const newSlide = document.createElement('div');
+            newSlide.className = 'slide';
+            newSlide.setAttribute('data-slide', slideNumber);
+            newSlide.innerHTML = `
+                <div class="slide-content">
+                    ${content}
+                </div>
+            `;
+            container.appendChild(newSlide);
+            updateSlideCount();
+        }
+
+        // Función helper para efectos visuales
+        function animateElement(element, animation) {
+            element.style.animation = 'none';
+            setTimeout(() => {
+                element.style.animation = animation;
+            }, 10);
+        }
+        // Animación de contadores para las estadísticas
+function animateCounters() {
+    const counters = document.querySelectorAll('.stat-value');
+    
+    counters.forEach(counter => {
+        const target = parseFloat(counter.getAttribute('data-value'));
+        const suffix = target >= 1 ? 'T' : 'B';
+        const displayTarget = target >= 1 ? target : target;
+        let current = 0;
+        const increment = displayTarget / 100;
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= displayTarget) {
+                current = displayTarget;
+                clearInterval(timer);
+            }
+            if (suffix === 'T') {
+                counter.textContent = `$${current.toFixed(1)}T`;
+            } else {
+                counter.textContent = `$${current.toFixed(1)}B`;
+            }
+        }, 20);
+    });
+}
+
+// Modificar la función changeSlide existente para activar animaciones
+const originalChangeSlide = changeSlide;
+changeSlide = function(direction) {
+    originalChangeSlide(direction);
+    
+    // Si llegamos al slide 2, animar los contadores
+    setTimeout(() => {
+        if (currentSlideIndex === 1) {
+            animateCounters();
+        }
+    }, 600);
+};
+
+// Activar animación si empezamos en el slide 2
+if (currentSlideIndex === 1) {
+    setTimeout(animateCounters, 1000);
+}
+    </script>
+</body>
+</html>
