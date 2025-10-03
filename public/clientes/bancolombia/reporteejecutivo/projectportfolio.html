@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Projects Portfolio - Bancolombia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            width: 95vw;
+            max-width: 1600px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0D6E5F 0%, #1B8B6F 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 35px;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 25px rgba(13, 110, 95, 0.3);
+        }
+        
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .category-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .category-title {
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .category-title::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.5), rgba(255,255,255,0.2));
+        }
+        
+        /* Implementation category - Yellow */
+        .implementation .category-title {
+            background: linear-gradient(135deg, #FFD93D 0%, #FFB800 100%);
+            color: #333;
+        }
+        
+        /* Business Impact category - MongoDB Green */
+        .impact .category-title {
+            background: linear-gradient(135deg, #00ED64 0%, #00A944 100%);
+            color: white;
+        }
+        
+        /* SpinOffs category - Light Blue */
+        .spinoffs .category-title {
+            background: linear-gradient(135deg, #87CEEB 0%, #5CA9D6 100%);
+            color: white;
+        }
+        
+        /* What's Next category - Orange */
+        .next .category-title {
+            background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+            color: white;
+        }
+        
+        .projects-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .project-card {
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .project-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        
+        .project-desc {
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.85;
+            line-height: 1.4;
+        }
+        
+        .project-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .project-card:hover::after {
+            transform: scaleX(1);
+        }
+        
+        /* Yellow cards - Implementation */
+        .implementation .project-card {
+            background: linear-gradient(135deg, #FFF9E6 0%, #FFF3CC 100%);
+            border: 2px solid #FFD93D;
+            color: #6B5B00;
+        }
+        
+        .implementation .project-card:hover {
+            background: linear-gradient(135deg, #FFF3CC 0%, #FFECB3 100%);
+            border-color: #FFB800;
+        }
+        
+        /* Green cards - Business Impact */
+        .impact .project-card {
+            background: linear-gradient(135deg, #E8F8F0 0%, #D4F4E2 100%);
+            border: 2px solid #00ED64;
+            color: #004A1C;
+        }
+        
+        .impact .project-card:hover {
+            background: linear-gradient(135deg, #D4F4E2 0%, #C1F0D6 100%);
+            border-color: #00A944;
+        }
+        
+        /* Light Blue cards - SpinOffs */
+        .spinoffs .project-card {
+            background: linear-gradient(135deg, #F0F8FF 0%, #E6F3FB 100%);
+            border: 2px solid #87CEEB;
+            color: #1E5A7D;
+        }
+        
+        .spinoffs .project-card:hover {
+            background: linear-gradient(135deg, #E6F3FB 0%, #D9EDF7 100%);
+            border-color: #5CA9D6;
+        }
+        
+        /* Orange cards - What's Next */
+        .next .project-card {
+            background: linear-gradient(135deg, #FFF4F0 0%, #FFEBE6 100%);
+            border: 2px solid #FF8C42;
+            color: #7A3A1A;
+        }
+        
+        .next .project-card:hover {
+            background: linear-gradient(135deg, #FFEBE6 0%, #FFE2D9 100%);
+            border-color: #FF6B35;
+        }
+        
+        .icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+        
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #495057;
+        }
+        
+        .footer-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-total {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .badge-active {
+            background: linear-gradient(135deg, #00ED64 0%, #00A944 100%);
+            color: white;
+        }
+        
+        .badge-planning {
+            background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+            color: white;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .category-section {
+            animation: slideIn 0.6s ease-out forwards;
+        }
+        
+        .category-section:nth-child(1) { animation-delay: 0.1s; }
+        .category-section:nth-child(2) { animation-delay: 0.2s; }
+        .category-section:nth-child(3) { animation-delay: 0.3s; }
+        .category-section:nth-child(4) { animation-delay: 0.4s; }
+        
+        .subtitle {
+            text-align: center;
+            color: #6c757d;
+            font-size: 16px;
+            margin-top: -20px;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            MongoDB Projects Portfolio
+        </div>
+        <div class="subtitle">Bancolombia's Strategic Database Modernization Initiative</div>
+        
+        <div class="portfolio-grid">
+            <!-- Implementation Projects -->
+            <div class="category-section implementation">
+                <div class="category-title">
+                    <span class="icon"></span>En Implementación
+                </div>
+                <div class="projects-container">
+                    <div class="project-card">
+                        <div class="project-name">Query Model</div>
+                        <div class="project-desc">Capa operacional de datos para consultas del mainframe</div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-name">BDTL</div>
+                        <div class="project-desc">Repositorio temporal de datos líquidos en JSON</div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-name">Detección de Fraude</div>
+                        <div class="project-desc">Sistema de orquestación transaccional en tiempo real</div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-name">Traza de Procesos</div>
+                        <div class="project-desc">Monitoreo y seguimiento de procesos bancarios</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Business Impact Projects -->
+            <div class="category-section impact">
+                <div class="category-title">
+                    <span class="icon"></span>Mayor Impacto al Negocio
+                </div>
+                <div class="projects-container">
+                    <div class="project-card">
+                        <div class="project-name">Query Model</div>
+                        <div class="project-desc">Modernización del mainframe con 200+ bases de datos</div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-name">Botón Bancolombia</div>
+                        <div class="project-desc">Plataforma transaccional para pagos en línea</div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-name">Corresponsal Bancario</div>
+                        <div class="project-desc">Gestión de corresponsales con 60% reducción de costos</div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-name">Monitoring Fraude</div>
+                        <div class="project-desc">Análisis y prevención de fraudes por asesores</div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-name">Galatea</div>
+                        <div class="project-desc">Microservicio de personalización multicanal</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SpinOffs -->
+            <div class="category-section spinoffs">
+                <div class="category-title">
+                    <span class="icon"></span>SpinOffs
+                </div>
+                <div class="projects-container">
+                    <div class="project-card">
+                        <div class="project-name">Plink</div>
+                        <div class="project-desc">Recolección y procesamiento de datos de comportamiento</div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-name">BanBus</div>
+                        <div class="project-desc">Aplicación de viajes terrestres con múltiples proveedores</div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-name">Prezio</div>
+                        <div class="project-desc">Negociaciones dinámicas con campos variables</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- What's Next -->
+            <div class="category-section next">
+                <div class="category-title">
+                    <span class="icon"></span>What's Next / Evaluación
+                </div>
+                <div class="projects-container">
+                    <div class="project-card">
+                        <div class="project-name">TDC Repository</div>
+                        <div class="project-desc">Repositorio centralizado de métodos de pago</div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-name">Mainframe Modernization</div>
+                        <div class="project-desc">Migración estratégica de sistemas legacy a cloud</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-item">
+                <span class="footer-badge badge-total">12 Proyectos Total</span>
+            </div>
+            <div class="footer-item">
+                <span>Powered by</span>
+                <svg width="100" height="25" viewBox="0 0 100 25">
+                    <text x="0" y="18" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#00A944">MongoDB</text>
+                   
+                </svg>
+            </div>
+            <div class="footer-item">
+                <span class="footer-badge badge-active">6 En Producción</span>
+                <span class="footer-badge badge-planning">6 En Desarrollo</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

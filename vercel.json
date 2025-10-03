@@ -299,6 +299,10 @@
       "dest": "/clientes/bancolombia/flappy.html"
     },
     {
+      "src": "/juegos/flappy(?:/.*)?$",
+      "dest": "/juegos/flappy.html"
+    },
+    {
       "src": "/estrategia/estrategiafi(?:/.*)?$",
       "dest": "/estrategia/estrategiafi.html"
     },

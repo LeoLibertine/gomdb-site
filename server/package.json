@@ -1,0 +1,22 @@
+{
+    "name": "flappy-mongodb-backend",
+    "version": "1.0.0",
+    "description": "Backend para Flappy Leaf - MongoDB Bintec 2024",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js",
+      "dev": "nodemon index.js"
+    },
+    "keywords": ["mongodb", "game", "flappy", "bintec"],
+    "author": "MongoDB Bintec Team",
+    "license": "MIT",
+    "dependencies": {
+      "express": "^4.18.2",
+      "cors": "^2.8.5",
+      "mongodb": "^6.3.0",
+      "dotenv": "^16.3.1"
+    },
+    "devDependencies": {
+      "nodemon": "^3.0.2"
+    }
+  }
