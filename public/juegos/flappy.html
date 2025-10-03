@@ -190,6 +190,18 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         
+        // Optimización específica para Chrome móvil
+        const isChromeMobile = /Chrome/.test(navigator.userAgent) && /Mobile/.test(navigator.userAgent);
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        // Forzar aceleración de hardware en Chrome
+        if (isChromeMobile) {
+            canvas.style.transform = 'translateZ(0)';
+            canvas.style.willChange = 'transform';
+            ctx.imageSmoothingEnabled = false;
+        }
+
+
         // Ajustar tamaño del canvas
         function resizeCanvas() {
             const container = document.getElementById('gameContainer');
@@ -247,7 +259,7 @@
                 this.swayAngle = Math.sin(frame * 0.05) * 0.1;
 
                 // Generar partículas verdes
-                if (Math.random() < 0.3 && this.velocity < 0) {
+                if (Math.random() < (isChromeMobile ? 0.1 : 0.3) && this.velocity < 0) {
                     this.particles.push({
                         x: this.x - 10,
                         y: this.y,
@@ -284,7 +296,7 @@
                 this.velocity = jumpPower;
                 
                 // Partículas al saltar
-                for (let i = 0; i < 5; i++) {
+                for (let i = 0; i < (isChromeMobile ? 2 : 5); i++) 
                     this.particles.push({
                         x: this.x,
                         y: this.y + 10,
@@ -459,6 +471,7 @@
                 // Textura de madera (líneas verticales)
                 ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
                 ctx.lineWidth = 1;
+                if (!isChromeMobile) {
                 for (let i = 0; i < pipeWidth; i += 8) {
                     ctx.beginPath();
                     ctx.moveTo(this.x + i, 0);
@@ -467,6 +480,7 @@
                     ctx.lineTo(this.x + i, canvas.height);
                     ctx.stroke();
                 }
+            }
             }
         }
 
@@ -524,7 +538,7 @@
             // Detalles de pasto
             ctx.strokeStyle = '#558B2F';
             ctx.lineWidth = 1;
-            for (let i = 0; i < canvas.width; i += 15) {
+            for (let i = 0; i < canvas.width; i += (isMobile ? 30 : 15)) {
                 const height = Math.random() * 10 + 5;
                 ctx.beginPath();
                 ctx.moveTo(i, canvas.height - 50);
