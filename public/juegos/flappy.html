@@ -553,7 +553,7 @@
             // Ciclo cada 50 puntos
             const cycleScore = score % 50;
             
-            if (cycleScore < 7) {
+            if (cycleScore < 6) {
                 // Día normal (0-9)
                 skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
                 skyGradient.addColorStop(0, '#87CEEB');
@@ -562,7 +562,7 @@
                 sunMoonY = canvas.height * 0.15;
                 celestialBody = 'sun';
                 timeOfDay = 'day';
-            } else if (cycleScore < 14) {
+            } else if (cycleScore < 12) {
                 // Mediodía soleado (10-19)
                 skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
                 skyGradient.addColorStop(0, '#00BFFF');
@@ -571,7 +571,7 @@
                 sunMoonY = canvas.height * 0.1;
                 celestialBody = 'sun-bright';
                 timeOfDay = 'noon';
-            } else if (cycleScore < 21) {
+            } else if (cycleScore < 18) {
                 // Atardecer (20-29)
                 skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
                 skyGradient.addColorStop(0, '#FDB813');
@@ -581,7 +581,7 @@
                 sunMoonY = canvas.height * 0.4;
                 celestialBody = 'sun-setting';
                 timeOfDay = 'sunset';
-            } else if (cycleScore < 28) {
+            } else if (cycleScore < 24) {
                 // Noche (30-39)
                 skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
                 skyGradient.addColorStop(0, '#0C1445');
@@ -591,7 +591,7 @@
                 celestialBody = 'moon';
                 timeOfDay = 'night';
             } else {
-                // Amanecer (29-36)
+                // Amanecer (32-40)
                 skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
                 skyGradient.addColorStop(0, '#4A5568');
                 skyGradient.addColorStop(0.3, '#718096');
