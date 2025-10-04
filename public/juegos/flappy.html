@@ -170,7 +170,7 @@
         <div id="ui">
             <div id="startScreen">
                 <img id="mongoLogo" src="mongo-logo.png" alt="MongoDB Logo" onerror="this.style.display='none'">
-                <h1>🍃 MongoDBFlappy Leaf</h1>
+                <h1>MongoDB Happy Leaf</h1>
                 <p>Toca o haz clic para volar</p>
                 <p>¡Evita los tubos!</p>
                 <button id="startBtn" class="btn">JUGAR</button>
@@ -204,6 +204,7 @@
         let score = 0;
         let bestScore = parseInt(localStorage.getItem('flappyBestScore')) || 0;
         let frame = 0;
+        let timeOfDay = 'day'; 
 
         // Configuración del juego
         const gravity = 0.5;
@@ -221,6 +222,7 @@
             rotation: 0,
             swayAngle: 0,
             particles: [],
+            isSad: false,  // AGREGAR ESTA LÍNEA
 
             reset() {
                 this.x = 80;
@@ -228,6 +230,7 @@
                 this.velocity = 0;
                 this.rotation = 0;
                 this.particles = [];
+                this.isSad = false;  // AGREGAR ESTA LÍNEA
             },
 
             update() {
@@ -312,7 +315,32 @@
                 ctx.translate(this.x, this.y);
                 ctx.rotate((this.rotation + this.swayAngle) * Math.PI / 180);
 
-                // Dibujar hoja estilo MongoDB
+                // MANITAS - Dibujar primero para que queden detrás de la hoja
+                ctx.strokeStyle = '#00684A';
+                ctx.lineWidth = 2;
+                
+                // Manita izquierda
+                ctx.beginPath();
+                ctx.moveTo(-this.size * 0.6, this.size * 0.2);
+                ctx.lineTo(-this.size * 0.9, this.size * 0.1);
+                // Deditos
+                ctx.moveTo(-this.size * 0.9, this.size * 0.1);
+                ctx.lineTo(-this.size * 1.0, this.size * 0.05);
+                ctx.moveTo(-this.size * 0.9, this.size * 0.1);
+                ctx.lineTo(-this.size * 1.0, this.size * 0.15);
+                ctx.stroke();
+                
+                // Manita derecha
+                ctx.beginPath();
+                ctx.moveTo(this.size * 0.6, this.size * 0.2);
+                ctx.lineTo(this.size * 0.9, this.size * 0.1);
+                // Deditos
+                ctx.moveTo(this.size * 0.9, this.size * 0.1);
+                ctx.lineTo(this.size * 1.0, this.size * 0.05);
+                ctx.moveTo(this.size * 0.9, this.size * 0.1);
+                ctx.lineTo(this.size * 1.0, this.size * 0.15);
+                ctx.stroke();
+
                 // Tallo
                 ctx.strokeStyle = '#00684A';
                 ctx.lineWidth = 2;
@@ -357,25 +385,59 @@
                 ctx.lineTo(0, this.size * 0.8);
                 ctx.stroke();
 
-                // Venas laterales
-                ctx.lineWidth = 1;
-                // Venas izquierdas
-                ctx.beginPath();
-                ctx.moveTo(0, -this.size * 0.4);
-                ctx.lineTo(-this.size * 0.3, -this.size * 0.2);
-                ctx.moveTo(0, 0);
-                ctx.lineTo(-this.size * 0.35, this.size * 0.1);
-                ctx.moveTo(0, this.size * 0.4);
-                ctx.lineTo(-this.size * 0.25, this.size * 0.5);
-                // Venas derechas
-                ctx.moveTo(0, -this.size * 0.4);
-                ctx.lineTo(this.size * 0.3, -this.size * 0.2);
-                ctx.moveTo(0, 0);
-                ctx.lineTo(this.size * 0.35, this.size * 0.1);
-                ctx.moveTo(0, this.size * 0.4);
-                ctx.lineTo(this.size * 0.25, this.size * 0.5);
-                ctx.stroke();
+            
 
+            // CARITA - CAMBIA SEGÚN EL ESTADO
+            // Ojos
+            ctx.fillStyle = '#00684A';
+            if (this.isSad) {
+                // Ojos tristes (más pequeños y caídos)
+                ctx.beginPath();
+                ctx.arc(-this.size * 0.25, -this.size * 0.05, 1.5, 0, Math.PI * 2);
+                ctx.arc(this.size * 0.25, -this.size * 0.05, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Cejas tristes
+                ctx.strokeStyle = '#00684A';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(-this.size * 0.35, -this.size * 0.15);
+                ctx.lineTo(-this.size * 0.15, -this.size * 0.1);
+                ctx.moveTo(this.size * 0.35, -this.size * 0.15);
+                ctx.lineTo(this.size * 0.15, -this.size * 0.1);
+                ctx.stroke();
+                
+                // Boca triste
+                ctx.beginPath();
+                ctx.arc(0, this.size * 0.25, this.size * 0.25, Math.PI * 1.2, Math.PI * 1.8);
+                ctx.stroke();
+                
+                // Lágrima (opcional)
+                ctx.fillStyle = 'rgba(135, 206, 235, 0.7)';
+                ctx.beginPath();
+                ctx.arc(-this.size * 0.3, this.size * 0.05, 3, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                // Ojos felices (normales)
+                ctx.beginPath();
+                ctx.arc(-this.size * 0.25, -this.size * 0.1, 2, 0, Math.PI * 2);
+                ctx.arc(this.size * 0.25, -this.size * 0.1, 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Sonrisa
+                ctx.strokeStyle = '#00684A';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(0, this.size * 0.1, this.size * 0.3, 0, Math.PI);
+                ctx.stroke();
+                
+                // Mejillas (rubor)
+                ctx.fillStyle = 'rgba(255, 182, 193, 0.3)';
+                ctx.beginPath();
+                ctx.arc(-this.size * 0.4, this.size * 0.05, this.size * 0.15, 0, Math.PI * 2);
+                ctx.arc(this.size * 0.4, this.size * 0.05, this.size * 0.15, 0, Math.PI * 2);
+                ctx.fill();
+            }
                 // Brillo
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
                 ctx.beginPath();
@@ -483,15 +545,132 @@
 
         // Dibujar fondo
         function drawBackground() {
-            // Cielo
-            const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            skyGradient.addColorStop(0, '#87CEEB');
-            skyGradient.addColorStop(0.7, '#98D8E8');
-            skyGradient.addColorStop(1, '#98D98E');
+            // Determinar hora del día basado en score
+            let skyGradient;
+            let sunMoonY;
+            let celestialBody = 'sun';
+            
+            // Ciclo cada 50 puntos
+            const cycleScore = score % 50;
+            
+            if (cycleScore < 7) {
+                // Día normal (0-9)
+                skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                skyGradient.addColorStop(0, '#87CEEB');
+                skyGradient.addColorStop(0.7, '#98D8E8');
+                skyGradient.addColorStop(1, '#98D98E');
+                sunMoonY = canvas.height * 0.15;
+                celestialBody = 'sun';
+                timeOfDay = 'day';
+            } else if (cycleScore < 14) {
+                // Mediodía soleado (10-19)
+                skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                skyGradient.addColorStop(0, '#00BFFF');
+                skyGradient.addColorStop(0.5, '#87CEEB');
+                skyGradient.addColorStop(1, '#98D8E8');
+                sunMoonY = canvas.height * 0.1;
+                celestialBody = 'sun-bright';
+                timeOfDay = 'noon';
+            } else if (cycleScore < 21) {
+                // Atardecer (20-29)
+                skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                skyGradient.addColorStop(0, '#FDB813');
+                skyGradient.addColorStop(0.3, '#FFA500');
+                skyGradient.addColorStop(0.6, '#FF6B6B');
+                skyGradient.addColorStop(1, '#4A5568');
+                sunMoonY = canvas.height * 0.4;
+                celestialBody = 'sun-setting';
+                timeOfDay = 'sunset';
+            } else if (cycleScore < 28) {
+                // Noche (30-39)
+                skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                skyGradient.addColorStop(0, '#0C1445');
+                skyGradient.addColorStop(0.5, '#1E3A5F');
+                skyGradient.addColorStop(1, '#2D5171');
+                sunMoonY = canvas.height * 0.15;
+                celestialBody = 'moon';
+                timeOfDay = 'night';
+            } else {
+                // Amanecer (29-36)
+                skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                skyGradient.addColorStop(0, '#4A5568');
+                skyGradient.addColorStop(0.3, '#718096');
+                skyGradient.addColorStop(0.6, '#FFA07A');
+                skyGradient.addColorStop(1, '#87CEEB');
+                sunMoonY = canvas.height * 0.5;
+                celestialBody = 'sun-rising';
+                timeOfDay = 'dawn';
+            }
+            
+            // Aplicar cielo
             ctx.fillStyle = skyGradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Nubes
+            
+            // Dibujar sol/luna
+            const celestialX = canvas.width * 0.8;
+            
+            if (celestialBody === 'moon') {
+                // Luna
+                ctx.fillStyle = '#F0E68C';
+                ctx.beginPath();
+                ctx.arc(celestialX, sunMoonY, 25, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Cráteres de la luna
+                ctx.fillStyle = '#E0D68C';
+                ctx.beginPath();
+                ctx.arc(celestialX - 5, sunMoonY - 5, 3, 0, Math.PI * 2);
+                ctx.arc(celestialX + 8, sunMoonY + 3, 4, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Estrellas
+                ctx.fillStyle = 'white';
+                for (let i = 0; i < 20; i++) {
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * (canvas.height * 0.5);
+                    const size = Math.random() * 2;
+                    ctx.beginPath();
+                    ctx.arc(x, y, size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            } else {
+                // Sol
+                let sunColor = '#FFD700';
+                if (celestialBody === 'sun-bright') {
+                    sunColor = '#FFFF00';
+                } else if (celestialBody === 'sun-setting') {
+                    sunColor = '#FF6347';
+                } else if (celestialBody === 'sun-rising') {
+                    sunColor = '#FFA07A';
+                }
+                
+                ctx.fillStyle = sunColor;
+                ctx.beginPath();
+                ctx.arc(celestialX, sunMoonY, 30, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Rayos de sol
+                if (celestialBody === 'sun-bright') {
+                    ctx.strokeStyle = sunColor;
+                    ctx.lineWidth = 2;
+                    for (let i = 0; i < 8; i++) {
+                        const angle = (Math.PI * 2 / 8) * i;
+                        ctx.beginPath();
+                        ctx.moveTo(
+                            celestialX + Math.cos(angle) * 35,
+                            sunMoonY + Math.sin(angle) * 35
+                        );
+                        ctx.lineTo(
+                            celestialX + Math.cos(angle) * 45,
+                            sunMoonY + Math.sin(angle) * 45
+                        );
+                        ctx.stroke();
+                    }
+                }
+            }
+            
+            // Nubes (con diferente opacidad según hora del día)
+            const cloudOpacity = timeOfDay === 'night' ? 0.2 : 0.4;
             clouds.forEach(cloud => {
                 if (gameState === 'playing') {
                     cloud.x -= cloud.speed;
@@ -501,7 +680,7 @@
                     }
                 }
 
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.fillStyle = `rgba(255, 255, 255, ${cloudOpacity})`;
                 ctx.beginPath();
                 ctx.arc(cloud.x, cloud.y, cloud.size, 0, Math.PI * 2);
                 ctx.arc(cloud.x + cloud.size, cloud.y, cloud.size * 0.8, 0, Math.PI * 2);
@@ -509,12 +688,19 @@
                 ctx.fill();
             });
 
-            // Suelo con textura de pasto
-            ctx.fillStyle = '#7CB342';
+            // Suelo con color variable
+            let groundColor = '#7CB342';
+            if (timeOfDay === 'night') {
+                groundColor = '#4A5A2A';
+            } else if (timeOfDay === 'sunset' || timeOfDay === 'dawn') {
+                groundColor = '#8B7355';
+            }
+            
+            ctx.fillStyle = groundColor;
             ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
             
             // Línea del suelo
-            ctx.strokeStyle = '#689F38';
+            ctx.strokeStyle = timeOfDay === 'night' ? '#3A4A1A' : '#689F38';
             ctx.lineWidth = 3;
             ctx.beginPath();
             ctx.moveTo(0, canvas.height - 50);
@@ -522,7 +708,7 @@
             ctx.stroke();
 
             // Detalles de pasto
-            ctx.strokeStyle = '#558B2F';
+            ctx.strokeStyle = timeOfDay === 'night' ? '#2A3A0A' : '#558B2F';
             ctx.lineWidth = 1;
             for (let i = 0; i < canvas.width; i += 15) {
                 const height = Math.random() * 10 + 5;
@@ -534,7 +720,6 @@
                 ctx.stroke();
             }
         }
-
         // Actualizar puntuación
         function updateScore() {
             document.getElementById('score').textContent = score;
@@ -567,6 +752,7 @@
             if (gameState === 'gameOver') return;
             
             gameState = 'gameOver';
+            bird.isSad = true;  // AGREGAR ESTA LÍNEA
             
             if (score > bestScore) {
                 bestScore = score;
