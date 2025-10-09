@@ -1,0 +1,2179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Fighter Challenge - Setup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 60px;
+        }
+
+        header {
+            text-align: center;
+            padding: 100px 20px 80px;
+            background: linear-gradient(135deg, #00ED64 0%, #00684A 100%);
+            position: relative;
+            overflow: hidden;
+            margin: -40px -60px 80px;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -300px;
+            right: -200px;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            bottom: -200px;
+            left: -100px;
+            animation: float 15s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(30px, 30px) rotate(180deg); }
+        }
+
+        header h1 {
+            font-size: 4em;
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header p {
+            font-size: 1.4em;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-size: 2.8em;
+            color: #1a1a1a;
+            margin: 80px 0 50px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            color: #666;
+            margin-top: -35px;
+            margin-bottom: 60px;
+            font-weight: 400;
+        }
+
+        .celda-card {
+            background: #ffffff;
+            border: 1px solid #e8e8e8;
+            border-radius: 24px;
+            padding: 50px;
+            margin-bottom: 40px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .celda-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00ED64 0%, #00684A 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .celda-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 237, 100, 0.15);
+            border-color: #00ED64;
+        }
+
+        .celda-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .celda-header {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .celda-number {
+            background: linear-gradient(135deg, #00ED64 0%, #00684A 100%);
+            color: #ffffff;
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(0, 237, 100, 0.3);
+            flex-shrink: 0;
+        }
+
+        .celda-title {
+            font-size: 2em;
+            color: #1a1a1a;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .celda-subtitle {
+            font-size: 1.15em;
+            color: #00684A;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin: 30px 0;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            overflow-x: auto;
+            position: relative;
+            border: 1px solid #21262d;
+        }
+
+        .code-block::before {
+            content: 'CÓDIGO';
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: #00ED64;
+            color: #0d1117;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.7em;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .code-block code {
+            color: #00ED64;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+
+        .explanation-section {
+            background: #f8fffe;
+            border-left: 4px solid #00ED64;
+            border-radius: 12px;
+            padding: 32px;
+            margin: 30px 0;
+        }
+
+        .explanation-section h3 {
+            color: #00684A;
+            font-size: 1.5em;
+            margin-bottom: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .explanation-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .explanation-section li {
+            margin: 15px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #333;
+            font-size: 1.05em;
+        }
+
+        .explanation-section li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #00ED64;
+            font-weight: 700;
+            font-size: 1.3em;
+        }
+
+        .analogy-box {
+            background: linear-gradient(135deg, #f0fff4 0%, #e6ffed 100%);
+            border: 2px solid #00ED64;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .analogy-box::before {
+            content: '💡';
+            position: absolute;
+            top: -18px;
+            left: 30px;
+            background: #ffffff;
+            padding: 6px 18px;
+            border-radius: 12px;
+            font-size: 1.6em;
+            border: 2px solid #00ED64;
+        }
+
+        .analogy-box strong {
+            color: #00684A;
+            font-size: 1.15em;
+            font-weight: 700;
+        }
+
+        .analogy-box p {
+            color: #333;
+            margin-top: 8px;
+            font-size: 1.05em;
+            line-height: 1.7;
+        }
+
+        .time-badge {
+            display: inline-block;
+            background: #f0fff4;
+            color: #00684A;
+            padding: 10px 24px;
+            border-radius: 24px;
+            font-weight: 600;
+            margin-top: 20px;
+            border: 2px solid #00ED64;
+            font-size: 0.95em;
+        }
+
+        .highlight {
+            color: #00684A;
+            font-weight: 700;
+            background: linear-gradient(180deg, transparent 60%, rgba(0, 237, 100, 0.2) 60%);
+            padding: 2px 0;
+        }
+
+        .icon {
+            font-size: 1.4em;
+        }
+
+        .completion-badge {
+            background: linear-gradient(135deg, #00ED64 0%, #00684A 100%);
+            color: #ffffff;
+            padding: 20px 40px;
+            border-radius: 60px;
+            font-size: 1.4em;
+            font-weight: 700;
+            display: inline-block;
+            margin: 40px 0;
+            box-shadow: 0 12px 40px rgba(0, 237, 100, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 12px 40px rgba(0, 237, 100, 0.3);
+            }
+            50% {
+                transform: scale(1.03);
+                box-shadow: 0 16px 50px rgba(0, 237, 100, 0.4);
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 40px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ED64 0%, #00684A 100%);
+            animation: progressAnimation 2s ease;
+            border-radius: 10px;
+        }
+
+        @keyframes progressAnimation {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        .example-output {
+            background: #0d1117;
+            color: #00ED64;
+            padding: 24px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-family: 'Menlo', monospace;
+            border: 1px solid #21262d;
+        }
+
+        .example-output strong {
+            color: #ffffff;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 30px;
+            }
+
+            header {
+                padding: 60px 20px 50px;
+                margin: -20px -30px 40px;
+            }
+
+            header h1 {
+                font-size: 2.5em;
+            }
+
+            .section-title {
+                font-size: 2em;
+            }
+
+            .celda-card {
+                padding: 30px;
+            }
+
+            .celda-number {
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        .final-summary {
+            background: linear-gradient(135deg, #f0fff4 0%, #e6ffed 100%);
+            border-radius: 24px;
+            padding: 60px;
+            text-align: center;
+            margin-top: 80px;
+            border: 2px solid #00ED64;
+        }
+
+        .final-summary h3 {
+            color: #00684A;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .final-summary p {
+            color: #333;
+            font-size: 1.2em;
+            line-height: 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚨 Fraud Fighter Challenge</h1>
+            <p>Setup Completo: Celdas 1-9 Explicadas</p>
+        </header>
+
+        <h2 class="section-title">Fase de Setup</h2>
+        <p class="section-subtitle">Preparando el terreno para detectar fraudes</p>
+
+        <!-- CELDA 1 -->
+        <div class="celda-card">
+            <div class="celda-header">
+                <div class="celda-number">1</div>
+                <div class="celda-title">📓 Título del Notebook</div>
+            </div>
+            
+            <p class="celda-subtitle">La portada de nuestro taller</p>
+
+            <div class="code-block">
+                <code># 🚨 Fraud Fighter Challenge - Setup</code>
+            </div>
+
+            🎯</span> ¿Qué hace?</h3>
+                <p>Simplemente coloca un título bonito y descriptivo para nuestro notebook de Jupyter. Es la forma profesional de iniciar cualquier proyecto.</p>
+            </div>
+
+            <div class="analogy-box">
+                <strong>Analogía:</strong>
+                <p>Es como la portada de un libro. Solo dice "aquí empieza el taller de detección de fraudes". Simple pero efectivo.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- CELDA 2 -->
+        <div class="celda-card">
+            <div class="celda-header">
+                <div class="celda-number">2</div>
+                <div class="celda-title">📦 Instalar Librerías</div>
+            </div>
+            
+            <p class="celda-subtitle">Descargando las herramientas necesarias</p>
+
+            <div class="code-block">
+                <code>!pip install pymongo sentence-transformers -q</code>
+            </div>
+
+            <div class="explanation-section">
+                <h3><span class="icon">🔧</span> ¿Qué hace?</h3>
+                <p>Descarga e instala dos herramientas esenciales para nuestro proyecto:</p>
+                <ul>
+                    <li><span class="highlight">pymongo</span> → Tu conexión directa con MongoDB Atlas</li>
+                    <li><span class="highlight">sentence-transformers</span> → El cerebro de IA para convertir texto en vectores</li>
+                    <li><span class="highlight">!pip install</span> → El comando que descarga e instala paquetes de Python</li>
+                    <li><span class="highlight">-q</span> → Modo silencioso, menos texto en pantalla</li>
+                </ul>
+            </div>
+
+            <div class="analogy-box">
+                <strong>Analogía:</strong>
+                <p>Imagina que vas a cocinar un platillo especial. Antes de empezar, necesitas ir a la tienda a comprar los utensilios específicos: el cuchillo profesional (pymongo) y la licuadora industrial (sentence-transformers).</p>
+            </div>
+
+            <div class="time-badge">⏱️ Tiempo estimado: ~1 minuto</div>
+        </div>
+    
+
+
+        <!-- CELDA 3 -->
+        <div class="celda-card">
+            <div class="celda-header">
+                <div class="celda-number">3</div>
+                <div class="celda-title">📚 Importar y Cargar Modelo de IA</div>
+            </div>
+            
+            <p class="celda-subtitle">Despertando el cerebro artificial</p>
+
+            <div class="code-block">
+                <code>import pymongo<br>from sentence_transformers import SentenceTransformer<br>model = SentenceTransformer('all-MiniLM-L6-v2')</code>
+            </div>
+
+            <div class="explanation-section">
+                <h3><span class="icon">🧠</span> ¿Qué hace?</h3>
+                <p>Activa las herramientas instaladas y carga el modelo de inteligencia artificial:</p>
+                <ul>
+                    <li><span class="highlight">import</span> → Saca las herramientas de la caja para poder usarlas</li>
+                    <li><span class="highlight">SentenceTransformer</span> → Un modelo de IA pre-entrenado listo para usar</li>
+                    <li><span class="highlight">all-MiniLM-L6-v2</span> → Un cerebro específico que convierte texto en 384 números</li>
+                    <li>Este modelo entiende el <span class="highlight">significado semántico</span>, no solo palabras</li>
+                </ul>
+            </div>
+
+            <div class="analogy-box">
+                <strong>Analogía:</strong>
+                <p>Piensa en Google Translate, pero en lugar de traducir español→inglés, este modelo traduce "comportamiento humano"→"384 números matemáticos". Es como cargar un traductor universal que entiende el significado profundo de las cosas.</p>
+            </div>
+
+            <div class="time-badge">⏱️ Tiempo estimado: ~30 segundos</div>
+        </div>
+
+        <!-- CELDA 4 -->
+        <div class="celda-card">
+            <div class="celda-header">
+                <div class="celda-number">4</div>
+                <div class="celda-title">🔌 Conectar a MongoDB Atlas</div>
+            </div>
+            
+            <p class="celda-subtitle">Estableciendo conexión con la nube</p>
+
+            <div class="code-block">
+                <code>MONGODB_URI = "mongodb+srv://usuario:password@cluster.mongodb.net/"<br>client = MongoClient(MONGODB_URI)<br>db = client.fraud_detection</code>
+            </div>
+
+            <div class="explanation-section">
+                <h3><span class="icon">🌐</span> ¿Qué hace?</h3>
+                <p>Establece la conexión con tu base de datos MongoDB en la nube:</p>
+                <ul>
+                    <li><span class="highlight">MONGODB_URI</span> → La dirección única de tu cluster (como una URL)</li>
+                    <li><span class="highlight">MongoClient</span> → Abre la conexión con MongoDB Atlas</li>
+                    <li><span class="highlight">db = client.fraud_detection</span> → Selecciona la base de datos específica</li>
+                    <li>Luego hace <span class="highlight">ping</span> para verificar que todo funciona</li>
+                </ul>
+            </div>
+
+            <div class="analogy-box">
+                <strong>Analogía:</strong>
+                <p>Es como llamar por Zoom a MongoDB Atlas y decir "¿me escuchas?". Si todo está bien, MongoDB responde "¡Sí, conexión establecida!" y ya puedes empezar a trabajar con tus datos.</p>
+            </div>
+        </div>
+
+        <!-- CELDA 5 -->
+        <div class="celda-card">
+            <div class="celda-header">
+                <div class="celda-number">5</div>
+                <div class="celda-title">👤 Generar Clientes Ficticios</div>
+            </div>
+            
+            <p class="celda-subtitle">Creando personas virtuales realistas</p>
+
+            <div class="code-block">
+                <code>def generar_cliente_colombiano(id_num):<br>    # Crea un perfil falso pero realista<br>    # con nombres, ciudades y ocupaciones típicas</code>
+            </div>
+
+            <div class="explanation-section">
+                <h3><span class="icon">🎭</span> ¿Qué hace?</h3>
+                <p>Crea una función que inventa perfiles de clientes ficticios pero creíbles:</p>
+                <ul>
+                    <li>Tiene listas de <span class="highlight">nombres colombianos</span> reales</li>
+                    <li>Tiene listas de <span class="highlight">ciudades principales</span> de Colombia</li>
+                    <li>Define <span class="highlight">perfiles ocupacionales</span> típicos con sus patrones de gasto</li>
+                    <li>Mezcla todo aleatoriamente para crear diversidad</li>
+                </ul>
+            </div>
+
+            <div class="example-output">
+                <strong>📋 Ejemplo de Cliente Generado:</strong>
+                <div style="margin-top: 15px; line-height: 1.8;">
+                    <div><span style="color: #00ED64;">●</span> Nombre: María González</div>
+                    <div><span style="color: #00ED64;">●</span> Ciudad: Bogotá</div>
+                    <div><span style="color: #00ED64;">●</span> Ocupación: Gerente</div>
+                    <div><span style="color: #00ED64;">●</span> Gasto promedio: $285,000 COP</div>
+                    <div><span style="color: #00ED64;">●</span> Comercios favoritos: ["Carulla", "Crepes & Waffles"]</div>
+                </div>
+            </div>
+
+            <div class="analogy-box">
+                <strong>Analogía:</strong>
+                <p>Es como Los Sims - el juego donde creas personajes con características aleatorias pero creíbles. Cada vez que ejecutas la función, obtienes una persona diferente con su propia historia de compras.</p>
+            </div>
+        </div>
+
+        <!-- CELDA 6 -->
+        <div class="celda-card">
+            <div class="celda-header">
+                <div class="celda-number">6</div>
+                <div class="celda-title">🧠 Generar Embedding del Cliente</div>
+            </div>
+            
+            <p class="celda-subtitle">Convirtiendo perfiles en ADN matemático</p>
+
+            <div class="code-block">
+                <code>def generar_embedding_cliente(cliente):<br>    texto_perfil = "Cliente Gerente de Bogotá estrato 5..."<br>    embedding = model.encode(texto_perfil)<br>    return embedding</code>
+            </div>
+
+            <div class="explanation-section">
+                <h3><span class="icon">🔬</span> ¿Qué hace?</h3>
+                <p>Transforma el perfil completo del cliente en un vector de 384 números:</p>
+                <ul>
+                    <li>Toma toda la info del cliente y la <span class="highlight">junta en una frase descriptiva</span></li>
+                    <li>Le pasa esa frase al modelo de IA</li>
+                    <li>El modelo la convierte en <span class="highlight">384 números decimales</span></li>
+                    <li>Esos números capturan el <span class="highlight">"comportamiento esperado"</span> del cliente</li>
+                </ul>
+            </div>
+
+            <div class="example-output">
+                <strong>🎯 Transformación Real:</strong>
+                <div style="margin-top: 15px;">
+                    <div style="color: #ffffff; margin-bottom: 10px;">INPUT (texto):</div>
+                    <div>"Gerente de Bogotá estrato 5 gasta $285,000 en Carulla"</div>
+                    <div style="color: #ffffff; margin: 15px 0 10px;">OUTPUT (vector):</div>
+                    <div>[0.023, -0.145, 0.289, 0.012, -0.345, ... 384 números]</div>
+                </div>
+            </div>
+
+            <div class="analogy-box">
+                <strong>Analogía:</strong>
+                <p>Es como tomar una foto de alguien y convertirla en un código de barras único. Diferentes personas = diferentes códigos. Y lo mejor: personas con comportamientos similares tendrán códigos similares.</p>
+            </div>
+        </div>
+
+        <!-- CELDA 7 -->
+        <div class="celda-card">
+            <div class="celda-header">
+                <div class="celda-number">7</div>
+                <div class="celda-title">📥 Crear y Cargar 50 Clientes</div>
+            </div>
+            
+            <p class="celda-subtitle">Poblando la base de datos</p>
+
+            <div class="code-block">
+                <code>for i in range(1, 51):<br>    cliente = generar_cliente_colombiano(i)<br>    cliente_con_embedding = generar_embedding_cliente(cliente)<br>    db.customers.insert_one(cliente_con_embedding)</code>
+            </div>
+
+            <div class="explanation-section">
+                <h3><span class="icon">⚙️</span> ¿Qué hace?</h3>
+                <p>Ejecuta un proceso automatizado para crear 50 clientes:</p>
+                <ul>
+                    <li>Hace un <span class="highlight">loop 50 veces</span> (de 1 a 50)</li>
+                    <li>En cada iteración genera 1 cliente nuevo</li>
+                    <li>Le calcula su embedding vectorial</li>
+                    <li>Lo guarda en MongoDB en la colección <span class="highlight">"customers"</span></li>
+                </ul>
+            </div>
+
+            <div class="example-output">
+                <strong>📺 Salida en Pantalla:</strong>
+                <div style="margin-top: 15px; line-height: 2;">
+                    <div>📝 10 clientes generados...</div>
+                    <div>📝 20 clientes generados...</div>
+                    <div>📝 30 clientes generados...</div>
+                    <div>📝 40 clientes generados...</div>
+                    <div>📝 50 clientes generados...</div>
+                    <div style="color: #ffffff; margin-top: 10px;">✅ 50 clientes insertados en MongoDB</div>
+                </div>
+            </div>
+
+            <div class="analogy-box">
+                <strong>Analogía:</strong>
+                <p>Es como crear 50 fichas de clientes en un Excel y subirlas todas a Google Drive automáticamente, pero con el poder adicional de que cada ficha tiene su "huella digital" de IA incorporada.</p>
+            </div>
+
+            <div class="time-badge">⏱️ Tiempo estimado: ~1 minuto</div>
+        </div>
+
+        <!-- CELDA 8 -->
+        <div class="celda-card">
+            <div class="celda-header">
+                <div class="celda-number">8</div>
+                <div class="celda-title">🔍 Verificar Vector Search</div>
+            </div>
+            
+            <p class="celda-subtitle">Probando la búsqueda inteligente</p>
+
+            <div class="code-block">
+                <code>pipeline = [{<br>    "$vectorSearch": {<br>        "queryVector": cliente_referencia['embedding'],<br>        "limit": 5<br>    }<br>}]<br>resultados = db.customers.aggregate(pipeline)</code>
+            </div>
+
+            <div class="explanation-section">
+                <h3><span class="icon">🎯</span> ¿Qué hace?</h3>
+                <p>Prueba que la búsqueda vectorial de MongoDB funciona correctamente:</p>
+                <ul>
+                    <li>Toma el embedding del cliente <span class="highlight">CUST_001</span></li>
+                    <li>Le dice a MongoDB: <span class="highlight">"búscame los 5 más parecidos"</span></li>
+                    <li>MongoDB compara ese vector contra todos los demás</li>
+                    <li>Devuelve los 5 con mayor <span class="highlight">similitud semántica</span></li>
+                </ul>
+            </div>
+
+            <div class="explanation-section">
+                <h3><span class="icon">✨</span> La Magia del Vector Search:</h3>
+                <p>Si funciona bien, verás que el cliente más similar es <span class="highlight">él mismo</span> con un score casi perfecto (~1.0). Los siguientes serán clientes con perfiles parecidos: misma ciudad, ocupación similar, gastos en el mismo rango.</p>
+            </div>
+
+            <div class="analogy-box">
+                <strong>Analogía:</strong>
+                <p>Es como en Spotify cuando dices "busca canciones parecidas a esta que me gusta". Vector Search hace exactamente lo mismo pero con perfiles de clientes. No busca coincidencias exactas de texto, sino similitud profunda de comportamiento.</p>
+            </div>
+        </div>
+
+        <!-- CELDA 9 -->
+        <div class="celda-card">
+            <div class="celda-header">
+                <div class="celda-number">9</div>
+                <div class="celda-title">✅ Resumen del Setup</div>
+            </div>
+            
+            <p class="celda-subtitle">Confirmando que todo está listo</p>
+
+            <div class="code-block">
+                <code>print("🎉 SETUP COMPLETADO")<br>print(f"Clientes: {db.customers.count_documents({})}")<br>print(f"Modelo: {model}")</code>
+            </div>
+
+            <div class="explanation-section">
+                <h3><span class="icon">
+
+
+                  </span> ¿Qué hace?</h3>
+                <p>Imprime un resumen final para confirmar que todo el setup se realizó correctamente:</p>
+                <ul>
+                    <li>Un mensaje de celebración: <span class="highlight">"🎉 SETUP COMPLETADO"</span></li>
+                    <li>Cuenta y muestra cuántos clientes hay en la base de datos</li>
+                    <li>Muestra qué modelo de IA se está usando</li>
+                </ul>
+            </div>
+            <div class="explanation-section">
+                <h3><span class="icon">📊</span> ¿Qué hace?</h3>
+                <p>Muestra un resumen final de todo lo que lograste en el setup:</p>
+                <ul>
+                    <li>Cuenta cuántos <span class="highlight">clientes hay en la base de datos</span></li>
+                    <li>Confirma que el <span class="highlight">modelo de embeddings funciona</span></li>
+                    <li>Verifica que la <span class="highlight">conexión a MongoDB está activa</span></li>
+                    <li>Te felicita porque todo está listo para la siguiente fase</li>
+                </ul>
+            </div>
+
+            <div class="example-output">
+                <strong>🎊 Salida Esperada:</strong>
+                <div style="margin-top: 15px; line-height: 2;">
+                    <div>🎉 SETUP COMPLETADO</div>
+                    <div>✅ Clientes en BD: 50</div>
+                    <div>✅ Modelo de IA: all-MiniLM-L6-v2</div>
+                    <div>✅ Vector Search: Operacional</div>
+                    <div>✅ Conexión MongoDB: Activa</div>
+                </div>
+            </div>
+
+            <div class="analogy-box">
+                <strong>Analogía:</strong>
+                <p>Es como el checklist antes de despegar un avión. Todo en verde significa que estás listo para la siguiente fase: ¡detectar fraudes!</p>
+            </div>
+        </div>
+
+        <!-- BADGE FINAL -->
+        <div style="text-align: center; margin: 80px 0 60px;">
+            <div class="completion-badge">
+                🎉 ¡SETUP COMPLETADO CON ÉXITO!
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 100%;"></div>
+            </div>
+        </div>
+
+        <div class="final-summary">
+            <h3>🏆 ¿Qué Lograste?</h3>
+            <p>
+                ✅ Instalaste las herramientas necesarias (pymongo + sentence-transformers)<br>
+                ✅ Cargaste un modelo de IA para generar embeddings<br>
+                ✅ Conectaste exitosamente con MongoDB Atlas<br>
+                ✅ Creaste 50 clientes ficticios pero realistas<br>
+                ✅ Convertiste cada cliente en un vector de 384 números<br>
+                ✅ Verificaste que Vector Search funciona perfectamente<br><br>
+                <span style="font-size: 1.3em; color: #00684A; font-weight: 700;">
+                    🚀 ¡Ahora estás listo para construir el detector de fraudes!
+                </span>
+            </p>
+        </div>
+    </div>
+
+
+<style>
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 60px;
+        }
+
+        header {
+            text-align: center;
+            padding: 100px 20px 80px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            position: relative;
+            overflow: hidden;
+            margin: -40px -60px 80px;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: rgba(0, 237, 100, 0.1);
+            border-radius: 50%;
+            top: -300px;
+            right: -200px;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(0, 237, 100, 0.05);
+            border-radius: 50%;
+            bottom: -200px;
+            left: -100px;
+            animation: float 15s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(30px, 30px) rotate(180deg); }
+        }
+
+        header h1 {
+            font-size: 4em;
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header p {
+            font-size: 1.4em;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-size: 2.8em;
+            color: #1a1a1a;
+            margin: 80px 0 50px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            color: #666;
+            margin-top: -35px;
+            margin-bottom: 60px;
+            font-weight: 400;
+        }
+
+        .celda-card {
+            background: #ffffff;
+            border: 1px solid #e8e8e8;
+            border-radius: 24px;
+            padding: 50px;
+            margin-bottom: 40px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .celda-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00ED64 0%, #00684A 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .celda-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 237, 100, 0.15);
+            border-color: #00ED64;
+        }
+
+        .celda-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .celda-card.danger::before {
+            background: linear-gradient(90deg, #dc2626 0%, #991b1b 100%);
+        }
+
+        .celda-card.danger:hover {
+            border-color: #dc2626;
+            box-shadow: 0 20px 60px rgba(220, 38, 38, 0.15);
+        }
+
+        .celda-header {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .celda-number {
+            background: linear-gradient(135deg, #00ED64 0%, #00684A 100%);
+            color: #ffffff;
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(0, 237, 100, 0.3);
+            flex-shrink: 0;
+        }
+
+        .celda-number.danger {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            box-shadow: 0 8px 24px rgba(220, 38, 38, 0.3);
+        }
+
+        .celda-title {
+            font-size: 2em;
+            color: #1a1a1a;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .celda-subtitle {
+            font-size: 1.15em;
+            color: #00684A;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin: 30px 0;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            overflow-x: auto;
+            position: relative;
+            border: 1px solid #21262d;
+        }
+
+        .code-block::before {
+            content: 'CÓDIGO';
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: #00ED64;
+            color: #0d1117;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.7em;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .code-block code {
+            color: #00ED64;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+
+        .explanation-section {
+            background: #f8fffe;
+            border-left: 4px solid #00ED64;
+            border-radius: 12px;
+            padding: 32px;
+            margin: 30px 0;
+        }
+
+        .explanation-section h3 {
+            color: #00684A;
+            font-size: 1.5em;
+            margin-bottom: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .explanation-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .explanation-section li {
+            margin: 15px 0;
+            padding-left: 35px;
+            position: relative;
+            color: #333;
+            font-size: 1.05em;
+        }
+
+        .explanation-section li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #00ED64;
+            font-weight: 700;
+            font-size: 1.3em;
+        }
+
+        .analogy-box {
+            background: linear-gradient(135deg, #f0fff4 0%, #e6ffed 100%);
+            border: 2px solid #00ED64;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .analogy-box::before {
+            content: '💡';
+            position: absolute;
+            top: -18px;
+            left: 30px;
+            background: #ffffff;
+            padding: 6px 18px;
+            border-radius: 12px;
+            font-size: 1.6em;
+            border: 2px solid #00ED64;
+        }
+
+        .analogy-box strong {
+            color: #00684A;
+            font-size: 1.15em;
+            font-weight: 700;
+        }
+
+        .analogy-box p, .analogy-box ul {
+            color: #333;
+            margin-top: 8px;
+            font-size: 1.05em;
+            line-height: 1.7;
+        }
+
+        .analogy-box ul {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+
+        .analogy-box li {
+            margin: 8px 0;
+        }
+
+        .highlight {
+            color: #00684A;
+            font-weight: 700;
+            background: linear-gradient(180deg, transparent 60%, rgba(0, 237, 100, 0.2) 60%);
+            padding: 2px 0;
+        }
+
+        .highlight-red {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        .icon {
+            font-size: 1.4em;
+        }
+
+        .risk-table {
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 30px 0;
+            border: 1px solid #e8e8e8;
+        }
+
+        .risk-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .risk-table th {
+            background: linear-gradient(135deg, #00ED64 0%, #00684A 100%);
+            color: #ffffff;
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 1.05em;
+        }
+
+        .risk-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+
+        .risk-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .risk-table tr:hover {
+            background: #f8fffe;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+
+        .badge.approve {
+            background: #f0fff4;
+            color: #00684A;
+            border: 2px solid #00ED64;
+        }
+
+        .badge.flag {
+            background: #fffbeb;
+            color: #b45309;
+            border: 2px solid #fbbf24;
+        }
+
+        .badge.block {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 2px solid #dc2626;
+        }
+
+        .example-box {
+            background: #fef2f2;
+            border: 2px solid #dc2626;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .example-box h4 {
+            color: #dc2626;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            font-weight: 700;
+        }
+
+        .detection-flow {
+            background: #f9fafb;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .flow-step {
+            background: #ffffff;
+            border-left: 4px solid #00ED64;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .flow-step strong {
+            color: #00684A;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            font-size: 2em;
+            color: #00ED64;
+            margin: 15px 0;
+        }
+
+        .step-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .step-box {
+            background: #ffffff;
+            border: 2px solid #e8e8e8;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .step-box:hover {
+            border-color: #00ED64;
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 237, 100, 0.1);
+        }
+
+        .step-box h4 {
+            color: #1a1a1a;
+            font-size: 1.2em;
+            margin: 15px 0;
+            font-weight: 700;
+        }
+
+        .step-icon {
+            background: linear-gradient(135deg, #00ED64 0%, #00684A 100%);
+            color: #ffffff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .fraud-pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .fraud-pattern-card {
+            background: #ffffff;
+            border: 2px solid #fee2e2;
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .fraud-pattern-card:hover {
+            border-color: #dc2626;
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(220, 38, 38, 0.1);
+        }
+
+        .fraud-pattern-card h4 {
+            color: #dc2626;
+            margin-bottom: 12px;
+            font-size: 1.25em;
+            font-weight: 700;
+        }
+
+        .fraud-pattern-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .completion-badge {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #00ED64;
+            padding: 20px 40px;
+            border-radius: 60px;
+            font-size: 1.4em;
+            font-weight: 700;
+            display: inline-block;
+            margin: 40px 0;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            }
+            50% {
+                transform: scale(1.03);
+                box-shadow: 0 16px 50px rgba(0, 0, 0, 0.25);
+            }
+        }
+
+        .final-summary {
+            background: linear-gradient(135deg, #f0fff4 0%, #e6ffed 100%);
+            border-radius: 24px;
+            padding: 60px;
+            text-align: center;
+            margin-top: 80px;
+            border: 2px solid #00ED64;
+        }
+
+        .final-summary h3 {
+            color: #00684A;
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .final-summary p {
+            color: #333;
+            font-size: 1.2em;
+            line-height: 2.2;
+        }
+
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .concept-card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .concept-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .concept-card strong {
+            color: #00684A;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 30px;
+            }
+
+            header {
+                padding: 60px 20px 50px;
+                margin: -20px -30px 40px;
+            }
+
+            header h1 {
+                font-size: 2.5em;
+            }
+
+            .section-title {
+                font-size: 2em;
+            }
+
+            .celda-card {
+                padding: 30px;
+            }
+
+            .step-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+</style>   
+
+<div class="container">
+    <header>
+        <h1>🚨 Sistema de Detección</h1>
+        <p>Celdas 10-19: El Motor Inteligente</p>
+    </header>
+
+    <h2 class="section-title">Construyendo el Guardian</h2>
+    <p class="section-subtitle">De reglas básicas a inteligencia artificial</p>
+
+    <!-- CELDA 10 -->
+    <div class="celda-card danger">
+        <div class="celda-header">
+            <div class="celda-number danger">10</div>
+            <div class="celda-title">⚖️ Crear Modelo de Riesgo</div>
+        </div>
+        
+        <p class="celda-subtitle">Definiendo las reglas del juego</p>
+
+        <div class="code-block">
+            <code>risk_model = {<br>    "weights": {<br>        "amount_anomaly_high": 30,<br>        "location_anomaly": 25,<br>        "new_device": 35,<br>        "unusual_time": 15<br>    },<br>    "thresholds": {<br>        "approve": 30,<br>        "flag": 60,<br>        "block": 85<br>    }<br>}<br>db.risk_models.insert_one(risk_model)</code>
+        </div>
+
+        <div class="explanation-section">
+            <h3><span class="icon">🎯</span> ¿Qué hace?</h3>
+            <p>Crea las reglas fundamentales para decidir si una transacción es fraude:</p>
+            <ul>
+                <li><span class="highlight">Weights (Pesos)</span> → Cuántos puntos suma cada anomalía detectada</li>
+                <li><span class="highlight">Thresholds (Umbrales)</span> → Cuándo aprobar, revisar o bloquear</li>
+                <li>El sistema acumula puntos automáticamente y toma decisiones</li>
+            </ul>
+        </div>
+
+        <div class="risk-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Anomalía Detectada</th>
+                        <th>Puntos</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Monto muy alto</td>
+                        <td><span class="highlight-red">+30</span></td>
+                        <td>3x el promedio del cliente</td>
+                    </tr>
+                    <tr>
+                        <td>Ubicación rara</td>
+                        <td><span class="highlight-red">+25</span></td>
+                        <td>Ciudad diferente a la habitual</td>
+                    </tr>
+                    <tr>
+                        <td>Dispositivo nuevo</td>
+                        <td><span class="highlight-red">+35</span></td>
+                        <td>Nunca antes usado</td>
+                    </tr>
+                    <tr>
+                        <td>Hora sospechosa</td>
+                        <td><span class="highlight-red">+15</span></td>
+                        <td>Entre 0-6 AM (madrugada)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="explanation-section">
+            <h3><span class="icon">🚦</span> Umbrales de Decisión:</h3>
+            <div style="margin-top: 20px;">
+                <div style="margin: 15px 0;">
+                    <span class="badge approve">✅ APROBAR</span> → Menos de 30 puntos (bajo riesgo)
+                </div>
+                <div style="margin: 15px 0;">
+                    <span class="badge flag">🟡 REVISAR</span> → Entre 30 y 85 puntos (riesgo medio)
+                </div>
+                <div style="margin: 15px 0;">
+                    <span class="badge block">🔴 BLOQUEAR</span> → Más de 85 puntos (alto riesgo)
+                </div>
+            </div>
+        </div>
+
+        <div class="analogy-box">
+            <strong>Analogía:</strong>
+            <p>Es como el sistema de puntos en tu licencia de conducir. Cada infracción suma puntos: exceso de velocidad (+15), pasarse un semáforo (+30), conducir ebrio (+50). Si llegas a 100 puntos, te suspenden la licencia. Aquí funciona igual pero para transacciones financieras.</p>
+        </div>
+    </div>
+
+    <!-- CELDA 11 -->
+    <div class="celda-card">
+        <div class="celda-header">
+            <div class="celda-number">11</div>
+            <div class="celda-title">🧮 Calcular Score de Riesgo</div>
+        </div>
+        
+        <p class="celda-subtitle">El cerebro que suma puntos sospechosos</p>
+
+        <div class="code-block">
+            <code>def calcular_risk_score(transaccion, cliente, modelo):<br>    score = 0<br>    <br>    if monto > promedio * 3:<br>        score += 30  # Monto anómalo<br>    <br>    if hora entre 0 y 6:<br>        score += 15  # Hora sospechosa<br>    <br>    if dispositivo_nuevo:<br>        score += 35  # Dispositivo desconocido<br>    <br>    return score, detalles</code>
+        </div>
+
+        <div class="explanation-section">
+            <h3><span class="icon">⚙️</span> ¿Qué hace?</h3>
+            <p>Calcula automáticamente cuántos puntos de riesgo tiene una transacción:</p>
+            <ul>
+                <li>Comienza con <span class="highlight">score = 0</span></li>
+                <li>Revisa cada característica de la transacción</li>
+                <li>Por cada anomalía detectada, suma los puntos correspondientes</li>
+                <li>Al final, compara el total con los umbrales para decidir</li>
+            </ul>
+        </div>
+
+        <div class="example-box">
+            <h4>🔍 Ejemplo Paso a Paso:</h4>
+            <div class="detection-flow">
+                <div class="flow-step">
+                    <strong>TRANSACCIÓN:</strong>
+                    <span style="font-size: 0.95em;">$5,000,000 COP a las 3 AM desde iPhone desconocido</span>
+                </div>
+                
+                <div class="flow-step">
+                    <strong>PROMEDIO DEL CLIENTE:</strong>
+                    <span style="font-size: 0.95em;">$100,000 COP</span>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <div class="flow-step" style="border-color: #dc2626;">
+                    <span class="highlight-red">+30 puntos</span> → Monto es 50x el promedio
+                </div>
+
+                <div class="flow-step" style="border-color: #dc2626;">
+                    <span class="highlight-red">+15 puntos</span> → Hora: 3 AM (madrugada)
+                </div>
+
+                <div class="flow-step" style="border-color: #dc2626;">
+                    <span class="highlight-red">+35 puntos</span> → Dispositivo nunca visto
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <div class="flow-step" style="background: #fef2f2; border-color: #dc2626;">
+                    <strong style="color: #dc2626;">SCORE FINAL: 80 puntos</strong>
+                </div>
+
+                <div class="flow-arrow">⬇️</div>
+
+                <div class="flow-step" style="background: #fffbeb; border-color: #fbbf24;">
+                    <strong style="color: #b45309;">DECISIÓN:</strong>
+                    <span class="badge flag">🟡 REVISAR</span>
+                    <span style="font-size: 0.9em; display: block; margin-top: 8px;">(está entre 30-85 puntos)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="analogy-box">
+            <strong>Analogía:</strong>
+            <p>Es como un detector de metales en el aeropuerto. Pitas un poco = revisión rápida. Pitas mucho = revisión exhaustiva. Pitas DEMASIADO = problema serio y seguridad interviene.</p>
+        </div>
+    </div>
+
+    <!-- CELDA 12 -->
+    <div class="celda-card danger">
+        <div class="celda-header">
+            <div class="celda-number danger">12</div>
+            <div class="celda-title">🚨 Crear Patrones de Fraude</div>
+        </div>
+        
+        <p class="celda-subtitle">La biblioteca de trucos conocidos</p>
+
+        <div class="code-block">
+            <code>fraud_patterns = [<br>    {<br>        "pattern_name": "Viajero Imposible",<br>        "description": "Compra en Bogotá y luego en Miami en 30 min"<br>    },<br>    {<br>        "pattern_name": "Cambio de Patrón",<br>        "description": "Estudiante que súbitamente compra en casino"<br>    },<br>    # ... 6 patrones más<br>]<br>db.fraud_patterns.insert_many(fraud_patterns)</code>
+        </div>
+
+        <div class="explanation-section">
+            <h3><span class="icon">📚</span> ¿Qué hace?</h3>
+            <p>Crea una biblioteca completa con 8 tipos de fraude típicos en Colombia. Cada patrón describe un comportamiento sospechoso conocido que los delincuentes usan frecuentemente.</p>
+        </div>
+
+        <div class="fraud-pattern-grid">
+            <div class="fraud-pattern-card">
+                <h4>🌍 Viajero Imposible</h4>
+                <p>Compra en Bogotá y 30 minutos después en Miami. Físicamente imposible sin teletransportación.</p>
+            </div>
+
+            <div class="fraud-pattern-card">
+                <h4>🎭 Cambio de Patrón</h4>
+                <p>Estudiante que de repente compra en casino de lujo. Comportamiento completamente atípico.</p>
+            </div>
+
+            <div class="fraud-pattern-card">
+                <h4>💸 Pitufeo</h4>
+                <p>Muchas transacciones pequeñas en corto tiempo para evadir límites de seguridad.</p>
+            </div>
+
+            <div class="fraud-pattern-card">
+                <h4>🌙 Compras Nocturnas</h4>
+                <p>Transacciones atípicas entre 2-6 AM cuando el cliente normalmente duerme.</p>
+            </div>
+
+            <div class="fraud-pattern-card">
+                <h4>🚧 Frontera Venezuela</h4>
+                <p>Compras en zonas fronterizas de alto riesgo conocidas por clonación de tarjetas.</p>
+            </div>
+
+            <div class="fraud-pattern-card">
+                <h4>💳 Clonación de Tarjeta</h4>
+                <p>Múltiples intentos fallidos seguidos de una compra exitosa. Prueba de tarjeta robada.</p>
+            </div>
+
+            <div class="fraud-pattern-card">
+                <h4>🏦 Mula Digital</h4>
+                <p>Recibe dinero y lo dispersa rápidamente a múltiples cuentas. Lavado de dinero.</p>
+            </div>
+
+            <div class="fraud-pattern-card">
+                <h4>🧪 Test de Tarjeta</h4>
+                <p>Compras de $1 para verificar si la tarjeta funciona antes del fraude real.</p>
+            </div>
+        </div>
+
+        <div class="analogy-box">
+            <strong>Analogía:</strong>
+            <p>Es como el "Top 10 de trucos de ladrones" que estudia la policía. Cada patrón es un modus operandi conocido. Si tu sistema reconoce estos patrones, puede identificar fraudes mucho más rápido.</p>
+        </div>
+    </div>
+
+    <!-- CELDA 13 -->
+    <div class="celda-card">
+        <div class="celda-header">
+            <div class="celda-number">13</div>
+            <div class="celda-title">🔢 Embeddings de Patrones</div>
+        </div>
+        
+        <p class="celda-subtitle">Convirtiendo patrones en vectores</p>
+
+        <div class="code-block">
+            <code>for pattern in fraud_patterns:<br>    texto = pattern['description']<br>    embedding = model.encode(texto)<br>    db.fraud_patterns.update_one(<br>        {"_id": pattern['_id']}, <br>        {"$set": {"embedding": embedding}}<br>    )</code>
+        </div>
+
+        <div class="explanation-section">
+            <h3><span class="icon">🧬</span> ¿Qué hace?</h3>
+            <p>Convierte cada patrón de fraude en su ADN matemático:</p>
+            <ul>
+                <li>Igual que con los clientes, ahora los <span class="highlight">fraudes tienen vectores</span></li>
+                <li>Cada descripción se convierte en 384 números</li>
+                <li>Esto permite comparar: <span class="highlight">"¿Esta transacción se parece al fraude 'Viajero Imposible'?"</span></li>
+                <li>MongoDB puede buscar similitudes semánticas automáticamente</li>
+            </ul>
+        </div>
+
+        <div class="analogy-box">
+            <strong>Analogía:</strong>
+            <p>Es como convertir las huellas dactilares de criminales conocidos en códigos digitales. Cuando encuentras una huella nueva en una escena del crimen, puedes compararla instantáneamente contra toda la base de datos.</p>
+        </div>
+    </div>
+
+    <!-- CELDA 14 -->
+    <div class="celda-card">
+        <div class="celda-header">
+            <div class="celda-number">14</div>
+            <div class="celda-title">📚 Mostrar Patrones</div>
+        </div>
+        
+        <p class="celda-subtitle">Verificación visual de la carga</p>
+
+        <div class="code-block">
+            <code>patterns = db.fraud_patterns.find()<br>for p in patterns:<br>    print(f"✅ {p['pattern_name']}: {p['description']}")</code>
+        </div>
+
+        <div class="explanation-section">
+            <h3><span class="icon">👁️</span> ¿Qué hace?</h3>
+            <p>Simplemente lista todos los patrones de fraude cargados para verificación visual. Es un print bonito que confirma que los 8 patrones se guardaron correctamente en MongoDB con sus embeddings.</p>
+        </div>
+    </div>
+
+    <!-- CELDA 15 -->
+    <div class="celda-card">
+        <div class="celda-header">
+            <div class="celda-number">15</div>
+            <div class="celda-title">🎭 Simulador de Transacciones</div>
+        </div>
+        
+        <p class="celda-subtitle">Creando transacciones legítimas vs fraudulentas</p>
+
+        <div class="code-block">
+            <code>def generar_transaccion_normal(cliente):<br>    # Monto cerca del promedio (±50%)<br>    # Hora normal (8 AM - 10 PM)<br>    # Comercio favorito<br>    # Dispositivo conocido<br><br>def generar_transaccion_fraudulenta(cliente):<br>    # Monto 10x el promedio<br>    # Hora rara (3 AM)<br>    # Comercio atípico<br>    # Dispositivo nuevo</code>
+        </div>
+
+        <div class="explanation-section">
+            <h3><span class="icon">⚙️</span> ¿Qué hace?</h3>
+            <p>Crea dos funciones generadoras para simular transacciones de prueba con características muy diferentes.</p>
+        </div>
+
+        <div class="step-grid">
+            <div class="step-box" style="border-color: #00ED64;">
+                <div class="step-icon">✅</div>
+                <h4>Transacción NORMAL</h4>
+                <p style="font-size: 0.95em; margin-top: 15px; color: #666;">
+                    • Comercio frecuentado<br>
+                    • Monto típico ±50%<br>
+                    • Horario 8 AM - 10 PM<br>
+                    • Dispositivo conocido
+                </p>
+            </div>
+
+            <div class="step-box" style="border-color: #dc2626;">
+                <div class="step-icon" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);">🚨</div>
+                <h4>Transacción FRAUDULENTA</h4>
+                <p style="font-size: 0.95em; margin-top: 15px; color: #666;">
+                    • Monto gigante (10x)<br>
+                    • Hora extraña (3-4 AM)<br>
+                    • Casino o extranjero<br>
+                    • Dispositivo nuevo
+                </p>
+            </div>
+        </div>
+
+        <div class="example-box">
+            <h4>📊 Ejemplos Comparativos:</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px;">
+                <div style="background: #f0fff4; padding: 20px; border-radius: 12px; border: 2px solid #00ED64;">
+                    <strong style="color: #00684A; display: block; margin-bottom: 10px;">✅ NORMAL</strong>
+                    <div style="font-size: 0.95em; color: #333; line-height: 1.8;">
+                        María compra $80,000<br>
+                        en Carulla<br>
+                        a las 2 PM<br>
+                        desde su iPhone habitual
+                    </div>
+                </div>
+                <div style="background: #fef2f2; padding: 20px; border-radius: 12px; border: 2px solid #dc2626;">
+                    <strong style="color: #dc2626; display: block; margin-bottom: 10px;">🚨 FRAUDE</strong>
+                    <div style="font-size: 0.95em; color: #333; line-height: 1.8;">
+                        María "compra" $5,000,000<br>
+                        en casino online<br>
+                        a las 3 AM<br>
+                        desde Android desconocido
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="analogy-box">
+            <strong>Analogía:</strong>
+            <p>Es como crear dos tipos de emails para entrenar un filtro de spam: algunos son correos legítimos de tu jefe, otros son claramente "HAZ CLIC AQUÍ PARA GANAR $1,000,000". El sistema aprende a distinguirlos.</p>
+        </div>
+    </div>
+
+    <!-- CELDA 16 -->
+    <div class="celda-card">
+        <div class="celda-header">
+            <div class="celda-number">16</div>
+            <div class="celda-title">📦 Generar Batch de Transacciones</div>
+        </div>
+        
+        <p class="celda-subtitle">Mezclando el mazo completo</p>
+
+        <div class="code-block">
+            <code>def generar_batch_transacciones(num=100, fraud_rate=0.20):<br>    normales = int(num * (1 - fraud_rate))  # 80<br>    fraudulentas = int(num * fraud_rate)     # 20<br>    <br>    transacciones = []<br>    # Generar 80 normales<br>    # Generar 20 fraudulentas<br>    # Mezclar aleatoriamente (shuffle)<br>    <br>    return transacciones</code>
+        </div>
+
+        <div class="explanation-section">
+            <h3><span class="icon">🎲</span> ¿Qué hace?</h3>
+            <p>Genera lotes grandes de transacciones mezcladas para pruebas realistas:</p>
+            <ul>
+                <li>Le dices: <span class="highlight">"quiero 100 transacciones con 20% de fraudes"</span></li>
+                <li>Genera 80 transacciones normales automáticamente</li>
+                <li>Genera 20 transacciones fraudulentas</li>
+                <li>Las <span class="highlight">baraja completamente</span> para simular la vida real</li>
+            </ul>
+        </div>
+
+        <div class="analogy-box">
+            <strong>Analogía:</strong>
+            <p>Es como repartir cartas de póker - algunas son buenas (legítimas), algunas son malas (fraudes), y todas están perfectamente mezcladas. El detector debe identificar cuáles son cuáles sin saber de antemano el orden.</p>
+        </div>
+    </div>
+
+    <!-- CELDA 17 -->
+    <div class="celda-card danger">
+        <div class="celda-header">
+            <div class="celda-number danger">17</div>
+            <div class="celda-title">🔍 Sistema de Detección Vectorial</div>
+        </div>
+        
+        <p class="celda-subtitle">¡LA MAGIA! El corazón del sistema completo</p>
+
+        <div class="code-block">
+            <code>def detectar_fraude_vectorial(transaccion):<br>    # PASO 1: Generar embedding<br>    embedding_txn = model.encode(descripcion_txn)<br>    <br>    # PASO 2: Vector Search<br>    vecinos = db.customers.aggregate([{<br>        "$vectorSearch": {<br>            "queryVector": embedding_txn,<br>            "limit": 3<br>        }<br>    }])<br>    <br>    # PASO 3: Calcular risk score<br>    score = calcular_risk_score(transaccion)<br>    <br>    # PASO 4: Penalización por baja similitud<br>    if similitud < 0.5:<br>        score += 40<br>    <br>    # PASO 5: Decisión final<br>    return decision, score</code>
+        </div>
+
+        <div class="explanation-section">
+            <h3><span class="icon">🚀</span> ¿Qué hace?</h3>
+            <p>Este es el <span class="highlight">corazón del sistema</span>. Combina Vector Search con Risk Scoring para detectar fraudes de manera inteligente.</p>
+        </div>
+
+        <div class="detection-flow" style="background: #fef2f2; border: 2px solid #fee2e2;">
+            <h4 style="color: #dc2626; text-align: center; margin-bottom: 25px; font-size: 1.5em;">🎯 Flujo Completo de Detección</h4>
+            
+            <div class="flow-step" style="background: #f0fff4; border-color: #00ED64;">
+                <strong>PASO 1: Convertir en Vector</strong>
+                <span style="font-size: 0.95em; color: #666;">"$5M en casino a las 3 AM" → [0.89, -0.45, 0.23, ... 384 números]</span>
+            </div>
+
+            <div class="flow-arrow">⬇️</div>
+
+            <div class="flow-step" style="background: #f0fff4; border-color: #00ED64;">
+                <strong>PASO 2: Vector Search</strong>
+                <span style="font-size: 0.95em; color: #666;">MongoDB busca: "¿Qué clientes tienen comportamiento similar?"</span><br>
+                <span style="font-size: 0.95em; color: #b45309; margin-top: 8px; display: block;">Resultado: Cliente Alejandro (gerente) - Similitud: 0.3 (BAJA ⚠️)</span>
+            </div>
+
+            <div class="flow-arrow">⬇️</div>
+
+            <div class="flow-step" style="background: #fffbeb; border-color: #fbbf24;">
+                <strong>PASO 3: Calcular Risk Score</strong>
+                <span style="font-size: 0.95em; color: #666;">
+                    • Monto 50x el promedio → <span class="highlight-red">+30 puntos</span><br>
+                    • Hora 3 AM → <span class="highlight-red">+15 puntos</span><br>
+                    • Dispositivo nuevo → <span class="highlight-red">+35 puntos</span><br>
+                    <strong style="color: #1a1a1a; margin-top: 8px; display: block;">Subtotal = 80 puntos</strong>
+                </span>
+            </div>
+
+            <div class="flow-arrow">⬇️</div>
+
+            <div class="flow-step" style="background: #fef2f2; border-color: #dc2626;">
+                <strong>PASO 4: Penalización Vectorial</strong>
+                <span style="font-size: 0.95em; color: #666;">
+                    Similitud 0.3 es MUY baja (no se parece a nadie conocido) → <span class="highlight-red">+40 puntos extra</span><br>
+                    <strong style="color: #dc2626; margin-top: 8px; display: block;">Score Final = 80 + 40 = 120 puntos 🚨</strong>
+                </span>
+            </div>
+
+            <div class="flow-arrow">⬇️</div>
+
+            <div class="flow-step" style="background: #fef2f2; border-color: #dc2626;">
+                <strong style="color: #dc2626;">PASO 5: Decisión Final</strong>
+                <div style="margin-top: 12px;">
+                    <span style="font-size: 1.1em;">120 > 85 → <span class="badge block">🔴 BLOQUEAR</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="analogy-box">
+            <strong>Analogía:</strong>
+            <p>Es como la seguridad del aeropuerto con dos capas:</p>
+            <ul>
+                <li><strong>Vector Search</strong> = Reconocimiento facial que compara tu cara con perfiles conocidos</li>
+                <li><strong>Risk Model</strong> = Detector de metales que suma puntos por items sospechosos</li>
+                <li>Si ambos sistemas dicen "sospechoso" → <span class="highlight-red">¡ALARMA MÁXIMA!</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- CELDA 18 -->
+    <div class="celda-card">
+        <div class="celda-header">
+            <div class="celda-number">18</div>
+            <div class="celda-title">📊 Procesar Batch Completo</div>
+        </div>
+        
+        <p class="celda-subtitle">Evaluando el rendimiento del sistema</p>
+
+        <div class="code-block">
+            <code>batch = generar_batch_transacciones(50, 0.20)<br>resultados = []<br><br>for txn in batch:<br>    resultado = detectar_fraude_vectorial(txn)<br>    resultados.append(resultado)<br><br># Calcular métricas<br>precision = TP / (TP + FP)<br>recall = TP / (TP + FN)<br>dinero_salvado = suma_fraudes_bloqueados</code>
+        </div>
+
+        <div class="explanation-section">
+            <h3><span class="icon">📈</span> ¿Qué hace?</h3>
+            <p>Procesa lotes completos y calcula métricas de desempeño profesionales:</p>
+            <ul>
+                <li>Genera 50 transacciones (10 fraudes, 40 normales)</li>
+                <li>Pasa cada una por el detector completo</li>
+                <li>Cuenta resultados y calcula estadísticas de efectividad</li>
+            </ul>
+        </div>
+
+        <div class="risk-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Métrica</th>
+                        <th>Qué Mide</th>
+                        <th>Importancia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">True Positives (TP)</span></td>
+                        <td>Fraudes detectados correctamente</td>
+                        <td>✅ ¡Dinero salvado!</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight-red">False Negatives (FN)</span></td>
+                        <td>Fraudes que dejamos pasar</td>
+                        <td>❌ Pérdida de dinero</td>
+                    </tr>
+                    <tr>
+                        <td><span style="color: #b45309; font-weight: 700;">False Positives (FP)</span></td>
+                        <td>Clientes legítimos bloqueados</td>
+                        <td>⚠️ Clientes molestos</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Precisión</span></td>
+                        <td>% de bloqueados que son fraudes reales</td>
+                        <td>TP / (TP + FP)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Recall</span></td>
+                        <td>% de fraudes reales que detectamos</td>
+                        <td>TP / (TP + FN)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Dinero Salvado</span></td>
+                        <td>Suma de montos de fraudes bloqueados</td>
+                        <td>💰 ROI del sistema</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="example-box">
+            <h4>📊 Ejemplo de Resultados:</h4>
+            <div style="background: #f0fff4; padding: 25px; border-radius: 12px; margin-top: 20px; border: 2px solid #00ED64;">
+                <div style="font-size: 1.15em; color: #333; line-height: 2;">
+                    ✅ <strong style="color: #00684A;">9 fraudes detectados</strong> de 10 (90% recall)<br>
+                    ⚠️ <strong style="color: #b45309;">2 falsos positivos</strong> (clientes bloqueados por error)<br>
+                    💰 <strong style="color: #00684A;">$45,000,000 COP salvados</strong><br>
+                    🎯 <strong style="color: #00684A;">Precisión: 81.8%</strong> (9 / 11)<br>
+                    🎯 <strong style="color: #00684A;">Recall: 90%</strong> (9 / 10)
+                </div>
+            </div>
+        </div>
+
+        <div class="analogy-box">
+            <strong>Analogía:</strong>
+            <p>Es como evaluar el desempeño de un portero de fútbol:</p>
+            <ul>
+                <li><strong>Recall</strong> = ¿Cuántos goles atajó de los que le tiraron?</li>
+                <li><strong>Precisión</strong> = ¿Cuándo gritó "¡falta!", realmente era falta?</li>
+                <li><strong>Dinero salvado</strong> = ¿Cuántos partidos ganó gracias a sus atajadas?</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- CELDA 19 -->
+    <div class="celda-card">
+        <div class="celda-header">
+            <div class="celda-number">19</div>
+            <div class="celda-title">🎮 Dashboard Interactivo</div>
+        </div>
+        
+        <p class="celda-subtitle">Panel de control visual en tiempo real</p>
+
+        <div class="code-block">
+            <code>import ipywidgets as widgets<br><br>num_txn_slider = widgets.IntSlider(<br>    value=10, min=5, max=50,<br>    description='Transacciones:'<br>)<br><br>fraud_rate_slider = widgets.FloatSlider(<br>    value=0.20, min=0.10, max=0.50,<br>    description='% Fraudes:'<br>)<br><br>process_btn = widgets.Button(<br>    description='🚀 PROCESAR',<br>    button_style='success'<br>)<br><br>def procesar_transacciones(b):<br>    # Genera batch<br>    # Procesa todo<br>    # Muestra gráficos<br>    # Muestra tablas</code>
+        </div>
+
+        <div class="explanation-section">
+            <h3><span class="icon">🎨</span> ¿Qué hace?</h3>
+            <p>Crea un panel de control interactivo con widgets visuales:</p>
+            <ul>
+                <li>2 <span class="highlight">sliders ajustables</span> para configurar parámetros</li>
+                <li>1 <span class="highlight">botón grande</span> para ejecutar el proceso</li>
+                <li>Genera <span class="highlight">gráficos automáticos</span> de los resultados</li>
+                <li>Muestra <span class="highlight">tablas interactivas</span> con transacciones sospechosas</li>
+            </ul>
+        </div>
+
+        <div class="step-grid">
+            <div class="step-box">
+                <div class="step-icon">🎚️</div>
+                <h4>Slider 1</h4>
+                <p style="font-size: 0.95em; margin-top: 15px; color: #666;">
+                    Número de<br>transacciones<br>(5-50)
+                </p>
+            </div>
+
+            <div class="step-box">
+                <div class="step-icon">📊</div>
+                <h4>Slider 2</h4>
+                <p style="font-size: 0.95em; margin-top: 15px; color: #666;">
+                    Porcentaje de<br>fraudes<br>(10%-50%)
+                </p>
+            </div>
+
+            <div class="step-box" style="border-color: #00ED64;">
+                <div class="step-icon">🚀</div>
+                <h4>Botón Ejecutar</h4>
+                <p style="font-size: 0.95em; margin-top: 15px; color: #666;">
+                    Procesa todo y<br>muestra resultados<br>visuales
+                </p>
+            </div>
+        </div>
+
+        <div class="explanation-section">
+            <h3><span class="icon">📺</span> Outputs Generados:</h3>
+            <div style="margin-top: 20px;">
+                <div style="margin: 18px 0; padding: 18px; background: #ffffff; border-radius: 10px; border-left: 4px solid #00ED64;">
+                    <strong style="color: #00684A;">📈 Gráfico de Torta:</strong>
+                    <span style="color: #666; margin-left: 10px;">Distribución de aprobadas, revisadas, bloqueadas</span>
+                </div>
+                <div style="margin: 18px 0; padding: 18px; background: #ffffff; border-radius: 10px; border-left: 4px solid #00ED64;">
+                    <strong style="color: #00684A;">📊 Histograma:</strong>
+                    <span style="color: #666; margin-left: 10px;">Distribución de risk scores</span>
+                </div>
+                <div style="margin: 18px 0; padding: 18px; background: #ffffff; border-radius: 10px; border-left: 4px solid #00ED64;">
+                    <strong style="color: #00684A;">🔍 Tabla Interactiva:</strong>
+                    <span style="color: #666; margin-left: 10px;">Top 10 transacciones más sospechosas</span>
+                </div>
+                <div style="margin: 18px 0; padding: 18px; background: #ffffff; border-radius: 10px; border-left: 4px solid #00ED64;">
+                    <strong style="color: #00684A;">📋 Métricas:</strong>
+                    <span style="color: #666; margin-left: 10px;">Precisión, recall, dinero salvado</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="analogy-box">
+            <strong>Analogía:</strong>
+            <p>Es como el panel de control de un videojuego moderno. Ajustas la dificultad con sliders (¿cuántos enemigos? ¿qué tan peligrosos?), presionas START, y el juego comienza mostrándote estadísticas en tiempo real: puntos, vidas, nivel alcanzado.</p>
+        </div>
+    </div>
+
+    <!-- BADGE FINAL -->
+    <div style="text-align: center; margin: 80px 0 60px;">
+        <div class="completion-badge">
+            🎉 ¡SISTEMA COMPLETO OPERACIONAL!
+        </div>
+    </div>
+
+    <div class="final-summary">
+        <h3>🏆 Lo Que Lograste en Esta Fase:</h3>
+        <p>
+            ✅ Modelo de riesgo con pesos y umbrales inteligentes<br>
+            ✅ Biblioteca de 8 patrones de fraude conocidos<br>
+            ✅ Sistema de detección con Vector Search + IA<br>
+            ✅ Simulador de transacciones realistas<br>
+            ✅ Métricas profesionales de evaluación<br>
+            ✅ Dashboard interactivo para experimentar<br><br>
+            <span style="font-size: 1.4em; color: #00684A; font-weight: 700;">
+                🚀 ¡Tienes un detector de fraudes con IA completamente funcional!
+            </span>
+        </p>
+    </div>
+
+    <!-- CONCEPTOS CLAVE -->
+    <div style="background: #f9fafb; border-radius: 24px; padding: 60px; margin-top: 60px; border: 1px solid #e8e8e8;">
+        <h3 style="text-align: center; font-size: 2.2em; color: #1a1a1a; margin-bottom: 40px; font-weight: 700;">🎓 Conceptos Clave Dominados</h3>
+        
+        <div class="concepts-grid">
+            <div class="concept-card">
+                <div class="concept-icon">🧠</div>
+                <strong>Vector Embeddings</strong>
+                <span style="color: #666; font-size: 0.95em;">Convertir comportamiento en números para que la IA lo entienda</span>
+            </div>
+
+            <div class="concept-card">
+                <div class="concept-icon">🔍</div>
+                <strong>Vector Search</strong>
+                <span style="color: #666; font-size: 0.95em;">Buscar por similitud semántica, no solo coincidencias exactas</span>
+            </div>
+
+            <div class="concept-card">
+                <div class="concept-icon">⚖️</div>
+                <strong>Risk Scoring</strong>
+                <span style="color: #666; font-size: 0.95em;">Sistema de puntos ponderados para cuantificar riesgos</span>
+            </div>
+
+            <div class="concept-card">
+                <div class="concept-icon">🎭</div>
+                <strong>Pattern Matching</strong>
+                <span style="color: #666; font-size: 0.95em;">Detectar fraudes conocidos mediante patrones históricos</span>
+            </div>
+
+            <div class="concept-card">
+                <div class="concept-icon">📊</div>
+                <strong>Métricas ML</strong>
+                <span style="color: #666; font-size: 0.95em;">Precisión, recall y F1-score para medir efectividad</span>
+            </div>
+
+            <div class="concept-card">
+                <div class="concept-icon">🚦</div>
+                <strong>Thresholds</strong>
+                <span style="color: #666; font-size: 0.95em;">Umbrales inteligentes para decisiones automatizadas</span>
+            </div>
+
+            <div class="concept-card">
+                <div class="concept-icon">🔄</div>
+                <strong>Batch Processing</strong>
+                <span style="color: #666; font-size: 0.95em;">Procesar grandes volúmenes de transacciones eficientemente</span>
+            </div>
+
+            <div class="concept-card">
+                <div class="concept-icon">🎮</div>
+                <strong>Interactive UI</strong>
+                <span style="color: #666; font-size: 0.95em;">Interfaces visuales para análisis en tiempo real</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ARQUITECTURA DEL SISTEMA -->
+    <div style="background: linear-gradient(135deg, #f0fff4 0%, #e6ffed 100%); border-radius: 24px; padding: 60px; margin-top: 60px; border: 2px solid #00ED64;">
+        <h3 style="text-align: center; font-size: 2.2em; color: #00684A; margin-bottom: 40px; font-weight: 700;">🏗️ Arquitectura del Sistema</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 40px;">
+            <div style="text-align: center;">
+                <div style="background: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); height: 100%;">
+                    <div style="font-size: 3em; margin-bottom: 15px;">📥</div>
+                    <h4 style="color: #00684A; margin-bottom: 15px; font-size: 1.3em;">ENTRADA</h4>
+                    <p style="color: #666; font-size: 0.95em; line-height: 1.7;">
+                        • Transacción nueva<br>
+                        • Datos del cliente<br>
+                        • Contexto histórico
+                    </p>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <div style="background: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); height: 100%;">
+                    <div style="font-size: 3em; margin-bottom: 15px;">⚙️</div>
+                    <h4 style="color: #00684A; margin-bottom: 15px; font-size: 1.3em;">PROCESAMIENTO</h4>
+                    <p style="color: #666; font-size: 0.95em; line-height: 1.7;">
+                        • Generar embedding<br>
+                        • Vector Search<br>
+                        • Calcular risk score<br>
+                        • Aplicar penalizaciones
+                    </p>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <div style="background: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); height: 100%;">
+                    <div style="font-size: 3em; margin-bottom: 15px;">📤</div>
+                    <h4 style="color: #00684A; margin-bottom: 15px; font-size: 1.3em;">SALIDA</h4>
+                    <p style="color: #666; font-size: 0.95em; line-height: 1.7;">
+                        • Decisión final<br>
+                        • Score de riesgo<br>
+                        • Explicación detallada<br>
+                        • Recomendación
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CASOS DE USO -->
+    <div style="margin-top: 80px;">
+        <h3 style="text-align: center; font-size: 2.2em; color: #1a1a1a; margin-bottom: 40px; font-weight: 700;">💼 Casos de Uso Reales</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
+            <div style="background: #ffffff; border: 2px solid #e8e8e8; border-radius: 16px; padding: 35px; transition: all 0.3s ease;">
+                <h4 style="color: #00684A; font-size: 1.4em; margin-bottom: 15px;">🏦 Banca Digital</h4>
+                <p style="color: #666; line-height: 1.7;">
+                    Bancos como <strong>Nequi</strong> y <strong>Daviplata</strong> pueden usar este sistema para detectar transacciones fraudulentas en tiempo real, protegiendo millones de usuarios y ahorrando millones de pesos diariamente.
+                </p>
+            </div>
+
+            <div style="background: #ffffff; border: 2px solid #e8e8e8; border-radius: 16px; padding: 35px; transition: all 0.3s ease;">
+                <h4 style="color: #00684A; font-size: 1.4em; margin-bottom: 15px;">🛒 E-commerce</h4>
+                <p style="color: #666; line-height: 1.7;">
+                    Plataformas como <strong>Mercado Libre</strong> y <strong>Rappi</strong> pueden identificar compras sospechosas, protegiendo tanto a vendedores como compradores de estafas y clonaciones de tarjeta.
+                </p>
+            </div>
+
+            <div style="background: #ffffff; border: 2px solid #e8e8e8; border-radius: 16px; padding: 35px; transition: all 0.3s ease;">
+                <h4 style="color: #00684A; font-size: 1.4em; margin-bottom: 15px;">💳 Tarjetas de Crédito</h4>
+                <p style="color: #666; line-height: 1.7;">
+                    Emisoras de tarjetas pueden detectar clonaciones y uso no autorizado antes de que ocurran pérdidas significativas, mejorando la seguridad y confianza del cliente.
+                </p>
+            </div>
+
+            <div style="background: #ffffff; border: 2px solid #e8e8e8; border-radius: 16px; padding: 35px; transition: all 0.3s ease;">
+                <h4 style="color: #00684A; font-size: 1.4em; margin-bottom: 15px;">🎰 Gaming & Apuestas</h4>
+                <p style="color: #666; line-height: 1.7;">
+                    Plataformas de juegos online pueden identificar cuentas comprometidas, lavado de dinero y patrones de comportamiento fraudulento entre jugadores.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRÓXIMOS PASOS -->
+    <div style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 24px; padding: 60px; margin-top: 80px; text-align: center; color: #ffffff;">
+        <h3 style="font-size: 2.2em; color: #00ED64; margin-bottom: 30px; font-weight: 700;">🚀 Próximos Pasos</h3>
+        <p style="font-size: 1.15em; line-height: 2; color: rgba(255, 255, 255, 0.9);">
+            Ahora que dominas los fundamentos, puedes:<br><br>
+            <strong style="color: #00ED64;">→</strong> Agregar más patrones de fraude específicos de tu industria<br>
+            <strong style="color: #00ED64;">→</strong> Ajustar los pesos y umbrales según tus necesidades<br>
+            <strong style="color: #00ED64;">→</strong> Integrar con sistemas de alertas en tiempo real<br>
+            <strong style="color: #00ED64;">→</strong> Expandir a detección de anomalías en otros dominios<br>
+            <strong style="color: #00ED64;">→</strong> Implementar modelos de Machine Learning más complejos<br><br>
+            <span style="font-size: 1.3em; color: #00ED64; font-weight: 700;">
+                ¡El límite es tu imaginación! 🎨
+            </span>
+        </p>
+    </div>
+
+</div>
+</body>
+</html>

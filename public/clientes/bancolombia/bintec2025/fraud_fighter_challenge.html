@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador y Dashboard - Fraud Fighter Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Euclid+Circular+A:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mongodb-green: #00ED64;
+            --mongodb-navy: #001E2B;
+            --mongodb-forest: #00684A;
+            --mongodb-slate: #13AA52;
+            --mongodb-light: #E3FCF7;
+            --success: #00ED64;
+            --warning: #FFC107;
+            --danger: #DC3545;
+        }
+
+        body {
+            font-family: 'Euclid Circular A', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--mongodb-navy);
+            color: #ffffff;
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* Animated Particle Background */
+        .particle-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--mongodb-green);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float-particle 20s infinite;
+        }
+
+        @keyframes float-particle {
+            0%, 100% {
+                transform: translate(0, 0);
+                opacity: 0.3;
+            }
+            25% {
+                transform: translate(100px, -100px);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(-50px, -200px);
+                opacity: 0.3;
+            }
+            75% {
+                transform: translate(150px, -100px);
+                opacity: 0.6;
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* Hero Section - Ultra Premium */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 14px 28px;
+            background: rgba(0, 237, 100, 0.15);
+            border: 2px solid rgba(0, 237, 100, 0.4);
+            border-radius: 50px;
+            color: var(--mongodb-green);
+            font-size: 0.95em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            backdrop-filter: blur(20px);
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(0, 237, 100, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 237, 100, 0.6);
+            }
+        }
+
+        .hero h1 {
+            font-size: 5.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--mongodb-green) 0%, #ffffff 50%, var(--mongodb-slate) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            line-height: 1.2;
+            animation: gradientShift 5s ease infinite;
+            background-size: 200% auto;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.6em;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+            max-width: 900px;
+            margin: 0 auto 60px;
+        }
+
+        .hero-emojis {
+            font-size: 6em;
+            margin: 40px 0;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+        }
+
+        /* Section Styles */
+        section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .section-label {
+            display: inline-block;
+            color: var(--mongodb-green);
+            font-size: 1em;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .section-label::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--mongodb-green);
+        }
+
+        .section-title {
+            font-size: 4em;
+            font-weight: 800;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.5) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-description {
+            font-size: 1.4em;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.9;
+        }
+
+        /* Interactive Simulator */
+        .simulator-container {
+            background: linear-gradient(135deg, rgba(0, 104, 74, 0.2), rgba(0, 237, 100, 0.05));
+            border-radius: 40px;
+            padding: 80px 60px;
+            margin: 60px 0;
+            border: 2px solid rgba(0, 237, 100, 0.3);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .simulator-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--mongodb-green), var(--mongodb-slate), var(--mongodb-green));
+            background-size: 200% 100%;
+            animation: shimmer 3s ease infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+
+        .simulator-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .simulator-title {
+            font-size: 3em;
+            color: var(--mongodb-green);
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .simulator-subtitle {
+            font-size: 1.3em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .simulator-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .control-group {
+            background: rgba(0, 30, 43, 0.6);
+            padding: 35px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .control-group:hover {
+            border-color: var(--mongodb-green);
+            box-shadow: 0 20px 40px rgba(0, 237, 100, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .control-label {
+            font-size: 1.2em;
+            color: var(--mongodb-green);
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider-container {
+            position: relative;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--mongodb-green);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 237, 100, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(0, 237, 100, 0.8);
+        }
+
+        .slider-value {
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 2em;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, var(--mongodb-green), var(--mongodb-slate));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .action-button {
+            width: 100%;
+            padding: 25px 40px;
+            background: linear-gradient(135deg, var(--mongodb-green), var(--mongodb-slate));
+            border: none;
+            border-radius: 60px;
+            color: var(--mongodb-navy);
+            font-size: 1.4em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 20px 40px rgba(0, 237, 100, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .action-button:hover::before {
+            left: 100%;
+        }
+
+        .action-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 237, 100, 0.5);
+        }
+
+        .action-button:active {
+            transform: translateY(-2px);
+        }
+
+        /* Live Feed */
+        .live-feed {
+            background: rgba(0, 30, 43, 0.8);
+            border-radius: 24px;
+            padding: 40px;
+            margin-top: 50px;
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .feed-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 237, 100, 0.2);
+        }
+
+        .live-indicator {
+            width: 12px;
+            height: 12px;
+            background: var(--mongodb-green);
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+            box-shadow: 0 0 20px var(--mongodb-green);
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.3);
+                opacity: 0.7;
+            }
+        }
+
+        .feed-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--mongodb-green);
+        }
+
+        .transaction-item {
+            background: rgba(0, 104, 74, 0.1);
+            padding: 25px;
+            margin-bottom: 15px;
+            border-radius: 16px;
+            border-left: 4px solid var(--mongodb-green);
+            animation: slideInLeft 0.5s ease;
+            transition: all 0.3s ease;
+        }
+
+        .transaction-item:hover {
+            background: rgba(0, 104, 74, 0.2);
+            transform: translateX(10px);
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .transaction-id {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .transaction-decision {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .decision-approve {
+            background: rgba(0, 237, 100, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .decision-flag {
+            background: rgba(255, 193, 7, 0.2);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .decision-block {
+            background: rgba(220, 53, 69, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .transaction-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95em;
+        }
+
+        .transaction-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .detail-label {
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* Dashboard Stats */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(0, 104, 74, 0.3), rgba(0, 237, 100, 0.1));
+            padding: 50px 40px;
+            border-radius: 28px;
+            border: 2px solid rgba(0, 237, 100, 0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.1), transparent);
+            animation: rotate 15s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: var(--mongodb-green);
+            box-shadow: 0 30px 60px rgba(0, 237, 100, 0.3);
+        }
+
+        .stat-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 10px 20px rgba(0, 237, 100, 0.4));
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-number {
+            font-size: 4.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--mongodb-green), white);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-label {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Risk Gauge */
+        .gauge-container {
+            background: rgba(0, 30, 43, 0.6);
+            border-radius: 32px;
+            padding: 60px;
+            margin: 60px 0;
+            text-align: center;
+            border: 2px solid rgba(0, 237, 100, 0.2);
+        }
+
+        .gauge-title {
+            font-size: 2.5em;
+            color: var(--mongodb-green);
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+
+        .gauge {
+            width: 300px;
+            height: 150px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+
+        .gauge-background {
+            width: 100%;
+            height: 100%;
+            border-radius: 150px 150px 0 0;
+            background: linear-gradient(90deg, 
+                var(--success) 0%, 
+                var(--success) 30%, 
+                var(--warning) 30%, 
+                var(--warning) 60%, 
+                var(--danger) 60%, 
+                var(--danger) 100%);
+            opacity: 0.3;
+        }
+
+        .gauge-needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            height: 140px;
+            background: white;
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(-90deg);
+            transition: transform 1s ease;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .gauge-needle::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: var(--mongodb-green);
+            border-radius: 50%;
+            box-shadow: 0 0 30px var(--mongodb-green);
+        }
+
+        .gauge-value {
+            font-size: 5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--mongodb-green), white);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-top: 30px;
+        }
+
+        .gauge-label {
+            font-size: 1.3em;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 10px;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin: 60px 0;
+        }
+
+        .feature-card {
+            background: rgba(0, 104, 74, 0.1);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(0, 237, 100, 0.2);
+            border-radius: 28px;
+            padding: 50px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--mongodb-green), var(--mongodb-slate));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            border-color: var(--mongodb-green);
+            box-shadow: 0 30px 60px rgba(0, 237, 100, 0.3);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            font-size: 4em;
+            margin-bottom: 25px;
+            display: block;
+            filter: drop-shadow(0 10px 20px rgba(0, 237, 100, 0.3));
+        }
+
+        .feature-title {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--mongodb-green);
+            margin-bottom: 20px;
+        }
+
+        .feature-description {
+            font-size: 1.15em;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 12px 0;
+            color: rgba(255, 255, 255, 0.6);
+            border-bottom: 1px solid rgba(0, 237, 100, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .feature-list li:before {
+            content: '✓';
+            color: var(--mongodb-green);
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        /* Code Example */
+        .code-example {
+            background: rgba(0, 30, 43, 0.9);
+            border-radius: 24px;
+            padding: 50px;
+            margin: 60px 0;
+            border: 2px solid rgba(0, 237, 100, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-example::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--mongodb-green), var(--mongodb-slate), var(--mongodb-green));
+            background-size: 200% 100%;
+            animation: shimmer 3s ease infinite;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 237, 100, 0.2);
+        }
+
+        .code-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .code-dot:nth-child(1) { background: #FF5F56; }
+        .code-dot:nth-child(2) { background: #FFBD2E; }
+        .code-dot:nth-child(3) { background: #27C93F; }
+
+        .code-title {
+            margin-left: auto;
+            color: var(--mongodb-green);
+            font-size: 1em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .code-content {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .code-content .keyword {
+            color: var(--mongodb-green);
+            font-weight: 700;
+        }
+
+        .code-content .string {
+            color: #FFD700;
+        }
+
+        .code-content .comment {
+            color: rgba(255, 255, 255, 0.4);
+            font-style: italic;
+        }
+
+        .code-content .number {
+            color: #FF6B9D;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--mongodb-forest), var(--mongodb-slate));
+            border-radius: 48px;
+            padding: 100px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin: 80px 0;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.3), transparent);
+            top: -300px;
+            right: -300px;
+            animation: rotate 20s linear infinite;
+        }
+
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.2), transparent);
+            bottom: -200px;
+            left: -200px;
+            animation: rotate 15s linear infinite reverse;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-title {
+            font-size: 3.5em;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .cta-text {
+            font-size: 1.5em;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 800px;
+            margin: 0 auto 50px;
+            line-height: 1.8;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-button-primary,
+        .cta-button-secondary {
+            padding: 25px 50px;
+            font-size: 1.3em;
+            font-weight: 700;
+            border-radius: 60px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .cta-button-primary {
+            background: white;
+            color: var(--mongodb-forest);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-button-primary:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .cta-button-secondary {
+            background: transparent;
+            color: white;
+            border: 3px solid white;
+        }
+
+        .cta-button-secondary:hover {
+            background: white;
+            color: var(--mongodb-forest);
+            transform: translateY(-8px);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3.5em;
+            }
+
+            .section-title {
+                font-size: 2.8em;
+            }
+
+            .simulator-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--mongodb-navy);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--mongodb-green);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--mongodb-slate);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Particles Background -->
+    <div class="particle-background" id="particle-bg"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">🎮 Experiencia Interactiva</div>
+                <h1>Simulador & Dashboard</h1>
+                <p class="hero-subtitle">
+                    Genera transacciones en tiempo real, detecta fraudes instantáneamente 
+                    y visualiza el poder de MongoDB Vector Search en acción
+                </p>
+                <div class="hero-emojis">🎯 📊 🚨</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Simulator -->
+    <section>
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Modo Interactivo</div>
+                <h2 class="section-title">Simulador de Transacciones</h2>
+                <p class="section-description">
+                    Controla el flujo de transacciones y observa cómo el sistema detecta fraudes en milisegundos
+                </p>
+            </div>
+
+            <div class="simulator-container reveal">
+                <div class="simulator-header">
+                    <h3 class="simulator-title">Panel de Control</h3>
+                    <p class="simulator-subtitle">Ajusta los parámetros y genera transacciones realistas</p>
+                </div>
+
+                <div class="simulator-controls">
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>💳</span>
+                            <span>Número de Transacciones</span>
+                        </div>
+                        <input type="range" min="10" max="100" value="50" class="slider" id="numTxnSlider">
+                        <div class="slider-value" id="numTxnValue">50</div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>🚨</span>
+                            <span>Porcentaje de Fraudes</span>
+                        </div>
+                        <input type="range" min="0" max="50" value="20" class="slider" id="fraudRateSlider">
+                        <div class="slider-value" id="fraudRateValue">20%</div>
+                    </div>
+                </div>
+
+                <button class="action-button" id="generateBtn">
+                    🚀 Generar Transacciones
+                </button>
+
+                <div class="live-feed" id="liveFeed" style="display: none;">
+                    <div class="feed-header">
+                        <div class="live-indicator"></div>
+                        <h4 class="feed-title">Feed en Tiempo Real</h4>
+                    </div>
+                    <div id="feedContent"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Stats -->
+    <section style="background: rgba(0, 104, 74, 0.02);">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Métricas en Vivo</div>
+                <h2 class="section-title">Dashboard de Detección</h2>
+                <p class="section-description">
+                    Visualiza el rendimiento del sistema en tiempo real con métricas clave
+                </p>
+            </div>
+
+            <div class="dashboard-stats reveal">
+                <div class="stat-card">
+                    <div class="stat-icon">💳</div>
+                    <div class="stat-number" id="totalTransactions">0</div>
+                    <div class="stat-label">Transacciones Procesadas</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-number" id="approvedCount">0</div>
+                    <div class="stat-label">Aprobadas</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-number" id="flaggedCount">0</div>
+                    <div class="stat-label">Revisadas</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🚫</div>
+                    <div class="stat-number" id="blockedCount">0</div>
+                    <div class="stat-label">Bloqueadas</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-number" id="accuracyRate">0%</div>
+                    <div class="stat-label">Precisión</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-number" id="moneySaved">$0</div>
+                    <div class="stat-label">Dinero Salvado</div>
+                </div>
+            </div>
+
+            <!-- Risk Gauge -->
+            <div class="gauge-container reveal">
+                <h3 class="gauge-title">Score de Riesgo Promedio</h3>
+                <div class="gauge">
+                    <div class="gauge-background"></div>
+                    <div class="gauge-needle" id="gaugeNeedle"></div>
+                </div>
+                <div class="gauge-value" id="gaugeValue">0</div>
+                <div class="gauge-label">de 100 puntos</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section>
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Características</div>
+                <h2 class="section-title">Capacidades del Sistema</h2>
+                <p class="section-description">
+                    Todo lo que puedes hacer con el Fraud Fighter Challenge
+                </p>
+            </div>
+
+            <div class="feature-grid reveal">
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h3 class="feature-title">Detección en Tiempo Real</h3>
+                    <p class="feature-description">
+                        El sistema procesa y analiza cada transacción en menos de 100 milisegundos, 
+                        proporcionando decisiones instantáneas.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Vector Search en < 50ms</li>
+                        <li>Risk scoring automático</li>
+                        <li>Change Streams para actualizaciones live</li>
+                        <li>Dashboard con refresh automático</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🎮</span>
+                    <h3 class="feature-title">Simulador Configurable</h3>
+                    <p class="feature-description">
+                        Genera transacciones personalizadas mezclando comportamientos normales 
+                        y patrones de fraude colombianos reales.
+                    </p>
+                    <ul class="feature-list">
+                        <li>8 tipos de fraude diferentes</li>
+                        <li>Perfiles de 50 clientes reales</li>
+                        <li>Comercios colombianos</li>
+                        <li>Parámetros ajustables en vivo</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <h3 class="feature-title">Analytics Avanzados</h3>
+                    <p class="feature-description">
+                        Métricas completas de rendimiento, desde precisión hasta impacto financiero, 
+                        todo visualizado de manera intuitiva.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Precisión y Recall</li>
+                        <li>Tasa de falsos positivos</li>
+                        <li>Dinero protegido</li>
+                        <li>Distribución de decisiones</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🧠</span>
+                    <h3 class="feature-title">IA Explicable</h3>
+                    <p class="feature-description">
+                        Cada decisión viene con explicación detallada de factores de riesgo activados 
+                        y similitud vectorial.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Factores de riesgo identificados</li>
+                        <li>Score de similitud vectorial</li>
+                        <li>Top vecinos más cercanos</li>
+                        <li>Transparencia total</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🎯</span>
+                    <h3 class="feature-title">Umbrales Ajustables</h3>
+                    <p class="feature-description">
+                        Modifica los umbrales de decisión y pesos del modelo de riesgo 
+                        para optimizar el balance entre seguridad y experiencia de usuario.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Configuración de umbrales</li>
+                        <li>Pesos personalizables</li>
+                        <li>A/B testing de estrategias</li>
+                        <li>Optimización en vivo</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🔄</span>
+                    <h3 class="feature-title">Escenarios de Batalla</h3>
+                    <p class="feature-description">
+                        Simula diferentes niveles de intensidad: desde operación normal 
+                        hasta ataques masivos coordinados.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Modo calentamiento (baja intensidad)</li>
+                        <li>Operación normal</li>
+                        <li>Black Friday (alta carga)</li>
+                        <li>Ataque masivo (supervivencia)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Example -->
+    <section style="background: rgba(0, 104, 74, 0.02);">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Implementación</div>
+                <h2 class="section-title">Código del Dashboard</h2>
+                <p class="section-description">
+                    Así es como se integra todo en el notebook interactivo
+                </p>
+            </div>
+
+            <div class="code-example reveal">
+                <div class="code-header">
+                    <div class="code-dot"></div>
+                    <div class="code-dot"></div>
+                    <div class="code-dot"></div>
+                    <div class="code-title">Python + ipywidgets</div>
+                </div>
+                <div class="code-content">
+<span class="comment"># Importar librerías para dashboard interactivo</span>
+<span class="keyword">import</span> ipywidgets <span class="keyword">as</span> widgets
+<span class="keyword">from</span> IPython.display <span class="keyword">import</span> display, clear_output
+<span class="keyword">import</span> plotly.graph_objects <span class="keyword">as</span> go
+
+<span class="comment"># Crear controles deslizantes</span>
+num_txn_slider = widgets.IntSlider(
+    value=<span class="number">10</span>,
+    min=<span class="number">5</span>,
+    max=<span class="number">50</span>,
+    description=<span class="string">'Transacciones:'</span>
+)
+
+fraud_rate_slider = widgets.IntSlider(
+    value=<span class="number">20</span>,
+    min=<span class="number">0</span>,
+    max=<span class="number">50</span>,
+    description=<span class="string">'% Fraudes:'</span>
+)
+
+<span class="comment"># Botón de acción</span>
+process_btn = widgets.Button(
+    description=<span class="string">'🚀 PROCESAR'</span>,
+    button_style=<span class="string">'success'</span>
+)
+
+<span class="comment"># Función que se ejecuta al hacer click</span>
+<span class="keyword">def</span> <span class="keyword">procesar_transacciones</span>(b):
+    <span class="keyword">with</span> output:
+        clear_output(wait=<span class="keyword">True</span>)
+        
+        <span class="comment"># Generar batch</span>
+        batch = generar_batch_transacciones(
+            num_txn_slider.value,
+            fraud_rate_slider.value / <span class="number">100</span>
+        )
+        
+        <span class="comment"># Procesar cada transacción</span>
+        resultados = []
+        <span class="keyword">for</span> txn <span class="keyword">in</span> batch:
+            resultado = <span class="keyword">detectar_fraude_vectorial</span>(txn)
+            resultados.append(resultado)
+        
+        <span class="comment"># Calcular métricas</span>
+        aprobadas = <span class="keyword">sum</span>(<span class="number">1</span> <span class="keyword">for</span> r <span class="keyword">in</span> resultados <span class="keyword">if</span> r[<span class="string">'decision'</span>] == <span class="string">'APPROVE'</span>)
+        bloqueadas = <span class="keyword">sum</span>(<span class="number">1</span> <span class="keyword">for</span> r <span class="keyword">in</span> resultados <span class="keyword">if</span> r[<span class="string">'decision'</span>] == <span class="string">'BLOCK'</span>)
+        
+        <span class="comment"># Crear gráfico interactivo con Plotly</span>
+        fig = go.Figure(data=[
+            go.Pie(
+                labels=[<span class="string">'Aprobadas'</span>, <span class="string">'Revisadas'</span>, <span class="string">'Bloqueadas'</span>],
+                values=[aprobadas, revisadas, bloqueadas],
+                marker=<span class="keyword">dict</span>(colors=[<span class="string">'#00ED64'</span>, <span class="string">'#FFC107'</span>, <span class="string">'#DC3545'</span>])
+            )
+        ])
+        
+        fig.show()
+
+<span class="comment"># Conectar botón a función</span>
+process_btn.on_click(procesar_transacciones)
+
+<span class="comment"># Mostrar dashboard</span>
+<span class="keyword">display</span>(num_txn_slider, fraud_rate_slider, process_btn, output)
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workshop Flow -->
+    <section>
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Experiencia del Taller</div>
+                <h2 class="section-title">Flujo del Workshop</h2>
+                <p class="section-description">
+                    90 minutos de aprendizaje práctico divididos en fases interactivas
+                </p>
+            </div>
+
+            <div class="feature-grid reveal">
+                <div class="feature-card">
+                    <span class="feature-icon">🏁</span>
+                    <h3 class="feature-title">Fase 1: Setup (15 min)</h3>
+                    <p class="feature-description">
+                        Los participantes conectan a MongoDB Atlas, cargan 50 clientes colombianos 
+                        y generan los embeddings vectoriales iniciales.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🎯</span>
+                    <h3 class="feature-title">Fase 2: Configuración (15 min)</h3>
+                    <p class="feature-description">
+                        Crear el modelo de riesgo, cargar patrones de fraude conocidos 
+                        y verificar que Vector Search funcione correctamente.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🔥</span>
+                    <h3 class="feature-title">Fase 3: Batalla (30 min)</h3>
+                    <p class="feature-description">
+                        Simulación en vivo donde los equipos procesan transacciones, 
+                        compiten por mejor precisión y dinero salvado.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🏆</span>
+                    <h3 class="feature-title">Fase 4: Competencia (20 min)</h3>
+                    <p class="feature-description">
+                        Los equipos intentan crear fraudes sofisticados que pasen desapercibidos. 
+                        El sistema más inteligente gana.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <h3 class="feature-title">Fase 5: Análisis (10 min)</h3>
+                    <p class="feature-description">
+                        Revisar métricas finales, identificar fraudes que se escaparon 
+                        y discutir mejoras al modelo.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🎓</span>
+                    <h3 class="feature-title">Cierre: Takeaways</h3>
+                    <p class="feature-description">
+                        Cada equipo se lleva el código funcionando, conocimiento de Vector Search 
+                        y casos de uso reales para implementar.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section>
+        <div class="container">
+            <div class="cta-section reveal">
+                <div class="cta-content">
+                    <h2 class="cta-title">¿Listo para el Challenge?</h2>
+                    <p class="cta-text">
+                        Has visto la arquitectura, el sistema de detección y ahora el simulador interactivo. 
+                        Es hora de poner manos a la obra y construir tu propio sistema de detección de fraudes 
+                        con MongoDB Vector Search.
+                    </p>
+                    <div class="cta-buttons">
+                        <a href="#" class="cta-button-primary">Empezar el Taller</a>
+                        <a href="#" class="cta-button-secondary">Ver Demo en Vivo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <section style="padding: 80px 0; background: var(--mongodb-forest);">
+        <div class="container" style="text-align: center;">
+            <div style="font-size: 5em; margin-bottom: 30px; filter: drop-shadow(0 10px 30px rgba(0, 237, 100, 0.4)); animation: float 6s ease-in-out infinite;">
+                🍃
+            </div>
+            <h3 style="color: var(--mongodb-green); font-size: 2.5em; margin-bottom: 20px; font-weight: 800;">
+                Powered by MongoDB Atlas Vector Search
+            </h3>
+            <p style="color: rgba(255, 255, 255, 0.7); font-size: 1.3em; margin-bottom: 15px;">
+                Fraud Fighter Challenge - Bancolombia Workshop 2024
+            </p>
+            <p style="color: rgba(255, 255, 255, 0.5); font-size: 1.1em;">
+                Built with 💚 for financial innovation and fraud prevention
+            </p>
+            <div style="margin-top: 40px; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+                <div style="color: rgba(255, 255, 255, 0.6);">
+                    <strong style="color: var(--mongodb-green);">50+</strong> Clientes Simulados
+                </div>
+                <div style="color: rgba(255, 255, 255, 0.6);">
+                    <strong style="color: var(--mongodb-green);">8</strong> Tipos de Fraude
+                </div>
+                <div style="color: rgba(255, 255, 255, 0.6);">
+                    <strong style="color: var(--mongodb-green);">384</strong> Dimensiones Vectoriales
+                </div>
+                <div style="color: rgba(255, 255, 255, 0.6);">
+                    <strong style="color: var(--mongodb-green);">&lt;50ms</strong> Tiempo de Detección
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- JavaScript -->
+    <script>
+        // ============================================================
+        // PARTICLE BACKGROUND GENERATION
+        // ============================================================
+        function createParticles() {
+            const particleBg = document.getElementById('particle-bg');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                particleBg.appendChild(particle);
+            }
+        }
+
+        createParticles();
+
+        // ============================================================
+        // SLIDER CONTROLS
+        // ============================================================
+        const numTxnSlider = document.getElementById('numTxnSlider');
+        const numTxnValue = document.getElementById('numTxnValue');
+        const fraudRateSlider = document.getElementById('fraudRateSlider');
+        const fraudRateValue = document.getElementById('fraudRateValue');
+
+        numTxnSlider.addEventListener('input', (e) => {
+            numTxnValue.textContent = e.target.value;
+        });
+
+        fraudRateSlider.addEventListener('input', (e) => {
+            fraudRateValue.textContent = e.target.value + '%';
+        });
+
+        // ============================================================
+        // TRANSACTION GENERATOR
+        // ============================================================
+        const generateBtn = document.getElementById('generateBtn');
+        const liveFeed = document.getElementById('liveFeed');
+        const feedContent = document.getElementById('feedContent');
+
+        // Sample transaction data
+        const merchants = ['Carulla', 'Exito', 'Rappi', 'Netflix', 'Casino Online', 'Apple Store', 'Joyería', 'ATM Cúcuta'];
+        const decisions = [
+            { decision: 'APPROVE', class: 'decision-approve', emoji: '🟢' },
+            { decision: 'FLAG', class: 'decision-flag', emoji: '🟡' },
+            { decision: 'BLOCK', class: 'decision-block', emoji: '🔴' }
+        ];
+
+        let totalTxn = 0;
+        let approved = 0;
+        let flagged = 0;
+        let blocked = 0;
+
+        generateBtn.addEventListener('click', () => {
+            const numTxn = parseInt(numTxnSlider.value);
+            const fraudRate = parseInt(fraudRateSlider.value) / 100;
+
+            liveFeed.style.display = 'block';
+            feedContent.innerHTML = '';
+
+            // Reset stats
+            totalTxn = 0;
+            approved = 0;
+            flagged = 0;
+            blocked = 0;
+
+            // Generate transactions
+            for (let i = 0; i < numTxn; i++) {
+                setTimeout(() => {
+                    generateTransaction(fraudRate);
+                }, i * 200); // Stagger animation
+            }
+        });
+
+        function generateTransaction(fraudRate) {
+            const isFraud = Math.random() < fraudRate;
+            const amount = isFraud 
+                ? Math.floor(Math.random() * 5000000) + 1000000
+                : Math.floor(Math.random() * 500000) + 50000;
+            
+            const merchant = merchants[Math.floor(Math.random() * merchants.length)];
+            const score = isFraud 
+                ? Math.floor(Math.random() * 40) + 60
+                : Math.floor(Math.random() * 40) + 10;
+
+            let decisionObj;
+            if (score < 30) {
+                decisionObj = decisions[0];
+                approved++;
+            } else if (score < 85) {
+                decisionObj = decisions[1];
+                flagged++;
+            } else {
+                decisionObj = decisions[2];
+                blocked++;
+            }
+
+            totalTxn++;
+            updateStats(score);
+
+            const txnElement = document.createElement('div');
+            txnElement.className = 'transaction-item';
+            txnElement.innerHTML = `
+                <div class="transaction-header">
+                    <div class="transaction-id">TXN_${Math.floor(Math.random() * 999999).toString().padStart(6, '0')}</div>
+                    <div class="transaction-decision ${decisionObj.class}">
+                        ${decisionObj.emoji} ${decisionObj.decision}
+                    </div>
+                </div>
+                <div class="transaction-details">
+                    <div class="transaction-detail">
+                        <span class="detail-label">Monto</span>
+                        <span class="detail-value">$${amount.toLocaleString()}</span>
+                    </div>
+                    <div class="transaction-detail">
+                        <span class="detail-label">Comercio</span>
+                        <span class="detail-value">${merchant}</span>
+                    </div>
+                    <div class="transaction-detail">
+                        <span class="detail-label">Score</span>
+                        <span class="detail-value">${score}/100</span>
+                    </div>
+                    <div class="transaction-detail">
+                        <span class="detail-label">Real</span>
+                        <span class="detail-value">${isFraud ? '🚨 FRAUDE' : '✅ NORMAL'}</span>
+                    </div>
+                </div>
+            `;
+
+            feedContent.insertBefore(txnElement, feedContent.firstChild);
+
+            // Keep only last 10 transactions visible
+            if (feedContent.children.length > 10) {
+                feedContent.removeChild(feedContent.lastChild);
+            }
+        }
+
+        function updateStats(score) {
+            document.getElementById('totalTransactions').textContent = totalTxn;
+            document.getElementById('approvedCount').textContent = approved;
+            document.getElementById('flaggedCount').textContent = flagged;
+            document.getElementById('blockedCount').textContent = blocked;
+
+            const accuracy = totalTxn > 0 ? Math.floor((approved + blocked) / totalTxn * 100) : 0;
+            document.getElementById('accuracyRate').textContent = accuracy + '%';
+
+            const moneySaved = blocked * 500000;
+            document.getElementById('moneySaved').textContent = '$' + (moneySaved / 1000000).toFixed(1) + 'M';
+
+            // Update gauge
+            const avgScore = score;
+            const gaugeNeedle = document.getElementById('gaugeNeedle');
+            const gaugeValue = document.getElementById('gaugeValue');
+            
+            const rotation = -90 + (avgScore / 100) * 180;
+            gaugeNeedle.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+            gaugeValue.textContent = avgScore;
+        }
+
+        // ============================================================
+        // SCROLL REVEAL ANIMATION
+        // ============================================================
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', reveal);
+        reveal(); // Initial check
+
+        // ============================================================
+        // SMOOTH SCROLLING
+        // ============================================================
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ============================================================
+        // ANIMATED COUNTERS ON SCROLL
+        // ============================================================
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                
+                if (element.textContent.includes('%')) {
+                    element.textContent = value + '%';
+                } else if (element.textContent.includes('$')) {
+                    element.textContent = '$' + value;
+                } else {
+                    element.textContent = value;
+                }
+                
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Initialize
+        console.log('🚀 Fraud Fighter Challenge Dashboard Ready!');
+        console.log('💚 Built with MongoDB Atlas Vector Search');
+    </script>
+</body>
+</html>

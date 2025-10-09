@@ -306,7 +306,15 @@
       "src": "/estrategia/estrategiafi(?:/.*)?$",
       "dest": "/estrategia/estrategiafi.html"
     },
-    
+
+    {
+      "src": "/mcp/configuracion(?:/.*)?$",
+      "dest": "/mcp/configuracion.html"
+    },
+    {
+      "src": "/mcp/mcp-server(?:/.*)?$",
+      "dest": "/mcp/mcp-server.html"
+    },
     
     {
       "src": "/(.*)",

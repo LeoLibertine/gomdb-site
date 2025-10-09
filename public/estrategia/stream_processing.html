@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payway - Procesamiento de Transacciones en Tiempo Real con MongoDB Atlas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Payway</h1>
+            <p>Innovación en la gestión de transacciones</p>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="container">
+                <h2>Procesamiento Inteligente de Transacciones con MongoDB Atlas Stream Processing</h2>
+                <p class="subtitle">Automatiza validaciones, enrutamiento y enriquecimiento de datos en tiempo real.</p>
+                <button id="startSimulation" class="cta-button"><i class="fas fa-play"></i> Iniciar Simulación</button>
+            </div>
+        </section>
+
+        <section class="architecture-flow">
+            <div class="container">
+                <h3>El Flujo Inteligente de Payway</h3>
+
+                <div class="flow-diagram">
+                    <div class="flow-step kafka-source" id="step-kafka">
+                        <i class="fab fa-kafka icon"></i>
+                        <h4>Kafka Tópico de Origen</h4>
+                        <p>Transacciones entrantes (Raw)</p>
+                    </div>
+                    <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="flow-step stream-processor" id="step-asp">
+                        <i class="fas fa-brain icon"></i>
+                        <h4>Atlas Stream Processing</h4>
+                        <p>Validación, Enriquecimiento, Enrutamiento</p>
+                        <div class="code-snippet">
+                            <pre><code class="language-json">
+// Simulación de pipeline de ASP
+[
+  {
+    "$match": {
+      "moneda": "MXN",
+      "monto": { "$gt": 0 }
+    }
+  },
+  {
+    "$addFields": {
+      "processed_at": "$$NOW",
+      "status_interno": "PROCESADA"
+    }
+  },
+  {
+    "$merge": {
+      "into": {
+        "db": "payway_db",
+        "coll": "transacciones_aprobadas"
+      }
+    }
+  }
+]
+                            </code></pre>
+                        </div>
+                    </div>
+                    <div class="flow-arrow split-arrow good-path-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="flow-step mongo-good" id="step-mongo-good">
+                        <i class="fas fa-database icon"></i>
+                        <h4>MongoDB Atlas: `transacciones_aprobadas`</h4>
+                        <p>Transacciones válidas y enriquecidas</p>
+                        <div class="data-preview good-data"></div>
+                    </div>
+                </div>
+
+                <div class="flow-diagram error-path">
+                    <div class="flow-arrow split-arrow error-path-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="flow-step mongo-error" id="step-mongo-error">
+                        <i class="fas fa-exclamation-triangle icon"></i>
+                        <h4>MongoDB Atlas: `transacciones_rechazadas`</h4>
+                        <p>Transacciones con errores o no válidas</p>
+                        <div class="data-preview error-data"></div>
+                    </div>
+                </div>
+
+                <div class="transaction-input-section">
+                    <h3>Envía una Transacción de Prueba</h3>
+                    <div class="input-area">
+                        <textarea id="transactionInput" rows="10" class="json-input"></textarea>
+                        <button id="sendTransaction" class="cta-button send-button"><i class="fas fa-paper-plane"></i> Enviar</button>
+                    </div>
+                    <p class="input-info">Modifica el JSON para ver cómo se procesa.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="benefits-section">
+            <div class="container">
+                <h3>Beneficios Clave para Payway</h3>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <i class="fas fa-rocket icon"></i>
+                        <h4>Rendimiento en Tiempo Real</h4>
+                        <p>Procesa y valida transacciones instantáneamente para pagos y liquidaciones críticas.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-shield-alt icon"></i>
+                        <h4>Gobernanza de Datos</h4>
+                        <p>Asegura la calidad y estructura de los datos con validadores de esquema robustos.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-code-branch icon"></i>
+                        <h4>Lógica Sin Código</h4>
+                        <p>Define validaciones y enrutamiento con JSON, reduciendo el mantenimiento de microservicios.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <i class="fas fa-balance-scale icon"></i>
+                        <h4>Consolidación y Simplificación</h4>
+                        <p>Una única plataforma para ingesta, procesamiento, búsqueda y transacciones.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Payway & MongoDB. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/json.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script src="script.js"></script>
+</body>
+</html>

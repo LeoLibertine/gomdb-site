@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detección de Fraudes con MongoDB Vector Search</title>
+    <style>
+        /* =============================================
+           Variables CSS basadas en GoMDB
+           ============================================= */
+        :root {
+            --color-primary: #00ED64;
+            --color-primary-hover: #00D757;
+            --color-primary-light: #00ED6420;
+            
+            --color-bg-primary: #001E2B;
+            --color-bg-secondary: #0D2A3D;
+            --color-bg-tertiary: #112331;
+            --color-bg-card: #0D2A3D80;
+            
+            --color-accent: #5644D4;
+            --color-accent-light: #5644D420;
+            
+            --color-text-primary: #FFFFFF;
+            --color-text-secondary: #B8C4CE;
+            --color-text-muted: #718096;
+            --color-text-dark: #001E2B;
+            
+            --color-success: #00ED64;
+            --color-warning: #F59E0B;
+            --color-error: #EF4444;
+            --color-info: #3B82F6;
+            
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --spacing-3xl: 4rem;
+            --spacing-4xl: 6rem;
+            
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+            
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 2rem;
+            --text-4xl: 2.5rem;
+            --text-5xl: 3rem;
+            --text-6xl: 4rem;
+            
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-full: 9999px;
+            
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+            --shadow-glow: 0 0 40px rgba(0, 237, 100, 0.3);
+            
+            --transition-fast: 150ms ease;
+            --transition-base: 200ms ease;
+            --transition-slow: 300ms ease;
+        }
+
+        /* =============================================
+           Reset y Base
+           ============================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* =============================================
+           Container
+           ============================================= */
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+        }
+
+        /* =============================================
+           Hero Section
+           ============================================= */
+        .hero {
+            position: relative;
+            padding: var(--spacing-4xl) 0;
+            overflow: hidden;
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .hero-background {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 50%, var(--color-bg-primary) 100%);
+            z-index: -2;
+        }
+
+        .hero-blur {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.2;
+            z-index: -1;
+        }
+
+        .hero-blur-primary {
+            width: 300px;
+            height: 300px;
+            background-color: var(--color-primary);
+            top: 10%;
+            left: 5%;
+        }
+
+        .hero-blur-accent {
+            width: 400px;
+            height: 400px;
+            background-color: var(--color-accent);
+            bottom: 10%;
+            right: 10%;
+        }
+
+        .hero-content {
+            text-align: center;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(var(--text-4xl), 8vw, var(--text-6xl));
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.2;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: var(--text-xl);
+            color: var(--color-text-secondary);
+            max-width: 700px;
+            margin: 0 auto var(--spacing-xl);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-md);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            border-radius: var(--radius-full);
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        /* =============================================
+           Section
+           ============================================= */
+        .section {
+            margin-bottom: var(--spacing-4xl);
+        }
+
+        .section-title {
+            font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
+            font-weight: 700;
+            margin-bottom: var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .section-title .icon {
+            font-size: 1em;
+            filter: drop-shadow(0 0 10px rgba(0, 237, 100, 0.5));
+        }
+
+        .section-subtitle {
+            font-size: var(--text-2xl);
+            font-weight: 600;
+            color: var(--color-primary);
+            margin: var(--spacing-xl) 0 var(--spacing-lg);
+        }
+
+        /* =============================================
+           Cards
+           ============================================= */
+        .card {
+            background-color: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-base);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--color-primary-light);
+        }
+
+        .card p {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* =============================================
+           Flow Diagram
+           ============================================= */
+        .flow-diagram {
+            display: grid;
+            gap: var(--spacing-lg);
+            margin: var(--spacing-2xl) 0;
+        }
+
+        @media (min-width: 768px) {
+            .flow-diagram {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        .flow-step {
+            position: relative;
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            border: 2px solid rgba(0, 237, 100, 0.2);
+            transition: all var(--transition-base);
+        }
+
+        .flow-step:hover {
+            border-color: var(--color-primary);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-glow);
+        }
+
+        @media (min-width: 768px) {
+            .flow-step::after {
+                content: '→';
+                position: absolute;
+                right: -20px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: var(--text-3xl);
+                color: var(--color-primary);
+                z-index: 1;
+            }
+
+            .flow-step:last-child::after {
+                content: '';
+            }
+        }
+
+        .step-number {
+            background: var(--color-bg-primary);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-2xl);
+            font-weight: bold;
+            margin: 0 auto var(--spacing-md);
+            color: var(--color-primary);
+            border: 3px solid var(--color-primary);
+        }
+
+        .flow-step h4 {
+            font-size: var(--text-lg);
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text-primary);
+        }
+
+        .flow-step p {
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+        }
+
+        /* =============================================
+           Vector Visual
+           ============================================= */
+        .vector-visual {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-xl);
+            border: 2px dashed var(--color-primary);
+            margin: var(--spacing-2xl) 0;
+        }
+
+        .vector-title {
+            text-align: center;
+            color: var(--color-accent);
+            font-weight: 600;
+            margin-bottom: var(--spacing-xl);
+            font-size: var(--text-lg);
+        }
+
+        .vector-points {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-xl);
+            margin: var(--spacing-2xl) 0;
+        }
+
+        .vector-point {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color-primary) 0%, var(--color-bg-secondary) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: var(--text-sm);
+            box-shadow: var(--shadow-glow);
+            animation: pulse 2s infinite;
+            border: 2px solid var(--color-primary);
+        }
+
+        .vector-point.query {
+            width: 110px;
+            height: 110px;
+            background: radial-gradient(circle, var(--color-warning) 0%, var(--color-error) 100%);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.7);
+            border-color: var(--color-warning);
+            font-size: var(--text-base);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        /* =============================================
+           Scoring Grid
+           ============================================= */
+        .scoring-grid {
+            display: grid;
+            gap: var(--spacing-lg);
+            margin: var(--spacing-2xl) 0;
+        }
+
+        @media (min-width: 768px) {
+            .scoring-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .score-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-tertiary));
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            border-left: 4px solid var(--color-primary);
+            transition: all var(--transition-base);
+        }
+
+        .score-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .score-value {
+            font-size: var(--text-4xl);
+            color: var(--color-primary);
+            font-weight: bold;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .score-label {
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+            line-height: 1.4;
+        }
+
+        /* =============================================
+           Decision Table
+           ============================================= */
+        .decision-table {
+            width: 100%;
+            margin: var(--spacing-2xl) 0;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+            background: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+        }
+
+        .decision-table th {
+            background: var(--color-bg-secondary);
+            padding: var(--spacing-lg);
+            text-align: left;
+            color: var(--color-primary);
+            font-weight: 600;
+            font-size: var(--text-base);
+        }
+
+        .decision-table td {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .decision-table tr:hover td {
+            background: var(--color-primary-light);
+        }
+
+        .decision-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Decision Badges */
+        .decision-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: 600;
+        }
+
+        .decision-badge.approve {
+            background: var(--color-success);
+            color: var(--color-text-dark);
+        }
+
+        .decision-badge.flag {
+            background: var(--color-warning);
+            color: var(--color-text-dark);
+        }
+
+        .decision-badge.block {
+            background: var(--color-error);
+            color: var(--color-text-primary);
+        }
+
+        /* =============================================
+           Example Boxes
+           ============================================= */
+        .example-box {
+            background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-tertiary));
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            margin: var(--spacing-lg) 0;
+            border-left: 5px solid var(--color-primary);
+            transition: all var(--transition-base);
+        }
+
+        .example-box:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .example-box.fraud {
+            border-left-color: var(--color-error);
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), var(--color-bg-tertiary));
+        }
+
+        .example-title {
+            font-size: var(--text-xl);
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-md);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .example-box.fraud .example-title {
+            color: var(--color-error);
+        }
+
+        .example-box p {
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .example-box strong {
+            color: var(--color-text-primary);
+        }
+
+        .example-box ul {
+            list-style: none;
+            margin-left: 0;
+            margin-top: var(--spacing-md);
+        }
+
+        .example-box li {
+            padding: var(--spacing-sm) 0;
+            color: var(--color-text-secondary);
+        }
+
+        /* =============================================
+           Stats Container
+           ============================================= */
+        .stats-container {
+            display: grid;
+            gap: var(--spacing-lg);
+            margin: var(--spacing-2xl) 0;
+        }
+
+        @media (min-width: 768px) {
+            .stats-container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .stat-box {
+            background: var(--color-primary-light);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            border: 2px solid var(--color-primary);
+            transition: all var(--transition-base);
+        }
+
+        .stat-box:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .stat-number {
+            font-size: var(--text-5xl);
+            color: var(--color-primary);
+            font-weight: bold;
+            display: block;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stat-label {
+            color: var(--color-text-secondary);
+            font-size: var(--text-base);
+        }
+
+        /* =============================================
+           Pattern Cards
+           ============================================= */
+        .pattern-grid {
+            display: grid;
+            gap: var(--spacing-lg);
+            margin: var(--spacing-2xl) 0;
+        }
+
+        @media (min-width: 768px) {
+            .pattern-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* =============================================
+           List Styles
+           ============================================= */
+        .feature-list {
+            list-style: none;
+            margin: var(--spacing-xl) 0;
+        }
+
+        .feature-list li {
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            background: var(--color-bg-card);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--color-primary);
+            font-size: var(--text-lg);
+            transition: all var(--transition-base);
+        }
+
+        .feature-list li:hover {
+            transform: translateX(8px);
+            background: var(--color-primary-light);
+        }
+
+        .feature-list strong {
+            color: var(--color-primary);
+        }
+
+        /* =============================================
+           Conclusion
+           ============================================= */
+        .conclusion {
+            text-align: center;
+            padding: var(--spacing-4xl) var(--spacing-xl);
+            background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-primary));
+            border-radius: var(--radius-xl);
+            border: 2px solid var(--color-primary);
+            margin-top: var(--spacing-4xl);
+        }
+
+        .conclusion h2 {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .conclusion p {
+            font-size: var(--text-xl);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .conclusion-icons {
+            font-size: var(--text-6xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        /* =============================================
+           Animations
+           ============================================= */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* =============================================
+           Responsive
+           ============================================= */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 var(--spacing-md);
+            }
+
+            .flow-diagram {
+                grid-template-columns: 1fr;
+            }
+
+            .vector-points {
+                flex-direction: column;
+            }
+
+            .section-title {
+                font-size: var(--text-3xl);
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="hero-content animate-fadeIn">
+                <div class="badge">
+                    🚀 MongoDB Vector Search + IA
+                </div>
+                <h1>
+                    Sistema de <span class="text-gradient">Detección de Fraudes</span>
+                </h1>
+                <p>
+                    Tecnología de punta combinando búsqueda semántica con IA y 
+                    modelos de scoring de riesgo para proteger transacciones en tiempo real
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Introducción -->
+        <section class="section animate-fadeIn">
+            <div class="card">
+                <h2 class="section-title">
+                    <span class="icon">🎯</span>
+                    ¿Cómo Funciona el Sistema?
+                </h2>
+                <p style="font-size: var(--text-lg);">
+                    Nuestro sistema combina dos tecnologías poderosas para detectar fraudes en tiempo real:
+                    <strong style="color: var(--color-primary);">Vector Search</strong> (búsqueda semántica con IA) para 
+                    entender el contexto del comportamiento, y un 
+                    <strong style="color: var(--color-warning);">Modelo de Scoring de Riesgo</strong> (reglas de negocio) 
+                    para evaluar factores específicos.
+                </p>
+            </div>
+        </section>
+
+        <!-- Flujo Principal -->
+        <section class="section animate-fadeIn">
+            <h2 class="section-title">
+                <span class="icon">🔄</span>
+                Flujo de Detección en 5 Pasos
+            </h2>
+            <div class="flow-diagram">
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <h4>Transacción Ingresa</h4>
+                    <p>Cliente realiza una compra o transferencia</p>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <h4>Convertir a Vector</h4>
+                    <p>IA convierte la transacción en 384 números</p>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <h4>Vector Search</h4>
+                    <p>Busca comportamientos similares en la BD</p>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <h4>Calcular Score</h4>
+                    <p>Evalúa factores de riesgo y asigna puntos</p>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">5</div>
+                    <h4>Decisión Final</h4>
+                    <p>Aprobar, Revisar o Bloquear</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vector Search Explicado -->
+        <section class="section animate-fadeIn">
+            <h2 class="section-title">
+                <span class="icon">🧠</span>
+                Vector Search: El Cerebro del Sistema
+            </h2>
+            <div class="card">
+                <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-xl);">
+                    Vector Search usa inteligencia artificial para entender el <strong style="color: var(--color-primary);">significado</strong> 
+                    de cada transacción, no solo las palabras. Convierte comportamientos en números que una computadora puede comparar matemáticamente.
+                </p>
+
+                <h3 class="section-subtitle">🤔 ¿Por qué comparamos TRANSACCIONES con CLIENTES?</h3>
+                <div class="card" style="background: linear-gradient(135deg, rgba(86, 68, 212, 0.1), var(--color-bg-tertiary)); margin-bottom: var(--spacing-xl);">
+                    <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-lg);">
+                        Esta es la pregunta clave que hace único a este sistema. La respuesta es simple pero poderosa:
+                    </p>
+                    <p style="font-size: var(--text-xl); color: var(--color-accent); font-weight: 600; text-align: center; padding: var(--spacing-lg); background: var(--color-accent-light); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg);">
+                        "Comparamos la transacción nueva con el COMPORTAMIENTO HISTÓRICO de los clientes para ver si alguien legítimo se comporta así"
+                    </p>
+                    
+                    <div style="display: grid; gap: var(--spacing-lg); margin-top: var(--spacing-xl);">
+                        <div style="background: var(--color-bg-card); padding: var(--spacing-lg); border-radius: var(--radius-md); border-left: 4px solid var(--color-primary);">
+                            <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-sm); font-size: var(--text-lg);">📊 PASO 1: Creamos perfiles de clientes</h4>
+                            <p style="margin-bottom: var(--spacing-sm);">Cada cliente tiene su "huella digital" de comportamiento:</p>
+                            <p style="color: var(--color-text-muted); font-family: var(--font-mono); font-size: var(--text-sm); background: var(--color-bg-tertiary); padding: var(--spacing-md); border-radius: var(--radius-sm);">
+                                María (Gerente): Compra $200k en Carulla, horario 9-8 PM<br>
+                                → Vector: [0.023, -0.145, 0.289, ... 384 números]
+                            </p>
+                        </div>
+
+                        <div style="background: var(--color-bg-card); padding: var(--spacing-lg); border-radius: var(--radius-md); border-left: 4px solid var(--color-warning);">
+                            <h4 style="color: var(--color-warning); margin-bottom: var(--spacing-sm); font-size: var(--text-lg);">🔍 PASO 2: Llega una transacción nueva</h4>
+                            <p style="margin-bottom: var(--spacing-sm);">La convertimos también en vector:</p>
+                            <p style="color: var(--color-text-muted); font-family: var(--font-mono); font-size: var(--text-sm); background: var(--color-bg-tertiary); padding: var(--spacing-md); border-radius: var(--radius-sm);">
+                                Transacción: $5M en Casino a las 3 AM en Miami<br>
+                                → Vector: [0.89, -0.45, 0.23, ... 384 números]
+                            </p>
+                        </div>
+
+                        <div style="background: var(--color-bg-card); padding: var(--spacing-lg); border-radius: var(--radius-md); border-left: 4px solid var(--color-accent);">
+                            <h4 style="color: var(--color-accent); margin-bottom: var(--spacing-sm); font-size: var(--text-lg);">🎯 PASO 3: La pregunta mágica</h4>
+                            <p style="font-size: var(--text-lg); color: var(--color-text-primary); font-weight: 600; margin-bottom: var(--spacing-sm);">
+                                "¿Hay algún cliente legítimo que normalmente se comporte así?"
+                            </p>
+                            <p style="margin-bottom: var(--spacing-sm);">MongoDB Vector Search busca en los 50 clientes:</p>
+                            <ul style="list-style: none; margin-left: 0;">
+                                <li style="padding: var(--spacing-xs) 0;">❌ Cliente A: Similitud 0.15 (muy diferente)</li>
+                                <li style="padding: var(--spacing-xs) 0;">❌ Cliente B: Similitud 0.23 (muy diferente)</li>
+                                <li style="padding: var(--spacing-xs) 0;">❌ Incluso María: Similitud 0.28 (muy diferente)</li>
+                            </ul>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), var(--color-bg-tertiary)); padding: var(--spacing-lg); border-radius: var(--radius-md); border: 2px solid var(--color-error);">
+                            <h4 style="color: var(--color-error); margin-bottom: var(--spacing-sm); font-size: var(--text-lg);">⚠️ CONCLUSIÓN DEL SISTEMA</h4>
+                            <p style="font-size: var(--text-lg); font-weight: 600;">
+                                "Esta transacción NO se parece al comportamiento de NINGÚN cliente legítimo"
+                            </p>
+                            <p style="color: var(--color-error); margin-top: var(--spacing-md); font-size: var(--text-xl); font-weight: bold;">
+                                → Similitud baja = SOSPECHOSO → Probablemente FRAUDE 🚨
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="section-subtitle">💡 Analogía Simple</h3>
+                <div class="card" style="background: linear-gradient(135deg, var(--color-primary-light), var(--color-bg-tertiary));">
+                    <p style="font-size: var(--text-lg); line-height: 1.8;">
+                        Imagina que tienes <strong style="color: var(--color-primary);">fotos de 50 personas</strong> que conoces bien. 
+                        De repente llega una <strong style="color: var(--color-warning);">nueva foto</strong> 📸. 
+                        Preguntas: <em>"¿Esta persona se parece a alguien que conozco?"</em>
+                    </p>
+                    <ul style="margin-top: var(--spacing-lg); font-size: var(--text-lg); line-height: 2;">
+                        <li>Si <strong style="color: var(--color-success);">SÍ se parece</strong> a Juan → Probablemente es Juan ✅</li>
+                        <li>Si <strong style="color: var(--color-error);">NO se parece a NADIE</strong> → Sospechoso, puede ser un impostor 🚨</li>
+                    </ul>
+                    <p style="margin-top: var(--spacing-lg); font-size: var(--text-lg); color: var(--color-primary); font-weight: 600;">
+                        Eso mismo hace Vector Search: compara la transacción con el "rostro" del comportamiento de cada cliente.
+                    </p>
+                </div>
+
+                <h3 class="section-subtitle">¿Cómo funciona técnicamente?</h3>
+                <div class="vector-visual">
+                    <p class="vector-title">
+                        Cada transacción se convierte en un punto en el espacio de 384 dimensiones
+                    </p>
+                    <div class="vector-points">
+                        <div class="vector-point query">🔍<br>Nueva<br>Transacción</div>
+                        <div class="vector-point">👤<br>Cliente A</div>
+                        <div class="vector-point">👤<br>Cliente B</div>
+                        <div class="vector-point">👤<br>Cliente C</div>
+                        <div class="vector-point">👤<br>Cliente D</div>
+                    </div>
+                    <p style="text-align: center; color: var(--color-text-secondary);">
+                        MongoDB busca los clientes cuyo comportamiento histórico es más <strong style="color: var(--color-primary);">similar</strong> a esta transacción
+                    </p>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Comparación: Normal vs Fraude</h3>
+            
+            <div style="display: grid; gap: var(--spacing-xl); margin: var(--spacing-2xl) 0;">
+                <div class="example-box">
+                    <div class="example-title">✅ CASO 1: Transacción Normal</div>
+                    <div style="background: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-md); margin: var(--spacing-md) 0;">
+                        <p><strong>Transacción de María:</strong></p>
+                        <p>$150,000 en Carulla a las 6 PM</p>
+                    </div>
+                    <p style="margin: var(--spacing-md) 0;"><strong>Vector Search pregunta:</strong><br>"¿Qué cliente se comporta así normalmente?"</p>
+                    <div style="background: rgba(0, 237, 100, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); border-left: 4px solid var(--color-success);">
+                        <p style="margin-bottom: var(--spacing-sm);"><strong style="color: var(--color-success);">✓ Encuentra: ¡María González!</strong></p>
+                        <p style="font-size: var(--text-xl); color: var(--color-success); font-weight: bold;">Similitud: 0.92 (¡Muy alta!)</p>
+                        <p style="margin-top: var(--spacing-md);">
+                            <strong>Interpretación:</strong><br>
+                            "Esta transacción es MUY similar al perfil de María"<br>
+                            "María siempre compra así"<br>
+                            "Es comportamiento NORMAL"
+                        </p>
+                        <p style="margin-top: var(--spacing-md); font-size: var(--text-xl); font-weight: bold; color: var(--color-success);">
+                            → DECISIÓN: APROBAR ✅
+                        </p>
+                    </div>
+                </div>
+
+                <div class="example-box fraud">
+                    <div class="example-title">🚨 CASO 2: Transacción Fraudulenta</div>
+                    <div style="background: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-md); margin: var(--spacing-md) 0;">
+                        <p><strong>Transacción "de María":</strong></p>
+                        <p>$5,000,000 en Casino Online a las 3 AM en Miami</p>
+                    </div>
+                    <p style="margin: var(--spacing-md) 0;"><strong>Vector Search pregunta:</strong><br>"¿Qué cliente se comporta así normalmente?"</p>
+                    <div style="background: rgba(239, 68, 68, 0.1); padding: var(--spacing-lg); border-radius: var(--radius-md); border-left: 4px solid var(--color-error);">
+                        <p style="margin-bottom: var(--spacing-sm);"><strong style="color: var(--color-error);">✗ Encuentra: Ninguno cercano</strong></p>
+                        <p style="font-size: var(--text-xl); color: var(--color-error); font-weight: bold;">Similitud: 0.23 (¡Muy baja!)</p>
+                        <p style="margin-top: var(--spacing-md);">
+                            <strong>Interpretación:</strong><br>
+                            "Esta transacción NO se parece al perfil de María"<br>
+                            "María NUNCA compra así"<br>
+                            "NO se parece a NINGÚN cliente legítimo"
+                        </p>
+                        <p style="margin-top: var(--spacing-md); font-size: var(--text-xl); font-weight: bold; color: var(--color-error);">
+                            → DECISIÓN: BLOQUEAR 🔴
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">📊 Tabla Resumen</h3>
+            <table class="decision-table">
+                <thead>
+                    <tr>
+                        <th>Qué comparamos</th>
+                        <th>Por qué</th>
+                        <th>Resultado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Transacción nueva</strong> → <strong>Perfiles de clientes</strong></td>
+                        <td>Para ver si el comportamiento de la transacción coincide con el comportamiento NORMAL de algún cliente</td>
+                        <td>Similitud = Nivel de confianza</td>
+                    </tr>
+                    <tr>
+                        <td>Alta similitud (0.8 - 1.0)</td>
+                        <td>"Sí, así se comporta este cliente normalmente"</td>
+                        <td><span class="decision-badge approve">✅ APROBAR</span></td>
+                    </tr>
+                    <tr>
+                        <td>Baja similitud (0.0 - 0.5)</td>
+                        <td>"Esto NO se parece a cómo se comporta NINGÚN cliente legítimo"</td>
+                        <td><span class="decision-badge block">🔴 BLOQUEAR</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="section-subtitle">Representación Visual</h3>
+
+        </section>
+
+        <!-- Modelo de Riesgo -->
+        <section class="section animate-fadeIn">
+            <h2 class="section-title">
+                <span class="icon">⚖️</span>
+                Modelo de Scoring de Riesgo
+            </h2>
+            <div class="card">
+                <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-xl);">
+                    El modelo evalúa <strong style="color: var(--color-warning);">8 factores de riesgo</strong> y asigna puntos. 
+                    Cuantos más puntos acumule una transacción, más sospechosa es.
+                </p>
+            </div>
+
+            <h3 class="section-subtitle">🤝 ¿Cómo trabajan juntos Vector Search y Risk Model?</h3>
+            <div class="card" style="background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-tertiary)); margin-bottom: var(--spacing-2xl);">
+                <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-xl); text-align: center;">
+                    Los dos sistemas trabajan <strong style="color: var(--color-primary);">EN PARALELO</strong>, 
+                    no uno después del otro. Cada uno aporta su perspectiva única.
+                </p>
+
+                <!-- Diagrama de Flujo Visual -->
+                <div style="background: var(--color-bg-card); padding: var(--spacing-2xl); border-radius: var(--radius-xl); margin: var(--spacing-xl) 0;">
+                    <div style="text-align: center; margin-bottom: var(--spacing-xl);">
+                        <div style="display: inline-block; background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); padding: var(--spacing-lg) var(--spacing-2xl); border-radius: var(--radius-lg); font-size: var(--text-xl); font-weight: bold;">
+                            📥 Nueva Transacción
+                        </div>
+                        <div style="font-size: var(--text-4xl); color: var(--color-primary); margin: var(--spacing-md) 0;">↓</div>
+                    </div>
+
+                    <div style="display: grid; gap: var(--spacing-xl); margin-bottom: var(--spacing-xl);">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-xl);">
+                            <!-- Vector Search Side -->
+                            <div style="background: linear-gradient(135deg, rgba(86, 68, 212, 0.2), var(--color-bg-tertiary)); padding: var(--spacing-xl); border-radius: var(--radius-lg); border: 2px solid var(--color-accent);">
+                                <div style="text-align: center; font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">🧠</div>
+                                <h4 style="color: var(--color-accent); text-align: center; margin-bottom: var(--spacing-md); font-size: var(--text-xl);">Vector Search</h4>
+                                <p style="text-align: center; margin-bottom: var(--spacing-md);">"¿Alguien legítimo se comporta así?"</p>
+                                <div style="background: var(--color-bg-primary); padding: var(--spacing-md); border-radius: var(--radius-md); margin-top: var(--spacing-md);">
+                                    <p style="font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--spacing-sm);">Similitud con clientes:</p>
+                                    <p style="font-size: var(--text-2xl); font-weight: bold; color: var(--color-warning); text-align: center;">0.28</p>
+                                    <p style="font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--spacing-sm); text-align: center;">(MUY BAJA)</p>
+                                </div>
+                                <div style="background: rgba(239, 68, 68, 0.2); padding: var(--spacing-md); border-radius: var(--radius-md); margin-top: var(--spacing-md); text-align: center;">
+                                    <p style="color: var(--color-error); font-weight: bold;">Penalización:</p>
+                                    <p style="font-size: var(--text-3xl); color: var(--color-error); font-weight: bold;">+40</p>
+                                </div>
+                            </div>
+
+                            <!-- Risk Model Side -->
+                            <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), var(--color-bg-tertiary)); padding: var(--spacing-xl); border-radius: var(--radius-lg); border: 2px solid var(--color-warning);">
+                                <div style="text-align: center; font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">⚖️</div>
+                                <h4 style="color: var(--color-warning); text-align: center; margin-bottom: var(--spacing-md); font-size: var(--text-xl);">Risk Model</h4>
+                                <p style="text-align: center; margin-bottom: var(--spacing-md);">"¿Qué cosas sospechosas tiene?"</p>
+                                <div style="background: var(--color-bg-primary); padding: var(--spacing-md); border-radius: var(--radius-md); margin-top: var(--spacing-md);">
+                                    <ul style="list-style: none; margin: 0; padding: 0; font-size: var(--text-sm);">
+                                        <li style="padding: var(--spacing-xs) 0;">• Monto alto: <span style="color: var(--color-warning);">+30</span></li>
+                                        <li style="padding: var(--spacing-xs) 0;">• Hora 3 AM: <span style="color: var(--color-warning);">+15</span></li>
+                                        <li style="padding: var(--spacing-xs) 0;">• Device nuevo: <span style="color: var(--color-warning);">+35</span></li>
+                                        <li style="padding: var(--spacing-xs) 0;">• Ubicación: <span style="color: var(--color-warning);">+25</span></li>
+                                    </ul>
+                                </div>
+                                <div style="background: rgba(239, 68, 68, 0.2); padding: var(--spacing-md); border-radius: var(--radius-md); margin-top: var(--spacing-md); text-align: center;">
+                                    <p style="color: var(--color-error); font-weight: bold;">Score Base:</p>
+                                    <p style="font-size: var(--text-3xl); color: var(--color-error); font-weight: bold;">105</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Combinación -->
+                    <div style="text-align: center; margin: var(--spacing-xl) 0;">
+                        <div style="font-size: var(--text-4xl); color: var(--color-primary);">↓</div>
+                        <div style="display: inline-block; background: linear-gradient(135deg, var(--color-error), #DC3545); padding: var(--spacing-xl) var(--spacing-2xl); border-radius: var(--radius-lg); margin: var(--spacing-md) 0;">
+                            <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-sm); opacity: 0.9;">Score Final</p>
+                            <p style="font-size: var(--text-5xl); font-weight: bold; margin-bottom: var(--spacing-sm);">145</p>
+                            <p style="font-size: var(--text-base); opacity: 0.9;">(105 + 40)</p>
+                        </div>
+                        <div style="font-size: var(--text-4xl); color: var(--color-error); margin: var(--spacing-md) 0;">↓</div>
+                        <div style="display: inline-block; background: var(--color-error); padding: var(--spacing-lg) var(--spacing-2xl); border-radius: var(--radius-full); font-size: var(--text-2xl); font-weight: bold; box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);">
+                            🔴 BLOQUEAR
+                        </div>
+                        <p style="margin-top: var(--spacing-md); color: var(--color-text-secondary);">145 > 85 (umbral de bloqueo)</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">💡 ¿Por qué usar AMBOS sistemas?</h3>
+            <div style="display: grid; gap: var(--spacing-xl); margin: var(--spacing-2xl) 0;">
+                
+                <!-- Solo Risk Model -->
+                <div class="card" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), var(--color-bg-tertiary)); border-left: 5px solid var(--color-error);">
+                    <h4 style="color: var(--color-error); margin-bottom: var(--spacing-md); font-size: var(--text-xl); display: flex; align-items: center; gap: var(--spacing-sm);">
+                        <span style="font-size: var(--text-3xl);">⚖️</span>
+                        Solo Risk Model
+                    </h4>
+                    <ul style="list-style: none; margin: 0; padding: 0;">
+                        <li style="padding: var(--spacing-sm) 0; display: flex; align-items: start; gap: var(--spacing-sm);">
+                            <span style="color: var(--color-error); font-size: var(--text-xl);">❌</span>
+                            <span>Reglas fijas y predecibles, fáciles de engañar por los estafadores</span>
+                        </li>
+                        <li style="padding: var(--spacing-sm) 0; display: flex; align-items: start; gap: var(--spacing-sm);">
+                            <span style="color: var(--color-error); font-size: var(--text-xl);">❌</span>
+                            <span>No entiende el contexto del comportamiento del cliente</span>
+                        </li>
+                        <li style="padding: var(--spacing-sm) 0; display: flex; align-items: start; gap: var(--spacing-sm);">
+                            <span style="color: var(--color-error); font-size: var(--text-xl);">❌</span>
+                            <span>Muchos falsos positivos (bloquea clientes legítimos)</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Solo Vector Search -->
+                <div class="card" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), var(--color-bg-tertiary)); border-left: 5px solid var(--color-error);">
+                    <h4 style="color: var(--color-error); margin-bottom: var(--spacing-md); font-size: var(--text-xl); display: flex; align-items: center; gap: var(--spacing-sm);">
+                        <span style="font-size: var(--text-3xl);">🧠</span>
+                        Solo Vector Search
+                    </h4>
+                    <ul style="list-style: none; margin: 0; padding: 0;">
+                        <li style="padding: var(--spacing-sm) 0; display: flex; align-items: start; gap: var(--spacing-sm);">
+                            <span style="color: var(--color-error); font-size: var(--text-xl);">❌</span>
+                            <span>Puede no detectar patrones específicos conocidos de fraude</span>
+                        </li>
+                        <li style="padding: var(--spacing-sm) 0; display: flex; align-items: start; gap: var(--spacing-sm);">
+                            <span style="color: var(--color-error); font-size: var(--text-xl);">❌</span>
+                            <span>Necesita muchos datos históricos para funcionar bien</span>
+                        </li>
+                        <li style="padding: var(--spacing-sm) 0; display: flex; align-items: start; gap: var(--spacing-sm);">
+                            <span style="color: var(--color-error); font-size: var(--text-xl);">❌</span>
+                            <span>Menos explicable: "¿Por qué bloqueaste esto?"</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- AMBOS JUNTOS -->
+                <div class="card" style="background: linear-gradient(135deg, var(--color-primary-light), var(--color-accent-light)); border: 3px solid var(--color-primary); box-shadow: var(--shadow-glow);">
+                    <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-md); font-size: var(--text-2xl); display: flex; align-items: center; gap: var(--spacing-sm); justify-content: center;">
+                        <span style="font-size: var(--text-4xl);">🧠</span>
+                        <span style="font-size: var(--text-3xl);">+</span>
+                        <span style="font-size: var(--text-4xl);">⚖️</span>
+                        <span>AMBOS JUNTOS</span>
+                    </h4>
+                    <ul style="list-style: none; margin: 0; padding: 0;">
+                        <li style="padding: var(--spacing-md) 0; display: flex; align-items: start; gap: var(--spacing-sm); background: var(--color-bg-card); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm);">
+                            <span style="color: var(--color-success); font-size: var(--text-2xl);">✅</span>
+                            <span style="font-size: var(--text-lg);"><strong style="color: var(--color-primary);">Vector Search</strong> detecta comportamientos atípicos que no siguen ningún patrón conocido</span>
+                        </li>
+                        <li style="padding: var(--spacing-md) 0; display: flex; align-items: start; gap: var(--spacing-sm); background: var(--color-bg-card); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm);">
+                            <span style="color: var(--color-success); font-size: var(--text-2xl);">✅</span>
+                            <span style="font-size: var(--text-lg);"><strong style="color: var(--color-warning);">Risk Model</strong> valida con reglas de negocio específicas del dominio bancario</span>
+                        </li>
+                        <li style="padding: var(--spacing-md) 0; display: flex; align-items: start; gap: var(--spacing-sm); background: var(--color-bg-card); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm);">
+                            <span style="color: var(--color-success); font-size: var(--text-2xl);">✅</span>
+                            <span style="font-size: var(--text-lg);">Reduce dramáticamente los <strong>falsos positivos</strong></span>
+                        </li>
+                        <li style="padding: var(--spacing-md) 0; display: flex; align-items: start; gap: var(--spacing-sm); background: var(--color-bg-card); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-sm);">
+                            <span style="color: var(--color-success); font-size: var(--text-2xl);">✅</span>
+                            <span style="font-size: var(--text-lg);">Más <strong>robusto y preciso</strong> ante nuevos tipos de fraude</span>
+                        </li>
+                        <li style="padding: var(--spacing-md) 0; display: flex; align-items: start; gap: var(--spacing-sm); background: var(--color-bg-card); padding: var(--spacing-md); border-radius: var(--radius-md);">
+                            <span style="color: var(--color-success); font-size: var(--text-2xl);">✅</span>
+                            <span style="font-size: var(--text-lg);"><strong>Explicable:</strong> puedes ver exactamente qué factores activaron la alerta</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">🕵️ Analogía del Detective</h3>
+            <div class="card" style="background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-primary));">
+                <p style="font-size: var(--text-xl); text-align: center; margin-bottom: var(--spacing-xl); color: var(--color-text-secondary);">
+                    Imagina que eres un detective investigando un caso sospechoso:
+                </p>
+                
+                <div style="display: grid; gap: var(--spacing-lg);">
+                    <div style="background: var(--color-accent-light); padding: var(--spacing-xl); border-radius: var(--radius-lg); border-left: 5px solid var(--color-accent);">
+                        <h4 style="color: var(--color-accent); margin-bottom: var(--spacing-md); font-size: var(--text-xl);">
+                            🧠 Vector Search = Tu Intuición
+                        </h4>
+                        <p style="font-size: var(--text-lg); font-style: italic; color: var(--color-text-secondary);">
+                            "Esta persona no se comporta como nadie que conozca"<br>
+                            "Algo no cuadra con su perfil habitual"<br>
+                            "Mi experiencia me dice que esto es raro"
+                        </p>
+                    </div>
+
+                    <div style="background: rgba(245, 158, 11, 0.15); padding: var(--spacing-xl); border-radius: var(--radius-lg); border-left: 5px solid var(--color-warning);">
+                        <h4 style="color: var(--color-warning); margin-bottom: var(--spacing-md); font-size: var(--text-xl);">
+                            ⚖️ Risk Model = Tu Checklist de Evidencias
+                        </h4>
+                        <ul style="list-style: none; margin: 0; padding: 0; font-size: var(--text-lg);">
+                            <li style="padding: var(--spacing-sm) 0;">☑️ Está en un lugar sospechoso</li>
+                            <li style="padding: var(--spacing-sm) 0;">☑️ Tiene un arma (dispositivo nuevo)</li>
+                            <li style="padding: var(--spacing-sm) 0;">☑️ Es de madrugada (horario extraño)</li>
+                            <li style="padding: var(--spacing-sm) 0;">☑️ Tiene mucho dinero encima</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); padding: var(--spacing-2xl); border-radius: var(--radius-lg); text-align: center;">
+                        <h4 style="color: white; margin-bottom: var(--spacing-md); font-size: var(--text-2xl);">
+                            🎯 Decisión Final = Intuición + Evidencias
+                        </h4>
+                        <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-sm);">
+                            Si <strong>AMBOS</strong> dicen "sospechoso" → Muy probable que sea fraude 🔴
+                        </p>
+                        <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-sm);">
+                            Si solo <strong>UNO</strong> dice "sospechoso" → Requiere revisión manual 🟡
+                        </p>
+                        <p style="font-size: var(--text-lg);">
+                            Si <strong>NINGUNO</strong> dice "sospechoso" → Probablemente legítimo ✅
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Factores de Riesgo (Pesos)</h3>
+            <div class="scoring-grid">
+                <div class="score-card">
+                    <div class="score-value">35</div>
+                    <div class="score-label">Dispositivo Desconocido</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-value">30</div>
+                    <div class="score-label">Monto Muy Alto (3x promedio)</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-value">25</div>
+                    <div class="score-label">Ubicación Inusual</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-value">25</div>
+                    <div class="score-label">Viajero Imposible</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-value">20</div>
+                    <div class="score-label">Muchas Trans. Rápidas</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-value">15</div>
+                    <div class="score-label">Horario Sospechoso (2-6 AM)</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-value">15</div>
+                    <div class="score-label">Monto Moderado Alto (2x)</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-value">10</div>
+                    <div class="score-label">Comercio Atípico</div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Ejemplo de Cálculo de Score</h3>
+            <div class="example-box fraud">
+                <div class="example-title">⚠️ Transacción Altamente Sospechosa</div>
+                <p><strong>Transacción:</strong> $8,000,000 a las 3 AM desde iPhone nuevo en Miami</p>
+                <p><strong>Promedio del cliente:</strong> $200,000</p>
+                <p style="margin-top: var(--spacing-md);"><strong>Cálculo de Score:</strong></p>
+                <ul>
+                    <li>✓ Monto 40x el promedio → <span style="color: var(--color-warning);">+30 puntos</span></li>
+                    <li>✓ Hora: 3 AM → <span style="color: var(--color-warning);">+15 puntos</span></li>
+                    <li>✓ Dispositivo desconocido → <span style="color: var(--color-warning);">+35 puntos</span></li>
+                    <li>✓ Similitud vectorial baja (0.2) → <span style="color: var(--color-warning);">+40 puntos</span></li>
+                </ul>
+                <p style="color: var(--color-error); margin-top: var(--spacing-lg); font-size: var(--text-2xl); font-weight: bold; text-align: center;">
+                    SCORE FINAL: 120/100 → 🔴 BLOQUEAR
+                </p>
+            </div>
+        </section>
+
+        <!-- Umbrales de Decisión -->
+        <section class="section animate-fadeIn">
+            <h2 class="section-title">
+                <span class="icon">🎚️</span>
+                Umbrales de Decisión
+            </h2>
+            <div class="card">
+                <p style="font-size: var(--text-lg); margin-bottom: var(--spacing-xl);">
+                    Según el score final, el sistema toma automáticamente una de tres acciones:
+                </p>
+            </div>
+
+            <table class="decision-table">
+                <thead>
+                    <tr>
+                        <th>Score</th>
+                        <th>Decisión</th>
+                        <th>Acción</th>
+                        <th>Ejemplo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>0 - 29</strong></td>
+                        <td><span class="decision-badge approve">✅ APROBAR</span></td>
+                        <td>Transacción procesada automáticamente</td>
+                        <td>Compra normal del cliente</td>
+                    </tr>
+                    <tr>
+                        <td><strong>30 - 84</strong></td>
+                        <td><span class="decision-badge flag">🟡 REVISAR</span></td>
+                        <td>Analista humano revisa manualmente</td>
+                        <td>Monto un poco alto, pero horario normal</td>
+                    </tr>
+                    <tr>
+                        <td><strong>85 - 100+</strong></td>
+                        <td><span class="decision-badge block">🔴 BLOQUEAR</span></td>
+                        <td>Transacción bloqueada inmediatamente</td>
+                        <td>Dispositivo nuevo + ubicación rara + 3 AM</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Tipos de Fraude -->
+        <section class="section animate-fadeIn">
+            <h2 class="section-title">
+                <span class="icon">🎭</span>
+                8 Patrones de Fraude Detectados
+            </h2>
+            
+            <div class="pattern-grid">
+                <div class="example-box fraud">
+                    <div class="example-title">1. Viajero Imposible</div>
+                    <p><strong>Escenario:</strong> Compra en Bogotá a las 10 AM y en Miami a las 10:30 AM</p>
+                    <p style="color: var(--color-error); margin-top: var(--spacing-sm);"><strong>Problema:</strong> Es físicamente imposible viajar 4,200 km en 30 minutos</p>
+                </div>
+
+                <div class="example-box fraud">
+                    <div class="example-title">2. Cambio Súbito de Patrón</div>
+                    <p><strong>Escenario:</strong> Estudiante que nunca apuesta súbitamente gasta $5M en casino a las 3 AM</p>
+                    <p style="color: var(--color-error); margin-top: var(--spacing-sm);"><strong>Problema:</strong> Comportamiento 100% diferente al histórico</p>
+                </div>
+
+                <div class="example-box fraud">
+                    <div class="example-title">3. Pitufeo (Fraccionamiento)</div>
+                    <p><strong>Escenario:</strong> 10 transferencias de $99,000 en 1 hora (evitando el límite de $100,000)</p>
+                    <p style="color: var(--color-error); margin-top: var(--spacing-sm);"><strong>Problema:</strong> Patrón típico de lavado de dinero</p>
+                </div>
+
+                <div class="example-box fraud">
+                    <div class="example-title">4. Compras Nocturnas de Alto Valor</div>
+                    <p><strong>Escenario:</strong> $3M en electrónicos a las 4 AM</p>
+                    <p style="color: var(--color-error); margin-top: var(--spacing-sm);"><strong>Problema:</strong> Horario inusual + monto grande</p>
+                </div>
+
+                <div class="example-box fraud">
+                    <div class="example-title">5. Frontera de Alto Riesgo</div>
+                    <p><strong>Escenario:</strong> Retiro de $5M en efectivo en Cúcuta (frontera con Venezuela)</p>
+                    <p style="color: var(--color-error); margin-top: var(--spacing-sm);"><strong>Problema:</strong> Zona de alto riesgo + monto alto</p>
+                </div>
+
+                <div class="example-box fraud">
+                    <div class="example-title">6. Clonación de Tarjeta</div>
+                    <p><strong>Escenario:</strong> Compra física en Bogotá y online en Panamá al mismo tiempo</p>
+                    <p style="color: var(--color-error); margin-top: var(--spacing-sm);"><strong>Problema:</strong> Uso simultáneo en ubicaciones diferentes</p>
+                </div>
+
+                <div class="example-box fraud">
+                    <div class="example-title">7. Mula de Dinero Digital</div>
+                    <p><strong>Escenario:</strong> Recibe $5M y dispersa en 20 transferencias a cuentas diferentes en 1 hora</p>
+                    <p style="color: var(--color-error); margin-top: var(--spacing-sm);"><strong>Problema:</strong> Patrón típico de lavado de dinero</p>
+                </div>
+
+                <div class="example-box fraud">
+                    <div class="example-title">8. Test de Tarjeta Robada</div>
+                    <p><strong>Escenario:</strong> 5 intentos de $1,000 en diferentes comercios en 10 minutos</p>
+                    <p style="color: var(--color-error); margin-top: var(--spacing-sm);"><strong>Problema:</strong> Validando si la tarjeta robada funciona</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ventajas del Sistema -->
+        <section class="section animate-fadeIn">
+            <h2 class="section-title">
+                <span class="icon">⚡</span>
+                Ventajas del Sistema Híbrido
+            </h2>
+            
+            <div class="stats-container">
+                <div class="stat-box">
+                    <span class="stat-number">&lt;50ms</span>
+                    <div class="stat-label">Tiempo de respuesta</div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">90%+</span>
+                    <div class="stat-label">Precisión en detección</div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">24/7</span>
+                    <div class="stat-label">Monitoreo continuo</div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">100%</span>
+                    <div class="stat-label">Automatizado</div>
+                </div>
+            </div>
+
+            <ul class="feature-list">
+                <li><strong>Detección en tiempo real:</strong> Analiza y decide en milisegundos mientras el cliente espera</li>
+                <li><strong>Aprendizaje semántico:</strong> Entiende el contexto del comportamiento, no solo reglas fijas</li>
+                <li><strong>Escalable:</strong> Funciona con millones de transacciones simultáneas sin perder velocidad</li>
+                <li><strong>Adaptable:</strong> Se ajusta a nuevos patrones de fraude sin necesidad de reprogramar</li>
+                <li><strong>Transparente:</strong> Explica exactamente por qué bloqueó una transacción con el score detallado</li>
+                <li><strong>Reducción de falsos positivos:</strong> Combina IA y reglas para tomar decisiones más precisas</li>
+            </ul>
+        </section>
+
+        <!-- Conclusión -->
+        <section class="conclusion animate-fadeIn">
+            <h2 class="text-gradient">🚀 Resultado: Protección Inteligente</h2>
+            <p>
+                Este sistema combina lo mejor de dos mundos: la <strong style="color: var(--color-primary);">inteligencia artificial</strong> 
+                para entender comportamientos complejos mediante Vector Search, y las <strong style="color: var(--color-warning);">reglas de negocio</strong> 
+                para tomar decisiones precisas y explicables. El resultado es un sistema que protege a los clientes y al banco 
+                de manera efectiva, rápida y escalable.
+            </p>
+            <div class="conclusion-icons">
+                🛡️ 💳 🔒
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Animación al hacer scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeIn');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

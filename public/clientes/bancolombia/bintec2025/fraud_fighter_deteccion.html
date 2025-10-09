@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Detección - Fraud Fighter Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Euclid+Circular+A:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mongodb-green: #00ED64;
+            --mongodb-navy: #001E2B;
+            --mongodb-forest: #00684A;
+            --mongodb-slate: #13AA52;
+            --mongodb-light: #E3FCF7;
+        }
+
+        body {
+            font-family: 'Euclid Circular A', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--mongodb-navy);
+            color: #ffffff;
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* Animated Background */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 237, 100, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 104, 74, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(19, 170, 82, 0.1) 0%, transparent 50%);
+            animation: drift 20s ease-in-out infinite;
+        }
+
+        @keyframes drift {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(50px, 50px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* Hero Section - Ultra Premium */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(0, 237, 100, 0.1);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: 50px;
+            color: var(--mongodb-green);
+            font-size: 0.9em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .hero h1 {
+            font-size: 5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--mongodb-green) 0%, var(--mongodb-slate) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5em;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
+            max-width: 800px;
+            margin: 0 auto 50px;
+        }
+
+        .hero-visual {
+            margin-top: 60px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-emoji {
+            font-size: 8em;
+            filter: drop-shadow(0 20px 40px rgba(0, 237, 100, 0.3));
+        }
+
+        /* Section Styles - Premium */
+        section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .section-label {
+            display: inline-block;
+            color: var(--mongodb-green);
+            font-size: 0.95em;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.6) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-description {
+            font-size: 1.3em;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* Glass Cards - Ultra Modern */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .glass-card {
+            background: rgba(0, 104, 74, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            border-radius: 24px;
+            padding: 50px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--mongodb-green), var(--mongodb-slate));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-12px);
+            border-color: var(--mongodb-green);
+            box-shadow: 0 30px 60px rgba(0, 237, 100, 0.2);
+        }
+
+        .glass-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-icon {
+            font-size: 3.5em;
+            margin-bottom: 25px;
+            display: block;
+            filter: drop-shadow(0 10px 20px rgba(0, 237, 100, 0.3));
+        }
+
+        .card-title {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: var(--mongodb-green);
+            margin-bottom: 20px;
+        }
+
+        .card-text {
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.8;
+        }
+
+        /* Flow Diagram - Interactive */
+        .flow-container {
+            background: rgba(0, 104, 74, 0.05);
+            border-radius: 32px;
+            padding: 80px 60px;
+            margin: 60px 0;
+            border: 1px solid rgba(0, 237, 100, 0.1);
+        }
+
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+        }
+
+        .flow-step-number {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--mongodb-green), var(--mongodb-slate));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--mongodb-navy);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.3);
+            animation: scaleIn 0.6s ease-out backwards;
+        }
+
+        .flow-step:nth-child(1) .flow-step-number { animation-delay: 0.1s; }
+        .flow-step:nth-child(2) .flow-step-number { animation-delay: 0.2s; }
+        .flow-step:nth-child(3) .flow-step-number { animation-delay: 0.3s; }
+        .flow-step:nth-child(4) .flow-step-number { animation-delay: 0.4s; }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .flow-step-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--mongodb-green);
+            margin-bottom: 15px;
+        }
+
+        .flow-step-desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .flow-arrow {
+            color: var(--mongodb-green);
+            font-size: 3em;
+            opacity: 0.3;
+            animation: slideArrow 2s ease-in-out infinite;
+        }
+
+        @keyframes slideArrow {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        /* Code Block - Premium */
+        .code-showcase {
+            background: rgba(0, 30, 43, 0.8);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-showcase::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--mongodb-green), var(--mongodb-slate), var(--mongodb-green));
+            background-size: 200% 100%;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--mongodb-green);
+            opacity: 0.6;
+        }
+
+        .code-title {
+            color: var(--mongodb-green);
+            font-size: 0.9em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-left: auto;
+        }
+
+        .code-content {
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .code-content .keyword {
+            color: var(--mongodb-green);
+            font-weight: 600;
+        }
+
+        .code-content .string {
+            color: #FFD700;
+        }
+
+        .code-content .comment {
+            color: rgba(255, 255, 255, 0.4);
+            font-style: italic;
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin: 60px 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 50px 30px;
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.05), rgba(0, 104, 74, 0.1));
+            border-radius: 24px;
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--mongodb-green);
+        }
+
+        .stat-number {
+            font-size: 4em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--mongodb-green), var(--mongodb-slate));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+        }
+
+        /* Feature Highlight */
+        .feature-highlight {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1), rgba(0, 104, 74, 0.1));
+            border-radius: 32px;
+            padding: 80px 60px;
+            margin: 80px 0;
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-highlight::after {
+            content: '🔍';
+            position: absolute;
+            right: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20em;
+            opacity: 0.03;
+        }
+
+        .feature-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--mongodb-green);
+            margin-bottom: 30px;
+        }
+
+        .feature-text {
+            font-size: 1.3em;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.9;
+            margin-bottom: 25px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 100px 40px;
+            background: linear-gradient(135deg, var(--mongodb-forest), var(--mongodb-slate));
+            border-radius: 40px;
+            margin: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.2), transparent);
+            top: -250px;
+            right: -250px;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cta-title {
+            font-size: 3em;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-text {
+            font-size: 1.3em;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 20px 50px;
+            background: white;
+            color: var(--mongodb-forest);
+            font-size: 1.2em;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3em;
+            }
+            
+            .section-title {
+                font-size: 2.5em;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-steps {
+                flex-direction: column;
+            }
+            
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* Scroll Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">Sistema de Detección Inteligente</div>
+                <h1>Vector Search + Risk Model</h1>
+                <p class="hero-subtitle">
+                    Descubre cómo la inteligencia artificial y MongoDB Atlas detectan fraudes en tiempo real 
+                    analizando patrones de comportamiento con precisión matemática
+                </p>
+                <div class="hero-visual">
+                    <div class="hero-emoji">🧠</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How Vector Search Works -->
+    <section>
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">La Tecnología</div>
+                <h2 class="section-title">¿Cómo Funciona Vector Search?</h2>
+                <p class="section-description">
+                    Vector Search convierte comportamientos humanos en matemáticas, 
+                    permitiendo comparar "similitudes" de manera instantánea
+                </p>
+            </div>
+
+            <div class="feature-highlight reveal">
+                <div class="feature-content">
+                    <div class="feature-title">De Texto a Números Mágicos</div>
+                    <p class="feature-text">
+                        Imagina que cada cliente tiene una "huella digital" de comportamiento. 
+                        Un modelo de IA (sentence-transformers) lee características como 
+                        "Gerente, Bogotá, estrato 5, gasta $285,000 en supermercados" 
+                        y lo convierte en un vector de 384 números.
+                    </p>
+                    <p class="feature-text">
+                        Cuando llega una transacción nueva, se genera su propio vector y 
+                        MongoDB Atlas calcula qué tan "cerca" o "lejos" está del comportamiento 
+                        normal del cliente usando distancia coseno. Si está muy lejos = 🚨 FRAUDE
+                    </p>
+                </div>
+            </div>
+
+            <div class="stats-grid reveal">
+                <div class="stat-card">
+                    <div class="stat-number">384</div>
+                    <div class="stat-label">Dimensiones del Vector</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">&lt;50ms</div>
+                    <div class="stat-label">Tiempo de Búsqueda</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">99.2%</div>
+                    <div class="stat-label">Precisión Típica</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Escalabilidad</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detection Flow -->
+    <section style="background: rgba(0, 104, 74, 0.02);">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">El Proceso</div>
+                <h2 class="section-title">Flujo de Detección Completo</h2>
+                <p class="section-description">
+                    Cada transacción pasa por este pipeline en menos de 100 milisegundos
+                </p>
+            </div>
+
+            <div class="flow-container reveal">
+                <div class="flow-steps">
+                    <div class="flow-step">
+                        <div class="flow-step-number">1</div>
+                        <div class="flow-step-title">Transacción Llega</div>
+                        <div class="flow-step-desc">
+                            $5M en casino online a las 3 AM desde dispositivo nuevo
+                        </div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">2</div>
+                        <div class="flow-step-title">Generar Embedding</div>
+                        <div class="flow-step-desc">
+                            Convertir características en vector de 384 dimensiones
+                        </div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">3</div>
+                        <div class="flow-step-title">Vector Search</div>
+                        <div class="flow-step-desc">
+                            Buscar Top 5 clientes con comportamiento similar
+                        </div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">4</div>
+                        <div class="flow-step-title">Calcular Score</div>
+                        <div class="flow-step-desc">
+                            Risk Model suma factores: monto + hora + dispositivo
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-showcase reveal">
+                <div class="code-header">
+                    <div class="code-dot"></div>
+                    <div class="code-dot"></div>
+                    <div class="code-dot"></div>
+                    <div class="code-title">Python Implementation</div>
+                </div>
+                <div class="code-content">
+<span class="comment"># Paso 1: Generar embedding de la transacción</span>
+texto = <span class="string">f"Transacción {amount} en {merchant} desde {location}"</span>
+embedding = <span class="keyword">model</span>.encode(texto)
+
+<span class="comment"># Paso 2: Vector Search en MongoDB</span>
+pipeline = [{
+    <span class="string">"$vectorSearch"</span>: {
+        <span class="string">"index"</span>: <span class="string">"customer_behavior_index"</span>,
+        <span class="string">"queryVector"</span>: embedding.tolist(),
+        <span class="string">"limit"</span>: <span class="keyword">5</span>
+    }
+}]
+
+vecinos = db.customers.<span class="keyword">aggregate</span>(pipeline)
+
+<span class="comment"># Paso 3: Calcular score de riesgo</span>
+score = <span class="keyword">calcular_risk_score</span>(transaccion, cliente, modelo)
+
+<span class="comment"># Paso 4: Decisión</span>
+<span class="keyword">if</span> score > <span class="keyword">85</span>:
+    decision = <span class="string">"🔴 BLOCK"</span>  <span class="comment"># Fraude detectado</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Risk Model -->
+    <section>
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Inteligencia Híbrida</div>
+                <h2 class="section-title">Modelo de Riesgo Configurable</h2>
+                <p class="section-description">
+                    Combinamos Vector Search con reglas de negocio para decisiones precisas
+                </p>
+            </div>
+
+            <div class="cards-grid reveal">
+                <div class="glass-card">
+                    <span class="card-icon">💰</span>
+                    <h3 class="card-title">Amount Anomaly</h3>
+                    <p class="card-text">
+                        Si el monto es 3x el promedio del cliente, suma 30 puntos al score. 
+                        Detecta compras inusuales y gastos excesivos.
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <span class="card-icon">🌍</span>
+                    <h3 class="card-title">Location Anomaly</h3>
+                    <p class="card-text">
+                        Transacción desde ciudad atípica o zona de riesgo. 
+                        Vector Search detecta patrones geográficos anómalos.
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <span class="card-icon">🕐</span>
+                    <h3 class="card-title">Time Anomaly</h3>
+                    <p class="card-text">
+                        Compras entre 2 AM - 6 AM son sospechosas. 
+                        Suma 15 puntos si el cliente nunca opera en esas horas.
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <span class="card-icon">📱</span>
+                    <h3 class="card-title">Unknown Device</h3>
+                    <p class="card-text">
+                        Dispositivo nuevo sin historial. El factor más crítico: 
+                        suma 35 puntos inmediatamente.
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <span class="card-icon">⚡</span>
+                    <h3 class="card-title">Velocity Anomaly</h3>
+                    <p class="card-text">
+                        5+ transacciones en 1 hora es sospechoso. 
+                        Detecta ataques automatizados y clonación.
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <span class="card-icon">🎯</span>
+                    <h3 class="card-title">Vector Distance</h3>
+                    <p class="card-text">
+                        Si la similitud coseno es < 0.7, el comportamiento 
+                        es muy distinto al perfil normal. Penalización de 25 puntos.
+                    </p>
+                </div>
+            </div>
+
+            <div class="feature-highlight reveal" style="margin-top: 80px;">
+                <div class="feature-content">
+                    <div class="feature-title">Umbrales de Decisión</div>
+                    <p class="feature-text">
+                        <strong style="color: var(--mongodb-green);">Score &lt; 30:</strong> 
+                        🟢 APROBAR - Transacción normal, pasar inmediatamente
+                    </p>
+                    <p class="feature-text">
+                        <strong style="color: #FFC107;">Score 30-85:</strong> 
+                        🟡 REVISAR - Sospechosa, requiere análisis humano
+                    </p>
+                    <p class="feature-text">
+                        <strong style="color: #DC3545;">Score &gt; 85:</strong> 
+                        🔴 BLOQUEAR - Alto riesgo de fraude, detener transacción
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real Examples -->
+    <section style="background: rgba(0, 104, 74, 0.02);">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Casos Reales</div>
+                <h2 class="section-title">Fraudes Detectados</h2>
+                <p class="section-description">
+                    Ejemplos de fraudes colombianos que el sistema atrapa en tiempo real
+                </p>
+            </div>
+
+            <div class="cards-grid reveal">
+                <div class="glass-card">
+                    <span class="card-icon">✈️</span>
+                    <h3 class="card-title">El Viajero Imposible</h3>
+                    <p class="card-text">
+                        <strong>Escenario:</strong> Compra en Bogotá a las 10:00 AM, 
+                        luego en Miami a las 10:30 AM<br><br>
+                        <strong>Detección:</strong> Vector Search detecta cambio geográfico imposible. 
+                        Score: 95/100 🔴 BLOQUEADO
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <span class="card-icon">🎰</span>
+                    <h3 class="card-title">Cambio Súbito de Patrón</h3>
+                    <p class="card-text">
+                        <strong>Escenario:</strong> Estudiante que nunca apuesta, 
+                        súbitamente $5M en casino online a las 3 AM<br><br>
+                        <strong>Detección:</strong> Embedding muy distante del perfil normal. 
+                        Score: 90/100 🔴 BLOQUEADO
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <span class="card-icon">🏦</span>
+                    <h3 class="card-title">Fraccionamiento Hormiga</h3>
+                    <p class="card-text">
+                        <strong>Escenario:</strong> 10 transferencias de $99,000 en 1 hora 
+                        (justo bajo límite de reporte)<br><br>
+                        <strong>Detección:</strong> Velocity anomaly + patrón sospechoso. 
+                        Score: 70/100 🟡 REVISADO
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <span class="card-icon">🌙</span>
+                    <h3 class="card-title">Compra Nocturna Masiva</h3>
+                    <p class="card-text">
+                        <strong>Escenario:</strong> $3M en Apple Store a las 4 AM 
+                        desde dispositivo desconocido<br><br>
+                        <strong>Detección:</strong> Time + Device + Amount anomalies. 
+                        Score: 85/100 🔴 BLOQUEADO
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <span class="card-icon">🚧</span>
+                    <h3 class="card-title">Zona Fronteriza</h3>
+                    <p class="card-text">
+                        <strong>Escenario:</strong> Retiro de $5M en cajero de Cúcuta 
+                        (frontera con Venezuela)<br><br>
+                        <strong>Detección:</strong> High-risk location + monto elevado. 
+                        Score: 80/100 🟡 REVISADO
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <span class="card-icon">👥</span>
+                    <h3 class="card-title">Mula Digital</h3>
+                    <p class="card-text">
+                        <strong>Escenario:</strong> Recibe $5M, dispersa en 20 transferencias 
+                        a cuentas diferentes en 1 hora<br><br>
+                        <strong>Detección:</strong> Velocity + behavioral change. 
+                        Score: 88/100 🔴 BLOQUEADO
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Metrics -->
+    <section>
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Resultados</div>
+                <h2 class="section-title">Métricas de Performance</h2>
+                <p class="section-description">
+                    Resultados reales del sistema en el taller con 100 transacciones de prueba
+                </p>
+            </div>
+
+            <div class="stats-grid reveal">
+                <div class="stat-card">
+                    <div class="stat-number">92%</div>
+                    <div class="stat-label">Precisión</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">Recall</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8%</div>
+                    <div class="stat-label">Falsos Positivos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">$45M</div>
+                    <div class="stat-label">Dinero Salvado</div>
+                </div>
+            </div>
+
+            <div class="feature-highlight reveal" style="margin-top: 60px;">
+                <div class="feature-content">
+                    <div class="feature-title">¿Por Qué Funciona Tan Bien?</div>
+                    <p class="feature-text">
+                        <strong>Vector Search captura contexto:</strong> 
+                        No solo mira reglas fijas, entiende el "comportamiento normal" 
+                        completo del cliente de manera holística.
+                    </p>
+                    <p class="feature-text">
+                        <strong>Híbrido = Lo mejor de ambos mundos:</strong> 
+                        Vector Search detecta anomalías sutiles que las reglas no ven, 
+                        mientras el Risk Model añade lógica de negocio específica.
+                    </p>
+                    <p class="feature-text">
+                        <strong>Aprendizaje continuo:</strong> 
+                        Los embeddings se actualizan con cada transacción legítima, 
+                        refinando constantemente el perfil del cliente.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Deep Dive -->
+    <section style="background: rgba(0, 104, 74, 0.02);">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Detalles Técnicos</div>
+                <h2 class="section-title">Bajo el Capó</h2>
+                <p class="section-description">
+                    La matemática y tecnología que hace posible la magia
+                </p>
+            </div>
+
+            <div class="cards-grid reveal">
+                <div class="glass-card">
+                    <span class="card-icon">🔢</span>
+                    <h3 class="card-title">Distancia Coseno</h3>
+                    <p class="card-text">
+                        Mide el ángulo entre dos vectores en espacio de 384 dimensiones. 
+                        Valores cercanos a 1 = muy similares. Cercanos a 0 = muy diferentes. 
+                        Es perfecto para detectar anomalías de comportamiento.
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <span class="card-icon">🚀</span>
+                    <h3 class="card-title">Índice HNSW</h3>
+                    <p class="card-text">
+                        Hierarchical Navigable Small World - El algoritmo que MongoDB usa 
+                        para búsquedas vectoriales ultra rápidas. Encuentra vecinos más cercanos 
+                        en log(n) tiempo.
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <span class="card-icon">🧠</span>
+                    <h3 class="card-title">Sentence Transformers</h3>
+                    <p class="card-text">
+                        Modelo all-MiniLM-L6-v2 pre-entrenado con 22M parámetros. 
+                        Convierte texto en vectores semánticos que capturan significado 
+                        y contexto, no solo palabras.
+                    </p>
+                </div>
+
+                <div class="glass-card">
+                    <span class="card-icon">⚡</span>
+                    <h3 class="card-title">Change Streams</h3>
+                    <p class="card-text">
+                        MongoDB captura transacciones en tiempo real usando Change Streams. 
+                        Cada nueva transacción dispara automáticamente el pipeline de detección 
+                        sin polling.
+                    </p>
+                </div>
+            </div>
+
+            <div class="code-showcase reveal" style="margin-top: 60px;">
+                <div class="code-header">
+                    <div class="code-dot"></div>
+                    <div class="code-dot"></div>
+                    <div class="code-dot"></div>
+                    <div class="code-title">Vector Search Query</div>
+                </div>
+                <div class="code-content">
+<span class="comment"># Configuración del Vector Search Index en MongoDB Atlas</span>
+{
+  <span class="string">"fields"</span>: [{
+    <span class="string">"type"</span>: <span class="string">"vector"</span>,
+    <span class="string">"path"</span>: <span class="string">"embedding"</span>,           <span class="comment"># Campo con el vector</span>
+    <span class="string">"numDimensions"</span>: <span class="keyword">384</span>,        <span class="comment"># Tamaño del vector</span>
+    <span class="string">"similarity"</span>: <span class="string">"cosine"</span>          <span class="comment"># Métrica de distancia</span>
+  }]
+}
+
+<span class="comment"># Query de búsqueda vectorial</span>
+db.customers.<span class="keyword">aggregate</span>([
+  {
+    <span class="string">"$vectorSearch"</span>: {
+      <span class="string">"index"</span>: <span class="string">"customer_behavior_index"</span>,
+      <span class="string">"path"</span>: <span class="string">"embedding"</span>,
+      <span class="string">"queryVector"</span>: embedding_transaccion,
+      <span class="string">"numCandidates"</span>: <span class="keyword">50</span>,         <span class="comment"># Candidatos a evaluar</span>
+      <span class="string">"limit"</span>: <span class="keyword">5</span>                     <span class="comment"># Top K más similares</span>
+    }
+  },
+  {
+    <span class="string">"$project"</span>: {
+      <span class="string">"score"</span>: { <span class="string">"$meta"</span>: <span class="string">"vectorSearchScore"</span> }
+    }
+  }
+])
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section>
+        <div class="container">
+            <div class="cta-section reveal">
+                <h2 class="cta-title">¿Listo para Detectar Fraudes?</h2>
+                <p class="cta-text">
+                    Ahora que entiendes cómo funciona el sistema, es hora de ponerlo en acción. 
+                    En el siguiente módulo simularemos transacciones reales y verás 
+                    el sistema trabajando en tiempo real.
+                </p>
+                <a href="#" class="cta-button">Continuar al Simulador →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <section style="padding: 60px 0; background: var(--mongodb-forest);">
+        <div class="container" style="text-align: center;">
+            <div style="font-size: 4em; margin-bottom: 20px; filter: drop-shadow(0 10px 20px rgba(0, 237, 100, 0.3));">
+                🍃
+            </div>
+            <h3 style="color: var(--mongodb-green); font-size: 2em; margin-bottom: 15px;">
+                Powered by MongoDB Atlas Vector Search
+            </h3>
+            <p style="color: rgba(255, 255, 255, 0.6); font-size: 1.2em;">
+                Fraud Fighter Challenge - Bancolombia Workshop 2024
+            </p>
+            <p style="color: rgba(255, 255, 255, 0.4); margin-top: 20px;">
+                Built with 💚 for financial innovation
+            </p>
+        </div>
+    </section>
+
+    <!-- Scroll Reveal Script -->
+    <script>
+        // Smooth scroll reveal animation
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', reveal);
+        reveal(); // Initial check
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

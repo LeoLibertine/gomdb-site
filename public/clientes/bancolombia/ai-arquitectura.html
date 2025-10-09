@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitecturas Técnicas - MongoDB Atlas Vector Search</title>
+    <style>
+        /* Sistema de diseño GoMDB */
+        :root {
+            --color-primary: #00ED64;
+            --color-primary-hover: #00D757;
+            --color-primary-light: #00ED6420;
+            --color-bg-primary: #001E2B;
+            --color-bg-secondary: #0D2A3D;
+            --color-bg-tertiary: #112331;
+            --color-bg-card: #0D2A3D80;
+            --color-accent: #5644D4;
+            --color-accent-light: #5644D420;
+            --color-text-primary: #FFFFFF;
+            --color-text-secondary: #B8C4CE;
+            --color-text-muted: #718096;
+            --color-text-dark: #001E2B;
+            --color-success: #00ED64;
+            --color-warning: #F59E0B;
+            --color-error: #EF4444;
+            --color-info: #3B82F6;
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --spacing-3xl: 4rem;
+            --spacing-4xl: 6rem;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 2rem;
+            --text-4xl: 2.5rem;
+            --text-5xl: 3rem;
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-full: 9999px;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+            --shadow-glow: 0 0 40px rgba(0, 237, 100, 0.3);
+            --transition-fast: 150ms ease;
+            --transition-base: 200ms ease;
+            --transition-slow: 300ms ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: var(--spacing-md);
+        }
+
+        h1 { font-size: clamp(var(--text-4xl), 6vw, var(--text-5xl)); }
+        h2 { font-size: clamp(var(--text-3xl), 4vw, var(--text-4xl)); }
+        h3 { font-size: var(--text-2xl); }
+        h4 { font-size: var(--text-xl); }
+
+        p {
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text-secondary);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+        }
+
+        .section {
+            padding: var(--spacing-4xl) 0;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card {
+            background-color: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            transition: all var(--transition-base);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .card-gradient {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.5) 100%);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-md);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            border-radius: var(--radius-full);
+        }
+
+        .badge-primary {
+            background-color: var(--color-primary);
+            color: var(--color-text-dark);
+        }
+
+        .badge-success {
+            background-color: var(--color-success);
+            color: var(--color-text-dark);
+        }
+
+        .badge-error {
+            background-color: var(--color-error);
+            color: white;
+        }
+
+        .badge-warning {
+            background-color: var(--color-warning);
+            color: var(--color-text-dark);
+        }
+
+        .hero {
+            position: relative;
+            padding-top: calc(var(--spacing-4xl) + 40px);
+            padding-bottom: var(--spacing-4xl);
+            overflow: hidden;
+        }
+
+        .hero-blur {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.2;
+            z-index: -1;
+        }
+
+        .hero-blur-primary {
+            width: 300px;
+            height: 300px;
+            background-color: var(--color-primary);
+            top: 10%;
+            left: 5%;
+        }
+
+        .hero-blur-accent {
+            width: 400px;
+            height: 400px;
+            background-color: var(--color-accent);
+            bottom: 10%;
+            right: 10%;
+        }
+
+        .architecture-container {
+            display: grid;
+            gap: var(--spacing-2xl);
+        }
+
+        .arch-diagram {
+            background: var(--color-bg-tertiary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-2xl);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .flow-step {
+            background: var(--color-bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-md) 0;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            color: var(--color-primary);
+            font-size: var(--text-2xl);
+            margin: var(--spacing-sm) 0;
+            font-weight: bold;
+        }
+
+        .pros-cons-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        @media (min-width: 768px) {
+            .pros-cons-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .pro-item, .con-item {
+            display: flex;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-md);
+            align-items: start;
+        }
+
+        .pro-icon {
+            color: var(--color-success);
+            font-size: var(--text-2xl);
+            flex-shrink: 0;
+        }
+
+        .con-icon {
+            color: var(--color-error);
+            font-size: var(--text-2xl);
+            flex-shrink: 0;
+        }
+
+        .comparison-banner {
+            background: linear-gradient(135deg, var(--color-accent-light) 0%, var(--color-primary-light) 100%);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            text-align: center;
+            margin: var(--spacing-2xl) 0;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--spacing-md);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .tech-item {
+            background: var(--color-bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            text-align: center;
+            transition: all var(--transition-base);
+        }
+
+        .tech-item:hover {
+            border-color: var(--color-primary);
+            transform: scale(1.05);
+        }
+
+        .tech-icon {
+            font-size: var(--text-4xl);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .recommendation-box {
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent-light) 100%);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin-top: var(--spacing-2xl);
+        }
+
+        .timeline-split {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        @media (min-width: 768px) {
+            .timeline-split {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .phase-box {
+            background: var(--color-bg-card);
+            border: 2px solid;
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+        }
+
+        .phase-poc {
+            border-color: var(--color-warning);
+        }
+
+        .phase-production {
+            border-color: var(--color-success);
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .note-box {
+            background: var(--color-bg-tertiary);
+            border-left: 4px solid var(--color-info);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-lg);
+        }
+
+        @media (min-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div style="text-align: center;" class="animate-fadeIn">
+                <span class="badge badge-primary" style="margin-bottom: var(--spacing-md);">Arquitectura Técnica</span>
+                <h1 class="text-gradient" style="margin-bottom: var(--spacing-lg);">
+                    Dos Caminos, Un Objetivo
+                </h1>
+                <p style="font-size: var(--text-xl); max-width: 800px; margin: 0 auto; color: var(--color-text-secondary);">
+                    Análisis comparativo de arquitecturas para implementar MongoDB Atlas Vector Search con Voyage AI
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nota sobre Voyage AI -->
+    <section style="padding: var(--spacing-2xl) 0;">
+        <div class="container">
+            <div class="card card-gradient">
+                <h3 class="text-gradient" style="margin-bottom: var(--spacing-lg);">
+                    📌 Importante: Voyage AI y Amazon Bedrock
+                </h3>
+                <div class="note-box">
+                    <p style="margin-bottom: var(--spacing-md);">
+                        <strong>Voyage AI no está disponible actualmente en Amazon Bedrock.</strong>
+                    </p>
+                    <p style="margin-bottom: var(--spacing-md);">
+                        Amazon Bedrock ofrece modelos de AI21 Labs, Anthropic, Cohere, Meta, Stability AI y Amazon Titan, pero Voyage AI se consume a través de su propia API independiente.
+                    </p>
+                    <p style="margin-bottom: 0;">
+                        <strong>Implicación:</strong> Las llamadas para crear los embeddings se realizarán directamente a la API de Voyage AI, no a través del endpoint de Bedrock. Esto no impide su uso, solo cambia el punto de integración.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Arquitectura 1: Modelo Externo -->
+    <section class="section">
+        <div class="container">
+            <div class="comparison-banner">
+                <h2 style="color: var(--color-text-primary); margin-bottom: var(--spacing-sm);">
+                    Arquitectura 1: Modelo Externo
+                </h2>
+                <span class="badge badge-success" style="font-size: var(--text-base);">
+                    ✓ Inmediatamente Implementable
+                </span>
+            </div>
+
+            <div class="card card-gradient">
+                <h3 style="margin-bottom: var(--spacing-lg);">Descripción General</h3>
+                <p style="font-size: var(--text-lg); color: var(--color-text-primary);">
+                    Tu aplicación (la función Lambda) orquesta el proceso de vectorización <strong>antes</strong> de almacenar los datos. Es la arquitectura más común y flexible disponible hoy.
+                </p>
+
+                <h4 style="margin-top: var(--spacing-2xl); margin-bottom: var(--spacing-lg); color: var(--color-primary);">
+                    🔄 Flujo de Trabajo
+                </h4>
+
+                <div class="arch-diagram">
+                    <div class="flow-step">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-sm);">
+                            <span style="background: var(--color-primary); color: var(--color-text-dark); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</span>
+                            <h4 style="margin: 0;">Generación del Informe</h4>
+                        </div>
+                        <p style="margin: 0; padding-left: 44px;">La AWS Lambda genera el informe de rendimiento en formato JSON mediante consultas a las bases de datos.</p>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-sm);">
+                            <span style="background: var(--color-primary); color: var(--color-text-dark); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</span>
+                            <h4 style="margin: 0;">Vectorización Externa</h4>
+                        </div>
+                        <p style="margin: 0; padding-left: 44px;">La Lambda hace una llamada API directa a <strong>Voyage AI</strong>. Envía el contenido del JSON y recibe el vector (embedding) numérico.</p>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-sm);">
+                            <span style="background: var(--color-primary); color: var(--color-text-dark); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</span>
+                            <h4 style="margin: 0;">Almacenamiento en Atlas</h4>
+                        </div>
+                        <p style="margin: 0; padding-left: 44px;">La Lambda agrega el vector recibido al documento JSON original y lo escribe en MongoDB Atlas.</p>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-sm);">
+                            <span style="background: var(--color-primary); color: var(--color-text-dark); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">4</span>
+                            <h4 style="margin: 0;">Consulta del Agente IA</h4>
+                        </div>
+                        <p style="margin: 0; padding-left: 44px;">El agente vectoriza su pregunta y usa <code>$vectorSearch</code> en Atlas para encontrar documentos relevantes.</p>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: var(--spacing-2xl); margin-bottom: var(--spacing-lg);">Stack Tecnológico</h4>
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <div class="tech-icon">🔧</div>
+                        <strong>AWS Lambda</strong>
+                        <p style="font-size: var(--text-sm); margin: 0;">Orquestación</p>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">🚀</div>
+                        <strong>Voyage AI</strong>
+                        <p style="font-size: var(--text-sm); margin: 0;">API Externa</p>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">🗄️</div>
+                        <strong>MongoDB Atlas</strong>
+                        <p style="font-size: var(--text-sm); margin: 0;">Almacenamiento</p>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">🧠</div>
+                        <strong>Claude</strong>
+                        <p style="font-size: var(--text-sm); margin: 0;">LLM (Bedrock)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pros y Contras -->
+            <div class="pros-cons-grid">
+                <div class="card" style="background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, transparent 100%);">
+                    <h4 style="color: var(--color-success); margin-bottom: var(--spacing-lg);">✅ Ventajas</h4>
+                    
+                    <div class="pro-item">
+                        <div class="pro-icon">✓</div>
+                        <div>
+                            <strong>Máxima Simplicidad</strong>
+                            <p style="font-size: var(--text-sm); margin: 0;">Tu código de ingesta es trivial. Solo necesitas guardar el JSON. La complejidad de la vectorización es abstraída por la base de datos.</p>
+                        </div>
+                    </div>
+
+                    <div class="pro-item" style="margin-top: var(--spacing-md);">
+                        <div class="pro-icon">✓</div>
+                        <div>
+                            <strong>Latencia Mínima</strong>
+                            <p style="font-size: var(--text-sm); margin: 0;">No hay llamadas de red externas durante la ingesta, resultando en un proceso de guardado mucho más rápido y eficiente.</p>
+                        </div>
+                    </div>
+
+                    <div class="pro-item" style="margin-top: var(--spacing-md);">
+                        <div class="pro-icon">✓</div>
+                        <div>
+                            <strong>Seguridad Centralizada</strong>
+                            <p style="font-size: var(--text-sm); margin: 0;">Los datos nunca abandonan el entorno seguro de Atlas para ser vectorizados. Gestión unificada de modelos y datos.</p>
+                        </div>
+                    </div>
+
+                    <div class="pro-item" style="margin-top: var(--spacing-md);">
+                        <div class="pro-icon">✓</div>
+                        <div>
+                            <strong>Menor Complejidad Operativa</strong>
+                            <p style="font-size: var(--text-sm); margin: 0;">Menos componentes que monitorear, menos puntos de fallo, menos código que mantener.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, transparent 100%);">
+                    <h4 style="color: var(--color-error); margin-bottom: var(--spacing-lg);">❌ Desventajas</h4>
+                    
+                    <div class="con-item">
+                        <div class="con-icon">✗</div>
+                        <div>
+                            <strong>Dependencia del Roadmap</strong>
+                            <p style="font-size: var(--text-sm); margin: 0;">Esta funcionalidad está en el roadmap de MongoDB. Aunque es la dirección estratégica, puede que no esté disponible para la PoC inicial.</p>
+                        </div>
+                    </div>
+
+                    <div class="con-item" style="margin-top: var(--spacing-md);">
+                        <div class="con-icon">✗</div>
+                        <div>
+                            <strong>Menor Flexibilidad (Temporal)</strong>
+                            <p style="font-size: var(--text-sm); margin: 0;">Una vez integrado, cambiar de modelo de embedding requerirá esperar actualizaciones de la plataforma.</p>
+                        </div>
+                    </div>
+
+                    <div class="con-item" style="margin-top: var(--spacing-md);">
+                        <div class="con-icon">⚠️</div>
+                        <div>
+                            <strong>Disponibilidad Futura</strong>
+                            <p style="font-size: var(--text-sm); margin: 0;">No hay fecha confirmada de disponibilidad general, aunque MongoDB ha confirmado que está en desarrollo activo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparación Directa -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center" style="margin-bottom: var(--spacing-2xl);">
+                <span class="text-gradient">Comparación Lado a Lado</span>
+            </h2>
+
+            <div class="card card-gradient">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--color-primary);">
+                                <th style="padding: var(--spacing-lg); text-align: left; color: var(--color-primary);">Criterio</th>
+                                <th style="padding: var(--spacing-lg); text-align: center; color: var(--color-primary);">Arquitectura 1<br/>(Modelo Externo)</th>
+                                <th style="padding: var(--spacing-lg); text-align: center; color: var(--color-primary);">Arquitectura 2<br/>(Modelo Integrado)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                                <td style="padding: var(--spacing-md); font-weight: 600;">Complejidad del Código</td>
+                                <td style="padding: var(--spacing-md); text-align: center;">⚠️ Media-Alta</td>
+                                <td style="padding: var(--spacing-md); text-align: center;"><span style="color: var(--color-success);">✓</span> Muy Baja</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                                <td style="padding: var(--spacing-md); font-weight: 600;">Latencia de Ingesta</td>
+                                <td style="padding: var(--spacing-md); text-align: center;">⚠️ Mayor (red externa)</td>
+                                <td style="padding: var(--spacing-md); text-align: center;"><span style="color: var(--color-success);">✓</span> Mínima (interna)</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                                <td style="padding: var(--spacing-md); font-weight: 600;">Seguridad de Datos</td>
+                                <td style="padding: var(--spacing-md); text-align: center;">⚠️ Sale de VPC</td>
+                                <td style="padding: var(--spacing-md); text-align: center;"><span style="color: var(--color-success);">✓</span> Nunca sale de Atlas</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                                <td style="padding: var(--spacing-md); font-weight: 600;">Flexibilidad</td>
+                                <td style="padding: var(--spacing-md); text-align: center;"><span style="color: var(--color-success);">✓</span> Cambio fácil</td>
+                                <td style="padding: var(--spacing-md); text-align: center;">⚠️ Depende de Atlas</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                                <td style="padding: var(--spacing-md); font-weight: 600;">Disponibilidad</td>
+                                <td style="padding: var(--spacing-md); text-align: center;"><span style="color: var(--color-success);">✓</span> Inmediata</td>
+                                <td style="padding: var(--spacing-md); text-align: center;">⚠️ Roadmap futuro</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                                <td style="padding: var(--spacing-md); font-weight: 600;">Costos de Operación</td>
+                                <td style="padding: var(--spacing-md); text-align: center;">⚠️ API separada + Lambda</td>
+                                <td style="padding: var(--spacing-md); text-align: center;"><span style="color: var(--color-success);">✓</span> Todo en Atlas</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                                <td style="padding: var(--spacing-md); font-weight: 600;">Mantenimiento</td>
+                                <td style="padding: var(--spacing-md); text-align: center;">⚠️ Múltiples servicios</td>
+                                <td style="padding: var(--spacing-md); text-align: center;"><span style="color: var(--color-success);">✓</span> Plataforma unificada</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: var(--spacing-md); font-weight: 600;">Escalabilidad</td>
+                                <td style="padding: var(--spacing-md); text-align: center;"><span style="color: var(--color-success);">✓</span> Buena</td>
+                                <td style="padding: var(--spacing-md); text-align: center;"><span style="color: var(--color-success);">✓</span> Excelente</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recomendación del Arquitecto -->
+    <section class="section" style="background: linear-gradient(180deg, transparent 0%, var(--color-bg-secondary) 50%, transparent 100%);">
+        <div class="container">
+            <h2 class="text-center" style="margin-bottom: var(--spacing-2xl);">
+                <span class="text-gradient">🎯 Recomendación del Arquitecto</span>
+            </h2>
+
+            <div class="recommendation-box">
+                <h3 style="text-align: center; color: var(--color-text-primary); margin-bottom: var(--spacing-xl);">
+                    Estrategia Dual: Lo Mejor de Ambos Mundos
+                </h3>
+
+                <div class="timeline-split">
+                    <div class="phase-box phase-poc">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+                            <span style="font-size: var(--text-4xl);">🚀</span>
+                            <div>
+                                <h3 style="margin: 0; color: var(--color-warning);">Fase 1: PoC</h3>
+                                <p style="margin: 0; font-size: var(--text-sm);">Inmediato (2-3 semanas)</p>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg);">
+                            <h4 style="color: var(--color-warning); margin-bottom: var(--spacing-md);">Arquitectura 1: Modelo Externo</h4>
+                            <p style="margin-bottom: var(--spacing-md); font-size: var(--text-sm);">
+                                <strong>Por qué:</strong> Te permite validar el caso de uso inmediatamente sin esperar funcionalidades futuras.
+                            </p>
+                        </div>
+
+                        <h5 style="margin-bottom: var(--spacing-md); color: var(--color-primary);">Objetivos de la PoC:</h5>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="padding: var(--spacing-sm) 0; display: flex; gap: var(--spacing-sm);">
+                                <span style="color: var(--color-success);">✓</span> 
+                                <span>Validar calidad de embeddings de Voyage AI</span>
+                            </li>
+                            <li style="padding: var(--spacing-sm) 0; display: flex; gap: var(--spacing-sm);">
+                                <span style="color: var(--color-success);">✓</span>
+                                <span>Medir rendimiento de Vector Search en Atlas</span>
+                            </li>
+                            <li style="padding: var(--spacing-sm) 0; display: flex; gap: var(--spacing-sm);">
+                                <span style="color: var(--color-success);">✓</span>
+                                <span>Comparar vs solución actual (S3 + Bedrock)</span>
+                            </li>
+                            <li style="padding: var(--spacing-sm) 0; display: flex; gap: var(--spacing-sm);">
+                                <span style="color: var(--color-success);">✓</span>
+                                <span>Demostrar valor antes de diciembre</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="phase-box phase-production">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+                            <span style="font-size: var(--text-4xl);">🎯</span>
+                            <div>
+                                <h3 style="margin: 0; color: var(--color-success);">Fase 2: Producción</h3>
+                                <p style="margin: 0; font-size: var(--text-sm);">Objetivo a largo plazo</p>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--color-bg-tertiary); padding: var(--spacing-lg); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg);">
+                            <h4 style="color: var(--color-success); margin-bottom: var(--spacing-md);">Arquitectura 2: Modelo Integrado</h4>
+                            <p style="margin-bottom: var(--spacing-md); font-size: var(--text-sm);">
+                                <strong>Por qué:</strong> Ofrece rendimiento superior, simplicidad operativa y mayor seguridad.
+                            </p>
+                        </div>
+
+                        <h5 style="margin-bottom: var(--spacing-md); color: var(--color-primary);">Beneficios en Producción:</h5>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="padding: var(--spacing-sm) 0; display: flex; gap: var(--spacing-sm);">
+                                <span style="color: var(--color-success);">✓</span>
+                                <span>Código más simple y mantenible</span>
+                            </li>
+                            <li style="padding: var(--spacing-sm) 0; display: flex; gap: var(--spacing-sm);">
+                                <span style="color: var(--color-success);">✓</span>
+                                <span>Menor latencia de ingesta</span>
+                            </li>
+                            <li style="padding: var(--spacing-sm) 0; display: flex; gap: var(--spacing-sm);">
+                                <span style="color: var(--color-success);">✓</span>
+                                <span>Máxima seguridad de datos</span>
+                            </li>
+                            <li style="padding: var(--spacing-sm) 0; display: flex; gap: var(--spacing-sm);">
+                                <span style="color: var(--color-success);">✓</span>
+                                <span>Costos operativos optimizados</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="note-box" style="margin-top: var(--spacing-2xl); background: rgba(0, 237, 100, 0.1); border-color: var(--color-success);">
+                    <h4 style="color: var(--color-success); margin-bottom: var(--spacing-md);">💡 Estrategia Recomendada</h4>
+                    <p style="margin: 0; color: var(--color-text-primary);">
+                        <strong>Diseña la PoC con Arquitectura 1</strong> para validación inmediata, pero <strong>mantén en mente la transición a Arquitectura 2</strong> como objetivo final. Esta estrategia te permite avanzar sin demoras mientras te preparas para una solución optimizada a largo plazo.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plan de Migración -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center" style="margin-bottom: var(--spacing-2xl);">
+                <span class="text-gradient">📋 Plan de Transición</span>
+            </h2>
+
+            <div class="grid-2">
+                <div class="card card-gradient">
+                    <h3 style="margin-bottom: var(--spacing-lg); color: var(--color-warning);">🔧 Preparación de la PoC</h3>
+                    
+                    <div style="background: var(--color-bg-tertiary); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);">
+                        <h5 style="color: var(--color-primary);">1. Configuración Inicial</h5>
+                        <ul style="font-size: var(--text-sm); padding-left: var(--spacing-xl);">
+                            <li>Crear cuenta en Voyage AI</li>
+                            <li>Configurar Lambda con SDK de Voyage AI</li>
+                            <li>Provisionar cluster de MongoDB Atlas</li>
+                            <li>Crear índice de vector search</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: var(--color-bg-tertiary); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);">
+                        <h5 style="color: var(--color-primary);">2. Implementación</h5>
+                        <ul style="font-size: var(--text-sm); padding-left: var(--spacing-xl);">
+                            <li>Desarrollar flujo de vectorización en Lambda</li>
+                            <li>Implementar manejo de errores y reintentos</li>
+                            <li>Configurar monitoreo y logging</li>
+                            <li>Cargar datos de prueba</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: var(--color-bg-tertiary); padding: var(--spacing-md); border-radius: var(--radius-md);">
+                        <h5 style="color: var(--color-primary);">3. Validación</h5>
+                        <ul style="font-size: var(--text-sm); padding-left: var(--spacing-xl);">
+                            <li>Pruebas de rendimiento</li>
+                            <li>Comparación con S3 + Bedrock</li>
+                            <li>Documentar métricas clave</li>
+                            <li>Presentación a stakeholders</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card card-gradient">
+                    <h3 style="margin-bottom: var(--spacing-lg); color: var(--color-success);">🚀 Migración a Producción</h3>
+                    
+                    <div style="background: var(--color-bg-tertiary); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);">
+                        <h5 style="color: var(--color-primary);">1. Monitoreo del Roadmap</h5>
+                        <ul style="font-size: var(--text-sm); padding-left: var(--spacing-xl);">
+                            <li>Mantener contacto con equipo MongoDB</li>
+                            <li>Seguir anuncios de producto</li>
+                            <li>Participar en beta testing si está disponible</li>
+                            <li>Evaluar fecha de disponibilidad general</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: var(--color-bg-tertiary); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);">
+                        <h5 style="color: var(--color-primary);">2. Preparación</h5>
+                        <ul style="font-size: var(--text-sm); padding-left: var(--spacing-xl);">
+                            <li>Diseñar código modular para fácil migración</li>
+                            <li>Documentar proceso de transición</li>
+                            <li>Planificar ventana de mantenimiento</li>
+                            <li>Preparar rollback strategy</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: var(--color-bg-tertiary); padding: var(--spacing-md); border-radius: var(--radius-md);">
+                        <h5 style="color: var(--color-primary);">3. Transición</h5>
+                        <ul style="font-size: var(--text-sm); padding-left: var(--spacing-xl);">
+                            <li>Migrar a vectorización integrada</li>
+                            <li>Simplificar código de Lambda</li>
+                            <li>Re-indexar documentos existentes</li>
+                            <li>Validar performance mejorado</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Consideraciones Técnicas -->
+    <section class="section" style="background: linear-gradient(180deg, transparent 0%, var(--color-bg-secondary) 50%, transparent 100%);">
+        <div class="container">
+            <h2 class="text-center" style="margin-bottom: var(--spacing-2xl);">
+                <span class="text-gradient">⚙️ Consideraciones Técnicas Clave</span>
+            </h2>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">📊 Dimensionamiento</h4>
+                    <p style="margin-bottom: var(--spacing-md);"><strong>Información necesaria de Bancolombia:</strong></p>
+                    <ul style="padding-left: var(--spacing-xl); color: var(--color-text-secondary);">
+                        <li>Volumen de informes JSON por semana/mes</li>
+                        <li>Tamaño promedio de cada informe</li>
+                        <li>Número de consultas concurrentes esperadas</li>
+                        <li>Requisitos de latencia (P95, P99)</li>
+                        <li>Retención de datos históricos</li>
+                        <li>Crecimiento proyectado</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">🔒 Seguridad</h4>
+                    <p style="margin-bottom: var(--spacing-md);"><strong>Aspectos a considerar:</strong></p>
+                    <ul style="padding-left: var(--spacing-xl); color: var(--color-text-secondary);">
+                        <li>Encriptación en tránsito y en reposo</li>
+                        <li>Control de acceso basado en roles (RBAC)</li>
+                        <li>Auditoría de accesos</li>
+                        <li>VPC peering o Private Link</li>
+                        <li>Cumplimiento normativo bancario</li>
+                        <li>Gestión de secretos (API keys)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">📈 Monitoreo</h4>
+                    <p style="margin-bottom: var(--spacing-md);"><strong>Métricas críticas:</strong></p>
+                    <ul style="padding-left: var(--spacing-xl); color: var(--color-text-secondary);">
+                        <li>Latencia de ingesta (con/sin vectorización)</li>
+                        <li>Latencia de consultas vector search</li>
+                        <li>Tasa de éxito/error en llamadas API</li>
+                        <li>Uso de recursos (CPU, memoria, disco)</li>
+                        <li>Costos por operación</li>
+                        <li>Calidad de resultados (relevancia)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">💰 Costos</h4>
+                    <p style="margin-bottom: var(--spacing-md);"><strong>Componentes de costo:</strong></p>
+                    <ul style="padding-left: var(--spacing-xl); color: var(--color-text-secondary);">
+                        <li>MongoDB Atlas (compute + storage)</li>
+                        <li>API de Voyage AI (por embedding)</li>
+                        <li>AWS Lambda (ejecución)</li>
+                        <li>Transferencia de datos</li>
+                        <li>Claude via Bedrock (por token)</li>
+                        <li>Monitoreo y logging</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="section">
+        <div class="container">
+            <div class="card card-gradient" style="text-align: center; padding: var(--spacing-3xl);">
+                <span style="font-size: 4rem; margin-bottom: var(--spacing-lg); display: block;">🎯</span>
+                <h2 class="text-gradient" style="margin-bottom: var(--spacing-lg);">
+                    Siguiente Paso: Inicio de PoC
+                </h2>
+                <p style="font-size: var(--text-xl); max-width: 700px; margin: 0 auto var(--spacing-xl); color: var(--color-text-primary);">
+                    Con esta estrategia dual, Bancolombia obtiene <strong>resultados inmediatos</strong> con la PoC y una <strong>visión clara</strong> hacia la optimización futura.
+                </p>
+                <div style="display: flex; gap: var(--spacing-lg); justify-content: center; flex-wrap: wrap;">
+                    <div class="card" style="flex: 1; min-width: 250px; max-width: 300px;">
+                        <h4 style="color: var(--color-warning);">Semanas 1-2</h4>
+                        <p style="margin: 0; font-size: var(--text-sm);">Implementación Arquitectura 1</p>
+                    </div>
+                    <div class="card" style="flex: 1; min-width: 250px; max-width: 300px;">
+                        <h4 style="color: var(--color-info);">Semanas 3-4</h4>
+                        <p style="margin: 0; font-size: var(--text-sm);">Pruebas y validación</p>
+                    </div>
+                    <div class="card" style="flex: 1; min-width: 250px; max-width: 300px;">
+                        <h4 style="color: var(--color-success);">Q1 2026+</h4>
+                        <p style="margin: 0; font-size: var(--text-sm);">Transición a Arquitectura 2</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: var(--color-bg-secondary); padding: var(--spacing-2xl) 0; text-align: center;">
+        <div class="container">
+            <p style="font-size: var(--text-sm); margin: 0; color: var(--color-text-muted);">
+                MongoDB × Bancolombia | Arquitectura Vector Search | Documento Técnico 2025
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Animaciones al hacer scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s ease-out';
+            observer.observe(card);
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>: var(--color-success); margin-bottom: var(--spacing-lg);">✅ Ventajas</h4>
+                    
+                    <div class="pro-item">
+                        <div class="pro-icon">✓</div>
+                        <div>
+                            <strong>Flexibilidad Total</strong>
+                            <p style="font-size: var(--text-sm); margin: 0;">Puedes cambiar de proveedor de embedding (de Voyage AI a Cohere, por ejemplo) con solo modificar la llamada de API en la Lambda.</p>
+                        </div>
+                    </div>
+
+                    <div class="pro-item" style="margin-top: var(--spacing-md);">
+                        <div class="pro-icon">✓</div>
+                        <div>
+                            <strong>Disponibilidad Inmediata</strong>
+                            <p style="font-size: var(--text-sm); margin: 0;">Este patrón se puede implementar hoy mismo sin depender de futuras funcionalidades de la base de datos.</p>
+                        </div>
+                    </div>
+
+                    <div class="pro-item" style="margin-top: var(--spacing-md);">
+                        <div class="pro-icon">✓</div>
+                        <div>
+                            <strong>Control Granular</strong>
+                            <p style="font-size: var(--text-sm); margin: 0;">Tienes control total sobre el proceso de vectorización y puedes optimizar según necesidades específicas.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, transparent 100%);">
+                    <h4 style="color: var(--color-error); margin-bottom: var(--spacing-lg);">❌ Desventajas</h4>
+                    
+                    <div class="con-item">
+                        <div class="con-icon">✗</div>
+                        <div>
+                            <strong>Mayor Latencia en Ingesta</strong>
+                            <p style="font-size: var(--text-sm); margin: 0;">Cada informe requiere una llamada de red adicional a un servicio externo, añadiendo tiempo al proceso de guardado.</p>
+                        </div>
+                    </div>
+
+                    <div class="con-item" style="margin-top: var(--spacing-md);">
+                        <div class="con-icon">✗</div>
+                        <div>
+                            <strong>Código Más Complejo</strong>
+                            <p style="font-size: var(--text-sm); margin: 0;">La Lambda debe gestionar conexión, autenticación, manejo de fallos y reintentos con la API externa.</p>
+                        </div>
+                    </div>
+
+                    <div class="con-item" style="margin-top: var(--spacing-md);">
+                        <div class="con-icon">✗</div>
+                        <div>
+                            <strong>Seguridad y Costos Adicionales</strong>
+                            <p style="font-size: var(--text-sm); margin: 0;">Los datos salen de tu VPC hacia la API externa, con costos separados por uso del servicio.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Arquitectura 2: Modelo Integrado -->
+    <section class="section" style="background: linear-gradient(180deg, transparent 0%, var(--color-bg-secondary) 50%, transparent 100%);">
+        <div class="container">
+            <div class="comparison-banner" style="background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent-light) 100%);">
+                <h2 style="color: var(--color-text-primary); margin-bottom: var(--spacing-sm);">
+                    Arquitectura 2: Modelo Integrado
+                </h2>
+                <span class="badge badge-warning" style="font-size: var(--text-base);">
+                    🚀 Visión Estratégica (Roadmap)
+                </span>
+            </div>
+
+            <div class="card card-gradient">
+                <h3 style="margin-bottom: var(--spacing-lg);">Descripción General</h3>
+                <p style="font-size: var(--text-lg); color: var(--color-text-primary);">
+                    Arquitectura simplificada de alto rendimiento donde <strong>MongoDB Atlas se encarga de la vectorización de forma nativa</strong>. Esta es la visión futura de la plataforma.
+                </p>
+
+                <h4 style="margin-top: var(--spacing-2xl); margin-bottom: var(--spacing-lg); color: var(--color-primary);">
+                    🔄 Flujo de Trabajo
+                </h4>
+
+                <div class="arch-diagram">
+                    <div class="flow-step">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-sm);">
+                            <span style="background: var(--color-accent); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</span>
+                            <h4 style="margin: 0;">Ingesta Directa</h4>
+                        </div>
+                        <p style="margin: 0; padding-left: 44px;">La AWS Lambda genera el informe JSON y lo escribe <strong>directamente</strong> en MongoDB Atlas, sin preocuparse por el vector.</p>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step" style="border: 2px solid var(--color-primary); box-shadow: var(--shadow-glow);">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-sm);">
+                            <span style="background: var(--color-accent); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</span>
+                            <h4 style="margin: 0;">Vectorización Automática ⚡</h4>
+                        </div>
+                        <p style="margin-bottom: var(--spacing-sm); padding-left: 44px;">MongoDB Atlas detecta el nuevo documento y automáticamente:</p>
+                        <ul style="padding-left: 60px; margin: 0;">
+                            <li>Usa el modelo <strong>Voyage AI embebido</strong> en la plataforma</li>
+                            <li>Genera el vector automáticamente</li>
+                            <li>Puebla el campo correspondiente del documento</li>
+                            <li>Todo ocurre dentro del entorno seguro de Atlas</li>
+                        </ul>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-sm);">
+                            <span style="background: var(--color-accent); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</span>
+                            <h4 style="margin: 0;">Consulta del Agente IA</h4>
+                        </div>
+                        <p style="margin: 0; padding-left: 44px;">Proceso idéntico: el agente usa <code>$vectorSearch</code> para encontrar documentos relevantes.</p>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: var(--spacing-2xl); margin-bottom: var(--spacing-lg);">Stack Tecnológico Simplificado</h4>
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <div class="tech-icon">🔧</div>
+                        <strong>AWS Lambda</strong>
+                        <p style="font-size: var(--text-sm); margin: 0;">Generación JSON</p>
+                    </div>
+                    <div class="tech-item" style="border: 2px solid var(--color-primary);">
+                        <div class="tech-icon">🗄️</div>
+                        <strong>MongoDB Atlas</strong>
+                        <p style="font-size: var(--text-sm); margin: 0;">Todo-en-Uno</p>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">🧠</div>
+                        <strong>Claude</strong>
+                        <p style="font-size: var(--text-sm); margin: 0;">LLM (Bedrock)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pros y Contras -->
+            <div class="pros-cons-grid">
+                <div class="card" style="background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, transparent 100%);">
+                    <h4 style="color

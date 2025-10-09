@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Fighter Challenge - Setup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #001E2B;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #001E2B 0%, #00684A 100%);
+            padding: 100px 20px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 50px;
+            box-shadow: 0 10px 40px rgba(0, 237, 100, 0.3);
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            color: #00ED64;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero h2 {
+            font-size: 1.8em;
+            color: #ffffff;
+            font-weight: 300;
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .hero .emoji {
+            font-size: 4em;
+            animation: bounce 2s infinite;
+        }
+
+        /* Section Styles */
+        .section {
+            background: #00684A;
+            padding: 40px;
+            margin: 30px 0;
+            border-radius: 15px;
+            border-left: 5px solid #00ED64;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .section h2 {
+            color: #00ED64;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .section p {
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #e0e0e0;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #003d2e, #00684A);
+            padding: 30px;
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 237, 100, 0.4);
+            border-color: #00ED64;
+        }
+
+        .card-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            color: #00ED64;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            color: #cccccc;
+            font-size: 1.1em;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: #00ED64;
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            width: 45%;
+            background: #00684A;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #00ED64;
+            animation: slideIn 0.8s ease;
+        }
+
+        .timeline-number {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            background: #00ED64;
+            color: #001E2B;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5em;
+            box-shadow: 0 5px 15px rgba(0, 237, 100, 0.5);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #001E2B;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #00ED64;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            color: #00ED64;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Highlight Box */
+        .highlight {
+            background: linear-gradient(135deg, #00ED64 0%, #00684A 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.3);
+        }
+
+        .highlight h3 {
+            color: #001E2B;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .highlight p {
+            color: #001E2B;
+            font-size: 1.2em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            
+            .timeline::before {
+                left: 30px;
+            }
+            
+            .timeline-item {
+                flex-direction: column !important;
+            }
+            
+            .timeline-content {
+                width: 100%;
+            }
+            
+            .timeline-number {
+                left: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="emoji">🚨</div>
+            <h1>Fraud Fighter Challenge</h1>
+            <h2>Detección de Fraudes en Tiempo Real con MongoDB Vector Search</h2>
+        </div>
+
+        <!-- Intro Section -->
+        <div class="section">
+            <h2>🎯 ¿Qué vamos a construir?</h2>
+            <p>
+                En este taller práctico, construiremos un sistema de detección de fraudes bancarios en tiempo real 
+                utilizando MongoDB Atlas Vector Search. Aprenderás a detectar transacciones sospechosas comparando 
+                patrones de comportamiento mediante inteligencia artificial y vectores.
+            </p>
+        </div>
+
+        <!-- What is Vector Search -->
+        <div class="section">
+            <h2>🧠 ¿Qué es Vector Search?</h2>
+            <p>
+                Vector Search es una tecnología que convierte información (texto, imágenes, comportamientos) en 
+                números (vectores) y luego encuentra elementos similares calculando distancias matemáticas. 
+                Es como darle al sistema la capacidad de "entender" patrones y detectar anomalías.
+            </p>
+            
+            <div class="highlight" style="margin-top: 30px;">
+                <h3>💡 Ejemplo Simple</h3>
+                <p>
+                    Si un cliente normalmente gasta $50,000 en supermercados, y de repente aparece una transacción 
+                    de $5,000,000 en un casino a las 3 AM desde Miami... Vector Search detecta que esta transacción 
+                    está "muy lejos" del comportamiento normal del cliente. ¡Es fraude!
+                </p>
+            </div>
+        </div>
+
+        <!-- Architecture -->
+        <div class="section">
+            <h2>🏗️ Arquitectura del Sistema</h2>
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">📓</div>
+                    <h3>Jupyter Notebook</h3>
+                    <p>Centro de comando donde escribirás código Python de manera interactiva</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🍃</div>
+                    <h3>MongoDB Atlas</h3>
+                    <p>Base de datos en la nube con Vector Search integrado. El cerebro del sistema</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🧠</div>
+                    <h3>Embedding Model</h3>
+                    <p>Modelo de IA que convierte comportamientos en vectores de 384 dimensiones</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">⚖️</div>
+                    <h3>Risk Model</h3>
+                    <p>Sistema de scoring que combina múltiples factores para decidir: aprobar, revisar o bloquear</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎭</div>
+                    <h3>Simulador</h3>
+                    <p>Genera transacciones realistas mezcladas: normales y fraudulentas</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <h3>Dashboard</h3>
+                    <p>Visualización en tiempo real de detecciones, métricas y alertas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Setup Timeline -->
+        <div class="section">
+            <h2>🛠️ Setup del Ambiente (Paso a Paso)</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-number">1</div>
+                    <div class="timeline-content">
+                        <h3>Crear Cluster MongoDB Atlas</h3>
+                        <p>Registrarse en MongoDB Atlas y crear un cluster M0 (gratuito). Este será tu base de datos en la nube.</p>
+                        <div class="code-block">
+                            <code>
+                                • Cluster Name: fraud-detection-cluster<br>
+                                • Tier: M0 (Free)<br>
+                                • Region: São Paulo (cercano a Colombia)
+                            </code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-number">2</div>
+                    <div class="timeline-content">
+                        <h3>Crear Usuario de Base de Datos</h3>
+                        <p>Configurar credenciales de acceso con permisos de lectura/escritura.</p>
+                        <div class="code-block">
+                            <code>
+                                • Username: workshop_user<br>
+                                • Password: [segura]<br>
+                                • Privileges: Read and write to any database
+                            </code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-number">3</div>
+                    <div class="timeline-content">
+                        <h3>Configurar Network Access</h3>
+                        <p>Permitir conexiones desde cualquier IP (solo para el taller).</p>
+                        <div class="code-block">
+                            <code>
+                                • IP Address: 0.0.0.0/0 (Allow from anywhere)<br>
+                                • Nota: En producción, restringir IPs específicas
+                            </code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-number">4</div>
+                    <div class="timeline-content">
+                        <h3>Crear Colecciones</h3>
+                        <p>Estructuras donde almacenaremos los datos del sistema.</p>
+                        <div class="code-block">
+                            <code>
+                                Database: fraud_detection<br>
+                                <br>
+                                Collections:<br>
+                                • customers (perfiles de clientes)<br>
+                                • transactions (transacciones en tiempo real)<br>
+                                • risk_models (modelo de scoring)<br>
+                                • fraud_patterns (biblioteca de fraudes conocidos)
+                            </code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-number">5</div>
+                    <div class="timeline-content">
+                        <h3>Crear Índice Vectorial</h3>
+                        <p>El índice que permite búsquedas por similitud. ¡Esto es la magia!</p>
+                        <div class="code-block">
+                            <code>
+{<br>
+&nbsp;&nbsp;"fields": [{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"type": "vector",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"path": "embedding",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"numDimensions": 384,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"similarity": "cosine"<br>
+&nbsp;&nbsp;}]<br>
+}
+                            </code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-number">6</div>
+                    <div class="timeline-content">
+                        <h3>Conectar desde Google Colab</h3>
+                        <p>Obtener el connection string y probarlo en el notebook.</p>
+                        <div class="code-block">
+                            <code>
+mongodb+srv://user:pass@cluster.mongodb.net/
+                            </code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="section">
+            <h2>💻 Stack Tecnológico</h2>
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">🐍</div>
+                    <h3>Python</h3>
+                    <p>Lenguaje de programación principal</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📦</div>
+                    <h3>PyMongo</h3>
+                    <p>Driver oficial de MongoDB para Python</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🤖</div>
+                    <h3>Sentence Transformers</h3>
+                    <p>Modelo all-MiniLM-L6-v2 para generar embeddings</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <h3>Plotly</h3>
+                    <p>Gráficos interactivos y visualizaciones</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🐼</div>
+                    <h3>Pandas</h3>
+                    <p>Manipulación y análisis de datos</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎛️</div>
+                    <h3>ipywidgets</h3>
+                    <p>Controles interactivos en Jupyter</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- What's Next -->
+        <div class="highlight">
+            <h3>🚀 ¿Qué sigue después del Setup?</h3>
+            <p>
+                Una vez completado el setup, generaremos 50 clientes colombianos con perfiles realistas, 
+                crearemos un modelo de riesgo configurable, construiremos un simulador de fraudes, 
+                y finalmente implementaremos el sistema de detección en tiempo real con Vector Search.
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 60px; padding: 40px; background: #00684A; border-radius: 15px;">
+            <h2 style="color: #00ED64; margin-bottom: 20px;">🍃 Powered by MongoDB Atlas</h2>
+            <p style="font-size: 1.2em;">Fraud Fighter Challenge - Bancolombia Workshop 2024</p>
+        </div>
+    </div>
+</body>
+</html>
