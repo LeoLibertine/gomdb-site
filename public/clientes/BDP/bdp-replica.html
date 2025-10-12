@@ -1,0 +1,3049 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDP - Arquitectura MongoDB para Latinoamérica</title>
+    <style>
+        /* =============================================
+   GoMDB - Sistema de Diseño Global
+   Arquitectura MongoDB para Latinoamérica
+   ============================================= */
+
+/* ============================================= 
+   1. VARIABLES CSS (Custom Properties)
+   ============================================= */
+   :root {
+    /* Colores Primarios - Basados en MongoDB */
+    --color-primary: #00ED64;           /* Verde MongoDB */
+    --color-primary-hover: #00D757;     /* Verde hover */
+    --color-primary-light: #00ED6420;   /* Verde con transparencia */
+    
+    /* Colores de Fondo */
+    --color-bg-primary: #001E2B;        /* Azul oscuro principal */
+    --color-bg-secondary: #0D2A3D;      /* Azul medio */
+    --color-bg-tertiary: #112331;       /* Azul alternativo */
+    --color-bg-card: #0D2A3D80;         /* Fondo de cards con transparencia */
+    
+    /* Colores de Acento */
+    --color-accent: #5644D4;            /* Púrpura */
+    --color-accent-light: #5644D420;    /* Púrpura con transparencia */
+    
+    /* Colores de Texto */
+    --color-text-primary: #FFFFFF;      /* Blanco */
+    --color-text-secondary: #B8C4CE;    /* Gris claro */
+    --color-text-muted: #718096;        /* Gris medio */
+    --color-text-dark: #001E2B;         /* Para texto sobre fondos claros */
+    
+    /* Colores de Estado */
+    --color-success: #00ED64;
+    --color-warning: #F59E0B;
+    --color-error: #EF4444;
+    --color-info: #3B82F6;
+    
+    /* Espaciado */
+    --spacing-xs: 0.25rem;    /* 4px */
+    --spacing-sm: 0.5rem;     /* 8px */
+    --spacing-md: 1rem;       /* 16px */
+    --spacing-lg: 1.5rem;     /* 24px */
+    --spacing-xl: 2rem;       /* 32px */
+    --spacing-2xl: 3rem;      /* 48px */
+    --spacing-3xl: 4rem;      /* 64px */
+    --spacing-4xl: 6rem;      /* 96px */
+    
+    /* Tipografía */
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+    
+    /* Tamaños de Fuente */
+    --text-xs: 0.75rem;       /* 12px */
+    --text-sm: 0.875rem;      /* 14px */
+    --text-base: 1rem;        /* 16px */
+    --text-lg: 1.125rem;      /* 18px */
+    --text-xl: 1.25rem;       /* 20px */
+    --text-2xl: 1.5rem;       /* 24px */
+    --text-3xl: 2rem;         /* 32px */
+    --text-4xl: 2.5rem;       /* 40px */
+    --text-5xl: 3rem;         /* 48px */
+    --text-6xl: 4rem;         /* 64px */
+    --text-7xl: 5rem;         /* 80px */
+    --text-8xl: 6rem;         /* 96px */
+    
+    /* Bordes y Radios */
+    --radius-sm: 0.25rem;     /* 4px */
+    --radius-md: 0.5rem;      /* 8px */
+    --radius-lg: 1rem;        /* 16px */
+    --radius-xl: 1.5rem;      /* 24px */
+    --radius-full: 9999px;    /* Circular */
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+    --shadow-glow: 0 0 40px rgba(0, 237, 100, 0.3);
+    
+    /* Transiciones */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+    
+    /* Z-Index */
+    --z-base: 1;
+    --z-dropdown: 10;
+    --z-sticky: 20;
+    --z-fixed: 30;
+    --z-modal-backdrop: 40;
+    --z-modal: 50;
+    --z-popover: 60;
+    --z-tooltip: 70;
+  }
+  
+  /* ============================================= 
+     2. RESET Y BASE
+     ============================================= */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* ============================================= 
+     3. TIPOGRAFÍA
+     ============================================= */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  h1 {
+    font-size: clamp(var(--text-4xl), 8vw, var(--text-8xl));
+  }
+  
+  h2 {
+    font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
+  }
+  
+  h3 {
+    font-size: clamp(var(--text-2xl), 3vw, var(--text-4xl));
+  }
+  
+  h4 {
+    font-size: var(--text-2xl);
+  }
+  
+  h5 {
+    font-size: var(--text-xl);
+  }
+  
+  h6 {
+    font-size: var(--text-lg);
+  }
+  
+  p {
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-secondary);
+  }
+  
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+  
+  a:hover {
+    color: var(--color-primary-hover);
+  }
+  
+  /* Texto con gradiente */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* ============================================= 
+     4. LAYOUT Y CONTENEDORES
+     ============================================= */
+  .container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+  }
+  
+  .section {
+    padding: var(--spacing-4xl) 0;
+  }
+  
+  .section-lg {
+    padding: var(--spacing-4xl) 0;
+  }
+  
+  @media (min-width: 768px) {
+    .section-lg {
+      padding: calc(var(--spacing-4xl) * 1.5) 0;
+    }
+  }
+  
+  /* ============================================= 
+     5. COMPONENTES - NAVEGACIÓN
+     ============================================= */
+  .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: var(--z-fixed);
+    transition: all var(--transition-slow);
+  }
+  
+  .navbar-scrolled {
+    background-color: rgba(0, 30, 43, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+  }
+  
+  .navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+  
+  .navbar-links {
+    display: none;
+    gap: var(--spacing-xl);
+  }
+  
+  @media (min-width: 768px) {
+    .navbar-links {
+      display: flex;
+    }
+  }
+  
+  .navbar-link {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    transition: color var(--transition-base);
+  }
+  
+  .navbar-link:hover {
+    color: var(--color-text-primary);
+  }
+  
+  /* ============================================= 
+     6. COMPONENTES - BOTONES
+     ============================================= */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-weight: 600;
+    font-size: var(--text-base);
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    text-decoration: none;
+  }
+  
+  .btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-text-muted);
+  }
+  
+  .btn-ghost:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  
+  /* Tamaños de botones */
+  .btn-sm {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--text-sm);
+  }
+  
+  .btn-lg {
+    padding: var(--spacing-lg) var(--spacing-2xl);
+    font-size: var(--text-lg);
+  }
+  
+  /* ============================================= 
+     7. COMPONENTES - CARDS
+     ============================================= */
+  .card {
+    background-color: var(--color-bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    transition: all var(--transition-base);
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .card-gradient {
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.5) 100%);
+  }
+  
+  .card-bordered {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  /* ============================================= 
+     8. COMPONENTES - HERO
+     ============================================= */
+  .hero {
+    position: relative;
+    padding-top: calc(80px + var(--spacing-4xl));
+    padding-bottom: var(--spacing-4xl);
+    overflow: hidden;
+  }
+  
+  .hero-background {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 50%, var(--color-bg-primary) 100%);
+    z-index: -2;
+  }
+  
+  .hero-blur {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.2;
+    z-index: -1;
+  }
+  
+  .hero-blur-primary {
+    width: 300px;
+    height: 300px;
+    background-color: var(--color-primary);
+    top: 10%;
+    left: 5%;
+  }
+  
+  .hero-blur-accent {
+    width: 400px;
+    height: 400px;
+    background-color: var(--color-accent);
+    bottom: 10%;
+    right: 10%;
+  }
+  
+  /* ============================================= 
+     9. COMPONENTES - BADGES
+     ============================================= */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border-radius: var(--radius-full);
+  }
+  
+  .badge-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .badge-secondary {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+  }
+  
+  /* ============================================= 
+     10. COMPONENTES - GRÁFICOS Y MÉTRICAS
+     ============================================= */
+  .metric {
+    transition: transform var(--transition-base);
+    cursor: pointer;
+  }
+  
+  .metric:hover {
+    transform: scale(1.05);
+  }
+  
+  .metric-value {
+    font-size: var(--text-5xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .metric-label {
+    color: var(--color-text-secondary);
+    font-size: var(--text-base);
+  }
+  
+  .chart-container {
+    background-color: var(--color-bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+  }
+  
+  /* ============================================= 
+     11. UTILIDADES
+     ============================================= */
+  /* Espaciado */
+  .mt-0 { margin-top: 0; }
+  .mt-1 { margin-top: var(--spacing-xs); }
+  .mt-2 { margin-top: var(--spacing-sm); }
+  .mt-3 { margin-top: var(--spacing-md); }
+  .mt-4 { margin-top: var(--spacing-lg); }
+  .mt-5 { margin-top: var(--spacing-xl); }
+  .mt-6 { margin-top: var(--spacing-2xl); }
+  
+  .mb-0 { margin-bottom: 0; }
+  .mb-1 { margin-bottom: var(--spacing-xs); }
+  .mb-2 { margin-bottom: var(--spacing-sm); }
+  .mb-3 { margin-bottom: var(--spacing-md); }
+  .mb-4 { margin-bottom: var(--spacing-lg); }
+  .mb-5 { margin-bottom: var(--spacing-xl); }
+  .mb-6 { margin-bottom: var(--spacing-2xl); }
+  
+  /* Alineación de texto */
+  .text-left { text-align: left; }
+  .text-center { text-align: center; }
+  .text-right { text-align: right; }
+  
+  /* Display */
+  .hidden { display: none; }
+  .block { display: block; }
+  .inline-block { display: inline-block; }
+  .flex { display: flex; }
+  .inline-flex { display: inline-flex; }
+  .grid { display: grid; }
+  
+  /* Flex utilities */
+  .items-center { align-items: center; }
+  .items-start { align-items: flex-start; }
+  .items-end { align-items: flex-end; }
+  .justify-center { justify-content: center; }
+  .justify-between { justify-content: space-between; }
+  .justify-around { justify-content: space-around; }
+  .flex-wrap { flex-wrap: wrap; }
+  .gap-1 { gap: var(--spacing-xs); }
+  .gap-2 { gap: var(--spacing-sm); }
+  .gap-3 { gap: var(--spacing-md); }
+  .gap-4 { gap: var(--spacing-lg); }
+  .gap-5 { gap: var(--spacing-xl); }
+  
+  /* Grid */
+  .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  
+  @media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  
+  /* ============================================= 
+     12. ANIMACIONES
+     ============================================= */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+  
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(0, 237, 100, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(0, 237, 100, 0.6);
+    }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  .animate-slideInLeft {
+    animation: slideInLeft 0.6s ease-out;
+  }
+  
+  .animate-slideInRight {
+    animation: slideInRight 0.6s ease-out;
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+  
+  /* ============================================= 
+     13. RESPONSIVO
+     ============================================= */
+  /* Mobile First - Breakpoints */
+  @media (min-width: 640px) {
+    .container {
+      padding: 0 var(--spacing-xl);
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .hide-mobile {
+      display: none;
+    }
+    
+    .show-desktop {
+      display: block;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    h1 {
+      font-size: var(--text-7xl);
+    }
+    
+    h2 {
+      font-size: var(--text-5xl);
+    }
+  }
+  
+  /* ============================================= 
+     14. MODO OSCURO (ya es el default)
+     ============================================= */
+  /* Puedes agregar un modo claro en el futuro */
+  .light-mode {
+    --color-bg-primary: #FFFFFF;
+    --color-bg-secondary: #F7FAFC;
+    --color-text-primary: #001E2B;
+    --color-text-secondary: #4A5568;
+  }
+  
+  /* ============================================= 
+     15. UTILIDADES ESPECIALES PARA MONGODB
+     ============================================= */
+  .mongodb-glow {
+    box-shadow: 0 0 40px rgba(0, 237, 100, 0.3);
+  }
+  
+  .mongodb-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  }
+  
+  .code-block {
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    font-family: var(--font-mono);
+    overflow-x: auto;
+  }
+  
+  .performance-bar {
+    height: 100%;
+    background: linear-gradient(to top, var(--color-primary), rgba(0, 237, 100, 0.3));
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    transition: all var(--transition-base);
+  }
+  
+  .performance-bar:hover {
+    background: linear-gradient(to top, var(--color-primary-hover), rgba(0, 215, 87, 0.4));
+  }
+  @media (min-width: 768px) {
+    .criteria-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }
+
+  /* Estilos adicionales personalizados */
+  .icon {
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+  }
+
+  ul {
+    margin-left: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+  }
+
+  li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .feature-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--color-primary-light);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+    font-size: var(--text-2xl);
+  }
+
+  .step-number {
+    width: 40px;
+    height: 40px;
+    background: var(--color-primary);
+    color: var(--color-text-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: var(--text-lg);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .pros-cons-list {
+    list-style: none;
+    margin-left: 0;
+  }
+
+  .pros-cons-list li {
+    padding-left: var(--spacing-xl);
+    position: relative;
+  }
+
+  .pros-cons-list li::before {
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+    font-size: var(--text-lg);
+  }
+
+  .pros-list li::before {
+    content: "✓";
+    color: var(--color-success);
+  }
+
+  .cons-list li::before {
+    content: "⚠";
+    color: var(--color-warning);
+  }
+
+  .highlight-box {
+    background: var(--color-accent-light);
+    border-left: 4px solid var(--color-accent);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    margin: var(--spacing-lg) 0;
+  }
+
+  .warning-box {
+    background: rgba(245, 158, 11, 0.1);
+    border-left: 4px solid var(--color-warning);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    margin: var(--spacing-lg) 0;
+  }
+
+  .success-box {
+    background: rgba(0, 237, 100, 0.1);
+    border-left: 4px solid var(--color-success);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    margin: var(--spacing-lg) 0;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    margin: var(--spacing-lg) 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-bg-card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  th, td {
+    padding: var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  th {
+    background: var(--color-bg-secondary);
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  @media (min-width: 768px) {
+    .comparison-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* Estilos para diagramas */
+  .diagram-container {
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin: var(--spacing-lg) 0;
+    overflow-x: auto;
+  }
+
+  .diagram-node {
+    background: var(--color-bg-secondary);
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    text-align: center;
+    min-width: 100px;
+    transition: all var(--transition-base);
+  }
+
+  .diagram-node:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .diagram-node.primary {
+    background: var(--color-primary);
+    color: var(--color-text-dark);
+    font-weight: 700;
+  }
+
+  .diagram-node.secondary {
+    border-color: var(--color-accent);
+  }
+
+  .diagram-node.cloud {
+    background: rgba(66, 133, 244, 0.2);
+    border-color: #4285F4;
+  }
+
+  .diagram-node.onprem {
+    background: rgba(255, 153, 0, 0.2);
+    border-color: #FF9900;
+  }
+
+  .diagram-arrow {
+    stroke: var(--color-primary);
+    stroke-width: 2;
+    fill: none;
+    marker-end: url(#arrowhead);
+  }
+
+  .diagram-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin-top: var(--spacing-xs);
+  }
+
+  .connection-line {
+    border-top: 2px dashed var(--color-primary);
+    position: relative;
+    margin: var(--spacing-md) 0;
+  }
+
+  .connection-line::after {
+    content: "⟷";
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-bg-primary);
+    padding: 0 var(--spacing-sm);
+    color: var(--color-primary);
+  }
+
+  .cloud-provider-badge {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    margin-top: var(--spacing-xs);
+  }
+
+  .aws-badge { background: rgba(255, 153, 0, 0.2); color: #FF9900; }
+  .gcp-badge { background: rgba(66, 133, 244, 0.2); color: #4285F4; }
+  .azure-badge { background: rgba(0, 120, 212, 0.2); color: #0078D4; }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="navbar-container">
+                <div class="navbar-logo">
+                    <span class="text-gradient">BDP</span>
+                    <span style="color: var(--color-text-muted);">|</span>
+                    <span style="font-size: var(--text-base); font-weight: 500;">MongoDB Architecture</span>
+                </div>
+                <div class="navbar-links">
+                    <a href="#hybrid" class="navbar-link">ReplicaSets</a>
+                    <a href="#multiregion" class="navbar-link">Multi-Región</a>
+                    <a href="#backups" class="navbar-link">Backups</a>
+                    <a href="#atlas" class="navbar-link">Atlas</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="text-center animate-fadeIn">
+                <span class="badge badge-primary mb-4">Best Data Practices</span>
+                <h1 class="text-gradient mb-4">Arquitectura MongoDB</h1>
+                <h2 style="font-size: var(--text-2xl); font-weight: 400; color: var(--color-text-secondary); max-width: 800px; margin: 0 auto var(--spacing-xl);">
+                    Guía Completa de Alta Disponibilidad, Multi-Región y Recuperación ante Desastres
+                </h2>
+                <div class="flex justify-center gap-3 flex-wrap">
+                    <a href="#hybrid" class="btn btn-primary btn-lg">Explorar Arquitecturas</a>
+                    <a href="#backups" class="btn btn-secondary btn-lg">Ver Estrategias de Backup</a>
+                </div>
+            </div>
+
+            <!-- Métricas Clave -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+                <div class="card card-bordered text-center">
+                    <div class="metric-value">99.999%</div>
+                    <div class="metric-label">Disponibilidad</div>
+                </div>
+                <div class="card card-bordered text-center">
+                    <div class="metric-value">&lt;20ms</div>
+                    <div class="metric-label">Latencia Global</div>
+                </div>
+                <div class="card card-bordered text-center">
+                    <div class="metric-value">0 min</div>
+                    <div class="metric-label">RPO con PITR</div>
+                </div>
+                <div class="card card-bordered text-center">
+                    <div class="metric-value">3+</div>
+                    <div class="metric-label">Proveedores Cloud</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ReplicaSet Híbrido -->
+    <section id="hybrid" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <span class="badge badge-secondary mb-3">Arquitectura Híbrida</span>
+                <h2 class="text-gradient">ReplicaSet Híbrido: On-Premise y Nube</h2>
+                <p style="max-width: 800px; margin: 0 auto; font-size: var(--text-lg);">
+                    Una estrategia robusta para alta disponibilidad y recuperación ante desastres extendiendo tu infraestructura entre centros de datos y la nube.
+                </p>
+            </div>
+
+            <!-- Diagrama de ReplicaSet Híbrido -->
+            <div class="card card-bordered mongodb-glow mb-5">
+                <h3 style="color: var(--color-primary); text-align: center;">📊 Arquitectura: ReplicaSet Híbrido</h3>
+                
+                <div class="diagram-container">
+                    <svg width="100%" height="300" viewBox="0 0 800 300" style="max-width: 100%;">
+                        <!-- Definir arrowhead -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <polygon points="0 0, 10 3, 0 6" fill="#00ED64" />
+                            </marker>
+                        </defs>
+                        
+                        <!-- On-Premise Section -->
+                        <rect x="20" y="20" width="350" height="260" rx="10" fill="rgba(255, 153, 0, 0.1)" stroke="#FF9900" stroke-width="2" stroke-dasharray="5,5"/>
+                        <text x="195" y="45" text-anchor="middle" fill="#FF9900" font-weight="bold" font-size="14">ON-PREMISE DATA CENTER</text>
+                        
+                        <!-- Nodo Primario On-Prem -->
+                        <rect x="50" y="80" width="120" height="80" rx="8" fill="#00ED64" stroke="#00ED64" stroke-width="3"/>
+                        <text x="110" y="110" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="14">PRIMARY</text>
+                        <text x="110" y="130" text-anchor="middle" fill="#001E2B" font-size="12">onprem1:27017</text>
+                        <text x="110" y="145" text-anchor="middle" fill="#001E2B" font-size="11">priority: 2</text>
+                        
+                        <!-- Nodo Secundario On-Prem -->
+                        <rect x="220" y="80" width="120" height="80" rx="8" fill="#0D2A3D" stroke="#5644D4" stroke-width="3"/>
+                        <text x="280" y="110" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="14">SECONDARY</text>
+                        <text x="280" y="130" text-anchor="middle" fill="#B8C4CE" font-size="12">onprem2:27017</text>
+                        <text x="280" y="145" text-anchor="middle" fill="#B8C4CE" font-size="11">priority: 1</text>
+                        
+                        <!-- Cloud Section -->
+                        <rect x="430" y="20" width="350" height="260" rx="10" fill="rgba(66, 133, 244, 0.1)" stroke="#4285F4" stroke-width="2" stroke-dasharray="5,5"/>
+                        <text x="605" y="45" text-anchor="middle" fill="#4285F4" font-weight="bold" font-size="14">CLOUD (AWS/GCP/AZURE)</text>
+                        
+                        <!-- Nodo DR Cloud -->
+                        <rect x="490" y="80" width="120" height="80" rx="8" fill="#0D2A3D" stroke="#4285F4" stroke-width="3"/>
+                        <text x="550" y="110" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="14">SECONDARY</text>
+                        <text x="550" y="130" text-anchor="middle" fill="#B8C4CE" font-size="12">cloud1:27017</text>
+                        <text x="550" y="145" text-anchor="middle" fill="#B8C4CE" font-size="11">priority: 0 (DR)</text>
+                        
+                        <!-- Conexiones de Replicación -->
+                        <path d="M 170 120 L 220 120" class="diagram-arrow"/>
+                        <path d="M 340 120 Q 385 120 430 120" class="diagram-arrow"/>
+                        <path d="M 490 120 Q 445 120 400 120" stroke="#00ED64" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+                        
+                        <!-- Labels de conexión -->
+                        <text x="195" y="110" text-anchor="middle" fill="#00ED64" font-size="10">replication</text>
+                        <text x="385" y="110" text-anchor="middle" fill="#00ED64" font-size="10">VPN/Direct Connect</text>
+                        
+                        <!-- Cliente -->
+                        <ellipse cx="110" cy="230" rx="60" ry="30" fill="rgba(0, 237, 100, 0.2)" stroke="#00ED64" stroke-width="2"/>
+                        <text x="110" y="235" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="12">APP</text>
+                        
+                        <!-- Conexión Cliente -->
+                        <path d="M 110 200 L 110 160" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="85" y="180" fill="#00ED64" font-size="10">writes</text>
+                    </svg>
+                </div>
+
+                <div style="text-align: center; margin-top: var(--spacing-md);">
+                    <span class="badge badge-secondary">Latencia: &lt; 20-30ms entre nodos</span>
+                    <span class="badge badge-secondary">WriteConcern: w: "majority"</span>
+                    <span class="badge badge-secondary">Failover: Automático a cloud si on-prem cae</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                <div class="card card-gradient card-bordered animate-slideInLeft">
+                    <div class="feature-icon">🏢</div>
+                    <h4>Caso 1: Primario On-Premise</h4>
+                    <p><strong style="color: var(--color-primary);">Topología:</strong> 2 nodos on-premise (primario + secundario) + 1 nodo en nube (DR)</p>
+                    
+                    <div class="success-box mt-3">
+                        <h6>Ventajas</h6>
+                        <ul class="pros-list pros-cons-list">
+                            <li>Latencia mínima para operaciones locales</li>
+                            <li>Control total del entorno principal</li>
+                            <li>Protección contra fallos del data center</li>
+                        </ul>
+                    </div>
+
+                    <div class="code-block mt-3" style="font-size: var(--text-sm);">
+rs.conf().members = [
+  { _id:0, host:"onprem1:27017", 
+    priority:2 },
+  { _id:1, host:"onprem2:27017", 
+    priority:1 },
+  { _id:2, host:"cloud1:27017", 
+    priority:0 }
+]
+                    </div>
+                </div>
+
+                <div class="card card-gradient card-bordered animate-slideInRight">
+                    <div class="feature-icon">☁️</div>
+                    <h4>Patrón Recomendado con Prioridades</h4>
+                    <p><strong style="color: var(--color-primary);">Configuración Óptima:</strong> Primario on-premise + DR en nube</p>
+                    
+                    <!-- Diagrama de Patrón Recomendado -->
+                    <div class="diagram-container" style="margin-top: var(--spacing-md);">
+                        <svg width="100%" height="280" viewBox="0 0 500 280" style="max-width: 100%;">
+                            <!-- On-Premise -->
+                            <rect x="10" y="10" width="220" height="260" rx="8" fill="rgba(255, 153, 0, 0.05)" stroke="#FF9900" stroke-width="2" stroke-dasharray="5,5"/>
+                            <text x="120" y="30" text-anchor="middle" fill="#FF9900" font-weight="bold" font-size="12">ON-PREMISE</text>
+                            
+                            <!-- Primary On-Prem -->
+                            <rect x="30" y="50" width="80" height="60" rx="6" fill="#00ED64" stroke="#00ED64" stroke-width="2"/>
+                            <text x="70" y="75" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="11">PRIMARY</text>
+                            <text x="70" y="90" text-anchor="middle" fill="#001E2B" font-size="9">onprem1</text>
+                            <text x="70" y="102" text-anchor="middle" fill="#001E2B" font-size="9">priority: 2</text>
+                            
+                            <!-- Secondary On-Prem -->
+                            <rect x="130" y="50" width="80" height="60" rx="6" fill="#0D2A3D" stroke="#5644D4" stroke-width="2"/>
+                            <text x="170" y="75" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="11">SECONDARY</text>
+                            <text x="170" y="90" text-anchor="middle" fill="#B8C4CE" font-size="9">onprem2</text>
+                            <text x="170" y="102" text-anchor="middle" fill="#B8C4CE" font-size="9">priority: 1</text>
+                            
+                            <!-- Hidden Delayed On-Prem -->
+                            <rect x="80" y="130" width="80" height="60" rx="6" fill="#112331" stroke="#F59E0B" stroke-width="2" stroke-dasharray="3,3"/>
+                            <text x="120" y="155" text-anchor="middle" fill="#F59E0B" font-weight="bold" font-size="11">DELAYED</text>
+                            <text x="120" y="170" text-anchor="middle" fill="#B8C4CE" font-size="9">onprem3</text>
+                            <text x="120" y="182" text-anchor="middle" fill="#B8C4CE" font-size="9">delay: 3600s</text>
+                            
+                            <!-- Cloud Region -->
+                            <rect x="270" y="10" width="220" height="260" rx="8" fill="rgba(66, 133, 244, 0.05)" stroke="#4285F4" stroke-width="2" stroke-dasharray="5,5"/>
+                            <text x="380" y="30" text-anchor="middle" fill="#4285F4" font-weight="bold" font-size="12">CLOUD (DR)</text>
+                            
+                            <!-- Secondary Cloud (DR) -->
+                            <rect x="310" y="90" width="80" height="60" rx="6" fill="#0D2A3D" stroke="#4285F4" stroke-width="2"/>
+                            <text x="350" y="115" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="11">SECONDARY</text>
+                            <text x="350" y="130" text-anchor="middle" fill="#B8C4CE" font-size="9">cloud1</text>
+                            <text x="350" y="142" text-anchor="middle" fill="#B8C4CE" font-size="9">priority: 0</text>
+                            
+                            <!-- Conexiones -->
+                            <path d="M 110 80 L 130 80" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <path d="M 120 110 L 120 130" stroke="#F59E0B" stroke-width="2" stroke-dasharray="3,3"/>
+                            <path d="M 210 80 Q 240 80 270 120" stroke="#00ED64" stroke-width="2" stroke-dasharray="3,3"/>
+                            
+                            <!-- Labels -->
+                            <text x="380" y="180" text-anchor="middle" fill="#718096" font-size="9">🆘 Disaster Recovery</text>
+                            <text x="380" y="195" text-anchor="middle" fill="#718096" font-size="9">No promoción automática</text>
+                            <text x="380" y="210" text-anchor="middle" fill="#718096" font-size="9">Failover manual</text>
+                            
+                            <text x="120" y="215" text-anchor="middle" fill="#718096" font-size="9">🛡️ Protección contra</text>
+                            <text x="120" y="230" text-anchor="middle" fill="#718096" font-size="9">deletes/updates masivos</text>
+                            
+                            <text x="120" y="250" text-anchor="middle" fill="#718096" font-size="9">📊 Latencia mínima local</text>
+                        </svg>
+                    </div>
+                    
+                    <div class="highlight-box mt-3">
+                        <h6>Distribución Inteligente Híbrida</h6>
+                        <ul>
+                            <li><strong>On-Premise:</strong> PRIMARY <code>priority: 2</code> + SECONDARY <code>priority: 1</code> (workload principal local)</li>
+                            <li><strong>On-Premise Opcional:</strong> 1 nodo <code>hidden delayed</code> (1-2h) para protección lógica</li>
+                            <li><strong>Nube (DR):</strong> SECONDARY con <code>priority: 0</code> (no se promueve automáticamente)</li>
+                            <li><strong>Failover:</strong> Si data center cae → promover manualmente nodo de nube</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box mt-3">
+                        <strong>⚠️ Latencia Crítica:</strong> Inter-electores &lt; 20-30 ms. Si supera, el primario y votos deben estar en nube con on-prem sin voto.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Puntos Críticos -->
+            <div class="card card-bordered mongodb-glow">
+                <h3 style="color: var(--color-primary);">⚡ Puntos Críticos a Considerar</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div>
+                        <h5>1. Latencia de Red</h5>
+                        <p>La latencia alta retrasa la replicación (replication lag) y afecta la consistencia de lecturas.</p>
+                        <div class="success-box">
+                            <strong>Solución:</strong> Conexiones dedicadas como AWS Direct Connect, Azure ExpressRoute o Google Cloud Interconnect. Evita VPN sobre internet público.
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5>2. Costos de Transferencia</h5>
+                        <p>La replicación on-premise → nube (egress) genera costos significativos.</p>
+                        <div class="warning-box">
+                            <strong>Monitoreo:</strong> Vigila el tráfico de replicación y optimiza la frecuencia de sincronización según tus necesidades.
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5>3. Votos y Prioridades</h5>
+                        <p>Configuración correcta para elecciones predecibles.</p>
+                        <div class="code-block" style="font-size: var(--text-xs);">
+// Nodo en nube para DR
+{
+  priority: 0,
+  hidden: true,
+  tags: {role: "DR"}
+}
+
+// Árbitro para desempate
+{
+  arbiterOnly: true
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración de Seguridad -->
+            <div class="card card-gradient card-bordered mt-4">
+                <h4>🔒 Seguridad y Conectividad</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                    <div>
+                        <h6 style="color: var(--color-primary);">Networking</h6>
+                        <ul>
+                            <li>TLS mTLS obligatorio entre nodos</li>
+                            <li>VPN o conexión dedicada (Direct Connect/ExpressRoute)</li>
+                            <li>VPC peering para tráfico privado</li>
+                            <li>Firewalls con reglas de least privilege</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h6 style="color: var(--color-primary);">Configuración de Escritura</h6>
+                        <ul>
+                            <li><strong>writeConcern:</strong> <code>{ w: "majority", j: true }</code></li>
+                            <li><strong>readPreference:</strong> <code>nearest</code> con hedged reads</li>
+                            <li>Retryable writes habilitado en drivers</li>
+                            <li>Cifrado en reposo con KMS/KMIP</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Multi-Región y Multi-Nube -->
+    <section id="multiregion" class="section" style="background: var(--color-bg-secondary);">
+        <div class="container">
+            <div class="text-center mb-6">
+                <span class="badge badge-secondary mb-3">Arquitectura Global</span>
+                <h2 class="text-gradient">Multi-Región y Multi-Nube</h2>
+                <p style="max-width: 800px; margin: 0 auto; font-size: var(--text-lg);">
+                    Arquitectura avanzada para aplicaciones globales con baja latencia mundial y resiliencia contra fallos regionales o de proveedor cloud.
+                </p>
+            </div>
+
+            <!-- Arquitecturas Principales -->
+            <div class="grid grid-cols-1 gap-4 mb-5">
+                <!-- Diagrama Multi-Región -->
+                <div class="card card-bordered mongodb-glow">
+                    <h3 style="color: var(--color-primary); text-align: center;">🌍 Arquitectura Multi-Región</h3>
+                    
+                    <div class="diagram-container">
+                        <svg width="100%" height="300" viewBox="0 0 900 300" style="max-width: 100%;">
+                            <!-- US-EAST Region -->
+                            <rect x="20" y="20" width="250" height="260" rx="10" fill="rgba(0, 237, 100, 0.05)" stroke="#00ED64" stroke-width="2"/>
+                            <text x="145" y="45" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="14">US-EAST (Primary)</text>
+                            
+                            <!-- Primary US -->
+                            <rect x="50" y="70" width="80" height="70" rx="6" fill="#00ED64" stroke="#00ED64" stroke-width="3"/>
+                            <text x="90" y="95" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="12">PRIMARY</text>
+                            <text x="90" y="112" text-anchor="middle" fill="#001E2B" font-size="10">us-east-1</text>
+                            <text x="90" y="127" text-anchor="middle" fill="#001E2B" font-size="9">priority: 2</text>
+                            
+                            <!-- Secondary US -->
+                            <rect x="160" y="70" width="80" height="70" rx="6" fill="#0D2A3D" stroke="#5644D4" stroke-width="2"/>
+                            <text x="200" y="95" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="12">SEC</text>
+                            <text x="200" y="112" text-anchor="middle" fill="#B8C4CE" font-size="10">us-east-2</text>
+                            <text x="200" y="127" text-anchor="middle" fill="#B8C4CE" font-size="9">priority: 1</text>
+                            
+                            <!-- EU-WEST Region -->
+                            <rect x="320" y="20" width="250" height="260" rx="10" fill="rgba(86, 68, 212, 0.05)" stroke="#5644D4" stroke-width="2"/>
+                            <text x="445" y="45" text-anchor="middle" fill="#5644D4" font-weight="bold" font-size="14">EU-WEST (Secondary)</text>
+                            
+                            <!-- Secondary EU -->
+                            <rect x="380" y="70" width="80" height="70" rx="6" fill="#0D2A3D" stroke="#5644D4" stroke-width="2"/>
+                            <text x="420" y="95" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="12">SEC</text>
+                            <text x="420" y="112" text-anchor="middle" fill="#B8C4CE" font-size="10">eu-west-1</text>
+                            <text x="420" y="127" text-anchor="middle" fill="#B8C4CE" font-size="9">priority: 0</text>
+                            
+                            <!-- APAC Region -->
+                            <rect x="620" y="20" width="250" height="260" rx="10" fill="rgba(66, 133, 244, 0.05)" stroke="#4285F4" stroke-width="2"/>
+                            <text x="745" y="45" text-anchor="middle" fill="#4285F4" font-weight="bold" font-size="14">APAC-SOUTH (Secondary)</text>
+                            
+                            <!-- Secondary APAC -->
+                            <rect x="680" y="70" width="80" height="70" rx="6" fill="#0D2A3D" stroke="#4285F4" stroke-width="2"/>
+                            <text x="720" y="95" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="12">SEC</text>
+                            <text x="720" y="112" text-anchor="middle" fill="#B8C4CE" font-size="10">ap-south-1</text>
+                            <text x="720" y="127" text-anchor="middle" fill="#B8C4CE" font-size="9">priority: 0</text>
+                            
+                            <!-- Replicación -->
+                            <path d="M 240 105 L 320 105" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <path d="M 460 105 L 540 105" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <text x="280" y="95" text-anchor="middle" fill="#00ED64" font-size="9">replication</text>
+                            <text x="500" y="95" text-anchor="middle" fill="#00ED64" font-size="9">replication</text>
+                            
+                            <!-- Clientes -->
+                            <ellipse cx="90" cy="200" rx="50" ry="25" fill="rgba(0, 237, 100, 0.2)" stroke="#00ED64" stroke-width="2"/>
+                            <text x="90" y="205" text-anchor="middle" fill="#00ED64" font-size="11">US Client</text>
+                            
+                            <ellipse cx="420" cy="200" rx="50" ry="25" fill="rgba(86, 68, 212, 0.2)" stroke="#5644D4" stroke-width="2"/>
+                            <text x="420" y="205" text-anchor="middle" fill="#5644D4" font-size="11">EU Client</text>
+                            
+                            <ellipse cx="720" cy="200" rx="50" ry="25" fill="rgba(66, 133, 244, 0.2)" stroke="#4285F4" stroke-width="2"/>
+                            <text x="720" y="205" text-anchor="middle" fill="#4285F4" font-size="11">APAC Client</text>
+                            
+                            <!-- Conexiones Clientes -->
+                            <path d="M 90 175 L 90 140" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <text x="65" y="160" fill="#00ED64" font-size="9">writes</text>
+                            
+                            <path d="M 420 175 L 420 140" stroke="#5644D4" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <text x="390" y="160" fill="#5644D4" font-size="9">reads</text>
+                            
+                            <path d="M 720 175 L 720 140" stroke="#4285F4" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <text x="690" y="160" fill="#4285F4" font-size="9">reads</text>
+                            
+                            <!-- Legend -->
+                            <text x="90" y="250" text-anchor="middle" fill="#00ED64" font-size="10">✅ Escrituras globales</text>
+                            <text x="420" y="250" text-anchor="middle" fill="#5644D4" font-size="10">📖 Lecturas locales</text>
+                            <text x="720" y="250" text-anchor="middle" fill="#4285F4" font-size="10">📖 Lecturas locales</text>
+                        </svg>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: var(--spacing-md);">
+                        <span class="badge badge-secondary">readPreference: nearest</span>
+                        <span class="badge badge-secondary">Escrituras centralizadas</span>
+                        <span class="badge badge-secondary">Lecturas distribuidas</span>
+                    </div>
+                </div>
+
+                <!-- Diagrama Zone Sharding -->
+                <div class="card card-bordered mongodb-glow">
+                    <h3 style="color: var(--color-primary); text-align: center;">🗺️ Zone Sharding (Geo-Sharding)</h3>
+                    
+                    <div class="diagram-container">
+                        <svg width="100%" height="400" viewBox="0 0 900 400" style="max-width: 100%;">
+                            <!-- mongos Router -->
+                            <rect x="400" y="20" width="100" height="50" rx="8" fill="#5644D4" stroke="#5644D4" stroke-width="2"/>
+                            <text x="450" y="45" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="13">MONGOS</text>
+                            <text x="450" y="60" text-anchor="middle" fill="#FFFFFF" font-size="10">Router</text>
+                            
+                            <!-- Zone US-EAST -->
+                            <rect x="50" y="120" width="240" height="260" rx="10" fill="rgba(0, 237, 100, 0.05)" stroke="#00ED64" stroke-width="2"/>
+                            <text x="170" y="145" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="13">ZONE: US-EAST</text>
+                            
+                            <rect x="70" y="160" width="70" height="60" rx="6" fill="#00ED64" stroke="#00ED64" stroke-width="2"/>
+                            <text x="105" y="185" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="11">PRIMARY</text>
+                            <text x="105" y="200" text-anchor="middle" fill="#001E2B" font-size="9">Shard 0</text>
+                            
+                            <rect x="160" y="160" width="70" height="60" rx="6" fill="#0D2A3D" stroke="#5644D4" stroke-width="2"/>
+                            <text x="195" y="185" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="11">SEC</text>
+                            <text x="195" y="200" text-anchor="middle" fill="#B8C4CE" font-size="9">Shard 0</text>
+                            
+                            <text x="170" y="240" text-anchor="middle" fill="#B8C4CE" font-size="11">Datos: region = "US"</text>
+                            <text x="170" y="255" text-anchor="middle" fill="#B8C4CE" font-size="10">users: 1M (Nueva York)</text>
+                            
+                            <ellipse cx="170" cy="310" rx="60" ry="25" fill="rgba(0, 237, 100, 0.2)" stroke="#00ED64" stroke-width="2"/>
+                            <text x="170" y="315" text-anchor="middle" fill="#00ED64" font-size="11">US Client</text>
+                            
+                            <!-- Zone EU-WEST -->
+                            <rect x="330" y="120" width="240" height="260" rx="10" fill="rgba(86, 68, 212, 0.05)" stroke="#5644D4" stroke-width="2"/>
+                            <text x="450" y="145" text-anchor="middle" fill="#5644D4" font-weight="bold" font-size="13">ZONE: EU-WEST</text>
+                            
+                            <rect x="350" y="160" width="70" height="60" rx="6" fill="#00ED64" stroke="#00ED64" stroke-width="2"/>
+                            <text x="385" y="185" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="11">PRIMARY</text>
+                            <text x="385" y="200" text-anchor="middle" fill="#001E2B" font-size="9">Shard 1</text>
+                            
+                            <rect x="440" y="160" width="70" height="60" rx="6" fill="#0D2A3D" stroke="#5644D4" stroke-width="2"/>
+                            <text x="475" y="185" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="11">SEC</text>
+                            <text x="475" y="200" text-anchor="middle" fill="#B8C4CE" font-size="9">Shard 1</text>
+                            
+                            <text x="450" y="240" text-anchor="middle" fill="#B8C4CE" font-size="11">Datos: region = "EU"</text>
+                            <text x="450" y="255" text-anchor="middle" fill="#B8C4CE" font-size="10">users: 800K (Londres)</text>
+                            
+                            <ellipse cx="450" cy="310" rx="60" ry="25" fill="rgba(86, 68, 212, 0.2)" stroke="#5644D4" stroke-width="2"/>
+                            <text x="450" y="315" text-anchor="middle" fill="#5644D4" font-size="11">EU Client</text>
+                            
+                            <!-- Zone APAC-SOUTH -->
+                            <rect x="610" y="120" width="240" height="260" rx="10" fill="rgba(66, 133, 244, 0.05)" stroke="#4285F4" stroke-width="2"/>
+                            <text x="730" y="145" text-anchor="middle" fill="#4285F4" font-weight="bold" font-size="13">ZONE: APAC-SOUTH</text>
+                            
+                            <rect x="630" y="160" width="70" height="60" rx="6" fill="#00ED64" stroke="#00ED64" stroke-width="2"/>
+                            <text x="665" y="185" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="11">PRIMARY</text>
+                            <text x="665" y="200" text-anchor="middle" fill="#001E2B" font-size="9">Shard 2</text>
+                            
+                            <rect x="720" y="160" width="70" height="60" rx="6" fill="#0D2A3D" stroke="#4285F4" stroke-width="2"/>
+                            <text x="755" y="185" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="11">SEC</text>
+                            <text x="755" y="200" text-anchor="middle" fill="#B8C4CE" font-size="9">Shard 2</text>
+                            
+                            <text x="730" y="240" text-anchor="middle" fill="#B8C4CE" font-size="11">Datos: region = "APAC"</text>
+                            <text x="730" y="255" text-anchor="middle" fill="#B8C4CE" font-size="10">users: 1.2M (Mumbai)</text>
+                            
+                            <ellipse cx="730" cy="310" rx="60" ry="25" fill="rgba(66, 133, 244, 0.2)" stroke="#4285F4" stroke-width="2"/>
+                            <text x="730" y="315" text-anchor="middle" fill="#4285F4" font-size="11">APAC Client</text>
+                            
+                            <!-- Conexiones Router a Shards -->
+                            <path d="M 420 70 L 170 120" stroke="#00ED64" stroke-width="2" stroke-dasharray="5,5"/>
+                            <path d="M 450 70 L 450 120" stroke="#5644D4" stroke-width="2" stroke-dasharray="5,5"/>
+                            <path d="M 480 70 L 730 120" stroke="#4285F4" stroke-width="2" stroke-dasharray="5,5"/>
+                            
+                            <!-- Conexiones Clientes -->
+                            <path d="M 170 285 L 170 245" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <path d="M 450 285 L 450 245" stroke="#5644D4" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <path d="M 730 285 L 730 245" stroke="#4285F4" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            
+                            <text x="145" y="270" fill="#00ED64" font-size="9">local R/W</text>
+                            <text x="425" y="270" fill="#5644D4" font-size="9">local R/W</text>
+                            <text x="705" y="270" fill="#4285F4" font-size="9">local R/W</text>
+                        </svg>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: var(--spacing-md);">
+                        <span class="badge badge-primary">Shard Key: {region: 1, customerId: 1}</span>
+                        <span class="badge badge-secondary">Escrituras y lecturas LOCALES</span>
+                        <span class="badge badge-secondary">Cumplimiento GDPR</span>
+                    </div>
+                </div>
+                
+                <div class="card card-bordered mongodb-glow">
+                    <h3>🌍 Estrategias de Distribución Global</h3>
+                    
+                    <div class="comparison-grid mt-4">
+                        <!-- Multi-Región -->
+                        <div class="card card-gradient">
+                            <h5 style="color: var(--color-primary);">A) Multi-Región (Single ReplicaSet)</h5>
+                            <p><strong>Use Case:</strong> Baja latencia de lectura global con escrituras centralizadas</p>
+                            
+                            <div class="mt-3">
+                                <h6>Setup</h6>
+                                <ul>
+                                    <li>Región primaria: 3 electores</li>
+                                    <li>Regiones secundarias: réplicas hidden o baja prioridad</li>
+                                    <li>Clientes: <code>readPreference: nearest</code> + <code>tagSets</code> por región</li>
+                                </ul>
+                            </div>
+
+                            <div class="success-box mt-3">
+                                <strong>Pros:</strong>
+                                <ul class="pros-list pros-cons-list">
+                                    <li>Simplicidad operativa</li>
+                                    <li>RPO ≈ 0, RTO bajo</li>
+                                    <li>Consistencia fuerte garantizada</li>
+                                </ul>
+                            </div>
+
+                            <div class="warning-box mt-3">
+                                <strong>Contras:</strong>
+                                <ul class="cons-list pros-cons-list">
+                                    <li>Escrituras viajan a región primaria</li>
+                                    <li>Latencia de write = RTT a primario</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Zone Sharding -->
+                        <div class="card card-gradient">
+                            <h5 style="color: var(--color-primary);">B) Sharding Geográfico (Zone Sharding)</h5>
+                            <p><strong>Use Case:</strong> Escrituras locales por geografía (GDPR, latencias mínimas, escalado horizontal)</p>
+                            
+                            <div class="mt-3">
+                                <h6>Strategy</h6>
+                                <ul>
+                                    <li>Shard-key con dimensión geográfica: <code>{"region": 1, "customerId": 1}</code></li>
+                                    <li>Zonas definidas: <code>us-east</code>, <code>eu-west</code>, <code>apac-south</code></li>
+                                    <li>Cada zona vive en su región física</li>
+                                    <li>Lecturas y escrituras quedan locales</li>
+                                </ul>
+                            </div>
+
+                            <div class="code-block mt-3" style="font-size: var(--text-xs);">
+// Definir zonas
+sh.addShardTag("shard0", "US-EAST")
+sh.addShardTag("shard1", "EU-WEST")
+
+// Asignar rangos
+sh.addTagRange(
+  "mydb.users",
+  {region: "US", userId: MinKey},
+  {region: "US", userId: MaxKey},
+  "US-EAST"
+)
+                            </div>
+
+                            <div class="success-box mt-3">
+                                <strong>Pros:</strong>
+                                <ul class="pros-list pros-cons-list">
+                                    <li>Latencia de write local</li>
+                                    <li>Cumplimiento de residencia de datos</li>
+                                    <li>Escalado horizontal ilimitado</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MongoDB Atlas Global Clusters -->
+            <div class="card card-bordered animate-fadeIn" style="background: linear-gradient(135deg, #001E2B 0%, #0D2A3D 50%, #112331 100%);">
+                <div class="flex items-start gap-4">
+                    <div class="feature-icon" style="background: var(--color-primary); color: var(--color-text-dark); font-size: var(--text-3xl);">
+                        🌐
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="color: var(--color-primary);">MongoDB Atlas Global Clusters</h3>
+                        <p class="mb-4">Arquitectura más sofisticada basada en <strong>geo-sharding</strong> automático para mantener datos cerca de usuarios globalmente.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <h5>🗺️ Zonas Geográficas</h5>
+                        <p>Cada zona representa una región geográfica asociada a un shard:</p>
+                        <ul>
+                            <li><strong>Europa Occidental:</strong> UK, Alemania, Francia</li>
+                            <li><strong>US-EAST:</strong> Virginia, Ohio</li>
+                            <li><strong>APAC-SOUTH:</strong> Mumbai, Singapur</li>
+                        </ul>
+                        <div class="highlight-box mt-3">
+                            <strong>Mapeo Inteligente:</strong> Los datos de usuarios españoles van a la zona Europa Occidental; mexicanos a Norteamérica Central.
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5>🔑 La Clave del Éxito: Shard Key</h5>
+                        <p>Shard key con dimensión geográfica para enrutamiento inteligente:</p>
+                        <div class="code-block" style="font-size: var(--text-xs);">
+{
+  location: "madrid",
+  country_code: "ES",
+  user_region: "eu-west"
+}
+
+// El router (mongos) envía
+// escrituras directamente al
+// shard geográficamente cercano
+                        </div>
+                        <div class="success-box mt-3">
+                            <strong>Resultado:</strong> Usuario en Londres escribe en datacenter de Londres/Dublín, no en Virginia. Latencia mínima.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multi-Cloud Component -->
+                <div class="mt-5" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: var(--spacing-lg);">
+                    <h4 style="color: var(--color-primary);">☁️ Componente Multi-Nube</h4>
+                    <p class="mb-3">Cada ReplicaSet distribuido entre diferentes proveedores cloud para máxima resiliencia:</p>
+                    
+                    <!-- Diagrama Multi-Nube -->
+                    <div class="diagram-container">
+                        <svg width="100%" height="350" viewBox="0 0 900 350" style="max-width: 100%;">
+                            <!-- Título -->
+                            <text x="450" y="30" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="16">REPLICASET EN ZONA EUROPA (Multi-Cloud)</text>
+                            
+                            <!-- AWS Cloud -->
+                            <rect x="50" y="60" width="230" height="260" rx="10" fill="rgba(255, 153, 0, 0.08)" stroke="#FF9900" stroke-width="3"/>
+                            <text x="165" y="90" text-anchor="middle" fill="#FF9900" font-weight="bold" font-size="14">☁️ AWS</text>
+                            <text x="165" y="108" text-anchor="middle" fill="#FF9900" font-size="11">Frankfurt (eu-central-1)</text>
+                            
+                            <!-- Nodo Primario AWS -->
+                            <rect x="90" y="130" width="150" height="100" rx="8" fill="#00ED64" stroke="#00ED64" stroke-width="3"/>
+                            <text x="165" y="160" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="14">PRIMARY NODE</text>
+                            <text x="165" y="180" text-anchor="middle" fill="#001E2B" font-size="11">aws-fra-1.mongodb.net</text>
+                            <text x="165" y="195" text-anchor="middle" fill="#001E2B" font-size="10">M40 Instance</text>
+                            <text x="165" y="210" text-anchor="middle" fill="#001E2B" font-size="10">priority: 2</text>
+                            
+                            <rect x="100" y="240" width="130" height="30" rx="4" fill="rgba(255, 153, 0, 0.3)"/>
+                            <text x="165" y="260" text-anchor="middle" fill="#FF9900" font-weight="bold" font-size="11">AWS Services</text>
+                            
+                            <!-- GCP Cloud -->
+                            <rect x="335" y="60" width="230" height="260" rx="10" fill="rgba(66, 133, 244, 0.08)" stroke="#4285F4" stroke-width="3"/>
+                            <text x="450" y="90" text-anchor="middle" fill="#4285F4" font-weight="bold" font-size="14">☁️ Google Cloud</text>
+                            <text x="450" y="108" text-anchor="middle" fill="#4285F4" font-size="11">Frankfurt (europe-west3)</text>
+                            
+                            <!-- Nodo Secundario GCP -->
+                            <rect x="375" y="130" width="150" height="100" rx="8" fill="#0D2A3D" stroke="#4285F4" stroke-width="3"/>
+                            <text x="450" y="160" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="14">SECONDARY NODE</text>
+                            <text x="450" y="180" text-anchor="middle" fill="#B8C4CE" font-size="11">gcp-fra-1.mongodb.net</text>
+                            <text x="450" y="195" text-anchor="middle" fill="#B8C4CE" font-size="10">M40 Instance</text>
+                            <text x="450" y="210" text-anchor="middle" fill="#B8C4CE" font-size="10">priority: 1</text>
+                            
+                            <rect x="385" y="240" width="130" height="30" rx="4" fill="rgba(66, 133, 244, 0.3)"/>
+                            <text x="450" y="260" text-anchor="middle" fill="#4285F4" font-weight="bold" font-size="11">GCP Services</text>
+                            
+                            <!-- Azure Cloud -->
+                            <rect x="620" y="60" width="230" height="260" rx="10" fill="rgba(0, 120, 212, 0.08)" stroke="#0078D4" stroke-width="3"/>
+                            <text x="735" y="90" text-anchor="middle" fill="#0078D4" font-weight="bold" font-size="14">☁️ Azure</text>
+                            <text x="735" y="108" text-anchor="middle" fill="#0078D4" font-size="11">West Europe (Amsterdam)</text>
+                            
+                            <!-- Nodo Secundario Azure -->
+                            <rect x="660" y="130" width="150" height="100" rx="8" fill="#0D2A3D" stroke="#0078D4" stroke-width="3"/>
+                            <text x="735" y="160" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="14">SECONDARY NODE</text>
+                            <text x="735" y="180" text-anchor="middle" fill="#B8C4CE" font-size="11">azure-ams-1.mongodb.net</text>
+                            <text x="735" y="195" text-anchor="middle" fill="#B8C4CE" font-size="10">M40 Instance</text>
+                            <text x="735" y="210" text-anchor="middle" fill="#B8C4CE" font-size="10">priority: 1</text>
+                            
+                            <rect x="670" y="240" width="130" height="30" rx="4" fill="rgba(0, 120, 212, 0.3)"/>
+                            <text x="735" y="260" text-anchor="middle" fill="#0078D4" font-weight="bold" font-size="11">Azure Services</text>
+                            
+                            <!-- Conexiones de Replicación -->
+                            <path d="M 240 180 Q 290 180 335 180" stroke="#00ED64" stroke-width="3" marker-end="url(#arrowhead)"/>
+                            <path d="M 565 180 Q 595 180 620 180" stroke="#00ED64" stroke-width="3" marker-end="url(#arrowhead)"/>
+                            
+                            <!-- Línea de retorno -->
+                            <path d="M 660 200 Q 450 240 240 200" stroke="#00ED64" stroke-width="2" stroke-dasharray="5,5" fill="none"/>
+                            
+                            <!-- Labels de replicación -->
+                            <text x="287" y="170" text-anchor="middle" fill="#00ED64" font-size="10">replication</text>
+                            <text x="592" y="170" text-anchor="middle" fill="#00ED64" font-size="10">replication</text>
+                            
+                            <!-- Failover indicator -->
+                            <text x="450" y="310" text-anchor="middle" fill="#F59E0B" font-weight="bold" font-size="12">⚡ AUTOMATIC FAILOVER ⚡</text>
+                            <text x="450" y="328" text-anchor="middle" fill="#B8C4CE" font-size="10">Si AWS cae → GCP o Azure se promueve a PRIMARY en segundos</text>
+                        </svg>
+                    </div>
+                    
+                    <div class="card card-gradient">
+                        <h6>Ejemplo: ReplicaSet en Zona Europa</h6>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                            <div style="text-align: center; padding: var(--spacing-md); background: rgba(255, 153, 0, 0.1); border-radius: var(--radius-md);">
+                                <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">📦</div>
+                                <strong>Nodo Primario</strong>
+                                <p style="font-size: var(--text-sm); margin: 0;">AWS Frankfurt (eu-central-1)</p>
+                            </div>
+                            <div style="text-align: center; padding: var(--spacing-md); background: rgba(66, 133, 244, 0.1); border-radius: var(--radius-md);">
+                                <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">📦</div>
+                                <strong>Secundario 1</strong>
+                                <p style="font-size: var(--text-sm); margin: 0;">Google Cloud Frankfurt (europe-west3)</p>
+                            </div>
+                            <div style="text-align: center; padding: var(--spacing-md); background: rgba(0, 120, 212, 0.1); border-radius: var(--radius-md);">
+                                <div style="font-size: var(--text-2xl); margin-bottom: var(--spacing-sm);">📦</div>
+                                <strong>Secundario 2</strong>
+                                <p style="font-size: var(--text-sm); margin: 0;">Azure West Europe (Amsterdam)</p>
+                            </div>
+                        </div>
+
+                        <div class="success-box mt-4">
+                            <h6>Beneficios Multi-Nube</h6>
+                            <ul class="pros-list pros-cons-list">
+                                <li><strong>Resiliencia Máxima:</strong> Failover automático si AWS cae completo en Frankfurt</li>
+                                <li><strong>Sin Vendor Lock-in:</strong> No atado a un solo proveedor</li>
+                                <li><strong>Mejor Red:</strong> Aprovecha la conectividad óptima de cada cloud</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Beneficios -->
+                <div class="mt-5">
+                    <h4 style="color: var(--color-primary);">📊 Resumen de Beneficios Clave en Atlas</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Beneficio</th>
+                                    <th>Cómo lo logra Atlas</th>
+                                    <th>Impacto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Baja Latencia Global</strong></td>
+                                    <td>Geo-Sharding + Zonas + Read Preference nearest</td>
+                                    <td>Experiencia de usuario súper rápida sin importar ubicación</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Alta Disponibilidad Extrema</strong></td>
+                                    <td>ReplicaSets Multi-AZ + Failover inter-regional y multi-nube</td>
+                                    <td>SLAs de 99.999% y supervivencia a desastres mayores</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Soberanía de Datos</strong></td>
+                                    <td>Control granular sobre ubicación de datos por zona</td>
+                                    <td>Cumplimiento simplificado de GDPR y regulaciones</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Simplicidad Operacional</strong></td>
+                                    <td>Automatización completa de provisión, red y monitoreo</td>
+                                    <td>Ahorro de semanas/meses de trabajo de ingeniería</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consideraciones Clave -->
+            <div class="card card-bordered mt-4">
+                <h4>⚖️ Consideraciones Clave para Arquitectura Global</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                    <div class="card card-gradient">
+                        <h6 style="color: var(--color-warning);">Consistencia vs Latencia</h6>
+                        <p>Define prioridades con <code>writeConcern</code>:</p>
+                        <ul style="font-size: var(--text-sm);">
+                            <li><code>w: "majority"</code> en clúster geodistribuido será lento</li>
+                            <li>Usa <code>w: 1</code> o majority local para escrituras rápidas</li>
+                            <li>Acepta pequeña ventana de posible pérdida si región cae completa</li>
+                        </ul>
+                    </div>
+
+                    <div class="card card-gradient">
+                        <h6 style="color: var(--color-warning);">Complejidad de Red</h6>
+                        <p>Conexión entre nubes requiere:</p>
+                        <ul style="font-size: var(--text-sm);">
+                            <li>VPC/VNet peering entre proveedores</li>
+                            <li>Soluciones de red multi-nube</li>
+                            <li>Comunicación segura y baja latencia</li>
+                            <li>Configuración de rutas y security groups</li>
+                        </ul>
+                    </div>
+
+                    <div class="card card-gradient">
+                        <h6 style="color: var(--color-error);">Shard Key Critical</h6>
+                        <p>Decisión más importante del diseño:</p>
+                        <ul style="font-size: var(--text-sm);">
+                            <li>Mala shard key causa "hotspots"</li>
+                            <li>Requiere alta cardinalidad</li>
+                            <li>Debe alinearse con patrón de acceso geográfico</li>
+                            <li>Plan de re-shard si patrones cambian</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Backups y Recuperación -->
+    <section id="backups" class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <span class="badge badge-secondary mb-3">Recuperación de Datos</span>
+                <h2 class="text-gradient">Backups y Pruebas de Restauración</h2>
+                <p style="max-width: 800px; margin: 0 auto; font-size: var(--text-lg);">
+                    <strong style="color: var(--color-warning);">"Un backup que no ha sido probado, no es un backup. Es solo una esperanza."</strong>
+                </p>
+            </div>
+
+            <!-- Estrategias de Backup -->
+            <div class="card card-bordered mongodb-glow mb-5">
+                <h3 style="color: var(--color-primary);">📦 Estrategias de Backup</h3>
+                
+                <!-- Diagrama de Arquitectura de Backups -->
+                <div class="diagram-container">
+                    <svg width="100%" height="400" viewBox="0 0 1000 400" style="max-width: 100%;">
+                        <!-- Título -->
+                        <text x="500" y="30" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="16">ARQUITECTURA DE BACKUPS - ESTRATEGIA COMPLETA</text>
+                        
+                        <!-- Producción ReplicaSet -->
+                        <rect x="50" y="60" width="280" height="180" rx="10" fill="rgba(0, 237, 100, 0.05)" stroke="#00ED64" stroke-width="2"/>
+                        <text x="190" y="85" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="13">PRODUCCIÓN REPLICASET</text>
+                        
+                        <!-- Primary -->
+                        <rect x="80" y="100" width="80" height="60" rx="6" fill="#00ED64" stroke="#00ED64" stroke-width="2"/>
+                        <text x="120" y="125" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="11">PRIMARY</text>
+                        <text x="120" y="140" text-anchor="middle" fill="#001E2B" font-size="9">No backup</text>
+                        <text x="120" y="152" text-anchor="middle" fill="#001E2B" font-size="9">desde aquí</text>
+                        
+                        <!-- Secondary 1 -->
+                        <rect x="180" y="100" width="80" height="60" rx="6" fill="#0D2A3D" stroke="#5644D4" stroke-width="2"/>
+                        <text x="220" y="125" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="11">SECONDARY</text>
+                        <text x="220" y="140" text-anchor="middle" fill="#B8C4CE" font-size="9">Backup</text>
+                        <text x="220" y="152" text-anchor="middle" fill="#B8C4CE" font-size="9">source</text>
+                        
+                        <!-- Secondary Delayed -->
+                        <rect x="80" y="175" width="80" height="55" rx="6" fill="#112331" stroke="#F59E0B" stroke-width="2" stroke-dasharray="3,3"/>
+                        <text x="120" y="197" text-anchor="middle" fill="#F59E0B" font-weight="bold" font-size="10">DELAYED</text>
+                        <text x="120" y="210" text-anchor="middle" fill="#B8C4CE" font-size="9">1-2h delay</text>
+                        <text x="120" y="222" text-anchor="middle" fill="#B8C4CE" font-size="9">Rollback lógico</text>
+                        
+                        <!-- Oplog -->
+                        <rect x="180" y="175" width="80" height="55" rx="6" fill="#112331" stroke="#3B82F6" stroke-width="2"/>
+                        <text x="220" y="197" text-anchor="middle" fill="#3B82F6" font-weight="bold" font-size="10">OPLOG</text>
+                        <text x="220" y="210" text-anchor="middle" fill="#B8C4CE" font-size="9">Continuous</text>
+                        <text x="220" y="222" text-anchor="middle" fill="#B8C4CE" font-size="9">capture</text>
+                        
+                        <!-- Estrategia 1: Snapshots -->
+                        <rect x="380" y="60" width="280" height="100" rx="10" fill="rgba(86, 68, 212, 0.05)" stroke="#5644D4" stroke-width="2"/>
+                        <text x="520" y="85" text-anchor="middle" fill="#5644D4" font-weight="bold" font-size="13">ESTRATEGIA 1: SNAPSHOTS</text>
+                        
+                        <rect x="410" y="100" width="110" height="50" rx="6" fill="#0D2A3D" stroke="#5644D4" stroke-width="2"/>
+                        <text x="465" y="120" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="11">LVM Snapshot</text>
+                        <text x="465" y="135" text-anchor="middle" fill="#B8C4CE" font-size="9">fsyncLock()</text>
+                        
+                        <rect x="530" y="100" width="110" height="50" rx="6" fill="#112331" stroke="#3B82F6" stroke-width="2"/>
+                        <text x="585" y="120" text-anchor="middle" fill="#3B82F6" font-weight="bold" font-size="11">Storage</text>
+                        <text x="585" y="135" text-anchor="middle" fill="#B8C4CE" font-size="9">S3 / Azure Blob</text>
+                        
+                        <!-- Arrow -->
+                        <path d="M 260 130 L 380 130" stroke="#5644D4" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <path d="M 520 125 L 530 125" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- Estrategia 2: mongodump -->
+                        <rect x="380" y="180" width="280" height="100" rx="10" fill="rgba(245, 158, 11, 0.05)" stroke="#F59E0B" stroke-width="2"/>
+                        <text x="520" y="205" text-anchor="middle" fill="#F59E0B" font-weight="bold" font-size="13">ESTRATEGIA 2: MONGODUMP</text>
+                        
+                        <rect x="410" y="220" width="110" height="50" rx="6" fill="#0D2A3D" stroke="#F59E0B" stroke-width="2"/>
+                        <text x="465" y="240" text-anchor="middle" fill="#F59E0B" font-weight="bold" font-size="11">mongodump</text>
+                        <text x="465" y="255" text-anchor="middle" fill="#B8C4CE" font-size="9">--oplog --gzip</text>
+                        
+                        <rect x="530" y="220" width="110" height="50" rx="6" fill="#112331" stroke="#F59E0B" stroke-width="2"/>
+                        <text x="585" y="240" text-anchor="middle" fill="#F59E0B" font-weight="bold" font-size="11">BSON Archive</text>
+                        <text x="585" y="255" text-anchor="middle" fill="#B8C4CE" font-size="9">backup.gz</text>
+                        
+                        <!-- Arrow -->
+                        <path d="M 260 200 L 380 245" stroke="#F59E0B" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <path d="M 520 245 L 530 245" stroke="#F59E0B" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- Estrategia 3: Atlas Continuous -->
+                        <rect x="380" y="300" width="280" height="80" rx="10" fill="rgba(0, 237, 100, 0.05)" stroke="#00ED64" stroke-width="2"/>
+                        <text x="520" y="325" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="13">ESTRATEGIA 3: ATLAS CONTINUOUS</text>
+                        
+                        <rect x="410" y="340" width="110" height="30" rx="6" fill="#00ED64" stroke="#00ED64" stroke-width="2"/>
+                        <text x="465" y="360" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="11">Auto Backup</text>
+                        
+                        <rect x="530" y="340" width="110" height="30" rx="6" fill="#00ED64" stroke="#00ED64" stroke-width="2"/>
+                        <text x="585" y="360" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="11">PITR Ready</text>
+                        
+                        <!-- Arrow -->
+                        <path d="M 220 230 L 220 355 L 410 355" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- Recovery/Testing Section -->
+                        <rect x="710" y="60" width="260" height="320" rx="10" fill="rgba(239, 68, 68, 0.05)" stroke="#EF4444" stroke-width="3"/>
+                        <text x="840" y="85" text-anchor="middle" fill="#EF4444" font-weight="bold" font-size="14">RECOVERY & TESTING</text>
+                        
+                        <!-- Game Day -->
+                        <rect x="740" y="100" width="200" height="60" rx="6" fill="#112331" stroke="#EF4444" stroke-width="2"/>
+                        <text x="840" y="120" text-anchor="middle" fill="#EF4444" font-weight="bold" font-size="12">🎮 GAME DAY</text>
+                        <text x="840" y="138" text-anchor="middle" fill="#B8C4CE" font-size="10">Trimestral</text>
+                        <text x="840" y="152" text-anchor="middle" fill="#B8C4CE" font-size="10">Simulacro DR</text>
+                        
+                        <!-- Restore Test -->
+                        <rect x="740" y="175" width="200" height="60" rx="6" fill="#112331" stroke="#3B82F6" stroke-width="2"/>
+                        <text x="840" y="195" text-anchor="middle" fill="#3B82F6" font-weight="bold" font-size="12">Restore Test</text>
+                        <text x="840" y="213" text-anchor="middle" fill="#B8C4CE" font-size="10">Entorno aislado</text>
+                        <text x="840" y="227" text-anchor="middle" fill="#B8C4CE" font-size="10">Validar integridad</text>
+                        
+                        <!-- Metrics -->
+                        <rect x="740" y="250" width="95" height="50" rx="6" fill="#0D2A3D" stroke="#00ED64" stroke-width="2"/>
+                        <text x="787" y="270" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="11">RPO</text>
+                        <text x="787" y="285" text-anchor="middle" fill="#B8C4CE" font-size="10">0-5 min</text>
+                        
+                        <rect x="845" y="250" width="95" height="50" rx="6" fill="#0D2A3D" stroke="#00ED64" stroke-width="2"/>
+                        <text x="892" y="270" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="11">RTO</text>
+                        <text x="892" y="285" text-anchor="middle" fill="#B8C4CE" font-size="10">&lt; 1 hora</text>
+                        
+                        <!-- Automation -->
+                        <rect x="740" y="315" width="200" height="50" rx="6" fill="#5644D4" stroke="#5644D4" stroke-width="2"/>
+                        <text x="840" y="338" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="12">🤖 CI/CD Pipeline</text>
+                        <text x="840" y="353" text-anchor="middle" fill="#B8C4CE" font-size="10">Restore-Verify automation</text>
+                        
+                        <!-- Arrows to recovery -->
+                        <path d="M 640 125 L 710 125" stroke="#5644D4" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+                        <path d="M 640 245 L 680 210" stroke="#F59E0B" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+                        <path d="M 640 355 L 710 340" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+                    </svg>
+                </div>
+                
+                <div style="text-align: center; margin-top: var(--spacing-lg);">
+                    <span class="badge badge-primary">3 Estrategias Complementarias</span>
+                    <span class="badge badge-secondary">Testing Obligatorio</span>
+                    <span class="badge badge-secondary">Automatización CI/CD</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <!-- Snapshots -->
+                    <div class="card card-gradient">
+                        <div class="step-number">1</div>
+                        <h5>Snapshots del Sistema de Archivos</h5>
+                        <p><strong>Método:</strong> LVM en Linux o tecnologías similares para snapshots atómicos</p>
+                        
+                        <div class="mt-3">
+                            <h6 style="color: var(--color-primary); font-size: var(--text-sm);">Proceso</h6>
+                            <ol style="font-size: var(--text-sm);">
+                                <li>Detener balanceador (si sharded)</li>
+                                <li>Ejecutar <code>fsyncLock()</code> en secundario</li>
+                                <li>Tomar snapshot a nivel de filesystem</li>
+                                <li>Ejecutar <code>fsyncUnlock()</code></li>
+                                <li>Copiar a almacenamiento (S3, Azure Blob)</li>
+                            </ol>
+                        </div>
+
+                        <div class="success-box mt-3">
+                            <strong>Ventaja:</strong> Rápido y consistente
+                        </div>
+                    </div>
+
+                    <!-- mongodump -->
+                    <div class="card card-gradient">
+                        <div class="step-number">2</div>
+                        <h5>mongodump</h5>
+                        <p><strong>Método:</strong> Utilidad nativa de MongoDB para volcado lógico en BSON</p>
+                        
+                        <div class="code-block mt-3" style="font-size: 0.7rem;">
+mongodump \
+  --uri="mongodb://..." \
+  --oplog \
+  --gzip \
+  --archive="backup.gz"
+                        </div>
+
+                        <div class="mt-3">
+                            <h6 style="color: var(--color-primary); font-size: var(--text-sm);">Uso Ideal</h6>
+                            <ul style="font-size: var(--text-sm);">
+                                <li>Backups pequeños o migraciones</li>
+                                <li>Colecciones específicas</li>
+                                <li>Siempre desde nodo secundario</li>
+                            </ul>
+                        </div>
+
+                        <div class="warning-box mt-3">
+                            <strong>⚠️ Nota:</strong> <code>--oplog</code> captura operaciones durante dump para Point-in-Time Recovery (PITR)
+                        </div>
+                    </div>
+
+                    <!-- Soluciones Gestionadas -->
+                    <div class="card card-gradient">
+                        <div class="step-number">3</div>
+                        <h5>Soluciones Gestionadas</h5>
+                        <p><strong>Método:</strong> MongoDB Atlas / Ops Manager</p>
+                        
+                        <div class="success-box mt-3">
+                            <h6 style="font-size: var(--text-sm);">Características Atlas</h6>
+                            <ul style="font-size: var(--text-sm);">
+                                <li><strong>Backups continuos:</strong> Snapshots + oplogs</li>
+                                <li><strong>PITR:</strong> Restaurar a cualquier minuto específico</li>
+                                <li><strong>Automatización:</strong> Sin intervención manual</li>
+                                <li><strong>Retención:</strong> Configurable (14-35+ días)</li>
+                            </ul>
+                        </div>
+
+                        <div class="highlight-box mt-3">
+                            <strong>🏆 Mejor opción:</strong> Para producción, las soluciones gestionadas ofrecen el mejor balance de seguridad y facilidad.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Políticas RPO/RTO -->
+            <div class="card card-bordered mb-5">
+                <h3 style="color: var(--color-primary);">🎯 Políticas de Recuperación (RPO/RTO)</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div class="card card-gradient">
+                        <h5>RPO (Recovery Point Objective)</h5>
+                        <p><strong>Pérdida de datos aceptable</strong></p>
+                        <ul>
+                            <li><strong>Productivo:</strong> 0-5 minutos con PITR</li>
+                            <li><strong>Analytics:</strong> Puede tolerar horas</li>
+                            <li><strong>Dev/Test:</strong> 24 horas o más</li>
+                        </ul>
+                        
+                        <div class="metric mt-4">
+                            <div class="metric-value" style="font-size: var(--text-4xl);">0-5 min</div>
+                            <div class="metric-label">RPO Objetivo Producción</div>
+                        </div>
+                    </div>
+
+                    <div class="card card-gradient">
+                        <h5>RTO (Recovery Time Objective)</h5>
+                        <p><strong>Tiempo de vuelta aceptable</strong></p>
+                        <ul>
+                            <li><strong>Core:</strong> &lt; 1 hora</li>
+                            <li><strong>Sistemas periféricos:</strong> 2-4 horas</li>
+                            <li><strong>Reportes:</strong> 24 horas</li>
+                        </ul>
+                        
+                        <div class="metric mt-4">
+                            <div class="metric-value" style="font-size: var(--text-4xl);">&lt; 1h</div>
+                            <div class="metric-label">RTO Objetivo Core</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="highlight-box mt-4">
+                    <h6>📋 Retención Recomendada</h6>
+                    <p>Define retención según compliance y legal:</p>
+                    <ul>
+                        <li><strong>Productivo:</strong> 30-90 días mínimo</li>
+                        <li><strong>Compliance/Legal:</strong> 365 días o más</li>
+                        <li><strong>Evita:</strong> Retenciones infinitas sin costo-beneficio</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Backup Testing (Game Days) -->
+            <div class="card card-bordered mongodb-glow">
+                <h3 style="color: var(--color-primary);">🎮 Backup Testing - Game Days Trimestrales</h3>
+                <p class="mb-4" style="font-size: var(--text-lg); color: var(--color-warning);">
+                    <strong>El músculo que casi nadie entrena.</strong> La copia es el 50% del problema; el otro 50% es poder restaurar a tiempo lo que necesitas.
+                </p>
+
+                <!-- Diagrama de Flujo de Game Day -->
+                <div class="diagram-container">
+                    <svg width="100%" height="450" viewBox="0 0 1000 450" style="max-width: 100%;">
+                        <!-- Título -->
+                        <text x="500" y="30" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="16">FLUJO DE GAME DAY - TESTING DE RECUPERACIÓN</text>
+                        
+                        <!-- Paso 1 -->
+                        <rect x="50" y="60" width="180" height="100" rx="8" fill="rgba(0, 237, 100, 0.1)" stroke="#00ED64" stroke-width="3"/>
+                        <circle cx="140" cy="85" r="18" fill="#00ED64"/>
+                        <text x="140" y="93" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="16">1</text>
+                        <text x="140" y="125" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="12">Aprovisionar</text>
+                        <text x="140" y="142" text-anchor="middle" fill="#B8C4CE" font-size="10">Entorno Aislado</text>
+                        
+                        <!-- Details Paso 1 -->
+                        <rect x="60" y="170" width="160" height="70" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                        <text x="140" y="188" text-anchor="middle" fill="#B8C4CE" font-size="9">• Nuevo proyecto Atlas</text>
+                        <text x="140" y="202" text-anchor="middle" fill="#B8C4CE" font-size="9">• Nuevos hosts</text>
+                        <text x="140" y="216" text-anchor="middle" fill="#B8C4CE" font-size="9">• Red aislada</text>
+                        <text x="140" y="230" text-anchor="middle" fill="#B8C4CE" font-size="9">• Creds temporales</text>
+                        
+                        <!-- Arrow -->
+                        <path d="M 230 110 L 270 110" stroke="#00ED64" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- Paso 2 -->
+                        <rect x="270" y="60" width="180" height="100" rx="8" fill="rgba(86, 68, 212, 0.1)" stroke="#5644D4" stroke-width="3"/>
+                        <circle cx="360" cy="85" r="18" fill="#5644D4"/>
+                        <text x="360" y="93" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="16">2</text>
+                        <text x="360" y="125" text-anchor="middle" fill="#5644D4" font-weight="bold" font-size="12">Restaurar</text>
+                        <text x="360" y="142" text-anchor="middle" fill="#B8C4CE" font-size="10">Backup</text>
+                        
+                        <!-- Details Paso 2 -->
+                        <rect x="280" y="170" width="160" height="70" rx="4" fill="#112331" stroke="#5644D4" stroke-width="1"/>
+                        <text x="360" y="188" text-anchor="middle" fill="#B8C4CE" font-size="9">• mongorestore</text>
+                        <text x="360" y="202" text-anchor="middle" fill="#B8C4CE" font-size="9">• Restore snapshot</text>
+                        <text x="360" y="216" text-anchor="middle" fill="#B8C4CE" font-size="9">• PITR a punto random</text>
+                        <text x="360" y="230" text-anchor="middle" fill="#B8C4CE" font-size="9">⏱️ Cronometrar tiempo</text>
+                        
+                        <!-- Arrow -->
+                        <path d="M 450 110 L 490 110" stroke="#5644D4" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- Paso 3 -->
+                        <rect x="490" y="60" width="180" height="100" rx="8" fill="rgba(66, 133, 244, 0.1)" stroke="#3B82F6" stroke-width="3"/>
+                        <circle cx="580" cy="85" r="18" fill="#3B82F6"/>
+                        <text x="580" y="93" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="16">3</text>
+                        <text x="580" y="125" text-anchor="middle" fill="#3B82F6" font-weight="bold" font-size="12">Validar</text>
+                        <text x="580" y="142" text-anchor="middle" fill="#B8C4CE" font-size="10">Integridad Técnica</text>
+                        
+                        <!-- Details Paso 3 -->
+                        <rect x="500" y="170" width="160" height="70" rx="4" fill="#112331" stroke="#3B82F6" stroke-width="1"/>
+                        <text x="580" y="188" text-anchor="middle" fill="#B8C4CE" font-size="9">• dbHash colecciones</text>
+                        <text x="580" y="202" text-anchor="middle" fill="#B8C4CE" font-size="9">• Conteos comparativos</text>
+                        <text x="580" y="216" text-anchor="middle" fill="#B8C4CE" font-size="9">• Queries golden</text>
+                        <text x="580" y="230" text-anchor="middle" fill="#B8C4CE" font-size="9">• Verificar índices</text>
+                        
+                        <!-- Arrow -->
+                        <path d="M 670 110 L 710 110" stroke="#3B82F6" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- Paso 4 -->
+                        <rect x="710" y="60" width="180" height="100" rx="8" fill="rgba(245, 158, 11, 0.1)" stroke="#F59E0B" stroke-width="3"/>
+                        <circle cx="800" cy="85" r="18" fill="#F59E0B"/>
+                        <text x="800" y="93" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="16">4</text>
+                        <text x="800" y="125" text-anchor="middle" fill="#F59E0B" font-weight="bold" font-size="12">Smoke Tests</text>
+                        <text x="800" y="142" text-anchor="middle" fill="#B8C4CE" font-size="10">Validación Funcional</text>
+                        
+                        <!-- Details Paso 4 -->
+                        <rect x="720" y="170" width="160" height="70" rx="4" fill="#112331" stroke="#F59E0B" stroke-width="1"/>
+                        <text x="800" y="188" text-anchor="middle" fill="#B8C4CE" font-size="9">• Login/Auth</text>
+                        <text x="800" y="202" text-anchor="middle" fill="#B8C4CE" font-size="9">• CRUD básico</text>
+                        <text x="800" y="216" text-anchor="middle" fill="#B8C4CE" font-size="9">• TOP-10 endpoints</text>
+                        <text x="800" y="230" text-anchor="middle" fill="#B8C4CE" font-size="9">• APIs críticas</text>
+                        
+                        <!-- Paso 5: Medición -->
+                        <rect x="150" y="280" width="280" height="140" rx="8" fill="rgba(239, 68, 68, 0.1)" stroke="#EF4444" stroke-width="3"/>
+                        <circle cx="290" cy="305" r="18" fill="#EF4444"/>
+                        <text x="290" y="313" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="16">5</text>
+                        <text x="290" y="345" text-anchor="middle" fill="#EF4444" font-weight="bold" font-size="13">Medición de Métricas</text>
+                        
+                        <!-- Métricas -->
+                        <rect x="170" y="365" width="110" height="45" rx="4" fill="#112331" stroke="#00ED64" stroke-width="2"/>
+                        <text x="225" y="382" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="11">RTO Real</text>
+                        <text x="225" y="398" text-anchor="middle" fill="#B8C4CE" font-size="9">Tiempo total</text>
+                        
+                        <rect x="300" y="365" width="110" height="45" rx="4" fill="#112331" stroke="#00ED64" stroke-width="2"/>
+                        <text x="355" y="382" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="11">Throughput</text>
+                        <text x="355" y="398" text-anchor="middle" fill="#B8C4CE" font-size="9">GB/min restore</text>
+                        
+                        <!-- Paso 6: Tabletop -->
+                        <rect x="470" y="280" width="280" height="140" rx="8" fill="rgba(245, 158, 11, 0.1)" stroke="#F59E0B" stroke-width="3"/>
+                        <circle cx="610" cy="305" r="18" fill="#F59E0B"/>
+                        <text x="610" y="313" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="16">6</text>
+                        <text x="610" y="345" text-anchor="middle" fill="#F59E0B" font-weight="bold" font-size="13">Tabletop de Incidentes</text>
+                        
+                        <!-- Escenarios -->
+                        <rect x="490" y="365" width="230" height="45" rx="4" fill="#112331" stroke="#F59E0B" stroke-width="1"/>
+                        <text x="605" y="380" text-anchor="middle" fill="#B8C4CE" font-size="9">🔥 Borrado masivo → PITR antes</text>
+                        <text x="605" y="394" text-anchor="middle" fill="#B8C4CE" font-size="9">🦠 Corrupción → delayed secondary</text>
+                        <text x="605" y="408" text-anchor="middle" fill="#B8C4CE" font-size="9">🏴‍☠️ Ransomware → WORM storage</text>
+                        
+                        <!-- Paso 7: Automatización -->
+                        <rect x="790" y="280" width="180" height="140" rx="8" fill="rgba(0, 237, 100, 0.1)" stroke="#00ED64" stroke-width="3"/>
+                        <circle cx="880" cy="305" r="18" fill="#00ED64"/>
+                        <text x="880" y="313" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="16">7</text>
+                        <text x="880" y="345" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="12">Automatizar</text>
+                        <text x="880" y="360" text-anchor="middle" fill="#B8C4CE" font-size="10">CI/CD Pipeline</text>
+                        
+                        <!-- Script -->
+                        <rect x="810" y="375" width="140" height="38" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                        <text x="880" y="390" text-anchor="middle" fill="#00ED64" font-size="9">restore-verify.sh</text>
+                        <text x="880" y="403" text-anchor="middle" fill="#B8C4CE" font-size="8">→ cron trimestral</text>
+                        
+                        <!-- Arrows verticales -->
+                        <path d="M 290 160 L 290 280" stroke="#EF4444" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+                        <path d="M 610 160 L 610 280" stroke="#F59E0B" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+                        <path d="M 800 160 L 880 280" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+                        
+                        <!-- Footer con frecuencia -->
+                        <rect x="200" y="435" width="600" height="12" rx="6" fill="#5644D4"/>
+                        <text x="500" y="445" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="11">🗓️ FRECUENCIA: TRIMESTRAL (Cada 3 meses)</text>
+                    </svg>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 mt-4">
+                    <!-- Paso 1: Restauración Real -->
+                    <div class="card card-gradient">
+                        <div class="flex items-start gap-3">
+                            <div class="step-number">1</div>
+                            <div style="flex: 1;">
+                                <h5>Restauración Real a Entorno Aislado</h5>
+                                <p>Nunca restaures sobre producción. Aprovisiona:</p>
+                                <ul>
+                                    <li>Nuevo proyecto Atlas o nuevos hosts</li>
+                                    <li>Configuración de red aislada</li>
+                                    <li>Credenciales temporales separadas</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 2: Validación Técnica -->
+                    <div class="card card-gradient">
+                        <div class="flex items-start gap-3">
+                            <div class="step-number">2</div>
+                            <div style="flex: 1;">
+                                <h5>Validación Técnica</h5>
+                                <div class="code-block mt-2" style="font-size: var(--text-xs);">
+// dbHash por colección crítica
+db.runCommand({dbHash: 1})
+
+// Conteos comparativos
+db.users.countDocuments()
+db.orders.countDocuments()
+
+// Verificar índices
+db.collection.getIndexes()
+                                </div>
+                                <div class="success-box mt-3">
+                                    <strong>Validaciones clave:</strong>
+                                    <ul style="font-size: var(--text-sm);">
+                                        <li>dbHash por colección crítica</li>
+                                        <li>Conteos comparativos</li>
+                                        <li>Queries "golden" dan mismos resultados</li>
+                                        <li>Integridad de índices (rebuild si es necesario)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 3: Validación Funcional -->
+                    <div class="card card-gradient">
+                        <div class="flex items-start gap-3">
+                            <div class="step-number">3</div>
+                            <div style="flex: 1;">
+                                <h5>Validación Funcional (Smoke Tests)</h5>
+                                <ul>
+                                    <li>Pruebas de login y autenticación</li>
+                                    <li>Transacciones simples (CRUD básico)</li>
+                                    <li>Endpoints TOP-10 de negocio</li>
+                                    <li>Integraciones críticas (APIs externas)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 4: Métricas -->
+                    <div class="card card-gradient">
+                        <div class="flex items-start gap-3">
+                            <div class="step-number">4</div>
+                            <div style="flex: 1;">
+                                <h5>Medición de Métricas</h5>
+                                <div class="grid grid-cols-2 gap-3 mt-3">
+                                    <div>
+                                        <strong style="color: var(--color-primary);">RTO Real</strong>
+                                        <p style="font-size: var(--text-sm);">Tiempo total de restauración</p>
+                                    </div>
+                                    <div>
+                                        <strong style="color: var(--color-primary);">Throughput</strong>
+                                        <p style="font-size: var(--text-sm);">GB/min de restauración</p>
+                                    </div>
+                                    <div>
+                                        <strong style="color: var(--color-primary);">Cuellos de Botella</strong>
+                                        <p style="font-size: var(--text-sm);">Red / IO / CPU limitantes</p>
+                                    </div>
+                                    <div>
+                                        <strong style="color: var(--color-primary);">Errores</strong>
+                                        <p style="font-size: var(--text-sm);">Problemas encontrados</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 5: Tabletop -->
+                    <div class="card card-gradient">
+                        <div class="flex items-start gap-3">
+                            <div class="step-number">5</div>
+                            <div style="flex: 1;">
+                                <h5>Tabletop de Incidentes</h5>
+                                <p>Simula escenarios reales:</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                                    <div class="warning-box">
+                                        <strong>Escenario 1: Borrado Lógico Masivo</strong>
+                                        <p style="font-size: var(--text-sm);">Restaura desde PITR minutos antes del evento</p>
+                                    </div>
+                                    <div class="warning-box">
+                                        <strong>Escenario 2: Corrupción de App</strong>
+                                        <p style="font-size: var(--text-sm);">Usa delayed secondary para capturar el "antes"</p>
+                                    </div>
+                                    <div class="warning-box">
+                                        <strong>Escenario 3: Ransomware</strong>
+                                        <p style="font-size: var(--text-sm);">Restaura desde snapshot en almacenamiento WORM</p>
+                                    </div>
+                                    <div class="warning-box">
+                                        <strong>Escenario 4: Pérdida Regional</strong>
+                                        <p style="font-size: var(--text-sm);">Failover a región secundaria y verificación</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 6: Automatización -->
+                    <div class="card card-gradient">
+                        <div class="flex items-start gap-3">
+                            <div class="step-number">6</div>
+                            <div style="flex: 1;">
+                                <h5>Automatizar Restore-Verify (CI)</h5>
+                                <div class="code-block mt-2" style="font-size: 0.7rem;">
+#!/bin/bash
+# Script automatizado de restore-verify
+
+# 1. Crear cluster temporal
+create_temp_cluster()
+
+# 2. Restaurar snapshot/PITR
+restore_backup()
+
+# 3. Correr suite de checks
+run_validation_suite()
+
+# 4. Generar reporte
+generate_report()
+
+# 5. Destruir recursos temporales
+cleanup()
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controles de Prevención -->
+            <div class="card card-bordered mt-5">
+                <h4 style="color: var(--color-primary);">🛡️ Controles de Prevención</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                    <div>
+                        <h6>Prevención de Pérdida de Datos</h6>
+                        <ul>
+                            <li>TTL con <code>expireAfterSeconds</code> en vez de crons peligrosos</li>
+                            <li>Change Streams + auditoría para anomalías tempranas</li>
+                            <li>Privilegios mínimos; producción sin <code>dropCollection</code> para apps</li>
+                            <li>Validadores de esquema para integridad de datos</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h6>Monitoreo y Alertas</h6>
+                        <ul>
+                            <li>Alertas de replication lag</li>
+                            <li>Monitoreo de tamaño de oplog</li>
+                            <li>Métricas de backup success/failure</li>
+                            <li>Alertas de operaciones masivas de delete/update</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Atlas vs On-Premise -->
+    <section id="atlas" class="section" style="background: var(--color-bg-secondary);">
+        <div class="container">
+            <div class="text-center mb-6">
+                <span class="badge badge-secondary mb-3">Atlas vs Self-Managed</span>
+                <h2 class="text-gradient">¿Por Qué No Puedes Mezclar Atlas con On-Premise?</h2>
+            </div>
+
+            <div class="card card-bordered mongodb-glow mb-5">
+                <div class="warning-box">
+                    <h4 style="color: var(--color-warning);">⚠️ Limitación Importante</h4>
+                    <p style="font-size: var(--text-lg);"><strong>MongoDB Atlas no permite añadir nodos on-premise directamente a sus ReplicaSets o clústeres sharded.</strong></p>
+                </div>
+
+                <div class="mt-5">
+                    <h4 style="color: var(--color-primary);">¿Por Qué No Se Puede?</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div class="card card-gradient">
+                            <h6>🤖 Control de Automatización</h6>
+                            <p>Atlas depende de tener control total sobre todos los nodos:</p>
+                            <ul style="font-size: var(--text-sm);">
+                                <li>No podría reemplazar automáticamente un nodo externo si falla</li>
+                                <li>No puede aplicar parches de seguridad coordinados</li>
+                                <li>Pierde capacidad de garantizar salud y consistencia del clúster</li>
+                                <li>Rompe el modelo de automatización end-to-end</li>
+                            </ul>
+                        </div>
+
+                        <div class="card card-gradient">
+                            <h6>🔒 Seguridad y Red</h6>
+                            <p>Atlas opera en red virtual segura preconfigurada:</p>
+                            <ul style="font-size: var(--text-sm);">
+                                <li>VPC/VNet gestionada y aislada</li>
+                                <li>Integrar nodo externo rompería modelo de seguridad</li>
+                                <li>Complejidad de conectividad no gestionable automáticamente</li>
+                                <li>Imposible garantizar SLAs de disponibilidad</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alternativas Correctas -->
+            <div class="card card-bordered mb-5">
+                <h3 style="color: var(--color-primary);">✅ Alternativas y Soluciones Correctas</h3>
+                
+                <!-- Diagrama de Comparación -->
+                <div class="diagram-container">
+                    <svg width="100%" height="500" viewBox="0 0 1100 500" style="max-width: 100%;">
+                        <!-- Título -->
+                        <text x="550" y="30" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="16">COMPARACIÓN: SOLUCIONES HÍBRIDAS ON-PREMISE ⇄ ATLAS</text>
+                        
+                        <!-- Opción 1: Ops Manager -->
+                        <rect x="50" y="60" width="480" height="200" rx="10" fill="rgba(0, 237, 100, 0.05)" stroke="#00ED64" stroke-width="3"/>
+                        <text x="290" y="90" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="14">OPCIÓN 1: OPS MANAGER / CLOUD MANAGER</text>
+                        <text x="290" y="110" text-anchor="middle" fill="#B8C4CE" font-size="11">✅ ReplicaSet verdaderamente híbrido con failover automático</text>
+                        
+                        <!-- On-Prem con Ops Manager -->
+                        <rect x="80" y="130" width="180" height="110" rx="8" fill="rgba(255, 153, 0, 0.1)" stroke="#FF9900" stroke-width="2"/>
+                        <text x="170" y="150" text-anchor="middle" fill="#FF9900" font-weight="bold" font-size="12">ON-PREMISE</text>
+                        
+                        <rect x="100" y="165" width="60" height="50" rx="4" fill="#00ED64" stroke="#00ED64" stroke-width="2"/>
+                        <text x="130" y="185" text-anchor="middle" fill="#001E2B" font-size="10">PRIMARY</text>
+                        <text x="130" y="200" text-anchor="middle" fill="#001E2B" font-size="8">Ops Agent</text>
+                        
+                        <rect x="180" y="165" width="60" height="50" rx="4" fill="#0D2A3D" stroke="#5644D4" stroke-width="2"/>
+                        <text x="210" y="185" text-anchor="middle" fill="#FFFFFF" font-size="10">SEC</text>
+                        <text x="210" y="200" text-anchor="middle" fill="#B8C4CE" font-size="8">Ops Agent</text>
+                        
+                        <!-- Cloud con Ops Manager -->
+                        <rect x="300" y="130" width="180" height="110" rx="8" fill="rgba(66, 133, 244, 0.1)" stroke="#4285F4" stroke-width="2"/>
+                        <text x="390" y="150" text-anchor="middle" fill="#4285F4" font-weight="bold" font-size="12">CLOUD (AWS/GCP)</text>
+                        
+                        <rect x="330" y="165" width="60" height="50" rx="4" fill="#0D2A3D" stroke="#4285F4" stroke-width="2"/>
+                        <text x="360" y="185" text-anchor="middle" fill="#FFFFFF" font-size="10">SEC</text>
+                        <text x="360" y="200" text-anchor="middle" fill="#B8C4CE" font-size="8">Ops Agent</text>
+                        
+                        <rect x="400" y="165" width="60" height="50" rx="4" fill="#0D2A3D" stroke="#4285F4" stroke-width="2"/>
+                        <text x="430" y="185" text-anchor="middle" fill="#FFFFFF" font-size="10">SEC</text>
+                        <text x="430" y="200" text-anchor="middle" fill="#B8C4CE" font-size="8">Ops Agent</text>
+                        
+                        <!-- Ops Manager Console -->
+                        <rect x="160" y="180" width="100" height="30" rx="4" fill="#5644D4" stroke="#5644D4" stroke-width="2"/>
+                        <text x="210" y="200" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="11">Ops Manager</text>
+                        
+                        <!-- Arrows -->
+                        <path d="M 160 190 L 100 185" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <path d="M 180 190 L 180 185" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <path d="M 260 195 L 330 185" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <path d="M 260 195 L 400 185" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- Pros -->
+                        <rect x="80" y="250" width="200" height="8" rx="2" fill="#00ED64"/>
+                        <text x="180" y="266" text-anchor="middle" fill="#00ED64" font-size="10">✓ Failover automático bi-direccional</text>
+                        <rect x="300" y="250" width="180" height="8" rx="2" fill="#00ED64"/>
+                        <text x="390" y="266" text-anchor="middle" fill="#00ED64" font-size="10">✓ Gestión unificada</text>
+                        
+                        <!-- Opción 2: mongosync/mongomirror -->
+                        <rect x="570" y="60" width="480" height="200" rx="10" fill="rgba(86, 68, 212, 0.05)" stroke="#5644D4" stroke-width="3"/>
+                        <text x="810" y="90" text-anchor="middle" fill="#5644D4" font-weight="bold" font-size="14">OPCIÓN 2: MONGOSYNC / MONGOMIRROR</text>
+                        <text x="810" y="110" text-anchor="middle" fill="#B8C4CE" font-size="11">⚠️ Replicación unidireccional continua (Atlas → On-Prem o viceversa)</text>
+                        
+                        <!-- Atlas Source -->
+                        <rect x="600" y="130" width="180" height="110" rx="8" fill="rgba(0, 237, 100, 0.1)" stroke="#00ED64" stroke-width="2"/>
+                        <text x="690" y="150" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="12">ATLAS (Source)</text>
+                        
+                        <rect x="620" y="165" width="60" height="50" rx="4" fill="#00ED64" stroke="#00ED64" stroke-width="2"/>
+                        <text x="650" y="185" text-anchor="middle" fill="#001E2B" font-size="10">PRIMARY</text>
+                        
+                        <rect x="700" y="165" width="60" height="50" rx="4" fill="#0D2A3D" stroke="#5644D4" stroke-width="2"/>
+                        <text x="730" y="185" text-anchor="middle" fill="#FFFFFF" font-size="10">SEC</text>
+                        
+                        <!-- mongosync process -->
+                        <rect x="805" y="175" width="90" height="35" rx="4" fill="#F59E0B" stroke="#F59E0B" stroke-width="2"/>
+                        <text x="850" y="195" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="11">mongosync</text>
+                        
+                        <!-- On-Prem Destination -->
+                        <rect x="920" y="130" width="110" height="110" rx="8" fill="rgba(255, 153, 0, 0.1)" stroke="#FF9900" stroke-width="2"/>
+                        <text x="975" y="150" text-anchor="middle" fill="#FF9900" font-weight="bold" font-size="12">ON-PREM</text>
+                        <text x="975" y="165" text-anchor="middle" fill="#FF9900" font-size="10">(Destination)</text>
+                        
+                        <rect x="945" y="180" width="60" height="50" rx="4" fill="#112331" stroke="#FF9900" stroke-width="2" stroke-dasharray="3,3"/>
+                        <text x="975" y="200" text-anchor="middle" fill="#FF9900" font-size="10">READ</text>
+                        <text x="975" y="215" text-anchor="middle" fill="#FF9900" font-size="10">ONLY</text>
+                        
+                        <!-- One-way arrow -->
+                        <path d="M 780 192 L 805 192" stroke="#F59E0B" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        <path d="M 895 192 L 920 192" stroke="#F59E0B" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        <text x="850" y="230" text-anchor="middle" fill="#F59E0B" font-size="10">Continuo →</text>
+                        
+                        <!-- Warning -->
+                        <rect x="920" y="250" width="110" height="8" rx="2" fill="#EF4444"/>
+                        <text x="975" y="266" text-anchor="middle" fill="#EF4444" font-size="9">⚠️ No es multi-master</text>
+                        
+                        <!-- Opción 3: Live Migration -->
+                        <rect x="50" y="280" width="480" height="200" rx="10" fill="rgba(66, 133, 244, 0.05)" stroke="#3B82F6" stroke-width="3"/>
+                        <text x="290" y="310" text-anchor="middle" fill="#3B82F6" font-weight="bold" font-size="14">OPCIÓN 3: ATLAS LIVE MIGRATION</text>
+                        <text x="290" y="330" text-anchor="middle" fill="#B8C4CE" font-size="11">🚀 Para migración viva de On-Prem → Atlas con mínimo downtime</text>
+                        
+                        <!-- Timeline -->
+                        <line x1="100" y1="360" x2="480" y2="360" stroke="#3B82F6" stroke-width="3"/>
+                        
+                        <!-- Phase 1 -->
+                        <circle cx="150" cy="360" r="8" fill="#3B82F6"/>
+                        <text x="150" y="380" text-anchor="middle" fill="#3B82F6" font-size="10">Fase 1</text>
+                        <text x="150" y="395" text-anchor="middle" fill="#B8C4CE" font-size="9">Initial sync</text>
+                        
+                        <!-- Phase 2 -->
+                        <circle cx="270" cy="360" r="8" fill="#3B82F6"/>
+                        <text x="270" y="380" text-anchor="middle" fill="#3B82F6" font-size="10">Fase 2</text>
+                        <text x="270" y="395" text-anchor="middle" fill="#B8C4CE" font-size="9">Catch-up</text>
+                        
+                        <!-- Phase 3 -->
+                        <circle cx="390" cy="360" r="8" fill="#00ED64"/>
+                        <text x="390" y="380" text-anchor="middle" fill="#00ED64" font-size="10">Fase 3</text>
+                        <text x="390" y="395" text-anchor="middle" fill="#B8C4CE" font-size="9">Cutover</text>
+                        
+                        <!-- Details -->
+                        <rect x="100" y="410" width="100" height="50" rx="4" fill="rgba(255, 153, 0, 0.1)" stroke="#FF9900" stroke-width="2"/>
+                        <text x="150" y="430" text-anchor="middle" fill="#FF9900" font-size="10">On-Premise</text>
+                        <text x="150" y="445" text-anchor="middle" fill="#B8C4CE" font-size="9">Origin</text>
+                        
+                        <path d="M 200 435 L 290 435" stroke="#3B82F6" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        <text x="245" y="425" text-anchor="middle" fill="#3B82F6" font-size="9">oplog sync</text>
+                        
+                        <rect x="290" y="410" width="100" height="50" rx="4" fill="rgba(0, 237, 100, 0.1)" stroke="#00ED64" stroke-width="2"/>
+                        <text x="340" y="430" text-anchor="middle" fill="#00ED64" font-size="10">Atlas</text>
+                        <text x="340" y="445" text-anchor="middle" fill="#B8C4CE" font-size="9">Destination</text>
+                        
+                        <rect x="410" y="410" width="90" height="50" rx="4" fill="#00ED64" stroke="#00ED64" stroke-width="2"/>
+                        <text x="455" y="430" text-anchor="middle" fill="#001E2B" font-size="10">App Switch</text>
+                        <text x="455" y="445" text-anchor="middle" fill="#001E2B" font-size="9">Downtime:</text>
+                        <text x="455" y="456" text-anchor="middle" fill="#001E2B" font-size="9">&lt; 5 min</text>
+                        
+                        <!-- Opción 4: Atlas Global -->
+                        <rect x="570" y="280" width="480" height="200" rx="10" fill="rgba(0, 237, 100, 0.05)" stroke="#00ED64" stroke-width="3"/>
+                        <text x="810" y="310" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="14">OPCIÓN 4: ATLAS GLOBAL CLUSTERS</text>
+                        <text x="810" y="330" text-anchor="middle" fill="#B8C4CE" font-size="11">🌍 Para operaciones 100% en nube multi-región y multi-cloud</text>
+                        
+                        <!-- Regiones -->
+                        <rect x="600" y="350" width="120" height="60" rx="6" fill="rgba(0, 237, 100, 0.2)" stroke="#00ED64" stroke-width="2"/>
+                        <text x="660" y="375" text-anchor="middle" fill="#00ED64" font-size="11">ZONA US</text>
+                        <text x="660" y="390" text-anchor="middle" fill="#B8C4CE" font-size="9">Shard 0</text>
+                        
+                        <rect x="740" y="350" width="120" height="60" rx="6" fill="rgba(86, 68, 212, 0.2)" stroke="#5644D4" stroke-width="2"/>
+                        <text x="800" y="375" text-anchor="middle" fill="#5644D4" font-size="11">ZONA EU</text>
+                        <text x="800" y="390" text-anchor="middle" fill="#B8C4CE" font-size="9">Shard 1</text>
+                        
+                        <rect x="880" y="350" width="120" height="60" rx="6" fill="rgba(66, 133, 244, 0.2)" stroke="#4285F4" stroke-width="2"/>
+                        <text x="940" y="375" text-anchor="middle" fill="#4285F4" font-size="11">ZONA APAC</text>
+                        <text x="940" y="390" text-anchor="middle" fill="#B8C4CE" font-size="9">Shard 2</text>
+                        
+                        <!-- Features -->
+                        <text x="810" y="435" text-anchor="middle" fill="#00ED64" font-size="10">✓ Geo-sharding automático</text>
+                        <text x="810" y="452" text-anchor="middle" fill="#00ED64" font-size="10">✓ Multi-cloud (AWS + GCP + Azure)</text>
+                        <text x="810" y="469" text-anchor="middle" fill="#00ED64" font-size="10">✓ Latencia local &lt; 20ms</text>
+                    </svg>
+                </div>
+                
+                <div class="grid grid-cols-1 gap-4 mt-4">
+                    <!-- Ops Manager -->
+                    <div class="card card-gradient">
+                        <div class="flex items-start gap-4">
+                            <div class="feature-icon" style="font-size: var(--text-3xl);">🏢</div>
+                            <div style="flex: 1;">
+                                <h4>1. MongoDB Ops Manager / Cloud Manager</h4>
+                                <p><strong style="color: var(--color-primary);">La solución diseñada para clústeres híbridos</strong></p>
+                                
+                                <div class="mt-3">
+                                    <h6>¿Qué es?</h6>
+                                    <p>"Atlas, pero para tus propios servidores". Es el mismo software de automatización que usa Atlas, pero instalado en tu infraestructura.</p>
+                                </div>
+
+                                <div class="success-box mt-3">
+                                    <h6>¿Cómo funciona?</h6>
+                                    <ul>
+                                        <li>Instalas agente de MongoDB en tus servidores on-premise y en nube</li>
+                                        <li>Desde consola de Ops Manager: creas, gestionas y monitoreas ReplicaSets híbridos</li>
+                                        <li>Nodos distribuidos entre on-premise y nube con gestión unificada</li>
+                                        <li>Misma potencia de automatización que Atlas</li>
+                                    </ul>
+                                </div>
+
+                                <div class="highlight-box mt-3">
+                                    <strong>Ventaja:</strong> Control total y gestión unificada para un verdadero clúster híbrido
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- mongomirror -->
+                    <div class="card card-gradient">
+                        <div class="flex items-start gap-4">
+                            <div class="feature-icon" style="font-size: var(--text-3xl);">🔄</div>
+                            <div style="flex: 1;">
+                                <h4>2. Replicación Unidireccional con mongomirror</h4>
+                                <p><strong style="color: var(--color-primary);">Para copiar datos de Atlas a on-premise (o viceversa)</strong></p>
+                                
+                                <div class="mt-3">
+                                    <h6>¿Qué es?</h6>
+                                    <p>Utilidad que permite replicar datos de un clúster de MongoDB a otro continuamente.</p>
+                                </div>
+
+                                <div class="mt-3">
+                                    <h6>¿Cómo funciona?</h6>
+                                    <ul>
+                                        <li>Se conecta a tu clúster Atlas como fuente</li>
+                                        <li>Clúster on-premise como destino</li>
+                                        <li>Sincroniza continuamente los datos</li>
+                                    </ul>
+                                </div>
+
+                                <div class="warning-box mt-3">
+                                    <strong>Limitación importante:</strong> Replicación en una sola dirección. El clúster on-premise sería copia de solo lectura. No es HA activa-activa.
+                                </div>
+
+                                <div class="highlight-box mt-3">
+                                    <strong>Casos de uso:</strong> Analítica, reportes, backup adicional on-premise
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cluster-to-Cluster Sync -->
+                    <div class="card card-gradient">
+                        <div class="flex items-start gap-4">
+                            <div class="feature-icon" style="font-size: var(--text-3xl);">🔗</div>
+                            <div style="flex: 1;">
+                                <h4>3. Cluster-to-Cluster Sync (mongosync)</h4>
+                                <p><strong style="color: var(--color-primary);">Sincronización continua near-real-time</strong></p>
+                                
+                                <div class="success-box mt-3">
+                                    <h6>Cuándo usar</h6>
+                                    <ul>
+                                        <li>DR activo-pasivo entre on-prem y Atlas</li>
+                                        <li>Feeds analíticos continuos</li>
+                                        <li>Migraciones prolongadas con rollback plan</li>
+                                    </ul>
+                                </div>
+
+                                <div class="warning-box mt-3">
+                                    <strong>⚠️ Importante:</strong> El destino debe ser read-only para colecciones sincronizadas (evita conflictos)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Decisión -->
+            <div class="card card-bordered">
+                <h4 style="color: var(--color-primary);">📋 Resumen: ¿Qué Usar y Cuándo?</h4>
+                <div class="table-container mt-4">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Objetivo</th>
+                                <th>Solución Recomendada</th>
+                                <th>Características</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Alta Disponibilidad / DR Híbrido</strong></td>
+                                <td>MongoDB Ops Manager o Cloud Manager</td>
+                                <td>ReplicaSet verdaderamente híbrido con failover automático</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Copia de datos Atlas → On-Premise</strong></td>
+                                <td>mongomirror o mongosync</td>
+                                <td>Replicación unidireccional continua, destino read-only</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gestión 100% en nube multi-región/nube</strong></td>
+                                <td>MongoDB Atlas Global Clusters</td>
+                                <td>Geo-sharding automático, multi-cloud, gestión completa</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Migración viva on-prem → Atlas</strong></td>
+                                <td>Atlas Live Migration</td>
+                                <td>Migración online con mínimo downtime, cambio controlado</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Checklist Operativo -->
+    <section class="section">
+        <div class="container">
+            <div class="text-center mb-6">
+                <span class="badge badge-secondary mb-3">Para Arquitectos</span>
+                <h2 class="text-gradient">Checklist Operativo</h2>
+                <p style="max-width: 800px; margin: 0 auto; font-size: var(--text-lg);">
+                    <em>"Para que tu yo del futuro te aplauda"</em>
+                </p>
+            </div>
+
+            <!-- Diagrama de Árbol de Decisión -->
+            <div class="card card-bordered mongodb-glow mb-5">
+                <h3 style="color: var(--color-primary); text-align: center;">🎯 Árbol de Decisión: ¿Qué Arquitectura Elegir?</h3>
+                
+                <div class="diagram-container">
+                    <svg width="100%" height="550" viewBox="0 0 1100 550" style="max-width: 100%;">
+                        <!-- Título -->
+                        <text x="550" y="30" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="16">ÁRBOL DE DECISIÓN DE ARQUITECTURA MONGODB</text>
+                        
+                        <!-- Pregunta Inicial -->
+                        <rect x="450" y="50" width="200" height="60" rx="30" fill="#5644D4" stroke="#5644D4" stroke-width="3"/>
+                        <text x="550" y="75" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="13">¿Necesitas integración</text>
+                        <text x="550" y="92" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="13">on-premise + nube?</text>
+                        
+                        <!-- Branch SÍ -->
+                        <path d="M 480 110 L 280 180" stroke="#00ED64" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        <text x="360" y="140" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="12">SÍ</text>
+                        
+                        <!-- Branch NO -->
+                        <path d="M 620 110 L 820 180" stroke="#EF4444" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        <text x="740" y="140" text-anchor="middle" fill="#EF4444" font-weight="bold" font-size="12">NO</text>
+                        
+                        <!-- Decisión: ¿Failover bidireccional? -->
+                        <rect x="180" y="180" width="200" height="60" rx="10" fill="rgba(0, 237, 100, 0.1)" stroke="#00ED64" stroke-width="2"/>
+                        <text x="280" y="205" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="12">¿Necesitas failover</text>
+                        <text x="280" y="222" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="12">bidireccional automático?</text>
+                        
+                        <!-- Branch SÍ - Ops Manager -->
+                        <path d="M 220 240 L 180 300" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="195" y="270" text-anchor="middle" fill="#00ED64" font-size="10">SÍ</text>
+                        
+                        <rect x="50" y="300" width="180" height="90" rx="8" fill="#00ED64" stroke="#00ED64" stroke-width="3"/>
+                        <text x="140" y="325" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="13">OPS MANAGER</text>
+                        <text x="140" y="345" text-anchor="middle" fill="#001E2B" font-size="10">✓ ReplicaSet híbrido real</text>
+                        <text x="140" y="360" text-anchor="middle" fill="#001E2B" font-size="10">✓ Failover automático</text>
+                        <text x="140" y="375" text-anchor="middle" fill="#001E2B" font-size="10">✓ Control total</text>
+                        
+                        <!-- Branch NO - mongosync -->
+                        <path d="M 340 240 L 380 300" stroke="#F59E0B" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="365" y="270" text-anchor="middle" fill="#F59E0B" font-size="10">NO</text>
+                        
+                        <rect x="290" y="300" width="180" height="90" rx="8" fill="rgba(245, 158, 11, 0.2)" stroke="#F59E0B" stroke-width="3"/>
+                        <text x="380" y="325" text-anchor="middle" fill="#F59E0B" font-weight="bold" font-size="13">MONGOSYNC</text>
+                        <text x="380" y="345" text-anchor="middle" fill="#B8C4CE" font-size="10">✓ Replicación unidireccional</text>
+                        <text x="380" y="360" text-anchor="middle" fill="#B8C4CE" font-size="10">✓ DR / Analytics</text>
+                        <text x="380" y="375" text-anchor="middle" fill="#B8C4CE" font-size="10">⚠ Destino read-only</text>
+                        
+                        <!-- Decisión: ¿Multi-región? -->
+                        <rect x="720" y="180" width="200" height="60" rx="10" fill="rgba(86, 68, 212, 0.1)" stroke="#5644D4" stroke-width="2"/>
+                        <text x="820" y="205" text-anchor="middle" fill="#5644D4" font-weight="bold" font-size="12">¿Necesitas baja latencia</text>
+                        <text x="820" y="222" text-anchor="middle" fill="#5644D4" font-weight="bold" font-size="12">en múltiples regiones?</text>
+                        
+                        <!-- Branch SÍ - Escrituras locales? -->
+                        <path d="M 820 240 L 820 300" stroke="#5644D4" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="840" y="270" text-anchor="middle" fill="#5644D4" font-size="10">SÍ</text>
+                        
+                        <rect x="720" y="300" width="200" height="60" rx="10" fill="rgba(86, 68, 212, 0.1)" stroke="#5644D4" stroke-width="2"/>
+                        <text x="820" y="325" text-anchor="middle" fill="#5644D4" font-weight="bold" font-size="12">¿Escrituras locales</text>
+                        <text x="820" y="342" text-anchor="middle" fill="#5644D4" font-weight="bold" font-size="12">por región?</text>
+                        
+                        <!-- Zone Sharding -->
+                        <path d="M 760 360 L 680 420" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="715" y="390" text-anchor="middle" fill="#00ED64" font-size="10">SÍ</text>
+                        
+                        <rect x="550" y="420" width="180" height="100" rx="8" fill="#00ED64" stroke="#00ED64" stroke-width="3"/>
+                        <text x="640" y="445" text-anchor="middle" fill="#001E2B" font-weight="bold" font-size="13">ZONE SHARDING</text>
+                        <text x="640" y="465" text-anchor="middle" fill="#001E2B" font-size="10">✓ Escrituras locales</text>
+                        <text x="640" y="480" text-anchor="middle" fill="#001E2B" font-size="10">✓ GDPR compliance</text>
+                        <text x="640" y="495" text-anchor="middle" fill="#001E2B" font-size="10">✓ Latencia &lt; 20ms</text>
+                        <text x="640" y="510" text-anchor="middle" fill="#001E2B" font-size="10">✓ Escalado horizontal</text>
+                        
+                        <!-- Multi-Región ReplicaSet -->
+                        <path d="M 880 360 L 960 420" stroke="#5644D4" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="925" y="390" text-anchor="middle" fill="#5644D4" font-size="10">NO</text>
+                        
+                        <rect x="870" y="420" width="180" height="100" rx="8" fill="rgba(86, 68, 212, 0.2)" stroke="#5644D4" stroke-width="3"/>
+                        <text x="960" y="445" text-anchor="middle" fill="#5644D4" font-weight="bold" font-size="13">MULTI-REGIÓN RS</text>
+                        <text x="960" y="465" text-anchor="middle" fill="#B8C4CE" font-size="10">✓ Lecturas locales</text>
+                        <text x="960" y="480" text-anchor="middle" fill="#B8C4CE" font-size="10">✓ Escrituras centralizadas</text>
+                        <text x="960" y="495" text-anchor="middle" fill="#B8C4CE" font-size="10">✓ Simplicidad operativa</text>
+                        <text x="960" y="510" text-anchor="middle" fill="#B8C4CE" font-size="10">✓ RPO ≈ 0</text>
+                        
+                        <!-- Branch NO - Single Region -->
+                        <path d="M 920 240 L 980 300" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="955" y="270" text-anchor="middle" fill="#3B82F6" font-size="10">NO</text>
+                        
+                        <rect x="890" y="300" width="180" height="90" rx="8" fill="rgba(59, 130, 246, 0.2)" stroke="#3B82F6" stroke-width="3"/>
+                        <text x="980" y="325" text-anchor="middle" fill="#3B82F6" font-weight="bold" font-size="13">SINGLE REGION</text>
+                        <text x="980" y="345" text-anchor="middle" fill="#B8C4CE" font-size="10">✓ Atlas estándar</text>
+                        <text x="980" y="360" text-anchor="middle" fill="#B8C4CE" font-size="10">✓ Multi-AZ HA</text>
+                        <text x="980" y="375" text-anchor="middle" fill="#B8C4CE" font-size="10">✓ Costo optimizado</text>
+                    </svg>
+                </div>
+                
+                <div style="text-align: center; margin-top: var(--spacing-lg);">
+                    <span class="badge badge-primary">Elige según requisitos de negocio</span>
+                    <span class="badge badge-secondary">RPO/RTO</span>
+                    <span class="badge badge-secondary">Compliance</span>
+                    <span class="badge badge-secondary">Budget</span>
+                </div>
+            </div>
+
+            <!-- Visualización del Checklist -->
+            <div class="card card-bordered mongodb-glow mb-5">
+                <h3 style="color: var(--color-primary); text-align: center;">✅ Checklist Visual Completo</h3>
+                
+                <div class="diagram-container">
+                    <svg width="100%" height="600" viewBox="0 0 1100 600" style="max-width: 100%;">
+                        <!-- Grid de 4 columnas -->
+                        
+                        <!-- ARQUITECTURA -->
+                        <rect x="20" y="20" width="250" height="280" rx="10" fill="rgba(0, 237, 100, 0.05)" stroke="#00ED64" stroke-width="2"/>
+                        <text x="145" y="50" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="14">🏗️ ARQUITECTURA</text>
+                        
+                        <g transform="translate(40, 70)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Latencia medida (p50/p95/p99)</text>
+                        </g>
+                        
+                        <g transform="translate(40, 110)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ w: majority, j: true</text>
+                        </g>
+                        
+                        <g transform="translate(40, 150)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Prioridades/tags por región</text>
+                        </g>
+                        
+                        <g transform="translate(40, 190)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Shard-key validada</text>
+                        </g>
+                        
+                        <g transform="translate(40, 230)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Plan de re-shard</text>
+                        </g>
+                        
+                        <!-- BACKUPS -->
+                        <rect x="290" y="20" width="250" height="280" rx="10" fill="rgba(86, 68, 212, 0.05)" stroke="#5644D4" stroke-width="2"/>
+                        <text x="415" y="50" text-anchor="middle" fill="#5644D4" font-weight="bold" font-size="14">💾 BACKUPS</text>
+                        
+                        <g transform="translate(310, 70)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#5644D4" stroke-width="1"/>
+                            <text x="10" y="20" fill="#5644D4" font-size="11">✅ PITR activo</text>
+                        </g>
+                        
+                        <g transform="translate(310, 110)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#5644D4" stroke-width="1"/>
+                            <text x="10" y="20" fill="#5644D4" font-size="11">✅ Retención documentada</text>
+                        </g>
+                        
+                        <g transform="translate(310, 150)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#5644D4" stroke-width="1"/>
+                            <text x="10" y="20" fill="#5644D4" font-size="11">✅ Restores trimestrales</text>
+                        </g>
+                        
+                        <g transform="translate(310, 190)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#5644D4" stroke-width="1"/>
+                            <text x="10" y="20" fill="#5644D4" font-size="11">✅ RPO/RTO medidos</text>
+                        </g>
+                        
+                        <g transform="translate(310, 230)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#5644D4" stroke-width="1"/>
+                            <text x="10" y="20" fill="#5644D4" font-size="11">✅ Runbooks actualizados</text>
+                        </g>
+                        
+                        <!-- SEGURIDAD -->
+                        <rect x="560" y="20" width="250" height="280" rx="10" fill="rgba(239, 68, 68, 0.05)" stroke="#EF4444" stroke-width="2"/>
+                        <text x="685" y="50" text-anchor="middle" fill="#EF4444" font-weight="bold" font-size="14">🔒 SEGURIDAD</text>
+                        
+                        <g transform="translate(580, 70)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#EF4444" stroke-width="1"/>
+                            <text x="10" y="20" fill="#EF4444" font-size="11">✅ TLS mTLS entre nodos</text>
+                        </g>
+                        
+                        <g transform="translate(580, 110)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#EF4444" stroke-width="1"/>
+                            <text x="10" y="20" fill="#EF4444" font-size="11">✅ KMS/KMIP cifrado</text>
+                        </g>
+                        
+                        <g transform="translate(580, 150)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#EF4444" stroke-width="1"/>
+                            <text x="10" y="20" fill="#EF4444" font-size="11">✅ Rotación de secretos</text>
+                        </g>
+                        
+                        <g transform="translate(580, 190)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#EF4444" stroke-width="1"/>
+                            <text x="10" y="20" fill="#EF4444" font-size="11">✅ RBAC mínimo privilegio</text>
+                        </g>
+                        
+                        <g transform="translate(580, 230)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#EF4444" stroke-width="1"/>
+                            <text x="10" y="20" fill="#EF4444" font-size="11">✅ Auditoría habilitada</text>
+                        </g>
+                        
+                        <!-- OBSERVABILIDAD -->
+                        <rect x="830" y="20" width="250" height="280" rx="10" fill="rgba(245, 158, 11, 0.05)" stroke="#F59E0B" stroke-width="2"/>
+                        <text x="955" y="50" text-anchor="middle" fill="#F59E0B" font-weight="bold" font-size="14">📊 OBSERVABILIDAD</text>
+                        
+                        <g transform="translate(850, 70)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#F59E0B" stroke-width="1"/>
+                            <text x="10" y="20" fill="#F59E0B" font-size="11">✅ Profiler por muestreo</text>
+                        </g>
+                        
+                        <g transform="translate(850, 110)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#F59E0B" stroke-width="1"/>
+                            <text x="10" y="20" fill="#F59E0B" font-size="11">✅ FTDC/metrics centralizadas</text>
+                        </g>
+                        
+                        <g transform="translate(850, 150)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#F59E0B" stroke-width="1"/>
+                            <text x="10" y="20" fill="#F59E0B" font-size="11">✅ Alertas replication lag</text>
+                        </g>
+                        
+                        <g transform="translate(850, 190)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#F59E0B" stroke-width="1"/>
+                            <text x="10" y="20" fill="#F59E0B" font-size="11">✅ Opcounters, cache hit</text>
+                        </g>
+                        
+                        <g transform="translate(850, 230)">
+                            <rect x="0" y="0" width="210" height="30" rx="4" fill="#112331" stroke="#F59E0B" stroke-width="1"/>
+                            <text x="10" y="20" fill="#F59E0B" font-size="11">✅ Dashboard métricas clave</text>
+                        </g>
+                        
+                        <!-- NETWORKING -->
+                        <rect x="20" y="320" width="520" height="260" rx="10" fill="rgba(59, 130, 246, 0.05)" stroke="#3B82F6" stroke-width="2"/>
+                        <text x="280" y="350" text-anchor="middle" fill="#3B82F6" font-weight="bold" font-size="14">🌐 NETWORKING & CONECTIVIDAD</text>
+                        
+                        <g transform="translate(40, 370)">
+                            <rect x="0" y="0" width="240" height="30" rx="4" fill="#112331" stroke="#3B82F6" stroke-width="1"/>
+                            <text x="10" y="20" fill="#3B82F6" font-size="11">✅ VPN/Direct Connect configurado</text>
+                        </g>
+                        
+                        <g transform="translate(40, 410)">
+                            <rect x="0" y="0" width="240" height="30" rx="4" fill="#112331" stroke="#3B82F6" stroke-width="1"/>
+                            <text x="10" y="20" fill="#3B82F6" font-size="11">✅ VPC Peering activo</text>
+                        </g>
+                        
+                        <g transform="translate(40, 450)">
+                            <rect x="0" y="0" width="240" height="30" rx="4" fill="#112331" stroke="#3B82F6" stroke-width="1"/>
+                            <text x="10" y="20" fill="#3B82F6" font-size="11">✅ Private Endpoints configurados</text>
+                        </g>
+                        
+                        <g transform="translate(40, 490)">
+                            <rect x="0" y="0" width="240" height="30" rx="4" fill="#112331" stroke="#3B82F6" stroke-width="1"/>
+                            <text x="10" y="20" fill="#3B82F6" font-size="11">✅ Firewall rules least privilege</text>
+                        </g>
+                        
+                        <g transform="translate(40, 530)">
+                            <rect x="0" y="0" width="240" height="30" rx="4" fill="#112331" stroke="#3B82F6" stroke-width="1"/>
+                            <text x="10" y="20" fill="#3B82F6" font-size="11">✅ Latencia inter-nodos &lt; 30ms</text>
+                        </g>
+                        
+                        <g transform="translate(300, 370)">
+                            <rect x="0" y="0" width="220" height="30" rx="4" fill="#112331" stroke="#3B82F6" stroke-width="1"/>
+                            <text x="10" y="20" fill="#3B82F6" font-size="11">✅ DNS resolution validado</text>
+                        </g>
+                        
+                        <g transform="translate(300, 410)">
+                            <rect x="0" y="0" width="220" height="30" rx="4" fill="#112331" stroke="#3B82F6" stroke-width="1"/>
+                            <text x="10" y="20" fill="#3B82F6" font-size="11">✅ IP Access List actualizada</text>
+                        </g>
+                        
+                        <g transform="translate(300, 450)">
+                            <rect x="0" y="0" width="220" height="30" rx="4" fill="#112331" stroke="#3B82F6" stroke-width="1"/>
+                            <text x="10" y="20" fill="#3B82F6" font-size="11">✅ BGP routes configuradas</text>
+                        </g>
+                        
+                        <g transform="translate(300, 490)">
+                            <rect x="0" y="0" width="220" height="30" rx="4" fill="#112331" stroke="#3B82F6" stroke-width="1"/>
+                            <text x="10" y="20" fill="#3B82F6" font-size="11">✅ NACLs/Security Groups</text>
+                        </g>
+                        
+                        <g transform="translate(300, 530)">
+                            <rect x="0" y="0" width="220" height="30" rx="4" fill="#112331" stroke="#3B82F6" stroke-width="1"/>
+                            <text x="10" y="20" fill="#3B82F6" font-size="11">✅ Bandwidth monitoring</text>
+                        </g>
+                        
+                        <!-- RUNBOOKS -->
+                        <rect x="560" y="320" width="520" height="260" rx="10" fill="rgba(0, 237, 100, 0.05)" stroke="#00ED64" stroke-width="2"/>
+                        <text x="820" y="350" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="14">📚 RUNBOOKS & DOCUMENTACIÓN</text>
+                        
+                        <g transform="translate(580, 370)">
+                            <rect x="0" y="0" width="230" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Failover procedure documentado</text>
+                        </g>
+                        
+                        <g transform="translate(580, 410)">
+                            <rect x="0" y="0" width="230" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Rollback plan actualizado</text>
+                        </g>
+                        
+                        <g transform="translate(580, 450)">
+                            <rect x="0" y="0" width="230" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Incidentes 3 a.m. cubiertos</text>
+                        </g>
+                        
+                        <g transform="translate(580, 490)">
+                            <rect x="0" y="0" width="230" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Contactos on-call definidos</text>
+                        </g>
+                        
+                        <g transform="translate(580, 530)">
+                            <rect x="0" y="0" width="230" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Escalation path claro</text>
+                        </g>
+                        
+                        <g transform="translate(830, 370)">
+                            <rect x="0" y="0" width="230" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Arquitectura diagramada</text>
+                        </g>
+                        
+                        <g transform="translate(830, 410)">
+                            <rect x="0" y="0" width="230" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Configs versionadas (IaC)</text>
+                        </g>
+                        
+                        <g transform="translate(830, 450)">
+                            <rect x="0" y="0" width="230" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Change log mantenido</text>
+                        </g>
+                        
+                        <g transform="translate(830, 490)">
+                            <rect x="0" y="0" width="230" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Postmortem template</text>
+                        </g>
+                        
+                        <g transform="translate(830, 530)">
+                            <rect x="0" y="0" width="230" height="30" rx="4" fill="#112331" stroke="#00ED64" stroke-width="1"/>
+                            <text x="10" y="20" fill="#00ED64" font-size="11">✅ Conocimiento compartido</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Diagrama de Red y Conectividad -->
+                <div class="card card-gradient card-bordered">
+                    <h4 style="color: var(--color-primary);">🌐 Topología de Red</h4>
+                    <div class="diagram-container" style="padding: var(--spacing-md);">
+                        <svg width="100%" height="250" viewBox="0 0 400 250">
+                            <!-- On-Prem -->
+                            <rect x="20" y="80" width="100" height="90" rx="6" fill="rgba(255, 153, 0, 0.1)" stroke="#FF9900" stroke-width="2"/>
+                            <text x="70" y="105" text-anchor="middle" fill="#FF9900" font-weight="bold" font-size="11">On-Premise</text>
+                            <text x="70" y="120" text-anchor="middle" fill="#B8C4CE" font-size="9">Data Center</text>
+                            <rect x="35" y="135" width="70" height="35" rx="4" fill="#112331" stroke="#FF9900" stroke-width="1"/>
+                            <text x="70" y="155" text-anchor="middle" fill="#FF9900" font-size="9">MongoDB</text>
+                            
+                            <!-- Direct Connect -->
+                            <rect x="150" y="95" width="100" height="60" rx="6" fill="rgba(0, 237, 100, 0.1)" stroke="#00ED64" stroke-width="2"/>
+                            <text x="200" y="115" text-anchor="middle" fill="#00ED64" font-weight="bold" font-size="10">Direct Connect</text>
+                            <text x="200" y="130" text-anchor="middle" fill="#B8C4CE" font-size="8">ExpressRoute</text>
+                            <text x="200" y="143" text-anchor="middle" fill="#B8C4CE" font-size="8">Interconnect</text>
+                            
+                            <!-- Cloud -->
+                            <rect x="280" y="80" width="100" height="90" rx="6" fill="rgba(66, 133, 244, 0.1)" stroke="#4285F4" stroke-width="2"/>
+                            <text x="330" y="105" text-anchor="middle" fill="#4285F4" font-weight="bold" font-size="11">Cloud</text>
+                            <text x="330" y="120" text-anchor="middle" fill="#B8C4CE" font-size="9">AWS/GCP/Azure</text>
+                            <rect x="295" y="135" width="70" height="35" rx="4" fill="#112331" stroke="#4285F4" stroke-width="1"/>
+                            <text x="330" y="155" text-anchor="middle" fill="#4285F4" font-size="9">Atlas</text>
+                            
+                            <!-- Connections -->
+                            <path d="M 120 125 L 150 125" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <path d="M 250 125 L 280 125" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            
+                            <!-- VPN alternativo -->
+                            <path d="M 70 170 Q 200 210 330 170" stroke="#F59E0B" stroke-width="2" stroke-dasharray="3,3"/>
+                            <text x="200" y="225" text-anchor="middle" fill="#F59E0B" font-size="9">VPN (backup)</text>
+                            
+                            <!-- Latency label -->
+                            <text x="200" y="95" text-anchor="middle" fill="#00ED64" font-size="9">Latencia: &lt; 20ms</text>
+                        </svg>
+                    </div>
+                    <ul style="font-size: var(--text-sm); margin-top: var(--spacing-md);">
+                        <li>✅ Conexión dedicada para replicación</li>
+                        <li>✅ VPN como backup redundante</li>
+                        <li>✅ Cifrado TLS en tránsito</li>
+                    </ul>
+                </div>
+
+                <!-- Métricas de Monitoreo -->
+                <div class="card card-gradient card-bordered">
+                    <h4 style="color: var(--color-primary);">📈 Métricas Clave a Monitorear</h4>
+                    <div class="grid grid-cols-2 gap-2 mt-3" style="font-size: var(--text-sm);">
+                        <div style="background: var(--color-bg-tertiary); padding: var(--spacing-sm); border-radius: var(--radius-sm);">
+                            <strong style="color: var(--color-primary);">Replication Lag</strong>
+                            <p style="margin: 0; font-size: var(--text-xs); color: var(--color-text-muted);">Alerta: &gt; 10s</p>
+                        </div>
+                        <div style="background: var(--color-bg-tertiary); padding: var(--spacing-sm); border-radius: var(--radius-sm);">
+                            <strong style="color: var(--color-primary);">Oplog Window</strong>
+                            <p style="margin: 0; font-size: var(--text-xs); color: var(--color-text-muted);">Alerta: &lt; 2h</p>
+                        </div>
+                        <div style="background: var(--color-bg-tertiary); padding: var(--spacing-sm); border-radius: var(--radius-sm);">
+                            <strong style="color: var(--color-primary);">Cache Hit Ratio</strong>
+                            <p style="margin: 0; font-size: var(--text-xs); color: var(--color-text-muted);">Target: &gt; 95%</p>
+                        </div>
+                        <div style="background: var(--color-bg-tertiary); padding: var(--spacing-sm); border-radius: var(--radius-sm);">
+                            <strong style="color: var(--color-primary);">Connections</strong>
+                            <p style="margin: 0; font-size: var(--text-xs); color: var(--color-text-muted);">Alerta: &gt; 80%</p>
+                        </div>
+                        <div style="background: var(--color-bg-tertiary); padding: var(--spacing-sm); border-radius: var(--radius-sm);">
+                            <strong style="color: var(--color-primary);">Disk I/O</strong>
+                            <p style="margin: 0; font-size: var(--text-xs); color: var(--color-text-muted);">Monitor IOPS</p>
+                        </div>
+                        <div style="background: var(--color-bg-tertiary); padding: var(--spacing-sm); border-radius: var(--radius-sm);">
+                            <strong style="color: var(--color-primary);">CPU Usage</strong>
+                            <p style="margin: 0; font-size: var(--text-xs); color: var(--color-text-muted);">Alerta: &gt; 75%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Frases de Arquitecto -->
+            <div class="card card-bordered mongodb-glow mt-5">
+                <h4 style="color: var(--color-primary); text-align: center;">💡 Frases de Arquitecto</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div class="text-center" style="padding: var(--spacing-lg);">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">⏱️</div>
+                        <p style="font-style: italic; color: var(--color-text-secondary);">
+                            "No es alta disponibilidad si no has medido el RTO."
+                        </p>
+                    </div>
+                    <div class="text-center" style="padding: var(--spacing-lg);">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">💾</div>
+                        <p style="font-style: italic; color: var(--color-text-secondary);">
+                            "La copia que no restauras es un souvenir caro."
+                        </p>
+                    </div>
+                    <div class="text-center" style="padding: var(--spacing-lg);">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-md);">🗺️</div>
+                        <p style="font-style: italic; color: var(--color-text-secondary);">
+                            "Latencia manda la topología; compliance manda la shard-key."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: var(--color-bg-secondary); padding: var(--spacing-4xl) 0; text-align: center;">
+        <div class="container">
+            <h3 class="text-gradient mb-4">Best Data Practices</h3>
+            <p style="color: var(--color-text-muted); max-width: 600px; margin: 0 auto;">
+                Arquitectura MongoDB para Latinoamérica - Guía completa de patrones de alta disponibilidad, multi-región y recuperación ante desastres.
+            </p>
+            <div class="mt-5">
+                <span style="color: var(--color-text-muted);">© 2025 BDP. Todos los derechos reservados.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

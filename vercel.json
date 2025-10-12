@@ -299,6 +299,30 @@
       "dest": "/clientes/bancolombia/flappy.html"
     },
     {
+      "src": "/clientes/bancolombia/bintec2025/fraud_fighter_challenge(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bintec2025/fraud_fighter_challenge.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bintec2025/fraud_fighter_detection(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bintec2025/fraud_fighter_detection.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bintec2025/fraud_fighter_explanation(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bintec2025/fraud_fighter_explanation.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bintec2025/fraud_fighter_intro(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bintec2025/fraud_fighter_intro.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bintec2025/fraud_fighter(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bintec2025/fraud_fighter.html"
+    },
+    {
+      "src": "/clientes/bancolombia/bintec2025/generador_live(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bintec2025/generador_live.html"
+    },
+    {
       "src": "/juegos/flappy(?:/.*)?$",
       "dest": "/juegos/flappy.html"
     },
