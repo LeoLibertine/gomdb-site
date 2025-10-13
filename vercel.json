@@ -321,6 +321,10 @@
       "dest": "/clientes/bancolombia/bintec2025/generador_live.html"
     },
     {
+      "src": "/clientes/bancolombia/bintec2025/local_setup(?:/.*)?$",
+      "dest": "/clientes/bancolombia/bintec2025/lacal_setup.html"
+    },
+    {
       "src": "/juegos/flappy(?:/.*)?$",
       "dest": "/juegos/flappy.html"
     },
