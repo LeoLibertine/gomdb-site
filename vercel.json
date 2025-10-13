@@ -287,10 +287,7 @@
       "src": "/clientes/payway/salesforce(?:/.*)?$",
       "dest": "/clientes/payway/salesforce.html"
     },
-    {
-      "src": "/clientes/bdp/arquitectura(?:/.*)?$",
-      "dest": "/clientes/payway/arquitectura.svg"
-    },
+   
     {
       "src": "/clientes/coppel/matriz-universal(?:/.*)?$",
       "dest": "/clientes/coppel/matriz-universal.html"
