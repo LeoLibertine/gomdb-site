@@ -266,10 +266,7 @@
       "src": "/clientes/bancolombia/reporteejecutivo/pactuales(?:/.*)?$",
       "dest": "/clientes/bancolombia/reporteejecutivo/pactuales.html"
     },
-    {
-      "src": "/clientes/bdp/sizing(?:/.*)?$",
-      "dest": "/clientes/bdp/sizing.html"
-    },
+   
     {
       "src": "/clientes/bdp/bdp-replica(?:/.*)?$",
       "dest": "/clientes/bdp/bdp-replica.html"
