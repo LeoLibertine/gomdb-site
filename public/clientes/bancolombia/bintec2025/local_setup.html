@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Fraud Detection - Setup Local</title>
+    <style>
+        /* ============================================= 
+           Variables CSS - MongoDB Design System
+           ============================================= */
+        :root {
+            --color-primary: #00ED64;
+            --color-primary-hover: #00D757;
+            --color-primary-light: #00ED6420;
+            --color-bg-primary: #001E2B;
+            --color-bg-secondary: #0D2A3D;
+            --color-bg-tertiary: #112331;
+            --color-bg-card: #0D2A3D80;
+            --color-accent: #5644D4;
+            --color-accent-light: #5644D420;
+            --color-text-primary: #FFFFFF;
+            --color-text-secondary: #B8C4CE;
+            --color-text-muted: #718096;
+            --color-text-dark: #001E2B;
+            --color-success: #00ED64;
+            --color-warning: #F59E0B;
+            --color-error: #EF4444;
+            --color-info: #3B82F6;
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            --spacing-3xl: 4rem;
+            --spacing-4xl: 6rem;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+            --text-xs: 0.75rem;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+            --text-xl: 1.25rem;
+            --text-2xl: 1.5rem;
+            --text-3xl: 2rem;
+            --text-4xl: 2.5rem;
+            --text-5xl: 3rem;
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-full: 9999px;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+            --shadow-glow: 0 0 40px rgba(0, 237, 100, 0.3);
+            --transition-fast: 150ms ease;
+            --transition-base: 200ms ease;
+            --transition-slow: 300ms ease;
+        }
+
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background-color: rgba(0, 30, 43, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .navbar-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .navbar-links {
+            display: none;
+            gap: var(--spacing-xl);
+        }
+
+        @media (min-width: 768px) {
+            .navbar-links {
+                display: flex;
+            }
+        }
+
+        .navbar-link {
+            color: var(--color-text-secondary);
+            font-weight: 500;
+            transition: color var(--transition-base);
+            text-decoration: none;
+        }
+
+        .navbar-link:hover {
+            color: var(--color-primary);
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            padding-top: calc(80px + var(--spacing-4xl));
+            padding-bottom: var(--spacing-4xl);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .hero-blur {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        .hero-blur-1 {
+            width: 400px;
+            height: 400px;
+            background-color: var(--color-primary);
+            top: 10%;
+            left: -100px;
+        }
+
+        .hero-blur-2 {
+            width: 500px;
+            height: 500px;
+            background-color: var(--color-accent);
+            bottom: -100px;
+            right: -150px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            margin-bottom: var(--spacing-lg);
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: var(--text-xl);
+            color: var(--color-text-secondary);
+            max-width: 700px;
+            margin: 0 auto var(--spacing-xl);
+        }
+
+        /* Options Grid */
+        .options-section {
+            padding: var(--spacing-4xl) 0;
+        }
+
+        .section-title {
+            font-size: var(--text-4xl);
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+            color: var(--color-primary);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-xl);
+        }
+
+        @media (min-width: 768px) {
+            .options-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .option-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.5) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .option-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-glow);
+            border-color: var(--color-primary);
+        }
+
+        .option-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .option-card h3 {
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .option-badge {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-md);
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            border-radius: var(--radius-full);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            margin-top: var(--spacing-sm);
+        }
+
+        /* Steps Section */
+        .steps-section {
+            padding: var(--spacing-4xl) 0;
+            background-color: var(--color-bg-secondary);
+        }
+
+        .step-card {
+            background-color: var(--color-bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-lg);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: var(--text-xl);
+            color: var(--color-text-dark);
+        }
+
+        .step-title {
+            font-size: var(--text-2xl);
+            color: var(--color-primary);
+        }
+
+        .code-block {
+            background-color: var(--color-bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            font-family: var(--font-mono);
+            overflow-x: auto;
+            margin: var(--spacing-md) 0;
+            position: relative;
+        }
+
+        .code-block code {
+            color: var(--color-primary);
+            font-size: var(--text-sm);
+            line-height: 1.8;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: var(--spacing-sm);
+            right: var(--spacing-sm);
+            background-color: var(--color-primary);
+            color: var(--color-text-dark);
+            border: none;
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: var(--text-xs);
+            font-weight: 600;
+            transition: all var(--transition-base);
+        }
+
+        .copy-btn:hover {
+            background-color: var(--color-primary-hover);
+            transform: scale(1.05);
+        }
+
+        /* Checklist */
+        .checklist {
+            background-color: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: background-color var(--transition-base);
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-item:hover {
+            background-color: rgba(0, 237, 100, 0.05);
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-base);
+        }
+
+        .checklist-item.checked .checkbox {
+            background-color: var(--color-primary);
+        }
+
+        .checkmark {
+            color: var(--color-text-dark);
+            font-weight: 700;
+            display: none;
+        }
+
+        .checklist-item.checked .checkmark {
+            display: block;
+        }
+
+        /* Troubleshooting */
+        .troubleshooting-grid {
+            display: grid;
+            gap: var(--spacing-lg);
+        }
+
+        .trouble-card {
+            background-color: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            border-left: 4px solid var(--color-error);
+        }
+
+        .trouble-title {
+            color: var(--color-error);
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .trouble-solution {
+            color: var(--color-success);
+            font-weight: 600;
+            margin-top: var(--spacing-md);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-xl);
+            font-weight: 600;
+            font-size: var(--text-base);
+            border-radius: var(--radius-full);
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: var(--color-text-dark);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-hover);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--color-primary);
+            border: 2px solid var(--color-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--color-primary);
+            color: var(--color-text-dark);
+        }
+
+        /* Tab System */
+        .tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: none;
+            border: none;
+            color: var(--color-text-secondary);
+            font-size: var(--text-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--color-bg-secondary);
+            padding: var(--spacing-2xl) 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        footer p {
+            color: var(--color-text-secondary);
+        }
+
+        /* Utilities */
+        .text-center { text-align: center; }
+        .mt-lg { margin-top: var(--spacing-lg); }
+        .mb-lg { margin-bottom: var(--spacing-lg); }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <div class="navbar-logo">
+                🚨 Fraud Detection Setup
+            </div>
+            <div class="navbar-links">
+                <a href="#opciones" class="navbar-link">Opciones</a>
+                <a href="#jupyter" class="navbar-link">Jupyter</a>
+                <a href="#vscode" class="navbar-link">VS Code</a>
+                <a href="#troubleshooting" class="navbar-link">Ayuda</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-blur hero-blur-1"></div>
+        <div class="hero-blur hero-blur-2"></div>
+        <div class="container">
+            <h1>🚀 Setup Local<br>Fraud Detection</h1>
+            <p>Guía paso a paso para ejecutar tu notebook de detección de fraudes con MongoDB Vector Search localmente</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
+                <a href="#opciones" class="btn btn-primary">⚡ Comenzar</a>
+                <a href="#checklist" class="btn btn-secondary">📋 Checklist</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Options Section -->
+    <section id="opciones" class="options-section">
+        <div class="container">
+            <h2 class="section-title">Elige tu Entorno</h2>
+            <div class="options-grid">
+                <!-- Jupyter Option -->
+                <div class="option-card" onclick="showTab('jupyter')">
+                    <div class="option-icon">📓</div>
+                    <h3>Jupyter Notebook</h3>
+                    <p style="color: var(--color-text-secondary);">La forma clásica y más recomendada para data science</p>
+                    <span class="option-badge">⭐ RECOMENDADA</span>
+                </div>
+
+                <!-- VS Code Option -->
+                <div class="option-card" onclick="showTab('vscode')">
+                    <div class="option-icon">💻</div>
+                    <h3>VS Code + Jupyter</h3>
+                    <p style="color: var(--color-text-secondary);">Para desarrolladores que prefieren un IDE completo</p>
+                    <span class="option-badge">🔧 AVANZADA</span>
+                </div>
+
+                <!-- Colab Option -->
+                <div class="option-card" onclick="showTab('colab')">
+                    <div class="option-icon">☁️</div>
+                    <h3>Google Colab</h3>
+                    <p style="color: var(--color-text-secondary);">Sin instalación, directo en el navegador</p>
+                    <span class="option-badge">⚡ RÁPIDA</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Steps Sections -->
+    <section class="steps-section">
+        <div class="container">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('jupyter')">📓 Jupyter Notebook</button>
+                <button class="tab" onclick="showTab('vscode')">💻 VS Code</button>
+                <button class="tab" onclick="showTab('colab')">☁️ Google Colab</button>
+            </div>
+
+            <!-- Jupyter Content -->
+            <div id="jupyter-content" class="tab-content active">
+                <h2 style="color: var(--color-primary); margin-bottom: 2rem;">📓 Jupyter Notebook - Setup Completo</h2>
+
+                <!-- Step 1 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <h3 class="step-title">Instalar Python</h3>
+                    </div>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">Python 3.8 o superior es requerido</p>
+                    
+                    <div class="tabs">
+                        <button class="tab active" onclick="showPlatform('windows')">🪟 Windows</button>
+                        <button class="tab" onclick="showPlatform('mac')">🍎 Mac</button>
+                        <button class="tab" onclick="showPlatform('linux')">🐧 Linux</button>
+                    </div>
+
+                    <div id="windows-platform" class="tab-content active">
+                        <p style="color: var(--color-text-secondary);">1. Descarga desde: <a href="https://www.python.org/downloads/" target="_blank" style="color: var(--color-primary);">python.org/downloads</a></p>
+                        <p style="color: var(--color-warning); margin: 0.5rem 0;">⚠️ IMPORTANTE: Marca "Add Python to PATH" durante la instalación</p>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            <code># Verificar instalación
+python --version</code>
+                        </div>
+                    </div>
+
+                    <div id="mac-platform" class="tab-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            <code># Con Homebrew (recomendado)
+brew install python
+
+# Verificar
+python3 --version</code>
+                        </div>
+                    </div>
+
+                    <div id="linux-platform" class="tab-content">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            <code># Ubuntu/Debian
+sudo apt update
+sudo apt install python3 python3-pip
+
+# Verificar
+python3 --version</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <h3 class="step-title">Crear Entorno Virtual</h3>
+                    </div>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">Aísla las dependencias de tu proyecto</p>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        <code># Crear carpeta del proyecto
+mkdir fraud-detection
+cd fraud-detection
+
+# Crear entorno virtual
+python -m venv venv
+
+# Activar (Windows)
+venv\Scripts\activate
+
+# Activar (Mac/Linux)
+source venv/bin/activate</code>
+                    </div>
+                    <p style="color: var(--color-success); margin-top: 1rem;">✅ Verás (venv) al inicio de tu terminal cuando esté activo</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <h3 class="step-title">Instalar Dependencias</h3>
+                    </div>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        <code># Instalar todas las librerías necesarias
+pip install pymongo sentence-transformers jupyter notebook ipywidgets plotly
+
+# Si da error, instala una por una:
+pip install pymongo
+pip install sentence-transformers
+pip install jupyter
+pip install notebook
+pip install ipywidgets
+pip install plotly</code>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">4</div>
+                        <h3 class="step-title">Habilitar Widgets</h3>
+                    </div>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">Necesario para el dashboard interactivo (celda 19)</p>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        <code># Habilitar extensiones
+jupyter nbextension enable --py widgetsnbextension</code>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">5</div>
+                        <h3 class="step-title">Descargar Notebook</h3>
+                    </div>
+                    <p style="color: var(--color-text-secondary);">1. Ve a tu Google Colab</p>
+                    <p style="color: var(--color-text-secondary);">2. File → Download → Download .ipynb</p>
+                    <p style="color: var(--color-text-secondary);">3. Guarda en tu carpeta fraud-detection</p>
+                </div>
+
+                <!-- Step 6 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">6</div>
+                        <h3 class="step-title">Iniciar Jupyter</h3>
+                    </div>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        <code># Desde la carpeta del proyecto con venv activo
+jupyter notebook</code>
+                    </div>
+                    <p style="color: var(--color-success); margin-top: 1rem;">✅ Se abrirá automáticamente en: http://localhost:8888</p>
+                </div>
+
+                <!-- Step 7 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">7</div>
+                        <h3 class="step-title">Ejecutar Notebook</h3>
+                    </div>
+                    <p style="color: var(--color-text-secondary);">1. Click en fraud_detection.ipynb</p>
+                    <p style="color: var(--color-text-secondary);">2. Ejecuta las celdas en orden (Shift + Enter)</p>
+                    <p style="color: var(--color-warning); margin-top: 1rem;">⚠️ En la celda 4, ingresa tu USER_PREFIX cuando te lo pida</p>
+                </div>
+            </div>
+
+            <!-- VS Code Content -->
+            <div id="vscode-content" class="tab-content">
+                <h2 style="color: var(--color-primary); margin-bottom: 2rem;">💻 VS Code + Jupyter Extension</h2>
+
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <h3 class="step-title">Instalar VS Code</h3>
+                    </div>
+                    <p style="color: var(--color-text-secondary);">Descarga desde: <a href="https://code.visualstudio.com/" target="_blank" style="color: var(--color-primary);">code.visualstudio.com</a></p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <h3 class="step-title">Instalar Extensiones</h3>
+                    </div>
+                    <p style="color: var(--color-text-secondary);">En VS Code, busca e instala:</p>
+                    <ul style="color: var(--color-text-secondary); margin-left: 2rem; margin-top: 1rem;">
+                        <li>✅ Python (Microsoft)</li>
+                        <li>✅ Jupyter (Microsoft)</li>
+                        <li>✅ Pylance (Microsoft)</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <h3 class="step-title">Configurar Proyecto</h3>
+                    </div>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        <code># Terminal en VS Code (Ctrl+`)
+python -m venv venv
+
+# Activar (Windows)
+venv\Scripts\activate
+
+# Activar (Mac/Linux)
+source venv/bin/activate
+
+# Instalar dependencias
+pip install pymongo sentence-transformers ipykernel ipywidgets plotly</code>
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">4</div>
+                        <h3 class="step-title">Seleccionar Kernel</h3>
+                    </div>
+                    <p style="color: var(--color-text-secondary);">1. Abre el notebook en VS Code</p>
+                    <p style="color: var(--color-text-secondary);">2. Click en "Select Kernel" (esquina superior derecha)</p>
+                    <p style="color: var(--color-text-secondary);">3. Elige "Python Environments..."</p>
+                    <p style="color: var(--color-text-secondary);">4. Selecciona el entorno venv</p>
+                </div>
+            </div>
+
+            <!-- Colab Content -->
+            <div id="colab-content" class="tab-content">
+                <h2 style="color: var(--color-primary); margin-bottom: 2rem;">☁️ Google Colab - Sin Instalación</h2>
+
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <h3 class="step-title">Abrir Colab</h3>
+                    </div>
+                    <p style="color: var(--color-text-secondary);">Ve a: <a href="https://colab.research.google.com/" target="_blank" style="color: var(--color-primary);">colab.research.google.com</a></p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <h3 class="step-title">Subir Notebook</h3>
+                    </div>
+                    <p style="color: var(--color-text-secondary);">File → Upload Notebook → Selecciona tu archivo .ipynb</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <h3 class="step-title">Ejecutar</h3>
+                    </div>
+                    <p style="color: var(--color-success);">✅ Todo está pre-configurado, solo ejecuta las celdas</p>
+                    <p style="color: var(--color-info); margin-top: 1rem;">💡 Ventajas: GPU gratis, sin instalación, en la nube</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Checklist Section -->
+    <section id="checklist" class="options-section">
+        <div class="container">
+            <h2 class="section-title">📋 Checklist Final</h2>
+            <div class="checklist">
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checkbox"><span class="checkmark">✓</span></div>
+                    <span>Python instalado (versión 3.8+)</span>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checkbox"><span class="checkmark">✓</span></div>
+                    <span>Entorno virtual creado y activado</span>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checkbox"><span class="checkmark">✓</span></div>
+                    <span>Todas las dependencias instaladas</span>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checkbox"><span class="checkmark">✓</span></div>
+                    <span>Jupyter Notebook o VS Code configurado</span>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checkbox"><span class="checkmark">✓</span></div>
+                    <span>Notebook descargado en la carpeta</span>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checkbox"><span class="checkmark">✓</span></div>
+                    <span>MongoDB Atlas accesible (IP whitelisted)</span>
+                </div>
+                <div class="checklist-item" onclick="toggleCheck(this)">
+                    <div class="checkbox"><span class="checkmark">✓</span></div>
+                    <span>Connection string configurado</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Troubleshooting Section -->
+    <section id="troubleshooting" class="steps-section">
+        <div class="container">
+            <h2 class="section-title">🐛 Solución de Problemas</h2>
+            <div class="troubleshooting-grid">
+                <div class="trouble-card">
+                    <div class="trouble-title">❌ Error: "ModuleNotFoundError: No module named 'pymongo'"</div>
+                    <p style="color: var(--color-text-secondary); margin: 0.5rem 0;">El módulo no está instalado o el entorno virtual no está activo</p>
+                    <div class="trouble-solution">✅ Solución:</div>
+                    <div class="code-block" style="margin-top: 0.5rem;">
+                        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        <code># Verifica que venv esté activo (deberías ver (venv) en la terminal)
+# Luego reinstala
+pip install pymongo</code>
+                    </div>
+                </div>
+
+                <div class="trouble-card">
+                    <div class="trouble-title">❌ Error: "Connection timeout" con MongoDB</div>
+                    <p style="color: var(--color-text-secondary); margin: 0.5rem 0;">No puedes conectarte a MongoDB Atlas</p>
+                    <div class="trouble-solution">✅ Solución:</div>
+                    <ul style="color: var(--color-text-secondary); margin-left: 2rem; margin-top: 0.5rem;">
+                        <li>Verifica que tu IP esté en el whitelist de MongoDB Atlas</li>
+                        <li>Revisa que el connection string sea correcto</li>
+                        <li>Asegúrate de tener conexión a internet</li>
+                    </ul>
+                </div>
+
+                <div class="trouble-card">
+                    <div class="trouble-title">❌ La celda 3 se queda cargando (asterisco *)</div>
+                    <p style="color: var(--color-text-secondary); margin: 0.5rem 0;">El modelo sentence-transformers está descargándose</p>
+                    <div class="trouble-solution">✅ Solución:</div>
+                    <p style="color: var(--color-text-secondary); margin: 0.5rem 0;">Dale 2-5 minutos. Si sigue sin cargar, usa un modelo más ligero:</p>
+                    <div class="code-block" style="margin-top: 0.5rem;">
+                        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        <code># Reemplaza en celda 3:
+model = SentenceTransformer('paraphrase-MiniLM-L3-v2')  # Más ligero</code>
+                    </div>
+                </div>
+
+                <div class="trouble-card">
+                    <div class="trouble-title">❌ Los widgets no aparecen (celda 19)</div>
+                    <p style="color: var(--color-text-secondary); margin: 0.5rem 0;">Las extensiones de ipywidgets no están habilitadas</p>
+                    <div class="trouble-solution">✅ Solución:</div>
+                    <div class="code-block" style="margin-top: 0.5rem;">
+                        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        <code># Reinstalar y habilitar
+pip install --upgrade ipywidgets
+jupyter nbextension enable --py widgetsnbextension
+
+# Reinicia Jupyter después</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>🚨 Fraud Detection Workshop - MongoDB Vector Search</p>
+            <p style="margin-top: 0.5rem; font-size: 0.875rem;">Built with MongoDB Design System ❤️</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tab Navigation
+        function showTab(tabName) {
+            // Update tab buttons
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Update content
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            document.getElementById(tabName + '-content').classList.add('active');
+            
+            // Activate corresponding tab button
+            tabs.forEach(tab => {
+                if (tab.textContent.toLowerCase().includes(tabName)) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+
+        // Platform Tabs
+        function showPlatform(platform) {
+            const platformContents = document.querySelectorAll('[id$="-platform"]');
+            platformContents.forEach(content => content.classList.remove('active'));
+            
+            document.getElementById(platform + '-platform').classList.add('active');
+        }
+
+        // Checklist Toggle
+        function toggleCheck(element) {
+            element.classList.toggle('checked');
+        }
+
+        // Copy Code
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.querySelector('code').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = '✓ Copiado';
+                setTimeout(() => {
+                    button.textContent = 'Copiar';
+                }, 2000);
+            });
+        }
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.3)';
+            } else {
+                navbar.style.boxShadow = 'var(--shadow-lg)';
+            }
+        });
+    </script>
+</body>
+</html>
