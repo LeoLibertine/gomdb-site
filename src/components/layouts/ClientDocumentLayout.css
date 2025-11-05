@@ -1,0 +1,295 @@
+/* Client Document Layout Styles */
+
+.client-document-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--mongodb-white, #ffffff);
+  color: var(--gray-900, #111827);
+}
+
+/* Header */
+.document-header {
+  border-bottom: 2px solid var(--mongodb-green, #00ED64);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mongodb-logo {
+  height: 32px;
+  width: auto;
+}
+
+.separator {
+  color: var(--gray-300, #D1D5DB);
+  font-size: 1.5rem;
+  font-weight: 300;
+}
+
+.client-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--mongodb-purple, #5644D4);
+}
+
+.export-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--mongodb-green, #00ED64);
+  color: var(--mongodb-dark, #001E2B);
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.export-button:hover {
+  background: var(--mongodb-purple, #5644D4);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 237, 100, 0.3);
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+  margin-bottom: 2rem;
+}
+
+.breadcrumbs ol {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.breadcrumbs li {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumbs li:not(:last-child)::after {
+  content: '/';
+  margin-left: 0.5rem;
+  color: var(--gray-400, #9CA3AF);
+}
+
+.breadcrumbs a {
+  color: var(--mongodb-purple, #5644D4);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumbs a:hover {
+  color: var(--mongodb-green, #00ED64);
+  text-decoration: underline;
+}
+
+.breadcrumbs li[aria-current="page"] {
+  color: var(--gray-600, #4B5563);
+}
+
+/* Metadata Section */
+.document-metadata {
+  background: linear-gradient(135deg, #f9fafb 0%, #e5f7ee 100%);
+  border-left: 4px solid var(--mongodb-green, #00ED64);
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 3rem;
+}
+
+.title-section {
+  margin-bottom: 1.5rem;
+}
+
+.document-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--mongodb-dark, #001E2B);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.document-subtitle {
+  font-size: 1.25rem;
+  color: var(--gray-600, #4B5563);
+  margin: 0;
+}
+
+.metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.metadata-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.metadata-label {
+  font-size: 0.875rem;
+  color: var(--gray-500, #6B7280);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.metadata-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-900, #111827);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--mongodb-purple, #5644D4);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Main Content */
+.document-content {
+  line-height: 1.8;
+  margin-bottom: 4rem;
+}
+
+.document-content section {
+  margin-bottom: 3rem;
+}
+
+.document-content h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--mongodb-dark, #001E2B);
+  margin: 2rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--gray-200, #E5E7EB);
+}
+
+.document-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--mongodb-purple, #5644D4);
+  margin: 1.5rem 0 1rem 0;
+}
+
+.document-content p {
+  margin-bottom: 1rem;
+  color: var(--gray-700, #374151);
+}
+
+.document-content ul,
+.document-content ol {
+  margin: 1rem 0 1rem 1.5rem;
+  color: var(--gray-700, #374151);
+}
+
+.document-content li {
+  margin-bottom: 0.5rem;
+}
+
+.document-content a {
+  color: var(--mongodb-purple, #5644D4);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.document-content a:hover {
+  border-bottom-color: var(--mongodb-purple, #5644D4);
+}
+
+/* Footer */
+.document-footer {
+  border-top: 2px solid var(--gray-200, #E5E7EB);
+  padding-top: 2rem;
+  margin-top: 4rem;
+  text-align: center;
+}
+
+.footer-content {
+  color: var(--gray-600, #4B5563);
+  font-size: 0.875rem;
+}
+
+.footer-content p {
+  margin: 0.5rem 0;
+}
+
+.footer-contact a {
+  color: var(--mongodb-purple, #5644D4);
+  text-decoration: none;
+}
+
+.footer-contact a:hover {
+  text-decoration: underline;
+}
+
+/* Print Styles */
+@media print {
+  .export-button,
+  .breadcrumbs {
+    display: none;
+  }
+
+  .client-document-layout {
+    padding: 0;
+  }
+
+  .document-content {
+    color: black;
+  }
+
+  .document-content a {
+    color: black;
+    text-decoration: underline;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .client-document-layout {
+    padding: 1rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .document-title {
+    font-size: 1.75rem;
+  }
+
+  .metadata-grid {
+    grid-template-columns: 1fr;
+  }
+}
