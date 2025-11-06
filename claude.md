@@ -51,6 +51,237 @@
 
 ---
 
+## 🔐 Security & Access Control
+
+**CRITICAL:** This site shares confidential client information. All content under `/clientes/` is protected with access codes.
+
+### Protection Rules
+
+#### PROTECTED Routes (Require Access Code):
+```
+✅ /clientes/[cliente]/*          - All client documents
+✅ /clientes/bancolombia/*         - Requires BCO2025 OR MDB-MASTER-2025
+✅ /clientes/yape/*                - Requires YAPE2024 OR MDB-MASTER-2025
+✅ /clientes/etb/*                 - Requires ETB2025 OR MDB-MASTER-2025
+✅ /clientes/cencosud/*            - Requires CEN2025 OR MDB-MASTER-2025
+✅ /clientes/[any-client]/*        - Client code OR master code required
+```
+
+**Rule:** Any URL containing `/clientes/` is automatically protected.
+
+#### PUBLIC Routes (No Code Required):
+```
+✅ /                               - Landing page
+✅ /demo                           - Demo document
+✅ /sizing/*                       - Public tools (if exist)
+✅ /comparativa/*                  - Public comparisons (if exist)
+✅ Any route outside /clientes/*   - Public by default
+```
+
+**Rule:** If URL does NOT contain `/clientes/`, it's public unless explicitly protected.
+
+---
+
+### Access Code System
+
+#### One Code Per Client:
+- Each client has a unique access code
+- One code grants access to ALL documents of that client
+- Format: `[CLIENT]2025` (e.g., BCO2025, YAPE2024, ETB2025)
+- Codes are permanent (do not expire)
+- Stored in browser localStorage
+
+#### MongoDB Master Code:
+- Code: `MDB-MASTER-2025`
+- Grants access to ALL clients and ALL documents
+- Only for MongoDB internal team
+- Universal access across the entire site
+
+#### Active Client Codes:
+```javascript
+bancolombia: 'BCO2025'
+yape: 'YAPE2024'
+cencosud: 'CEN2025'
+etb: 'ETB2025'
+kushki: 'KUSH2025'
+segurosbolivar: 'SEG2025'
+payway: 'PAY2025'
+bdp: 'BDP2025'
+coppel: 'COP2025'
+falape: 'FAL2025'
+bintec: 'BIN2025'
+mongodb: 'MDB-MASTER-2025'  // Master code
+```
+
+---
+
+### Storage & Persistence
+
+**Where codes are stored:**
+- Browser localStorage
+- Key format: `access_[cliente]` (e.g., `access_bancolombia`)
+- Master code key: `access_mongodb_master`
+
+**Duration:**
+- Permanent (until user clears browser data)
+- Per browser/device (not synced across devices)
+- User enters code once per browser
+
+**Example localStorage entries:**
+```javascript
+localStorage.setItem('access_bancolombia', 'BCO2025')
+localStorage.setItem('access_mongodb_master', 'MDB-MASTER-2025')
+```
+
+---
+
+### User Flow Examples
+
+#### Scenario 1: Bancolombia User (First Time)
+```
+1. Receives link: /clientes/bancolombia/propuesta
+2. Receives code via WhatsApp: BCO2025
+3. Opens link → Modal appears: "Ingresa código de acceso"
+4. Enters: BCO2025
+5. ✅ Access granted
+6. Code saved in localStorage
+7. Navigates to /clientes/bancolombia/otro-doc → Direct access (no modal)
+8. Tries /clientes/yape/doc → Modal asks for Yape code (doesn't have access)
+```
+
+#### Scenario 2: MongoDB User (Master Code)
+```
+1. Opens any client document: /clientes/bancolombia/propuesta
+2. Modal appears
+3. Enters: MDB-MASTER-2025
+4. ✅ Access granted to EVERYTHING
+5. Can navigate to any /clientes/[any-client]/* without being asked again
+```
+
+#### Scenario 3: Public Content
+```
+1. User navigates to /demo
+2. No modal appears
+3. Content displayed immediately (public route)
+```
+
+---
+
+### Creating New Client Documents
+
+**IMPORTANT:** When creating a new client document, it's automatically protected by being under `/clientes/[cliente]/`.
+
+#### Workflow:
+1. **Create document** following normal workflow (from template)
+2. **Ensure path** is under `/clientes/[cliente]/`
+3. **Document is automatically protected** (no extra code needed)
+4. **Test access** with client code and master code
+
+#### Example:
+```javascript
+// File: src/pages/clientes/nuevocliente/Propuesta.jsx
+// Path on web: /clientes/nuevocliente/propuesta
+// Automatically protected ✅
+
+import { ClientDocumentLayout } from '@/components/layouts'
+
+export const NuevoClientePropuesta = () => (
+  <ClientDocumentLayout client="Nuevo Cliente" ...>
+    {/* content */}
+  </ClientDocumentLayout>
+)
+```
+
+---
+
+### Adding New Client
+
+When adding a new client to the system:
+
+1. **Add access code** to constants file (when implemented):
+```javascript
+// src/constants/accessCodes.js
+ACCESS_CODES = {
+  'nuevocliente': 'NUEVO2025',
+  // ... existing codes
+}
+```
+
+2. **Create client documents** under `/clientes/nuevocliente/`
+3. **Test access** with new code
+4. **Share code** with client via secure channel (WhatsApp, email)
+
+---
+
+### Security Considerations
+
+#### ✅ Protects Against:
+- Accidental access (someone finds link in history)
+- Search engine indexing (bots don't have codes)
+- Cross-client access (Bancolombia can't see Yape docs)
+- Unauthorized access without basic authentication
+
+#### ⚠️ Does NOT Protect Against:
+- Client sharing code with unauthorized people
+- Screenshots or content copying (if they have access)
+- Brute force attacks (implement rate limiting if needed)
+
+#### Best Practices:
+- Codes should be alphanumeric and hard to guess
+- Avoid: "123456", "password", "cliente"
+- Recommended: "BCO2025", "YAPE-2024", "MDB-MASTER-2025"
+- Length: 6-15 characters
+- Share codes via separate channel from link (WhatsApp/Email)
+
+---
+
+### Code Rotation
+
+**When to change codes:**
+- Annually (e.g., BCO2025 → BCO2026)
+- When client contact changes
+- Suspected code compromise
+- End of project/engagement
+
+**How to rotate:**
+1. Update code in constants file
+2. Deploy changes
+3. Old code stops working immediately
+4. Notify client of new code
+
+---
+
+### Future Enhancements (v2)
+
+**Not implementing now, but planned:**
+- 📊 Access tracking (who accessed what and when)
+- ⏰ Code expiration (time-limited access)
+- 🔗 Signed URLs with JWT tokens
+- 📧 Magic links via email
+- 🔢 Rate limiting on login attempts
+
+---
+
+### Implementation Status
+
+**Current Status:** 📝 DOCUMENTED (Not yet implemented)
+
+**When this section is implemented, it will include:**
+- `ProtectedRoute` component in `src/components/auth/`
+- `AccessModal` component with MongoDB branding
+- `useAuth` custom hook in `src/hooks/`
+- Access codes in `src/constants/accessCodes.js`
+
+**Testing After Implementation:**
+- [ ] Test with client code (should grant access to client docs only)
+- [ ] Test with master code (should grant access to all docs)
+- [ ] Test with wrong code (should show error)
+- [ ] Test public routes (should not ask for code)
+- [ ] Test localStorage persistence (should not ask again)
+- [ ] Test across different clients (should ask for different codes)
+
+---
+
 ## Architecture Overview
 
 ### Frontend Stack
@@ -478,6 +709,7 @@ du -sh public/img/clientes/[cliente]/*
 
 ---
 
-**Last Updated**: 2025-11-05
+**Last Updated**: 2025-11-06
 **Project Status**: Active Development
 **Tech Stack**: React 19 • Vite 6 • MongoDB Atlas • Vercel
+**Security**: Access codes system for client content protection
