@@ -1,10 +1,10 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import GoMDBLanding from './components/gomdblanding';
-import ClientesDirectory from './pages/Clientes/ClientesDirectory';
-import ClientContent from './pages/Clientes/ClientContent';
-import DocumentMongo from './pages/Clientes/cencosud/document-mongo';
-import BancolombiaDocument from './pages/Clientes/Bancolombia/document-mongo';
+import ClientesDirectory from './pages/clientes/ClientesDirectory';
+import ClientContent from './pages/clientes/ClientContent';
+import DocumentMongo from './pages/clientes/cencosud/document-mongo';
+import BancolombiaDocument from './pages/clientes/bancolombia/document-mongo';
 import DocumentoDemo from './pages/clientes/demo/DocumentoDemo';
 import NotFound from './components/NotFound';
 import { ProtectedRoute } from './components/auth';
