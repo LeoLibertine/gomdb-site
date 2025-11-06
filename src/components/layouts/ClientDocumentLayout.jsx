@@ -42,7 +42,7 @@ export const ClientDocumentLayout = ({
         <div className="header-content">
           <div className="brand">
             <img
-              src="/img/mongodb-logo.svg"
+              src="/img/MongoDB.png"
               alt="MongoDB"
               className="mongodb-logo"
             />
