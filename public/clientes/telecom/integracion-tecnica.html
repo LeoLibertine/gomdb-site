@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integración Técnica: Ops Manager + Stack Actual</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mongodb-green: #00ED64;
+            --mongodb-green-dark: #00684A;
+            --mongodb-black: #001E2B;
+            --white: #FFFFFF;
+            --gray-light: #F5F5F5;
+            --gray-medium: #E3E3E3;
+            --gray-dark: #2D3748;
+            --gray-text: #5C6C75;
+            --code-bg: #1a202c;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+            color: var(--mongodb-black);
+            line-height: 1.7;
+            background: var(--white);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--white);
+            background-image:
+                repeating-linear-gradient(30deg, transparent, transparent 50px, rgba(0, 237, 100, 0.02) 50px, rgba(0, 237, 100, 0.02) 100px);
+        }
+
+        .logo {
+            width: 180px;
+            height: 60px;
+            background: var(--mongodb-green);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 24px;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero h2 {
+            font-size: 1.6em;
+            color: var(--gray-text);
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 10px 25px;
+            background: var(--mongodb-green);
+            color: var(--mongodb-black);
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 18px 45px;
+            background: var(--mongodb-green);
+            color: var(--mongodb-black);
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid var(--mongodb-green);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Section */
+        .section {
+            padding: 80px 20px;
+        }
+
+        .section-gray {
+            background: var(--gray-light);
+        }
+
+        .section-green-light {
+            background: rgba(0, 237, 100, 0.05);
+        }
+
+        .section-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--mongodb-black);
+        }
+
+        .section-subtitle {
+            font-size: 1.3em;
+            color: var(--gray-text);
+            margin-bottom: 40px;
+        }
+
+        /* Code Block */
+        .code-container {
+            position: relative;
+            margin: 30px 0;
+        }
+
+        .code-header {
+            background: var(--gray-dark);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-lang {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            color: var(--mongodb-green);
+        }
+
+        .copy-btn {
+            background: var(--mongodb-green);
+            color: var(--mongodb-black);
+            border: none;
+            padding: 6px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            opacity: 0.8;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* Diagram */
+        .diagram {
+            background: var(--gray-light);
+            border: 2px solid var(--gray-medium);
+            border-radius: 12px;
+            padding: 40px;
+            margin: 40px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.8;
+            overflow-x: auto;
+            color: var(--mongodb-black);
+        }
+
+        .diagram-box {
+            border: 2px solid var(--mongodb-green);
+            padding: 15px;
+            border-radius: 8px;
+            background: white;
+            margin: 10px 0;
+        }
+
+        /* Cards */
+        .method-card {
+            background: white;
+            border: 2px solid var(--gray-medium);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .method-header {
+            background: var(--mongodb-green);
+            color: var(--mongodb-black);
+            padding: 15px 25px;
+            margin: -30px -30px 25px -30px;
+            border-radius: 10px 10px 0 0;
+            font-size: 1.4em;
+            font-weight: 700;
+        }
+
+        .method-subtitle {
+            color: var(--gray-text);
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        /* List */
+        .tech-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tech-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            font-size: 1.05em;
+        }
+
+        .tech-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--mongodb-green);
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(0, 237, 100, 0.1);
+            border-left: 4px solid var(--mongodb-green);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .info-box strong {
+            color: var(--mongodb-green-dark);
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        /* Table */
+        .tech-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .tech-table th {
+            background: var(--mongodb-green);
+            color: var(--mongodb-black);
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .tech-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--gray-medium);
+        }
+
+        .tech-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--gray-medium);
+        }
+
+        .tab {
+            padding: 12px 25px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--gray-text);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: var(--mongodb-green);
+            border-bottom-color: var(--mongodb-green);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Timeline */
+        .timeline {
+            margin: 40px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .timeline-week {
+            min-width: 150px;
+            background: var(--mongodb-green);
+            color: var(--mongodb-black);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.3em;
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .day-group {
+            margin: 15px 0;
+        }
+
+        .day-label {
+            font-weight: 700;
+            color: var(--mongodb-green-dark);
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gray-dark);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .section-title {
+                font-size: 1.8em;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+            }
+
+            .code-block {
+                font-size: 0.8em;
+            }
+        }
+
+        /* Sticky TOC */
+        .toc {
+            position: fixed;
+            left: 20px;
+            top: 100px;
+            width: 250px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .toc h3 {
+            margin-bottom: 15px;
+            color: var(--mongodb-green);
+        }
+
+        .toc a {
+            display: block;
+            padding: 8px 0;
+            color: var(--gray-text);
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        .toc a:hover {
+            color: var(--mongodb-green);
+            padding-left: 10px;
+        }
+
+        @media (max-width: 1400px) {
+            .toc {
+                display: none;
+            }
+        }
+
+        .main-content {
+            margin-left: 0;
+        }
+
+        @media (min-width: 1400px) {
+            .main-content {
+                margin-left: 290px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- TOC -->
+    <nav class="toc">
+        <h3>Contenido</h3>
+        <a href="#arquitectura">Arquitectura General</a>
+        <a href="#prometheus">Integración Prometheus</a>
+        <a href="#grafana">Integración Grafana</a>
+        <a href="#dynatrace">Integración Dynatrace</a>
+        <a href="#instana">Integración IBM Instana</a>
+        <a href="#nomenclatura">Nomenclatura & Tagging</a>
+        <a href="#alertas">Sistema de Alertas</a>
+        <a href="#bi">Exportación a BI</a>
+        <a href="#roadmap">Roadmap Implementación</a>
+        <a href="#recursos">Recursos</a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="logo">MongoDB</div>
+        <h1>Integración Técnica:<br>Ops Manager + Su Stack Actual</h1>
+        <h2>Guía completa de integración con Grafana, Prometheus, Dynatrace e IBM Instana</h2>
+        <div class="badge">🔧 Documentación Técnica</div>
+        <a href="#arquitectura" class="btn">Ver Arquitectura ↓</a>
+    </section>
+
+    <div class="main-content">
+        <!-- Arquitectura General -->
+        <section class="section section-gray" id="arquitectura">
+            <div class="container">
+                <h2 class="section-title">Arquitectura de Integración Completa</h2>
+                <p class="section-subtitle">Vista end-to-end de cómo Ops Manager se integra con su stack actual</p>
+
+                <div class="diagram">
+<pre>┌─────────────────────────────────────────────────────────────┐
+│                    MongoDB Cluster                           │
+│          (3 Replica Sets en 3 Ubicaciones)                   │
+│   RS1 (DC1)  ←→  RS2 (DC2)  ←→  RS3 (DC3)                  │
+└─────────────────┬───────────────────────────────────────────┘
+                  │
+                  ↓
+┌─────────────────────────────────────────────────────────────┐
+│                     Ops Manager                              │
+│  ┌──────────────┬──────────────┬──────────────────────┐    │
+│  │ Monitoring   │ Backup       │ Automation           │    │
+│  │ Agent        │ Agent        │ Agent                │    │
+│  └──────────────┴──────────────┴──────────────────────┘    │
+│                                                              │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │           REST API + Metrics Endpoints               │  │
+│  └──────────────────────────────────────────────────────┘  │
+└─────────┬────────────┬─────────────┬──────────────┬────────┘
+          │            │             │              │
+          ↓            ↓             ↓              ↓
+    ┌─────────┐  ┌──────────┐  ┌─────────┐  ┌──────────┐
+    │Prometheus│  │ Grafana  │  │Dynatrace│  │ Instana  │
+    └─────────┘  └──────────┘  └─────────┘  └──────────┘
+          │            │             │              │
+          └────────────┴─────────────┴──────────────┘
+                            ↓
+                  ┌──────────────────┐
+                  │  FinOps          │
+                  │  Dashboard       │
+                  └──────────────────┘</pre>
+                </div>
+
+                <div class="info-box">
+                    <strong>Arquitectura Hub-and-Spoke:</strong> Ops Manager actúa como hub central recolectando métricas de todos los procesos MongoDB y exponiéndolas vía API/exporters para integración con su stack actual. No reemplaza sus herramientas - las potencia con datos detallados de MongoDB.
+                </div>
+            </div>
+        </section>
+
+        <!-- Integración Prometheus -->
+        <section class="section" id="prometheus">
+            <div class="container">
+                <h2 class="section-title">Integración con Prometheus</h2>
+                <p class="section-subtitle">Exportar métricas de Ops Manager a Prometheus para almacenamiento time-series</p>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab(event, 'method1')">Método 1: MongoDB Exporter</button>
+                    <button class="tab" onclick="switchTab(event, 'method2')">Método 2: API Custom</button>
+                    <button class="tab" onclick="switchTab(event, 'method3')">Método 3: Remote Write</button>
+                </div>
+
+                <!-- Método 1 -->
+                <div class="tab-content active" id="method1">
+                    <div class="method-card">
+                        <div class="method-header">Método 1: MongoDB Exporter (Recomendado)</div>
+
+                        <div class="diagram" style="margin: 20px 0;">
+<pre>Ops Manager → MongoDB Processes → MongoDB Exporter → Prometheus</pre>
+                        </div>
+
+                        <h3 style="margin: 30px 0 15px; font-size: 1.4em;">Configuración Paso a Paso</h3>
+
+                        <div class="code-container">
+                            <div class="code-header">
+                                <span class="code-lang">Docker Compose</span>
+                                <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            </div>
+                            <div class="code-block"><pre># docker-compose.yml para MongoDB Exporter
+version: '3'
+services:
+  mongodb-exporter:
+    image: percona/mongodb_exporter:0.40
+    ports:
+      - "9216:9216"
+    environment:
+      - MONGODB_URI=mongodb://ops-manager-host:27017
+    command:
+      - '--collect-all'
+      - '--compatible-mode'
+      - '--discovering-mode'</pre></div>
+                        </div>
+
+                        <div class="code-container">
+                            <div class="code-header">
+                                <span class="code-lang">YAML - Prometheus Config</span>
+                                <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            </div>
+                            <div class="code-block"><pre># prometheus.yml
+scrape_configs:
+  - job_name: 'mongodb'
+    static_configs:
+      - targets: ['mongodb-exporter:9216']
+    scrape_interval: 15s
+    metrics_path: /metrics
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '(.+):.*'
+        replacement: '${1}'</pre></div>
+                        </div>
+
+                        <h4 style="margin: 25px 0 15px; color: var(--mongodb-green-dark);">Métricas Expuestas Clave</h4>
+                        <ul class="tech-list">
+                            <li><code>mongodb_up</code> - Disponibilidad del cluster (1 = up, 0 = down)</li>
+                            <li><code>mongodb_connections{state="current"}</code> - Conexiones activas</li>
+                            <li><code>mongodb_memory_resident_bytes</code> - Memoria RAM usada por MongoDB</li>
+                            <li><code>mongodb_network_bytes_total</code> - I/O de red total</li>
+                            <li><code>mongodb_opcounters_total{type="query"}</code> - Queries por segundo</li>
+                            <li><code>mongodb_mongod_wiredtiger_cache_bytes</code> - Uso de caché WiredTiger</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Método 2 -->
+                <div class="tab-content" id="method2">
+                    <div class="method-card">
+                        <div class="method-header">Método 2: Custom Exporter via Ops Manager API</div>
+
+                        <div class="diagram" style="margin: 20px 0;">
+<pre>Ops Manager API → Custom Exporter (Python/Go) → Prometheus</pre>
+                        </div>
+
+                        <div class="code-container">
+                            <div class="code-header">
+                                <span class="code-lang">Python</span>
+                                <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            </div>
+                            <div class="code-block"><pre># ops_manager_exporter.py
+from prometheus_client import start_http_server, Gauge
+import requests
+import time
+
+# Métricas Prometheus
+storage_gauge = Gauge('mongodb_storage_gb', 'Storage por base',
+                     ['database', 'cluster'])
+ops_gauge = Gauge('mongodb_operations_total', 'Operaciones',
+                 ['cluster', 'type'])
+conn_gauge = Gauge('mongodb_connections_active', 'Conexiones activas',
+                  ['cluster', 'app'])
+
+OPS_MANAGER_API = "http://ops-manager:8080/api/public/v1.0"
+API_KEY = "tu-api-key"
+GROUP_ID = "your-group-id"
+
+def get_metrics():
+    headers = {"X-Api-Key": API_KEY}
+
+    # Obtener métricas de procesos
+    url = f"{OPS_MANAGER_API}/groups/{GROUP_ID}/processes"
+    r = requests.get(url, headers=headers)
+    data = r.json()
+
+    for process in data['results']:
+        # Storage
+        storage_url = f"{OPS_MANAGER_API}/groups/{GROUP_ID}/hosts/{process['id']}/measurements"
+        params = {"granularity": "PT1M", "period": "PT1H"}
+        metrics = requests.get(storage_url, headers=headers, params=params)
+
+        # Actualizar gauges
+        if metrics.ok:
+            for m in metrics.json()['measurements']:
+                if m['name'] == 'DATABASE_STORAGE_SIZE':
+                    storage_gauge.labels(
+                        database=process['typeName'],
+                        cluster=process['replicaSetName']
+                    ).set(m['dataPoints'][-1]['value'] / 1e9)  # GB
+
+if __name__ == '__main__':
+    start_http_server(8000)
+    print("Exporter running on :8000")
+    while True:
+        get_metrics()
+        time.sleep(30)</pre></div>
+                        </div>
+
+                        <div class="info-box">
+                            <strong>Beneficios:</strong> Este método te da acceso a métricas exclusivas de Ops Manager como estado de backups, automation tasks, alertas activas, etc. que no están disponibles en exporters estándar.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Método 3 -->
+                <div class="tab-content" id="method3">
+                    <div class="method-card">
+                        <div class="method-header">Método 3: Prometheus Remote Write</div>
+
+                        <p class="method-subtitle">Ops Manager puede enviar métricas directamente a Prometheus usando Remote Write protocol</p>
+
+                        <div class="code-container">
+                            <div class="code-header">
+                                <span class="code-lang">JSON - Ops Manager Config</span>
+                                <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                            </div>
+                            <div class="code-block"><pre>{
+  "prometheusRemoteWrite": {
+    "enabled": true,
+    "endpoint": "http://prometheus:9090/api/v1/write",
+    "interval": "30s",
+    "batchSize": 1000,
+    "timeout": "10s",
+    "authentication": {
+      "type": "basic",
+      "username": "prometheus",
+      "password": "${PROMETHEUS_PASSWORD}"
+    }
+  }
+}</pre></div>
+                        </div>
+
+                        <div class="warning-box">
+                            <strong>⚠️ Nota:</strong> Remote Write requiere Ops Manager 6.0+ y Prometheus con remote write habilitado. Verifica compatibilidad de versiones.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Integración Grafana -->
+        <section class="section section-gray" id="grafana">
+            <div class="container">
+                <h2 class="section-title">Integración con Grafana</h2>
+                <p class="section-subtitle">3 formas de visualizar datos de Ops Manager en Grafana</p>
+
+                <div class="method-card">
+                    <div class="method-header">Opción A: Grafana → Prometheus (Recomendado)</div>
+
+                    <h3 style="margin: 20px 0;">1. Agregar Prometheus como Data Source</h3>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-lang">Bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <div class="code-block"><pre># Vía Grafana UI: Configuration → Data Sources → Add Prometheus
+# O vía API:
+curl -X POST http://grafana:3000/api/datasources \
+  -H "Authorization: Bearer ${GRAFANA_API_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Prometheus",
+    "type": "prometheus",
+    "url": "http://prometheus:9090",
+    "access": "proxy",
+    "isDefault": true
+  }'</pre></div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 15px;">2. Dashboard de FinOps - Queries PromQL</h3>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-lang">PromQL</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <div class="code-block"><pre># Storage total por replica set
+sum(mongodb_mongod_wiredtiger_cache_bytes_currently_in_the_cache) by (rs_nm)
+
+# Operaciones por segundo (últimos 5min)
+rate(mongodb_opcounters_total[5m])
+
+# Conexiones activas por aplicación
+mongodb_connections{state="current", app="FMS"}
+
+# Costo calculado por cliente (custom metric)
+(
+  sum(mongodb_storage_gb{app="$cliente"}) * 10 +
+  sum(rate(mongodb_opcounters_total{app="$cliente"}[30d])) / 1000000 * 5 +
+  avg(mongodb_connections{state="current", app="$cliente"}) * 2
+)</pre></div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 15px;">3. Importar Dashboard Pre-construido</h3>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-lang">Bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <div class="code-block"><pre># Dashboard ID oficiales de Grafana.com
+# MongoDB by Percona
+Dashboard ID: 2583
+
+# MongoDB Exporter Dashboard
+Dashboard ID: 7353
+
+# MongoDB Cluster Summary
+Dashboard ID: 2583</pre></div>
+                    </div>
+                </div>
+
+                <div class="method-card" style="margin-top: 30px;">
+                    <div class="method-header">Dashboard de FinOps - Panel Configuration</div>
+
+                    <table class="tech-table">
+                        <thead>
+                            <tr>
+                                <th>Panel</th>
+                                <th>Tipo</th>
+                                <th>Query PromQL</th>
+                                <th>Threshold</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Storage por Cliente</td>
+                                <td>Bar Chart</td>
+                                <td><code>sum(mongodb_storage_gb) by (app)</code></td>
+                                <td>> 500GB = Warning</td>
+                            </tr>
+                            <tr>
+                                <td>Costo Mensual</td>
+                                <td>Stat</td>
+                                <td><code>(sum(...) * 10 + ...)</code></td>
+                                <td>> $7000 = Alert</td>
+                            </tr>
+                            <tr>
+                                <td>Operaciones/seg</td>
+                                <td>Time Series</td>
+                                <td><code>rate(mongodb_opcounters_total[5m])</code></td>
+                                <td>> 10k ops/s</td>
+                            </tr>
+                            <tr>
+                                <td>Conexiones Activas</td>
+                                <td>Gauge</td>
+                                <td><code>mongodb_connections{state="current"}</code></td>
+                                <td>> 80% capacity</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynatrace -->
+        <section class="section" id="dynatrace">
+            <div class="container">
+                <h2 class="section-title">Integración con Dynatrace APM</h2>
+                <p class="section-subtitle">Correlación de performance de aplicación con queries MongoDB</p>
+
+                <div class="diagram">
+<pre>App (FMS) → Dynatrace OneAgent → Dynatrace Server
+                                        ↓
+MongoDB ← Ops Manager ← Dynatrace ActiveGate → MongoDB Extension</pre>
+                </div>
+
+                <div class="method-card">
+                    <h3 style="margin-bottom: 20px;">Paso 1: Instalar MongoDB Extension</h3>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-lang">Bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <div class="code-block"><pre># Descargar extensión oficial
+wget https://dynatrace.com/hub/detail/mongodb/
+
+# Instalar en ActiveGate
+cd /opt/dynatrace/remotepluginmodule
+./dynatracectl extension install mongodb-monitoring.zip
+
+# Verificar instalación
+./dynatracectl extension list | grep mongodb</pre></div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px;">Paso 2: Configurar Conexión a Ops Manager</h3>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-lang">JSON</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <div class="code-block"><pre>{
+  "opsManager": {
+    "url": "http://ops-manager:8080",
+    "apiKey": "${OPS_MANAGER_API_KEY}",
+    "groupId": "your-group-id"
+  },
+  "metrics": {
+    "enabled": true,
+    "interval": 60,
+    "dimensions": ["replicaSet", "database", "appName"]
+  },
+  "topology": {
+    "autoDiscovery": true,
+    "refreshInterval": 300
+  }
+}</pre></div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px;">Paso 3: Correlación en Código de Aplicación</h3>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-lang">JavaScript - Node.js</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <div class="code-block"><pre>const { MongoClient } = require('mongodb');
+
+const uri = "mongodb://cluster:27017/fms";
+const client = new MongoClient(uri, {
+  appName: "FMS",  // ← Importante para correlación
+  monitorCommands: true,
+  serverSelectionTimeoutMS: 5000
+});
+
+// Dynatrace OneAgent capturará automáticamente:
+// - Query duration
+// - Query text
+// - Connection pool metrics
+// - Errores de conexión
+
+async function getData() {
+  await client.connect();
+  const db = client.db("fms");
+
+  // Query será rastreado por Dynatrace
+  const data = await db.collection("network_events")
+    .find({ timestamp: { $gte: new Date() } })
+    .toArray();
+
+  return data;
+}</pre></div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>Resultado en Dynatrace:</strong>
+                        <ul style="margin-top: 10px;">
+                            <li>Service Flow: Aplicación → MongoDB queries</li>
+                            <li>Database Statements: Top slow queries identificadas</li>
+                            <li>Correlación automática con errores de aplicación</li>
+                            <li>Hotspots de performance en código</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- IBM Instana -->
+        <section class="section section-gray" id="instana">
+            <div class="container">
+                <h2 class="section-title">Integración con IBM Instana</h2>
+                <p class="section-subtitle">Observabilidad full-stack con tracing automático</p>
+
+                <div class="method-card">
+                    <h3 style="margin-bottom: 20px;">Configuración de Instana Agent</h3>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-lang">YAML</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <div class="code-block"><pre># configuration.yaml en Instana Agent
+com.instana.plugin.mongodb:
+  enabled: true
+  poll_rate: 5  # segundos
+  discovery:
+    enabled: true
+    patterns:
+      - "mongodb://*:27017"
+      - "mongodb://*:27018"
+      - "mongodb://*:27019"
+  metrics:
+    - name: 'opcounters'
+      enabled: true
+    - name: 'connections'
+      enabled: true
+    - name: 'replication'
+      enabled: true</pre></div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 20px;">
+                        <strong>Métricas Capturadas Automáticamente:</strong> Connection pool, Query performance, Replication lag, Storage metrics, Index usage, Lock contention
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nomenclatura -->
+        <section class="section" id="nomenclatura">
+            <div class="container">
+                <h2 class="section-title">Estrategia de Nomenclatura para FinOps</h2>
+                <p class="section-subtitle">Etiquetado consistente para chargeback preciso</p>
+
+                <div class="method-card">
+                    <div class="method-header">Connection String con appName</div>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-lang">Connection Strings</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <div class="code-block"><pre># Aplicación FMS
+mongodb://cluster:27017/fms_prod?appName=FMS-Produccion-Equipo-Red
+
+# Aplicación Desarrollo
+mongodb://cluster:27017/dev_db?appName=DEV-Equipo-Backend
+
+# Aplicación Testing
+mongodb://cluster:27017/test_db?appName=TEST-QA
+
+# Parsing del appName en dashboards:
+# FMS-Produccion-Equipo-Red
+#  ↓       ↓         ↓
+# App  Ambiente  Departamento</pre></div>
+                    </div>
+                </div>
+
+                <div class="method-card">
+                    <div class="method-header">Tags en Ops Manager</div>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-lang">JSON - API Request</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <div class="code-block"><pre>// PATCH /api/public/v1.0/groups/{groupId}/hosts/{hostId}
+{
+  "hostname": "mongo-rs1-primary.dc1.telecom.com",
+  "tags": [
+    {"key": "app", "value": "FMS"},
+    {"key": "environment", "value": "production"},
+    {"key": "cost_center", "value": "RED"},
+    {"key": "department", "value": "Operations"},
+    {"key": "location", "value": "DC1"}
+  ]
+}</pre></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Alertas -->
+        <section class="section section-gray" id="alertas">
+            <div class="container">
+                <h2 class="section-title">Sistema de Alertas Integrado</h2>
+
+                <div class="method-card">
+                    <div class="method-header">Alertas de FinOps en Prometheus</div>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-lang">YAML - Prometheus Rules</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <div class="code-block"><pre>groups:
+  - name: finops_alerts
+    rules:
+      - alert: HighCostApplication
+        expr: |
+          (
+            sum(mongodb_storage_gb{app="FMS"}) * 10 +
+            sum(rate(mongodb_opcounters_total{app="FMS"}[30d])) / 1e6 * 5 +
+            avg(mongodb_connections{app="FMS"}) * 2
+          ) > 7000
+        for: 1h
+        labels:
+          severity: warning
+          team: finops
+        annotations:
+          summary: "Aplicación FMS superó presupuesto mensual"
+          description: "Costo actual: {{ $value | humanize }}USD/mes"
+
+      - alert: StorageGrowthAnomaly
+        expr: |
+          predict_linear(mongodb_storage_gb{app="FMS"}[7d], 30*24*3600) >
+          mongodb_storage_gb{app="FMS"} * 2
+        for: 30m
+        annotations:
+          summary: "Crecimiento anómalo detectado en FMS"
+          description: "Proyección: doble de storage en 30 días"</pre></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BI Export -->
+        <section class="section" id="bi">
+            <div class="container">
+                <h2 class="section-title">Exportación de Datos para BI</h2>
+
+                <div class="method-card">
+                    <div class="method-header">Script Automatizado de Reportes</div>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-lang">Python</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+                        </div>
+                        <div class="code-block"><pre># monthly_finops_report.py
+import pandas as pd
+from prometheus_api_client import PrometheusConnect
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
+
+prom = PrometheusConnect(url="http://prometheus:9090")
+
+# Query métricas del mes
+storage_query = 'mongodb_storage_gb'
+ops_query = 'rate(mongodb_opcounters_total[30d])'
+
+storage_data = prom.custom_query(query=storage_query)
+ops_data = prom.custom_query(query=ops_query)
+
+# Procesar y calcular costos
+clientes = []
+for metric in storage_data:
+    app = metric['metric'].get('app', 'Unknown')
+    storage = float(metric['value'][1])
+
+    # Buscar operaciones correspondientes
+    ops = next((float(m['value'][1]) for m in ops_data
+                if m['metric'].get('app') == app), 0)
+
+    costo = (storage * 10) + (ops / 1e6 * 5)
+
+    clientes.append({
+        'Cliente': app,
+        'Storage (GB)': round(storage, 2),
+        'Operaciones (M)': round(ops / 1e6, 2),
+        'Costo Total': round(costo, 2)
+    })
+
+# Generar Excel
+df = pd.DataFrame(clientes)
+df.to_excel('finops_report_octubre_2025.xlsx',
+            sheet_name='Chargeback', index=False)
+
+print(f"✅ Reporte generado: {len(clientes)} clientes")
+print(f"💰 Costo total: ${df['Costo Total'].sum():,.2f}")</pre></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roadmap -->
+        <section class="section section-gray" id="roadmap">
+            <div class="container">
+                <h2 class="section-title">Plan de Implementación Detallado</h2>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-week">Semana 1<br>Setup Base</div>
+                        <div class="timeline-content">
+                            <div class="day-group">
+                                <div class="day-label">Día 1-2:</div>
+                                <ul class="tech-list">
+                                    <li>Instalar Ops Manager en servidor dedicado</li>
+                                    <li>Configurar MongoDB backing database</li>
+                                    <li>Conectar replica sets existentes (3 ubicaciones)</li>
+                                </ul>
+                            </div>
+                            <div class="day-group">
+                                <div class="day-label">Día 3-4:</div>
+                                <ul class="tech-list">
+                                    <li>Desplegar MongoDB Exporter (Docker)</li>
+                                    <li>Configurar Prometheus scraping</li>
+                                    <li>Validar flujo de métricas</li>
+                                </ul>
+                            </div>
+                            <div class="day-group">
+                                <div class="day-label">Día 5:</div>
+                                <ul class="tech-list">
+                                    <li>Primera integración con Grafana</li>
+                                    <li>Dashboard básico funcionando</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-week">Semana 2<br>FinOps</div>
+                        <div class="timeline-content">
+                            <div class="day-group">
+                                <div class="day-label">Día 1-2:</div>
+                                <ul class="tech-list">
+                                    <li>Definir modelo de cobro con finanzas</li>
+                                    <li>Implementar tags/nomenclatura en apps</li>
+                                    <li>Crear queries PromQL para costos</li>
+                                </ul>
+                            </div>
+                            <div class="day-group">
+                                <div class="day-label">Día 3-5:</div>
+                                <ul class="tech-list">
+                                    <li>Dashboards de FinOps en Grafana</li>
+                                    <li>Integración con Dynatrace</li>
+                                    <li>Validación con equipos piloto</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-week">Semana 3<br>Avanzado</div>
+                        <div class="timeline-content">
+                            <div class="day-group">
+                                <div class="day-label">Día 1-3:</div>
+                                <ul class="tech-list">
+                                    <li>Configurar IBM Instana integration</li>
+                                    <li>Sistema de alertas proactivas</li>
+                                    <li>Script de reportes automáticos</li>
+                                </ul>
+                            </div>
+                            <div class="day-group">
+                                <div class="day-label">Día 4-5:</div>
+                                <ul class="tech-list">
+                                    <li>Testing end-to-end completo</li>
+                                    <li>Documentación de operaciones</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-week">Semana 4<br>Producción</div>
+                        <div class="timeline-content">
+                            <div class="day-group">
+                                <div class="day-label">Día 1-5:</div>
+                                <ul class="tech-list">
+                                    <li>Rollout completo a producción</li>
+                                    <li>Primer reporte de facturación oficial</li>
+                                    <li>Capacitación a equipos</li>
+                                    <li>Handover y plan de mejora continua</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recursos -->
+        <section class="section section-green-light" id="recursos">
+            <div class="container">
+                <h2 class="section-title">Recursos Técnicos y Siguientes Pasos</h2>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-top: 40px;">
+                    <div class="method-card">
+                        <h3 style="font-size: 1.5em; margin-bottom: 20px; color: var(--mongodb-green);">📖 Documentación</h3>
+                        <ul class="tech-list">
+                            <li><a href="https://docs.mongodb.com/ops-manager/" style="color: var(--mongodb-green-dark);">Ops Manager API Reference</a></li>
+                            <li><a href="https://github.com/percona/mongodb_exporter" style="color: var(--mongodb-green-dark);">MongoDB Exporter GitHub</a></li>
+                            <li><a href="https://grafana.com/grafana/dashboards/" style="color: var(--mongodb-green-dark);">Grafana Dashboards</a></li>
+                            <li><a href="https://prometheus.io/docs/practices/" style="color: var(--mongodb-green-dark);">Prometheus Best Practices</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="method-card">
+                        <h3 style="font-size: 1.5em; margin-bottom: 20px; color: var(--mongodb-green);">🚀 Demos y Pruebas</h3>
+                        <a href="dashboard_simple.html" class="btn" style="display: block; text-align: center; margin-bottom: 15px;">
+                            👉 Ver Demo con Datos Reales
+                        </a>
+                        <a href="calculadora_costos.html" class="btn" style="display: block; text-align: center; background: transparent; color: var(--mongodb-green); margin-bottom: 15px;">
+                            🧮 Calculadora de Costos
+                        </a>
+                    </div>
+
+                    <div class="method-card">
+                        <h3 style="font-size: 1.5em; margin-bottom: 20px; color: var(--mongodb-green);">💬 Siguiente Paso</h3>
+                        <p style="color: var(--gray-text); margin-bottom: 20px;">¿Necesita ayuda con la implementación?</p>
+                        <a href="#" class="btn" style="display: block; text-align: center;">
+                            📅 Agendar Workshop Técnico
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="logo" style="margin: 0 auto 20px; background: white; color: var(--mongodb-green);">MongoDB</div>
+            <p style="font-size: 1.1em; margin: 15px 0;">Documentación Técnica v1.0</p>
+            <p style="opacity: 0.8;">MongoDB Professional Services | Octubre 2025</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script>
+        // Tab switching
+        function switchTab(evt, methodId) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+
+            evt.currentTarget.classList.add('active');
+            document.getElementById(methodId).classList.add('active');
+        }
+
+        // Copy code
+        function copyCode(btn) {
+            const codeBlock = btn.closest('.code-container').querySelector('.code-block pre');
+            const text = codeBlock.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copiado';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

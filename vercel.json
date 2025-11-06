@@ -322,7 +322,7 @@
     },
     {
       "src": "/clientes/bancolombia/bintec2025/local_setup(?:/.*)?$",
-      "dest": "/clientes/bancolombia/bintec2025/lacal_setup.html"
+      "dest": "/clientes/bancolombia/bintec2025/local_setup.html"
     },
     {
       "src": "/juegos/flappy(?:/.*)?$",

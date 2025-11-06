@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-11-03T22:59:51.437823+00:00",
+  "period_hours": 6,
+  "sample_interval_seconds": 10,
+  "databases": [
+    {
+      "name": "sample_mflix",
+      "ops_per_second": 34.4,
+      "storage_gb": 0.4,
+      "cache_gb_used": 0.0,
+      "data_size_gb": 0.36,
+      "index_size_gb": 0.04,
+      "collections": 4,
+      "documents": 234102
+    }
+  ],
+  "totals": {
+    "total_databases": 1,
+    "total_ops_per_second": 34.4,
+    "total_storage_gb": 0.4,
+    "total_cache_gb_used": 0.0,
+    "total_collections": 4,
+    "total_documents": 234102
+  }
+}

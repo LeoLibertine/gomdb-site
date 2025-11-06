@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinOps Dashboard - MongoDB Chargeback</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a1929;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 237, 100, 0.2);
+        }
+        .glow-green {
+            box-shadow: 0 0 20px rgba(0, 237, 100, 0.3);
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        // Función para generar datos dummy iniciales
+        const generateDummyData = () => {
+            const now = new Date();
+            const generateTimeseries = (baseOps, baseConn) => {
+                return Array.from({ length: 30 }, (_, i) => ({
+                    timestamp: new Date(now - (30 - i) * 60000).toISOString(),
+                    operations: +(baseOps * (0.95 + Math.random() * 0.1)).toFixed(2),
+                    connections: Math.max(1, baseConn + Math.floor(Math.random() * 5) - 2)
+                }));
+            };
+
+            return {
+                timestamp: now.toISOString(),
+                clientes: [
+                    {
+                        nombre: "FMS",
+                        storage_gb: 600,
+                        operations_millions: 125.5,
+                        connections_avg: 45,
+                        cost_monthly: 6627.5,
+                        databases: ["fms_production", "fms_analytics", "fms_backup", "fms_logs"],
+                        database_details: [
+                            { name: "fms_production", storage_gb: 350, collections: 45, documents: 5000000, indexes_size_gb: 25 },
+                            { name: "fms_analytics", storage_gb: 180, collections: 20, documents: 3200000, indexes_size_gb: 12 },
+                            { name: "fms_backup", storage_gb: 50, collections: 15, documents: 1500000, indexes_size_gb: 5 },
+                            { name: "fms_logs", storage_gb: 20, collections: 10, documents: 800000, indexes_size_gb: 3 }
+                        ],
+                        color: "#00ED64",
+                        timeseries: generateTimeseries(125.5, 45)
+                    },
+                    {
+                        nombre: "Desarrollo",
+                        storage_gb: 50,
+                        operations_millions: 10.5,
+                        connections_avg: 8,
+                        cost_monthly: 568.5,
+                        databases: ["dev_main", "dev_staging"],
+                        database_details: [
+                            { name: "dev_main", storage_gb: 30, collections: 12, documents: 500000, indexes_size_gb: 2 },
+                            { name: "dev_staging", storage_gb: 20, collections: 8, documents: 200000, indexes_size_gb: 1 }
+                        ],
+                        color: "#FFB800",
+                        timeseries: generateTimeseries(10.5, 8)
+                    },
+                    {
+                        nombre: "Testing",
+                        storage_gb: 20,
+                        operations_millions: 4.2,
+                        connections_avg: 5,
+                        cost_monthly: 231.0,
+                        databases: ["test_integration", "test_qa"],
+                        database_details: [
+                            { name: "test_integration", storage_gb: 12, collections: 6, documents: 150000, indexes_size_gb: 1 },
+                            { name: "test_qa", storage_gb: 8, collections: 4, documents: 50000, indexes_size_gb: 0.5 }
+                        ],
+                        color: "#3B7EF7",
+                        timeseries: generateTimeseries(4.2, 5)
+                    }
+                ],
+                totales: {
+                    storage_total: 670,
+                    cost_total: 7427.0,
+                    clients_count: 3
+                }
+            };
+        };
+
+        const FinOpsDashboard = () => {
+            const [data, setData] = useState(generateDummyData());
+            const [showModal, setShowModal] = useState(false);
+            const [jsonInput, setJsonInput] = useState('');
+            const [notification, setNotification] = useState(null);
+            const [lastUpdate, setLastUpdate] = useState(new Date());
+
+            // Calcular tiempo desde última actualización
+            const [timeSinceUpdate, setTimeSinceUpdate] = useState(0);
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    const diff = Math.floor((new Date() - lastUpdate) / 1000 / 60);
+                    setTimeSinceUpdate(diff);
+                }, 60000);
+                return () => clearInterval(interval);
+            }, [lastUpdate]);
+
+            // Mostrar notificación
+            const showNotification = (message, type = 'success') => {
+                setNotification({ message, type });
+                setTimeout(() => setNotification(null), 3000);
+            };
+
+            // Cargar datos desde JSON
+            const handleLoadJSON = () => {
+                try {
+                    const parsed = JSON.parse(jsonInput);
+
+                    // Validar estructura básica
+                    if (!parsed.clientes || !Array.isArray(parsed.clientes)) {
+                        throw new Error('Estructura JSON inválida: falta "clientes"');
+                    }
+
+                    setData(parsed);
+                    setLastUpdate(new Date());
+                    setShowModal(false);
+                    setJsonInput('');
+                    showNotification('✅ Métricas actualizadas correctamente', 'success');
+                } catch (error) {
+                    showNotification(`❌ Error: ${error.message}`, 'error');
+                }
+            };
+
+            // Simular carga adicional en FMS
+            const handleSimulateLoad = () => {
+                setData(prev => ({
+                    ...prev,
+                    clientes: prev.clientes.map(cliente =>
+                        cliente.nombre === 'FMS'
+                            ? {
+                                ...cliente,
+                                storage_gb: +(cliente.storage_gb * 1.1).toFixed(2),
+                                operations_millions: +(cliente.operations_millions * 1.1).toFixed(2),
+                                cost_monthly: +(cliente.cost_monthly * 1.1).toFixed(2)
+                            }
+                            : cliente
+                    )
+                }));
+                showNotification('📊 Carga +10% aplicada a FMS', 'info');
+            };
+
+            // Preparar datos para gráfico de costos
+            const costChartData = useMemo(() =>
+                data.clientes.map(c => ({
+                    nombre: c.nombre,
+                    costo: c.cost_monthly,
+                    fill: c.color
+                })), [data]
+            );
+
+            // Preparar datos para gráfico de operaciones en tiempo real
+            const operationsChartData = useMemo(() => {
+                if (!data.clientes[0]?.timeseries) return [];
+
+                const length = data.clientes[0].timeseries.length;
+                return Array.from({ length }, (_, i) => {
+                    const point = { time: i };
+                    data.clientes.forEach(cliente => {
+                        if (cliente.timeseries && cliente.timeseries[i]) {
+                            point[cliente.nombre] = cliente.timeseries[i].operations;
+                        }
+                    });
+                    return point;
+                });
+            }, [data]);
+
+            // Calcular desglose de costos
+            const costBreakdown = useMemo(() =>
+                data.clientes.map(c => ({
+                    cliente: c.nombre,
+                    storage: c.storage_gb,
+                    precioStorage: +(c.storage_gb * 10).toFixed(2),
+                    ops: c.operations_millions,
+                    precioOps: +(c.operations_millions * 5).toFixed(2),
+                    conexiones: c.connections_avg,
+                    precioConexiones: +(c.connections_avg * 2).toFixed(2),
+                    total: c.cost_monthly,
+                    color: c.color
+                })), [data]
+            );
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-6">
+                    {/* Notificación */}
+                    {notification && (
+                        <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-xl ${
+                            notification.type === 'success' ? 'bg-green-500' :
+                            notification.type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+                        } text-white font-semibold animate-pulse-slow`}>
+                            {notification.message}
+                        </div>
+                    )}
+
+                    {/* Header */}
+                    <div className="bg-slate-800 rounded-xl p-6 mb-6 shadow-2xl border border-slate-700">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div>
+                                <h1 className="text-4xl font-bold text-white mb-2">
+                                    FinOps Dashboard - MongoDB Chargeback
+                                    <span className="ml-3 text-green-400 text-xl">(DATOS REALES)</span>
+                                </h1>
+                                <div className="flex items-center gap-4 text-slate-300">
+                                    <span>📅 {new Date(data.timestamp).toLocaleString('es-ES')}</span>
+                                    <span className="text-slate-500">•</span>
+                                    <span className="text-sm">
+                                        {timeSinceUpdate === 0 ? 'Actualizado ahora' : `Actualizado hace ${timeSinceUpdate} min`}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setShowModal(true)}
+                                    className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-lg transition-all hover:scale-105 glow-green"
+                                >
+                                    🔄 Actualizar Métricas
+                                </button>
+                                <button
+                                    onClick={handleSimulateLoad}
+                                    className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg shadow-lg transition-all hover:scale-105"
+                                >
+                                    📊 Simular Carga
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Panel 1: Cards de Clientes */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        {data.clientes.map(cliente => (
+                            <div
+                                key={cliente.nombre}
+                                className="bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700 card-hover"
+                                style={{ borderTopColor: cliente.color, borderTopWidth: '4px' }}
+                            >
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-2xl font-bold text-white">{cliente.nombre}</h3>
+                                    <div
+                                        className="w-4 h-4 rounded-full"
+                                        style={{ backgroundColor: cliente.color }}
+                                    />
+                                </div>
+
+                                <div className="space-y-3 mb-4">
+                                    <div className="flex items-center justify-between text-slate-300">
+                                        <span className="flex items-center gap-2">
+                                            💾 Storage
+                                        </span>
+                                        <span className="font-semibold text-white">{cliente.storage_gb} GB</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-slate-300">
+                                        <span className="flex items-center gap-2">
+                                            ⚡ Operaciones
+                                        </span>
+                                        <span className="font-semibold text-white">{cliente.operations_millions}M/mes</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-slate-300">
+                                        <span className="flex items-center gap-2">
+                                            🔗 Conexiones
+                                        </span>
+                                        <span className="font-semibold text-white">{cliente.connections_avg}</span>
+                                    </div>
+                                </div>
+
+                                <div className="bg-slate-900 rounded-lg p-4 mb-4">
+                                    <div className="text-sm text-slate-400 mb-1">Costo Mensual</div>
+                                    <div className="text-3xl font-bold" style={{ color: cliente.color }}>
+                                        ${cliente.cost_monthly.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div className="text-xs text-slate-400 mb-2">Bases de datos ({cliente.databases.length}):</div>
+                                    <div className="flex flex-wrap gap-1">
+                                        {cliente.databases.slice(0, 4).map(db => (
+                                            <span
+                                                key={db}
+                                                className="text-xs px-2 py-1 bg-slate-900 text-slate-300 rounded"
+                                            >
+                                                {db}
+                                            </span>
+                                        ))}
+                                        {cliente.databases.length > 4 && (
+                                            <span className="text-xs px-2 py-1 bg-slate-900 text-slate-300 rounded">
+                                                +{cliente.databases.length - 4}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Panel 2: Gráfico de Costos */}
+                    <div className="bg-slate-800 rounded-xl p-6 mb-6 shadow-xl border border-slate-700">
+                        <h2 className="text-2xl font-bold text-white mb-6">📊 Costo Mensual por Cliente</h2>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={costChartData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                                <XAxis dataKey="nombre" stroke="#94a3b8" />
+                                <YAxis stroke="#94a3b8" />
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
+                                    labelStyle={{ color: '#f1f5f9' }}
+                                />
+                                <Bar dataKey="costo" radius={[8, 8, 0, 0]}>
+                                    {costChartData.map((entry, index) => (
+                                        <rect key={`cell-${index}`} fill={entry.fill} />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    {/* Panel 3: Gráfico de Operaciones en Tiempo Real */}
+                    <div className="bg-slate-800 rounded-xl p-6 mb-6 shadow-xl border border-slate-700">
+                        <h2 className="text-2xl font-bold text-white mb-6">⚡ Operaciones en Tiempo Real (últimos 30 min)</h2>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <LineChart data={operationsChartData}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                                <XAxis dataKey="time" stroke="#94a3b8" />
+                                <YAxis stroke="#94a3b8" />
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
+                                    labelStyle={{ color: '#f1f5f9' }}
+                                />
+                                <Legend />
+                                {data.clientes.map(cliente => (
+                                    <Line
+                                        key={cliente.nombre}
+                                        type="monotone"
+                                        dataKey={cliente.nombre}
+                                        stroke={cliente.color}
+                                        strokeWidth={2}
+                                        dot={false}
+                                    />
+                                ))}
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    {/* Panel 4: Tabla Detallada */}
+                    <div className="bg-slate-800 rounded-xl p-6 mb-6 shadow-xl border border-slate-700 overflow-x-auto">
+                        <h2 className="text-2xl font-bold text-white mb-6">📋 Desglose de Costos</h2>
+                        <table className="w-full text-left">
+                            <thead>
+                                <tr className="border-b border-slate-700">
+                                    <th className="pb-3 text-slate-300">Cliente</th>
+                                    <th className="pb-3 text-slate-300 text-right">Storage (GB)</th>
+                                    <th className="pb-3 text-slate-300 text-right">$ Storage</th>
+                                    <th className="pb-3 text-slate-300 text-right">Ops (M)</th>
+                                    <th className="pb-3 text-slate-300 text-right">$ Ops</th>
+                                    <th className="pb-3 text-slate-300 text-right">Conexiones</th>
+                                    <th className="pb-3 text-slate-300 text-right">$ Conn</th>
+                                    <th className="pb-3 text-slate-300 text-right font-bold">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {costBreakdown.map((row, idx) => (
+                                    <tr key={idx} className="border-b border-slate-700">
+                                        <td className="py-3 text-white font-semibold flex items-center gap-2">
+                                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: row.color }} />
+                                            {row.cliente}
+                                        </td>
+                                        <td className="py-3 text-slate-300 text-right">{row.storage.toFixed(2)}</td>
+                                        <td className="py-3 text-slate-300 text-right">${row.precioStorage.toFixed(2)}</td>
+                                        <td className="py-3 text-slate-300 text-right">{row.ops.toFixed(2)}</td>
+                                        <td className="py-3 text-slate-300 text-right">${row.precioOps.toFixed(2)}</td>
+                                        <td className="py-3 text-slate-300 text-right">{row.conexiones}</td>
+                                        <td className="py-3 text-slate-300 text-right">${row.precioConexiones.toFixed(2)}</td>
+                                        <td className="py-3 text-white text-right font-bold" style={{ color: row.color }}>
+                                            ${row.total.toFixed(2)}
+                                        </td>
+                                    </tr>
+                                ))}
+                                <tr className="bg-slate-900 font-bold">
+                                    <td className="py-4 text-green-400">TOTAL</td>
+                                    <td className="py-4 text-right text-green-400">{data.totales.storage_total.toFixed(2)}</td>
+                                    <td className="py-4 text-right text-green-400">${(data.totales.storage_total * 10).toFixed(2)}</td>
+                                    <td className="py-4 text-right text-green-400">
+                                        {data.clientes.reduce((sum, c) => sum + c.operations_millions, 0).toFixed(2)}
+                                    </td>
+                                    <td className="py-4 text-right text-green-400">
+                                        ${(data.clientes.reduce((sum, c) => sum + c.operations_millions, 0) * 5).toFixed(2)}
+                                    </td>
+                                    <td className="py-4 text-right text-green-400">
+                                        {data.clientes.reduce((sum, c) => sum + c.connections_avg, 0)}
+                                    </td>
+                                    <td className="py-4 text-right text-green-400">
+                                        ${(data.clientes.reduce((sum, c) => sum + c.connections_avg, 0) * 2).toFixed(2)}
+                                    </td>
+                                    <td className="py-4 text-right text-green-400 text-xl">
+                                        ${data.totales.cost_total.toFixed(2)}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Panel 5: Instrucciones */}
+                    <div className="bg-blue-900 bg-opacity-50 rounded-xl p-6 shadow-xl border border-blue-700">
+                        <div className="flex items-start gap-4">
+                            <div className="text-4xl">💡</div>
+                            <div>
+                                <h3 className="text-xl font-bold text-blue-200 mb-2">Actualizar con Datos Reales</h3>
+                                <p className="text-blue-100 mb-2">
+                                    Estas métricas vienen de tu MongoDB real. Para actualizar:
+                                </p>
+                                <ol className="list-decimal list-inside text-blue-100 space-y-1">
+                                    <li>Ejecuta: <code className="bg-blue-950 px-2 py-1 rounded">./run_metrics.sh</code> o <code className="bg-blue-950 px-2 py-1 rounded">python generate_metrics.py</code></li>
+                                    <li>Copia el contenido de <code className="bg-blue-950 px-2 py-1 rounded">metricas_mongodb.json</code></li>
+                                    <li>Haz clic en "🔄 Actualizar Métricas" y pega el JSON</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Modal de Actualización */}
+                    {showModal && (
+                        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+                            <div className="bg-slate-800 rounded-xl p-8 max-w-3xl w-full shadow-2xl border border-slate-700">
+                                <h2 className="text-3xl font-bold text-white mb-4">
+                                    Pegar métricas desde generate_metrics.py
+                                </h2>
+                                <p className="text-slate-300 mb-4">
+                                    Copia el contenido completo del archivo <code className="bg-slate-900 px-2 py-1 rounded">metricas_mongodb.json</code> y pégalo aquí:
+                                </p>
+                                <textarea
+                                    value={jsonInput}
+                                    onChange={(e) => setJsonInput(e.target.value)}
+                                    className="w-full h-96 bg-slate-900 text-slate-100 p-4 rounded-lg border border-slate-700 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    placeholder='{"timestamp": "2025-10-30T...", "clientes": [...], "totales": {...}}'
+                                />
+                                <div className="flex gap-3 mt-6">
+                                    <button
+                                        onClick={handleLoadJSON}
+                                        className="flex-1 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-lg transition-all hover:scale-105"
+                                    >
+                                        ✅ Cargar Datos
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setShowModal(false);
+                                            setJsonInput('');
+                                        }}
+                                        className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg shadow-lg transition-all"
+                                    >
+                                        ❌ Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<FinOpsDashboard />);
+    </script>
+</body>
+</html>

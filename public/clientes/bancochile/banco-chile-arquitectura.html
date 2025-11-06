@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama de Arquitectura VolPay</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos personalizados para el diagrama */
+        
+        /* Contenedor de un componente de arquitectura */
+        .component-box {
+            @apply p-4 rounded-lg shadow-lg text-center font-semibold min-h-[80px] flex items-center justify-center;
+        }
+
+        /* Contenedor para la pila de componentes (DC1 y DC2) */
+        .component-stack {
+            @apply flex flex-col space-y-4;
+        }
+
+        /* Flecha para el flujo principal (horizontal) */
+        .flow-arrow {
+            @apply flex items-center justify-center text-3xl font-bold text-gray-400;
+        }
+
+        /* Flecha para la replicación (vertical) */
+        .replication-arrow {
+            @apply flex items-center justify-center text-xl text-cyan-400 font-mono;
+            writing-mode: vertical-rl; /* Simula una flecha vertical con texto */
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white font-sans p-8">
+
+    <div class="container mx-auto max-w-7xl">
+        <h1 class="text-4xl font-bold text-center mb-4">Diagrama Visual de la Arquitectura (VolPay)</h1>
+        <p class="text-center text-gray-400 mb-8">Flujo de procesamiento de pagos y estrategia de DRP (Continuidad del Negocio).</p>
+
+        <!-- Leyenda -->
+        <div class="flex flex-wrap justify-center gap-6 mb-12">
+            <div class="flex items-center space-x-2">
+                <div class="w-6 h-6 rounded border-2 border-green-500 bg-green-900"></div>
+                <span>DC1 (Activo)</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-6 h-6 rounded border-2 border-blue-500 bg-blue-900"></div>
+                <span>DC2 (Pasivo / DRP)</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-3xl font-bold text-gray-400">&rarr;</span>
+                <span>Flujo de Pago Principal</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-xl text-cyan-400 font-mono">&darr;</span>
+                <span>Replicación de Datos</span>
+            </div>
+        </div>
+
+        <!-- Diagrama Principal -->
+        <!-- Usamos un grid que se adapta. En móvil será vertical, en desktop será horizontal. -->
+        <div class="grid grid-cols-1 md:grid-cols-11 gap-4 items-start">
+
+            <!-- 1. Cliente -->
+            <div class="md:col-span-1 md:flex md:items-center md:h-full">
+                <div class="component-box bg-gray-700 w-full">
+                    Cliente (Banco)
+                </div>
+            </div>
+
+            <!-- Flecha -->
+            <div class="flow-arrow hidden md:flex">&rarr;</div>
+
+            <!-- 2. API Gateway (Erlang) -->
+            <div class="md:col-span-2 component-stack">
+                <div class="component-box bg-green-900 border-2 border-green-500">
+                    API Gateway (Erlang)<br><span class="text-sm font-light text-green-300">(DC1 - Activo)</span>
+                </div>
+                <div class="component-box bg-blue-900 border-2 border-blue-500">
+                    API Gateway (Erlang)<br><span class="text-sm font-light text-blue-300">(DC2 - Standby)</span>
+                </div>
+            </div>
+
+            <!-- Flecha -->
+            <div class="flow-arrow hidden md:flex">&rarr;</div>
+
+            <!-- 3. Kafka (Buffer) -->
+            <div class="md:col-span-2 component-stack">
+                <div class="component-box bg-green-900 border-2 border-green-500">
+                    Kafka (Buffer)<br><span class="text-sm font-light text-green-300">(DC1 - Activo)</span>
+                </div>
+                <!-- Flecha de Replicación -->
+                <div class="text-center text-cyan-400 text-2xl font-bold">&darr;</div>
+                <div class="text-center text-cyan-400 -mt-4 text-xs font-mono">(MirrorMaker)</div>
+                
+                <div class="component-box bg-blue-900 border-2 border-blue-500">
+                    Kafka (Réplica)<br><span class="text-sm font-light text-blue-300">(DC2 - Pasivo)</span>
+                </div>
+            </div>
+
+            <!-- Flecha -->
+            <div class="flow-arrow hidden md:flex">&rarr;</div>
+
+            <!-- 4. Motor (Erlang/VolPay) -->
+            <div class="md:col-span-2 component-stack">
+                <div class="component-box bg-green-900 border-2 border-green-500">
+                    Motor VolPay (Erlang)<br><span class="text-sm font-light text-green-300">(DC1 - Activo)</span>
+                </div>
+                <div class="component-box bg-blue-900 border-2 border-blue-500">
+                    Motor VolPay (Erlang)<br><span class="text-sm font-light text-blue-300">(DC2 - Standby)</span>
+                </div>
+            </div>
+
+            <!-- Flecha -->
+            <div class="flow-arrow hidden md:flex">&rarr;</div>
+
+            <!-- 5. MongoDB (Base de Datos) -->
+            <div class="md:col-span-2 component-stack">
+                <div class="component-box bg-green-900 border-2 border-green-500">
+                    MongoDB (Primario)<br><span class="text-sm font-light text-green-300">(DC1 - Activo)</span>
+                </div>
+                <!-- Flecha de Replicación -->
+                <div class="text-center text-cyan-400 text-2xl font-bold">&darr;</div>
+                <div class="text-center text-cyan-400 -mt-4 text-xs font-mono">(Replica Set)</div>
+                
+                <div class="component-box bg-blue-900 border-2 border-blue-500">
+                    MongoDB (Secundario)<br><span class="text-sm font-light text-blue-300">(DC2 - Pasivo)</span>
+                </div>
+            </div>
+
+        </div> <!-- Fin del grid del diagrama -->
+
+
+        <!-- Nueva Sección: Descripción de Componentes -->
+        <div class="mt-16 pt-12 border-t border-gray-700">
+            <h2 class="text-3xl font-bold text-center mb-10">Descripción Detallada de Componentes</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- 1. Cliente -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-xl">
+                    <h3 class="text-xl font-semibold text-cyan-400 mb-3">1. Cliente (Banco)</h3>
+                    <p class="text-gray-300">
+                        Es el punto de inicio. Representa el sistema del banco (o su cliente) que origina la transacción de pago y la envía a la plataforma VolPay para ser procesada.
+                    </p>
+                </div>
+
+                <!-- 2. API Gateway (Erlang) -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-xl">
+                    <h3 class="text-xl font-semibold text-cyan-400 mb-3">2. API Gateway (Erlang)</h3>
+                    <p class="text-gray-300">
+                        Actúa como el "Recepcionista". Es la puerta de entrada que recibe la solicitud. Su trabajo es validar la seguridad (autenticación) y entregar el pago a Kafka de forma instantánea. No procesa, solo ingesta.
+                    </p>
+                </div>
+
+                <!-- 3. Kafka (Buffer) -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-xl">
+                    <h3 class="text-xl font-semibold text-cyan-400 mb-3">3. Kafka (Buffer)</h3>
+                    <p class="text-gray-300">
+                        Es el "Amortiguador". Una fila de espera (cola) de alta velocidad. Desacopla la ingesta del procesamiento. Absorbe ráfagas de transacciones (spikes) y garantiza que ningún pago se pierda (durabilidad) y que se mantenga el orden (particionamiento).
+                    </p>
+                </div>
+
+                <!-- 4. Motor VolPay (Erlang) -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-xl">
+                    <h3 class="text-xl font-semibold text-cyan-400 mb-3">4. Motor VolPay (Erlang)</h3>
+                    <p class="text-gray-300">
+                        Es el "Cerebro" de la operación. Es un servicio separado que "consume" los pagos de la fila de Kafka. Aquí se aplica toda la lógica de negocio compleja: validaciones, reglas de fraude, transformaciones, etc.
+                    </p>
+                </div>
+
+                <!-- 5. MongoDB (Base de Datos) -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-xl">
+                    <h3 class="text-xl font-semibold text-cyan-400 mb-3">5. MongoDB (Base de Datos)</h3>
+                    <p class="text-gray-300">
+                        Es el "Almacén" o Sistema de Registro (System of Record). Aquí es donde se guarda permanentemente el estado final del pago después de ser procesado por el motor. Es el componente que provee la persistencia y la replicación para el DRP.
+                    </p>
+                </div>
+
+                <!-- 6. Replicación (General) -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-xl">
+                    <h3 class="text-xl font-semibold text-cyan-400 mb-3">DRP (DC2 - Pasivo)</h3>
+                    <p class="text-gray-300">
+                        Todo el sitio en DC2 (azul) está en modo de espera (*hot standby*). Las flechas de replicación (MirrorMaker para Kafka, Replica Set para Mongo) aseguran que los datos estén sincronizados casi en tiempo real, listos para tomar el control si DC1 falla.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+        <!-- Fin de la Nueva Sección -->
+
+    </div> <!-- Fin del container -->
+
+</body>
+</html>
+

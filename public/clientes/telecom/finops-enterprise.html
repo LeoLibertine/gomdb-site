@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinOps para MongoDB - Enterprise Advanced + Ops Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mongodb-green: #00ED64;
+            --mongodb-green-dark: #00684A;
+            --mongodb-black: #001E2B;
+            --mongodb-yellow: #FFE212;
+            --white: #FFFFFF;
+            --gray-light: #F5F5F5;
+            --gray-medium: #E3E3E3;
+            --gray-text: #5C6C75;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+            color: var(--mongodb-black);
+            line-height: 1.7;
+            background: var(--white);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--white);
+            background-image:
+                repeating-linear-gradient(30deg, transparent, transparent 50px, rgba(0, 237, 100, 0.02) 50px, rgba(0, 237, 100, 0.02) 100px);
+            position: relative;
+        }
+
+        .mongo-logo {
+            width: 180px;
+            height: 60px;
+            background: var(--mongodb-green);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 24px;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 4.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--mongodb-black);
+            line-height: 1.1;
+        }
+
+        .hero h2 {
+            font-size: 2.2em;
+            color: var(--mongodb-green-dark);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .hero p {
+            font-size: 1.4em;
+            color: var(--gray-text);
+            margin-bottom: 50px;
+            max-width: 700px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 18px 45px;
+            background: var(--mongodb-green);
+            color: var(--mongodb-black);
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid var(--mongodb-green);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--mongodb-green);
+            border: 2px solid var(--mongodb-green);
+        }
+
+        .btn-outline:hover {
+            background: var(--mongodb-green);
+            color: var(--mongodb-black);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Section */
+        .section {
+            padding: 100px 20px;
+        }
+
+        .section-gray {
+            background: var(--gray-light);
+        }
+
+        .section-green-light {
+            background: rgba(0, 237, 100, 0.05);
+        }
+
+        .section-green {
+            background: linear-gradient(135deg, var(--mongodb-green-dark) 0%, var(--mongodb-green) 100%);
+            color: white;
+        }
+
+        .section-title {
+            font-size: 3em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--mongodb-black);
+        }
+
+        .section-subtitle {
+            font-size: 1.4em;
+            text-align: center;
+            color: var(--gray-text);
+            margin-bottom: 60px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border: 1px solid var(--gray-medium);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 237, 100, 0.2);
+            border-color: var(--mongodb-green);
+        }
+
+        .card-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--mongodb-black);
+        }
+
+        .card-text {
+            font-size: 1.1em;
+            color: var(--gray-text);
+            line-height: 1.7;
+        }
+
+        /* Two Column Layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin: 60px 0;
+        }
+
+        /* Architecture Diagram */
+        .architecture {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 60px 0;
+            padding: 50px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .arch-step {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+        }
+
+        .arch-step::after {
+            content: '→';
+            position: absolute;
+            right: -35px;
+            top: 30px;
+            font-size: 2.5em;
+            color: var(--mongodb-green);
+        }
+
+        .arch-step:last-child::after {
+            content: '';
+        }
+
+        .arch-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--mongodb-green);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 25px rgba(0, 237, 100, 0.3);
+        }
+
+        .arch-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .arch-desc {
+            color: var(--gray-text);
+            font-size: 0.95em;
+        }
+
+        /* Formula Box */
+        .formula-box {
+            background: linear-gradient(135deg, var(--mongodb-green-dark), var(--mongodb-green));
+            border: 3px solid var(--mongodb-green);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            margin: 60px 0;
+            color: white;
+            box-shadow: 0 15px 50px rgba(0, 237, 100, 0.3);
+        }
+
+        .formula {
+            font-size: 2em;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            margin: 30px 0;
+            color: var(--mongodb-yellow);
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin: 60px 0;
+        }
+
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            padding: 30px;
+            font-size: 1.5em;
+            font-weight: 700;
+            text-align: left;
+            border-bottom: 3px solid var(--mongodb-green);
+        }
+
+        .comparison-table td {
+            padding: 25px 30px;
+            font-size: 1.1em;
+            border-bottom: 1px solid var(--gray-medium);
+        }
+
+        .comparison-table tr:hover {
+            background: var(--gray-light);
+        }
+
+        /* Timeline */
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin: 60px 0;
+            flex-wrap: wrap;
+        }
+
+        .timeline-item {
+            flex: 1;
+            min-width: 220px;
+            text-align: center;
+            position: relative;
+        }
+
+        .timeline-circle {
+            width: 120px;
+            height: 120px;
+            background: var(--mongodb-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 25px rgba(0, 237, 100, 0.4);
+            font-weight: bold;
+            color: var(--mongodb-black);
+        }
+
+        .timeline-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--mongodb-black);
+        }
+
+        .timeline-desc {
+            color: var(--gray-text);
+            font-size: 1em;
+        }
+
+        /* Integration Cards */
+        .integration-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .integration-card {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+
+        .integration-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 35px rgba(0, 237, 100, 0.2);
+        }
+
+        .integration-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--gray-light);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--mongodb-green);
+            color: var(--mongodb-black);
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin: 10px 5px;
+        }
+
+        /* Checkmarks */
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 15px 0;
+            font-size: 1.2em;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .checklist li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--mongodb-green);
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        /* FAQ */
+        .faq-item {
+            background: white;
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .faq-question {
+            padding: 25px 30px;
+            font-size: 1.3em;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .faq-question:hover {
+            background: var(--gray-light);
+        }
+
+        .faq-answer {
+            padding: 0 30px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s;
+            color: var(--gray-text);
+            font-size: 1.1em;
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 25px 30px;
+            max-height: 500px;
+        }
+
+        /* CTA Box */
+        .cta-box {
+            background: linear-gradient(135deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+            border-radius: 20px;
+            padding: 80px 60px;
+            text-align: center;
+            margin: 80px 0;
+            color: var(--mongodb-black);
+        }
+
+        .cta-box h2 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: var(--mongodb-black);
+        }
+
+        .cta-box p {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        /* Screenshot placeholder */
+        .screenshot {
+            background: var(--gray-light);
+            border: 2px solid var(--gray-medium);
+            border-radius: 15px;
+            padding: 80px 40px;
+            text-align: center;
+            font-size: 1.3em;
+            color: var(--gray-text);
+            margin: 40px 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 5px solid var(--mongodb-green);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .metric-title {
+            font-size: 1.1em;
+            color: var(--gray-text);
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--mongodb-green);
+        }
+
+        .metric-subtitle {
+            font-size: 0.95em;
+            color: var(--gray-text);
+            margin-top: 8px;
+        }
+
+        /* Footer */
+        footer {
+            background: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-top: 1px solid var(--gray-medium);
+        }
+
+        footer .mongo-logo {
+            margin: 0 auto 30px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5em;
+            }
+
+            .hero h2 {
+                font-size: 1.5em;
+            }
+
+            .section-title {
+                font-size: 2em;
+            }
+
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-table {
+                overflow-x: auto;
+            }
+
+            .timeline {
+                flex-direction: column;
+            }
+
+            .formula {
+                font-size: 1.2em;
+            }
+
+            .arch-step::after {
+                content: '↓';
+                right: auto;
+                top: auto;
+                bottom: -35px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Sticky Nav */
+        .sticky-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px 30px;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sticky-nav.visible {
+            display: flex;
+        }
+
+        .sticky-nav .mongo-logo {
+            width: 120px;
+            height: 40px;
+            margin: 0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sticky Nav -->
+    <div class="sticky-nav" id="stickyNav">
+        <div class="mongo-logo">MongoDB</div>
+        <a href="#demo" class="btn" style="padding: 10px 25px; font-size: 1em;">Ver Demo</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="mongo-logo">MongoDB</div>
+        <h1>FinOps para MongoDB</h1>
+        <h2>Visibilidad, Control y Chargeback Automático</h2>
+        <p>Con MongoDB Enterprise Advanced + Ops Manager</p>
+        <a href="#solucion" class="btn">Ver Cómo Funciona ↓</a>
+    </section>
+
+    <!-- El Desafío -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Su Desafío de Visibilidad</h2>
+            <p class="section-subtitle">Sin herramientas centralizadas, gestionar MongoDB a escala es complejo y costoso</p>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <span class="card-icon">📊</span>
+                    <h3 class="card-title">Sin Visibilidad de Consumo</h3>
+                    <p class="card-text">¿Qué equipo consume más recursos? ¿Cuánto cuesta cada aplicación? Sin métricas centralizadas, es imposible saberlo.</p>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">💰</span>
+                    <h3 class="card-title">Sin Capacidad de Chargeback</h3>
+                    <p class="card-text">Imposible facturar internamente por uso real de la base de datos. No hay accountability por departamento.</p>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">⚙️</span>
+                    <h3 class="card-title">Gestión Manual Compleja</h3>
+                    <p class="card-text">600GB+ distribuidos en 3 ubicaciones sin herramientas centralizadas. Requiere scripts custom y mantenimiento constante.</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 60px;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 30px; background: var(--gray-light); border-radius: 15px;">
+                    <p style="font-size: 1.3em; color: var(--gray-text); font-style: italic;">
+                        "Desarrollar y mantener scripts de monitoreo custom consume <strong style="color: var(--mongodb-green);">4-6 semanas de desarrollo</strong> y requiere expertise constante."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- La Solución -->
+    <section class="section section-gray" id="solucion">
+        <div class="container">
+            <h2 class="section-title">MongoDB Enterprise Advanced + Ops Manager</h2>
+            <p class="section-subtitle">Todo integrado, listo para producción</p>
+
+            <div class="architecture">
+                <div class="arch-step">
+                    <div class="arch-icon">🗄️</div>
+                    <div class="arch-title">MongoDB Cluster</div>
+                    <div class="arch-desc">3 Ubicaciones<br>Replica Sets</div>
+                </div>
+
+                <div class="arch-step">
+                    <div class="arch-icon">⚡</div>
+                    <div class="arch-title">Ops Manager</div>
+                    <div class="arch-desc">Gestión Central<br>500+ Métricas</div>
+                </div>
+
+                <div class="arch-step">
+                    <div class="arch-icon">📊</div>
+                    <div class="arch-title">Dashboards</div>
+                    <div class="arch-desc">Métricas Tiempo Real<br>Visualización</div>
+                </div>
+
+                <div class="arch-step">
+                    <div class="arch-icon">💰</div>
+                    <div class="arch-title">FinOps</div>
+                    <div class="arch-desc">Chargeback Automático<br>Reportes</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <span class="badge">✓ Sin configuración manual</span>
+                <span class="badge">✓ Sin desarrollo custom</span>
+                <span class="badge">✓ Soporte Enterprise incluido</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ops Manager -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Ops Manager: Su Centro de Control</h2>
+            <p class="section-subtitle">Monitoreo, gestión y automatización desde un solo lugar</p>
+
+            <div class="screenshot">
+                📊 [Ops Manager Dashboard]<br><br>
+                Vista unificada de todos sus clusters MongoDB<br>
+                Métricas en tiempo real • Alertas proactivas • Query Analytics
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <span class="card-icon">🎯</span>
+                    <h3 class="card-title">Monitoreo Integrado</h3>
+                    <p class="card-text">500+ métricas out-of-the-box. Queries lentas, uso de índices, latencia de replicación. Todo sin configuración manual.</p>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">⚡</span>
+                    <h3 class="card-title">Query Analytics</h3>
+                    <p class="card-text">Identifique automáticamente las consultas más costosas por aplicación. Performance Advisor con recomendaciones.</p>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">📊</span>
+                    <h3 class="card-title">Métricas por Proceso</h3>
+                    <p class="card-text">Consumo detallado por cada proceso MongoDB en tiempo real. CPU, memoria, disk I/O, network.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FinOps Automático -->
+    <section class="section section-green-light">
+        <div class="container">
+            <h2 class="section-title">FinOps: De Métricas a Facturación</h2>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <span class="card-icon">📥</span>
+                    <h3 class="card-title">Recolección Automática</h3>
+                    <ul class="checklist">
+                        <li>Storage por base de datos</li>
+                        <li>Operaciones (reads/writes)</li>
+                        <li>Conexiones activas</li>
+                        <li>CPU y memoria por proceso</li>
+                        <li>Network I/O</li>
+                    </ul>
+                    <div style="margin-top: 20px;">
+                        <span class="badge">Sin scripts custom</span>
+                        <span class="badge">Datos históricos ilimitados</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">🔍</span>
+                    <h3 class="card-title">Análisis Inteligente</h3>
+                    <ul class="checklist">
+                        <li>Consumo por aplicación</li>
+                        <li>Tendencias de crecimiento</li>
+                        <li>Proyecciones de capacidad</li>
+                        <li>Comparativas por equipo</li>
+                    </ul>
+                    <div style="margin-top: 20px;">
+                        <span class="badge">Visualización instantánea</span>
+                        <span class="badge">Exportación a BI tools</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">💰</span>
+                    <h3 class="card-title">Facturación Integrada</h3>
+                    <ul class="checklist">
+                        <li>Costo por departamento</li>
+                        <li>Chargeback mensual</li>
+                        <li>Consumo vs presupuesto</li>
+                        <li>ROI por proyecto</li>
+                    </ul>
+                    <div style="margin-top: 20px;">
+                        <span class="badge">APIs para integración</span>
+                        <span class="badge">Reportes automáticos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modelo de Cobro -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Defina Su Modelo de FinOps</h2>
+
+            <div class="formula-box">
+                <p style="font-size: 1.4em; opacity: 0.9;">Fórmula de Costo Mensual</p>
+                <div class="formula">
+                    (Storage GB × Tarifa) + (Operaciones × Tarifa) +<br>
+                    (Conexiones × Tarifa) + (CPU Hours × Tarifa)
+                </div>
+                <p style="font-size: 1.1em; margin-top: 20px; opacity: 0.85;">
+                    Personalice las tarifas según su modelo de negocio
+                </p>
+            </div>
+
+            <h3 style="text-align: center; font-size: 2em; margin: 60px 0 40px;">Ejemplos con Datos Reales</h3>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div style="font-size: 2em; margin-bottom: 15px;">🏢</div>
+                    <h4 style="font-size: 1.5em; margin-bottom: 20px; color: var(--mongodb-black);">Cliente FMS</h4>
+                    <div style="color: var(--gray-text); margin-bottom: 10px;">Storage: <strong>600 GB</strong></div>
+                    <div style="color: var(--gray-text); margin-bottom: 10px;">Ops: <strong>125M/mes</strong></div>
+                    <div style="color: var(--gray-text); margin-bottom: 20px;">Conexiones: <strong>45 avg</strong></div>
+                    <div class="metric-value">$6,627</div>
+                    <div class="metric-subtitle">por mes</div>
+                </div>
+
+                <div class="metric-card">
+                    <div style="font-size: 2em; margin-bottom: 15px;">💻</div>
+                    <h4 style="font-size: 1.5em; margin-bottom: 20px; color: var(--mongodb-black);">Cliente Desarrollo</h4>
+                    <div style="color: var(--gray-text); margin-bottom: 10px;">Storage: <strong>50 GB</strong></div>
+                    <div style="color: var(--gray-text); margin-bottom: 10px;">Ops: <strong>12M/mes</strong></div>
+                    <div style="color: var(--gray-text); margin-bottom: 20px;">Conexiones: <strong>8 avg</strong></div>
+                    <div class="metric-value">$577</div>
+                    <div class="metric-subtitle">por mes</div>
+                </div>
+
+                <div class="metric-card">
+                    <div style="font-size: 2em; margin-bottom: 15px;">🧪</div>
+                    <h4 style="font-size: 1.5em; margin-bottom: 20px; color: var(--mongodb-black);">Cliente Testing</h4>
+                    <div style="color: var(--gray-text); margin-bottom: 10px;">Storage: <strong>20 GB</strong></div>
+                    <div style="color: var(--gray-text); margin-bottom: 10px;">Ops: <strong>3M/mes</strong></div>
+                    <div style="color: var(--gray-text); margin-bottom: 20px;">Conexiones: <strong>3 avg</strong></div>
+                    <div class="metric-value">$223</div>
+                    <div class="metric-subtitle">por mes</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 50px; padding: 30px; background: var(--gray-light); border-radius: 15px;">
+                <p style="font-size: 1.3em; color: var(--mongodb-green-dark); font-weight: 600;">
+                    Ops Manager le da todas las métricas necesarias para implementar cualquier modelo de cobro
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparativa -->
+    <section class="section section-gray">
+        <div class="container">
+            <h2 class="section-title">¿Por Qué Ops Manager?</h2>
+            <p class="section-subtitle">Compare el esfuerzo manual vs la solución Enterprise</p>
+
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 50%;">Implementación Manual</th>
+                            <th style="width: 50%; color: var(--mongodb-green);">Con Ops Manager</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>❌ Desarrollar scripts Python</td>
+                            <td style="color: var(--mongodb-green); font-weight: 600;">✅ Métricas out-of-the-box</td>
+                        </tr>
+                        <tr>
+                            <td>❌ Configurar Prometheus</td>
+                            <td style="color: var(--mongodb-green); font-weight: 600;">✅ Storage histórico incluido</td>
+                        </tr>
+                        <tr>
+                            <td>❌ Diseñar dashboards Grafana</td>
+                            <td style="color: var(--mongodb-green); font-weight: 600;">✅ Dashboards pre-construidos</td>
+                        </tr>
+                        <tr>
+                            <td>❌ Mantener infraestructura</td>
+                            <td style="color: var(--mongodb-green); font-weight: 600;">✅ MongoDB gestiona todo</td>
+                        </tr>
+                        <tr>
+                            <td>❌ Sin soporte especializado</td>
+                            <td style="color: var(--mongodb-green); font-weight: 600;">✅ Soporte Enterprise 24/7</td>
+                        </tr>
+                        <tr>
+                            <td>❌ 4-6 semanas de desarrollo</td>
+                            <td style="color: var(--mongodb-green); font-weight: 600;">✅ 1 semana de configuración</td>
+                        </tr>
+                        <tr>
+                            <td>⚠️ Requiere expertise interno</td>
+                            <td style="color: var(--mongodb-green); font-weight: 600;">✅ Best practices incluidas</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="text-align: center; margin-top: 50px;">
+                <div style="display: inline-block; padding: 30px 60px; background: var(--mongodb-green); border-radius: 15px;">
+                    <p style="font-size: 2em; font-weight: 700; color: var(--mongodb-black);">
+                        Ahorre 80% del tiempo de implementación
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboards -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Visibilidad Completa Desde Día 1</h2>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="screenshot" style="margin: 0 0 20px 0; padding: 60px 20px;">
+                        📊 [Dashboard Operativo]
+                    </div>
+                    <h3 class="card-title">Performance</h3>
+                    <ul class="checklist" style="font-size: 1em;">
+                        <li>Queries lentas en tiempo real</li>
+                        <li>Uso de índices</li>
+                        <li>Latencia de replicación</li>
+                        <li>Alertas proactivas</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="screenshot" style="margin: 0 0 20px 0; padding: 60px 20px;">
+                        📈 [Dashboard de Capacidad]
+                    </div>
+                    <h3 class="card-title">Capacity Planning</h3>
+                    <ul class="checklist" style="font-size: 1em;">
+                        <li>Storage por base de datos</li>
+                        <li>Proyecciones de crecimiento</li>
+                        <li>Recomendaciones de hardware</li>
+                        <li>Trends históricos</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="screenshot" style="margin: 0 0 20px 0; padding: 60px 20px;">
+                        💰 [Dashboard de Costos]
+                    </div>
+                    <h3 class="card-title">FinOps</h3>
+                    <ul class="checklist" style="font-size: 1em;">
+                        <li>Consumo por departamento</li>
+                        <li>Facturación mensual</li>
+                        <li>Comparativa vs presupuesto</li>
+                        <li>Exportación a Excel/BI</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <div class="screenshot" style="margin: 0 0 20px 0; padding: 60px 20px;">
+                        👤 [Dashboard por Cliente]
+                    </div>
+                    <h3 class="card-title">Self-Service</h3>
+                    <ul class="checklist" style="font-size: 1em;">
+                        <li>Vista filtrada por aplicación</li>
+                        <li>Solo métricas relevantes</li>
+                        <li>Consumo en tiempo real</li>
+                        <li>Alertas personalizadas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Georedundancia -->
+    <section class="section section-green-light">
+        <div class="container">
+            <h2 class="section-title">Perfecto para Su Arquitectura Multi-Datacenter</h2>
+
+            <div class="screenshot" style="font-size: 1.1em; padding: 60px;">
+                🌍 [Datacenter 1] ← → [Datacenter 2] ← → [Datacenter 3]<br><br>
+                ↓ Replica Sets ↓<br><br>
+                ↓ [Ops Manager] ↓<br><br>
+                Vista Unificada de 3 Ubicaciones
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <span class="card-icon">🌍</span>
+                    <h3 class="card-title">Visibilidad Global</h3>
+                    <p class="card-text">Monitoree las 3 ubicaciones desde un solo lugar. Dashboards consolidados con drill-down por site.</p>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">⚡</span>
+                    <h3 class="card-title">Detección de Failover</h3>
+                    <p class="card-text">Alertas instantáneas si un sitio falla. Visualización de topology changes en tiempo real.</p>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">📊</span>
+                    <h3 class="card-title">Latencia entre Sitios</h3>
+                    <p class="card-text">Métricas de replication lag y network I/O entre datacenters. Optimice su arquitectura basándose en datos reales.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Enterprise -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Más Allá de FinOps</h2>
+            <p class="section-subtitle">Capacidades Enterprise incluidas en su licencia</p>
+
+            <div class="cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                <div class="card">
+                    <span class="card-icon">🔐</span>
+                    <h3 class="card-title">Security</h3>
+                    <ul style="list-style: none; padding: 0; color: var(--gray-text);">
+                        <li>• Encriptación en reposo</li>
+                        <li>• LDAP/Kerberos</li>
+                        <li>• Auditing avanzado</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">💾</span>
+                    <h3 class="card-title">Backups</h3>
+                    <ul style="list-style: none; padding: 0; color: var(--gray-text);">
+                        <li>• Point-in-time recovery</li>
+                        <li>• Continuous backups</li>
+                        <li>• Snapshots automáticos</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">📈</span>
+                    <h3 class="card-title">Automation</h3>
+                    <ul style="list-style: none; padding: 0; color: var(--gray-text);">
+                        <li>• Rolling upgrades sin downtime</li>
+                        <li>• Auto-scaling</li>
+                        <li>• Self-healing</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">🔧</span>
+                    <h3 class="card-title">Query Optimization</h3>
+                    <ul style="list-style: none; padding: 0; color: var(--gray-text);">
+                        <li>• Performance Advisor</li>
+                        <li>• Index recommendations</li>
+                        <li>• Query profiling</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">⚠️</span>
+                    <h3 class="card-title">Alerting</h3>
+                    <ul style="list-style: none; padding: 0; color: var(--gray-text);">
+                        <li>• 100+ alertas pre-configuradas</li>
+                        <li>• Integración PagerDuty/Slack</li>
+                        <li>• Escalamiento automático</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">📞</span>
+                    <h3 class="card-title">Soporte</h3>
+                    <ul style="list-style: none; padding: 0; color: var(--gray-text);">
+                        <li>• 24/7/365</li>
+                        <li>• SLA garantizado</li>
+                        <li>• Ingenieros MongoDB</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section class="section section-gray">
+        <div class="container">
+            <h2 class="section-title">Su Plan de Implementación</h2>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-circle">1</div>
+                    <div class="timeline-title">Semana 1</div>
+                    <div class="timeline-desc">
+                        <strong>Setup Inicial</strong><br>
+                        • Instalar Ops Manager<br>
+                        • Conectar replica sets<br>
+                        • Importar topología
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-circle">2</div>
+                    <div class="timeline-title">Semana 2</div>
+                    <div class="timeline-desc">
+                        <strong>Configuración FinOps</strong><br>
+                        • Definir modelo de cobro<br>
+                        • Tags por aplicación/equipo<br>
+                        • Dashboards personalizados
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-circle">3</div>
+                    <div class="timeline-title">Semana 3</div>
+                    <div class="timeline-desc">
+                        <strong>Validación</strong><br>
+                        • Testing con usuarios piloto<br>
+                        • Ajuste de métricas<br>
+                        • Integración con BI tools
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-circle">4+</div>
+                    <div class="timeline-title">Semana 4+</div>
+                    <div class="timeline-desc">
+                        <strong>Producción</strong><br>
+                        • Rollout completo<br>
+                        • Reportes automáticos<br>
+                        • Optimización continua
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 50px;">
+                <span class="badge" style="font-size: 1.2em; padding: 15px 30px;">
+                    ✨ 4 semanas vs 3+ meses desarrollo manual
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Integración -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Se Integra con Su Stack Actual</h2>
+
+            <div class="integration-grid">
+                <div class="integration-card">
+                    <div class="integration-logo">📊</div>
+                    <h3 style="font-size: 1.4em; margin-bottom: 10px;">Grafana</h3>
+                    <p style="color: var(--gray-text);">Exporte métricas de Ops Manager vía API → Dashboards ejecutivos custom</p>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-logo">🔍</div>
+                    <h3 style="font-size: 1.4em; margin-bottom: 10px;">Dynatrace</h3>
+                    <p style="color: var(--gray-text);">APM completo de sus aplicaciones → Correlación con performance MongoDB</p>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-logo">⚡</div>
+                    <h3 style="font-size: 1.4em; margin-bottom: 10px;">IBM Instana</h3>
+                    <p style="color: var(--gray-text);">Observabilidad full-stack → Tracing end-to-end</p>
+                </div>
+
+                <div class="integration-card">
+                    <div class="integration-logo">📈</div>
+                    <h3 style="font-size: 1.4em; margin-bottom: 10px;">BI Tools</h3>
+                    <p style="color: var(--gray-text);">Power BI, Tableau, Excel → Reportes de facturación</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI -->
+    <section class="section section-green">
+        <div class="container">
+            <h2 style="font-size: 3em; text-align: center; margin-bottom: 20px; color: white;">
+                Retorno de Inversión Inmediato
+            </h2>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <span class="card-icon">💰</span>
+                    <h3 class="card-title">Reducción de Costos</h3>
+                    <ul class="checklist">
+                        <li>80% menos tiempo de implementación</li>
+                        <li>Sin desarrollo custom</li>
+                        <li>Sin mantenimiento de scripts</li>
+                        <li>Soporte incluido</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">⚡</span>
+                    <h3 class="card-title">Time to Value</h3>
+                    <ul class="checklist">
+                        <li>Visibilidad en 1 semana</li>
+                        <li>FinOps operativo en 1 mes</li>
+                        <li>vs 3-6 meses manual</li>
+                        <li>ROI positivo año 1</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">🎯</span>
+                    <h3 class="card-title">Capacidades Enterprise</h3>
+                    <ul class="checklist">
+                        <li>Backups automáticos</li>
+                        <li>Security avanzada</li>
+                        <li>Automation</li>
+                        <li>Alta disponibilidad</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Interactiva -->
+    <section class="section" id="demo">
+        <div class="container">
+            <h2 class="section-title">Vea Ops Manager en Acción</h2>
+
+            <div style="text-align: center; margin: 60px 0;">
+                <a href="dashboard_simple.html" class="btn" style="margin: 0 15px 15px; font-size: 1.3em; padding: 20px 50px;">
+                    👉 Ver Dashboard de FinOps Demo
+                </a>
+                <br>
+                <a href="calculadora_costos.html" class="btn btn-outline" style="margin: 0 15px 15px; font-size: 1.3em; padding: 20px 50px;">
+                    🧮 Calculadora de Costos
+                </a>
+            </div>
+
+            <p style="text-align: center; color: var(--gray-text); font-size: 1.2em;">
+                Dashboard con métricas reales de su entorno MongoDB
+            </p>
+        </div>
+    </section>
+
+    <!-- Siguiente Paso -->
+    <section class="section section-gray">
+        <div class="container">
+            <h2 class="section-title">Comience Hoy</h2>
+
+            <div class="cards-grid">
+                <div class="card" style="border: 3px solid var(--mongodb-green);">
+                    <span class="card-icon">🚀</span>
+                    <h3 class="card-title">Prueba de Concepto (PoC)</h3>
+                    <ul class="checklist" style="font-size: 1em;">
+                        <li>30 días de evaluación</li>
+                        <li>Ambiente de desarrollo</li>
+                        <li>Soporte durante PoC</li>
+                        <li>Sin compromiso</li>
+                    </ul>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="#" class="btn">Iniciar PoC</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">📖</span>
+                    <h3 class="card-title">Consultoría Técnica</h3>
+                    <ul class="checklist" style="font-size: 1em;">
+                        <li>Workshop de 2 horas</li>
+                        <li>Revisión de arquitectura</li>
+                        <li>Plan de implementación</li>
+                        <li>Best practices</li>
+                    </ul>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="#" class="btn btn-outline">Agendar Workshop</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">💬</span>
+                    <h3 class="card-title">Hablar con Experto</h3>
+                    <ul class="checklist" style="font-size: 1em;">
+                        <li>Sesión 1-on-1</li>
+                        <li>Preguntas específicas</li>
+                        <li>Cotización personalizada</li>
+                        <li>Roadmap detallado</li>
+                    </ul>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="#" class="btn btn-outline">Contactar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Preguntas Frecuentes</h2>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    ❓ ¿Funciona con nuestra versión actual de MongoDB?
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Sí, Ops Manager soporta desde MongoDB 4.0 en adelante. Recomendamos actualizar a 6.0 o 8.0 para acceder a todas las features de FinOps y performance optimization.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    ❓ ¿Cuánto tiempo toma la implementación?
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Típicamente 2-4 semanas desde instalación hasta producción completa. La primera semana se enfoca en setup e importación de topología, y las siguientes en configuración de FinOps y validación.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    ❓ ¿Necesitamos cambiar nuestra infraestructura?
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    No, Ops Manager se adapta a su topología actual y arquitectura multi-datacenter. Se integra sin cambios disruptivos en su infraestructura existente.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    ❓ ¿Qué incluye el soporte Enterprise?
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Soporte 24/7/365, SLA garantizado, acceso directo a ingenieros MongoDB, actualizaciones incluidas, y consultoría técnica para optimización continua.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    ❓ ¿Podemos probar antes de comprar?
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Sí, ofrecemos PoC (Proof of Concept) de 30 días sin compromiso en su ambiente de desarrollo. Incluye soporte completo durante la evaluación.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    ❓ ¿Cómo se compara el costo con desarrollo manual?
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Considerando tiempo de desarrollo (4-6 semanas), mantenimiento continuo, infraestructura adicional y falta de soporte especializado, Enterprise Advanced se paga solo en el primer año. Además obtiene capacidades avanzadas de backup, security y automation.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <div class="cta-box" style="margin: 0;">
+        <div class="container">
+            <h2>🚀 Listo para Transformar su FinOps?</h2>
+            <p>Implemente visibilidad, control y chargeback automático en semanas, no meses</p>
+            <a href="#demo" class="btn" style="background: var(--mongodb-black); color: var(--mongodb-green); border-color: var(--mongodb-black); margin: 0 10px 10px;">
+                Ver Demo Ahora →
+            </a>
+            <a href="#" class="btn btn-outline" style="color: var(--mongodb-black); border-color: var(--mongodb-black); margin: 0 10px 10px;">
+                Agendar Consultoría
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="mongo-logo">MongoDB</div>
+            <p style="color: var(--gray-text); margin: 20px 0;">
+                MongoDB Professional Services
+            </p>
+            <p style="color: var(--gray-text); margin: 10px 0;">
+                📧 sales@mongodb.com | 📞 +1 (866) 237-8815
+            </p>
+            <div style="margin: 30px 0;">
+                <a href="#" style="color: var(--mongodb-green); margin: 0 15px; text-decoration: none;">Documentación</a>
+                <a href="#" style="color: var(--mongodb-green); margin: 0 15px; text-decoration: none;">Soporte</a>
+                <a href="#" style="color: var(--mongodb-green); margin: 0 15px; text-decoration: none;">Portal del Cliente</a>
+            </div>
+            <p style="color: var(--gray-text); font-size: 0.9em; margin-top: 30px;">
+                © 2025 MongoDB, Inc. Todos los derechos reservados.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Sticky Navigation
+        window.addEventListener('scroll', function() {
+            const stickyNav = document.getElementById('stickyNav');
+            if (window.scrollY > 100) {
+                stickyNav.classList.add('visible');
+            } else {
+                stickyNav.classList.remove('visible');
+            }
+        });
+
+        // FAQ Toggle
+        function toggleFAQ(element) {
+            const faqItem = element.parentElement;
+            const isActive = faqItem.classList.contains('active');
+
+            // Close all FAQs
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Open clicked FAQ if it wasn't active
+            if (!isActive) {
+                faqItem.classList.add('active');
+            }
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

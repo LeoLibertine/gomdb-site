@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MongoDB Atlas - Propuesta de Dimensionamiento Payway</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      color: #001E2B;
+      line-height: 1.7;
+    }
+
+    .page {
+      width: 210mm;
+      height: 297mm;
+      background: white;
+      page-break-after: always !important;
+      page-break-inside: avoid !important;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page:last-child {
+      page-break-after: auto;
+    }
+
+    table, .card, .highlight-box, .conclusion-box, .stats-grid {
+      page-break-inside: avoid !important;
+    }
+
+    h2, h3 {
+      page-break-after: avoid;
+    }
+
+    /* Portada */
+    .cover-page {
+      background: linear-gradient(135deg, #001E2B 0%, #112733 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 60px;
+    }
+
+    .logo {
+      width: 120px;
+      height: auto;
+    }
+
+    .cover-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
+
+    .cover-title {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: white;
+    }
+
+    .cover-subtitle {
+      font-size: 24px;
+      margin-bottom: 60px;
+      color: #E8EDEB;
+    }
+
+    .cover-client {
+      margin-bottom: 40px;
+    }
+
+    .client-label {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #C1C7C6;
+      margin-bottom: 12px;
+    }
+
+    .client-name {
+      font-size: 36px;
+      font-weight: 600;
+      color: #00ED64;
+    }
+
+    .cover-date {
+      font-size: 16px;
+      color: #C1C7C6;
+    }
+
+    /* Páginas internas */
+    .page-header {
+      background: #001E2B;
+      padding: 28px 50px;
+      border-bottom: 3px solid #00ED64;
+    }
+
+    .page-header h1 {
+      color: #E8EDEB;
+      font-size: 30px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .page-content {
+      padding: 35px 50px;
+      max-height: 650px;
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #001E2B;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #00ED64;
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #00684A;
+      margin: 24px 0 14px 0;
+    }
+
+    p {
+      margin-bottom: 14px;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    ul, ol {
+      margin: 14px 0 14px 22px;
+      font-size: 13px;
+    }
+
+    li {
+      margin-bottom: 7px;
+      line-height: 1.7;
+    }
+
+    strong {
+      font-weight: 600;
+      color: #001E2B;
+    }
+
+    .highlight-box {
+      background: #F0FFF4;
+      border-left: 4px solid #00ED64;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+
+    .highlight-box h3 {
+      margin-top: 0;
+      color: #00684A;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 12px;
+    }
+
+    thead {
+      background: #001E2B;
+      color: #E8EDEB;
+    }
+
+    th {
+      padding: 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #E8EDEB;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #F9FBFA;
+    }
+
+    .card {
+      background: #F9FBFA;
+      border-left: 4px solid #00ED64;
+      padding: 20px;
+      margin: 18px 0;
+      border-radius: 8px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #001E2B;
+      margin-bottom: 10px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin: 20px 0;
+    }
+
+    .stat-card {
+      background: #F9FBFA;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #00ED64;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #889397;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: #001E2B;
+    }
+
+    .recommended {
+      display: inline-block;
+      background: #00ED64;
+      color: #001E2B;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    .conclusion-box {
+      background: linear-gradient(135deg, #001E2B 0%, #112733 100%);
+      color: white;
+      padding: 28px;
+      margin: 28px 0;
+      border-radius: 12px;
+      border: 2px solid #00ED64;
+    }
+
+    .conclusion-box h3 {
+      color: #00ED64;
+      margin-top: 0;
+    }
+
+    @media print {
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      
+      .page {
+        page-break-after: always !important;
+        margin: 0;
+      }
+
+      .page:last-child {
+        page-break-after: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PÁGINA 1: PORTADA -->
+  <div class="page cover-page">
+    <img src="mongo.png" alt="MongoDB" class="logo">
+
+    <div class="cover-content">
+      <h1 class="cover-title">MongoDB Atlas</h1>
+      <div class="cover-subtitle">Propuesta de Dimensionamiento Estratégico</div>
+      
+      <div class="cover-client">
+        <div class="client-label">Cliente</div>
+        <div class="client-name">Payway</div>
+      </div>
+
+      <div style="font-size: 20px; color: #E8EDEB; margin-bottom: 16px;">
+        Proyecto: Réplica de Salesforce
+      </div>
+
+      <div class="cover-date">Enero 2025</div>
+    </div>
+  </div>
+
+  <!-- PÁGINA 2: RESUMEN EJECUTIVO -->
+  <div class="page">
+    <div class="page-header">
+      <h1>1. Resumen Ejecutivo</h1>
+    </div>
+    <div class="page-content">
+      
+      <p>Este documento presenta un análisis técnico detallado y una recomendación de dimensionamiento para el cluster de MongoDB Atlas que servirá al proyecto "Réplica de Salesforce".</p>
+
+      <p>Nuestra propuesta está diseñada para <strong>garantizar el cumplimiento de los Acuerdos de Nivel de Servicio (SLA) de negocio</strong>, soportar los casos de uso críticos y proporcionar una ruta de escalabilidad predecible y costo-eficiente.</p>
+
+      <h2 style="margin-top: 30px;">Requerimientos Clave</h2>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">SLA de Rendimiento</div>
+          <div class="stat-value">500ms</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Crecimiento Proyectado</div>
+          <div class="stat-value">100 → 400 GB</div>
+        </div>
+      </div>
+
+      <h3>Casos de Uso Críticos</h3>
+      <ul>
+        <li><strong>Proceso de Tasación:</strong> Requiere acceso instantáneo a documentos en la colección assets</li>
+        <li><strong>Liquidación a Comercios en Tiempo Real:</strong> Necesita información de establishments y tasas</li>
+      </ul>
+
+      <h3>Patrón de Carga de Trabajo</h3>
+      <p>La operativa se basa en <strong>consultas puntuales de alta frecuencia</strong> (findOne por sf_id) y actualizaciones atómicas.</p>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 3: RECOMENDACIÓN ESTRATÉGICA -->
+  <div class="page">
+    <div class="page-header">
+      <h1>1. Resumen Ejecutivo (continuación)</h1>
+    </div>
+    <div class="page-content">
+      
+      <h2>Recomendación Estratégica por Fases</h2>
+
+      <div class="highlight-box">
+        <h3>Fase 1: Lanzamiento (100 GB)</h3>
+        <p>Iniciar con un cluster <strong>M40 (16 GB RAM)</strong>.</p>
+        <p style="margin-top: 10px;">Es el requisito mínimo para asegurar el SLA de 500ms bajo la carga de trabajo actual.</p>
+      </div>
+
+      <div class="highlight-box">
+        <h3>Fase 2: Crecimiento a 1 año (400 GB)</h3>
+        <p>Planificar el escalado a un cluster <strong>M50 (32 GB RAM)</strong>.</p>
+        <p style="margin-top: 10px;">Para absorber el crecimiento de datos y mantener el rendimiento óptimo.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 4: ANÁLISIS DE WORKLOAD -->
+  <div class="page">
+    <div class="page-header">
+      <h1>2. Análisis del Workload</h1>
+    </div>
+    <div class="page-content">
+      
+      <p>Un dimensionamiento correcto no solo se basa en el volumen de datos, sino en <strong>cómo se accede a ellos</strong>.</p>
+
+      <p>El análisis de su workload revela un patrón que MongoDB maneja con extrema eficiencia, siempre que la infraestructura sea la adecuada.</p>
+
+      <h2>Consultas Críticas</h2>
+
+      <div class="card">
+        <div class="card-title">Caso de Uso 1: Proceso de Tasación</div>
+        <p><strong>Colección:</strong> assets</p>
+        <p><strong>Consulta:</strong> findOne({ "sf_id": "..." })</p>
+        <p style="margin-top: 8px;">Requiere acceso rápido a documentos específicos para evaluación de activos.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Caso de Uso 2: Liquidación a Comercios</div>
+        <p><strong>Colección:</strong> accounts</p>
+        <p><strong>Consulta:</strong> findOne({ "sf_id": "..." })</p>
+        <p style="margin-top: 8px;">Necesita información de establecimientos y tasas para procesamiento en tiempo real.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 5: PATRÓN DE CONSULTAS -->
+  <div class="page">
+    <div class="page-header">
+      <h1>2. Análisis del Workload (continuación)</h1>
+    </div>
+    <div class="page-content">
+      
+      <h2>Patrón de Consultas</h2>
+      
+      <p>El patrón dominante es el de <strong>búsquedas puntuales (point lookups)</strong>, que son las más eficientes en MongoDB:</p>
+
+      <ul>
+        <li><strong>Lecturas:</strong> findOne por el campo sf_id, correctamente indexado en las colecciones accounts y assets</li>
+        <li><strong>Escrituras:</strong> update dirigidos por sf_id y addToSet para modificar arrays embebidos, como la relación entre assets y establishments</li>
+      </ul>
+
+      <div class="highlight-box" style="margin-top: 40px;">
+        <h3>Conclusión Clave</h3>
+        <p>El rendimiento de toda la aplicación depende de la <strong>velocidad con la que se puedan ejecutar estas búsquedas puntuales</strong>.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 6: JUSTIFICACIÓN TÉCNICA -->
+  <div class="page">
+    <div class="page-header">
+      <h1>3. Justificación Técnica: RAM y SLA</h1>
+    </div>
+    <div class="page-content">
+      
+      <p>Para que una consulta como findOne({ "sf_id": "..." }) se ejecute consistentemente por debajo de 500ms, es un <strong>requisito técnico indispensable</strong> que el índice utilizado ({ sf_id: 1 }) resida en la memoria RAM del cluster.</p>
+
+      <div class="stats-grid" style="margin-top: 30px;">
+        <div class="stat-card" style="border-left-color: #00ED64;">
+          <div class="stat-label">Operación en RAM</div>
+          <div class="stat-value" style="color: #00684A;">Instantánea</div>
+          <p style="margin-top: 12px; font-size: 12px;">Tiempo de respuesta mínimo, SLA garantizado</p>
+        </div>
+        <div class="stat-card" style="border-left-color: #E84949;">
+          <div class="stat-label">Operación en Disco</div>
+          <div class="stat-value" style="color: #E84949;">Lenta</div>
+          <p style="margin-top: 12px; font-size: 12px;">Latencia significativa, SLA en riesgo</p>
+        </div>
+      </div>
+
+      <div class="highlight-box" style="margin-top: 30px;">
+        <h3>Principio Fundamental</h3>
+        <p>Para cumplir con el SLA de 500ms de forma consistente, la RAM del cluster debe ser <strong>igual o mayor</strong> al Working Set calculado.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 7: CÁLCULO DE WORKING SET -->
+  <div class="page">
+    <div class="page-header">
+      <h1>3. Cálculo del Working Set</h1>
+    </div>
+    <div class="page-content">
+      
+      <p>El <strong>Working Set</strong> es la cantidad de datos e índices que deben residir en RAM para garantizar el rendimiento óptimo.</p>
+
+      <table style="margin-top: 30px;">
+        <thead>
+          <tr>
+            <th>Fase</th>
+            <th>Datos</th>
+            <th>Índices (10%)</th>
+            <th>Hot Data (10%)</th>
+            <th>Working Set</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Fase 1</strong></td>
+            <td>100 GB</td>
+            <td>~10 GB</td>
+            <td>~10 GB</td>
+            <td><strong>~20 GB</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Fase 2</strong></td>
+            <td>400 GB</td>
+            <td>~40 GB</td>
+            <td>~40 GB</td>
+            <td><strong>~80 GB</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 8: DIMENSIONAMIENTO FASE 1 -->
+  <div class="page">
+    <div class="page-header">
+      <h1>4. Dimensionamiento Fase 1</h1>
+    </div>
+    <div class="page-content">
+      
+      <h2>Cluster de Lanzamiento (Working Set ~20 GB)</h2>
+
+      <table style="margin-top: 25px;">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>RAM</th>
+            <th>vs. Working Set</th>
+            <th>Análisis</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>M30</strong></td>
+            <td>8 GB</td>
+            <td style="color: #E84949; font-weight: 600;">❌ Insuficiente</td>
+            <td>Con 8 GB, ni los índices (~10 GB) caben en memoria. Alto riesgo de incumplir SLA.</td>
+          </tr>
+          <tr style="background: #F0FFF4;">
+            <td><strong>M40</strong> <span class="recommended">RECOMENDADO</span></td>
+            <td>16 GB</td>
+            <td style="color: #00684A; font-weight: 600;">✓ Óptimo</td>
+            <td>Los 16 GB permiten mantener todos los índices en memoria y espacio para datos calientes. <strong>Garantiza el SLA.</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 9: CONCLUSIÓN FASE 1 -->
+  <div class="page">
+    <div class="page-header">
+      <h1>4. Dimensionamiento (continuación)</h1>
+    </div>
+    <div class="page-content">
+
+      <div class="conclusion-box">
+        <h3>Conclusión Fase 1</h3>
+        <p>Iniciar con un <strong>M40 no es un sobrecoste, es una inversión estratégica</strong> para asegurar el éxito y la adopción de la aplicación desde el primer día.</p>
+      </div>
+
+      <h2 style="margin-top: 35px;">Fase 2: Escalabilidad a 1 Año (Working Set ~80 GB)</h2>
+
+      <table style="margin-top: 25px;">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>RAM</th>
+            <th>vs. Working Set</th>
+            <th>Análisis</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background: #F0FFF4;">
+            <td><strong>M50</strong> <span class="recommended">RECOMENDADO</span></td>
+            <td>32 GB</td>
+            <td style="color: #00684A; font-weight: 600;">✓ Parcial</td>
+            <td>Podrá alojar porción significativa de índices y datos calientes. Balance costo-eficiente.</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 10: NOTA DE ESCALABILIDAD -->
+  <div class="page">
+    <div class="page-header">
+      <h1>4. Dimensionamiento (continuación)</h1>
+    </div>
+    <div class="page-content">
+
+      <div class="highlight-box">
+        <h3>Nota de Escalabilidad</h3>
+        <p>Atlas permite monitorear el "Cache Usage Ratio".</p>
+        <p style="margin-top: 12px;">Si esta métrica indica que una porción insuficiente de las lecturas se sirve desde la RAM, se puede escalar a un <strong>M60 (64 GB RAM)</strong> con cero tiempo de inactividad.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 11: COSTOS FASE 1 - ESTÁNDAR -->
+  <div class="page">
+    <div class="page-header">
+      <h1>5. Análisis de Costos - Año 1</h1>
+    </div>
+    <div class="page-content">
+      
+      <h2>Fase 1: Cluster M40 - Escenario Estándar</h2>
+
+      <p>Para la fase inicial con 100 GB de datos, se recomienda un <strong>Cluster M40</strong> para garantizar el cumplimiento del SLA de 500ms desde el lanzamiento.</p>
+
+      <table style="margin-top: 25px;">
+        <thead>
+          <tr>
+            <th>Componente</th>
+            <th>Costo Anual</th>
+            <th>Justificación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cluster (M40)</td>
+            <td>$9,440</td>
+            <td>16 GB RAM para working set inicial</td>
+          </tr>
+          <tr>
+            <td>Servicios de Red</td>
+            <td>$661</td>
+            <td>Transferencia de datos</td>
+          </tr>
+          <tr>
+            <td>Servicios de Backup</td>
+            <td>$269</td>
+            <td>Copias de seguridad continuas</td>
+          </tr>
+          <tr>
+            <td>Soporte (Pro)</td>
+            <td>$9,588</td>
+            <td>Soporte técnico especializado</td>
+          </tr>
+          <tr style="background: #F0FFF4; font-weight: 600;">
+            <td><strong>Total Anual</strong></td>
+            <td><strong>$19,958</strong></td>
+            <td>~$1,663 / mes</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 12: COSTOS FASE 1 - PAYWAY -->
+  <div class="page">
+    <div class="page-header">
+      <h1>5. Análisis de Costos - Año 1 (cont.)</h1>
+    </div>
+    <div class="page-content">
+      
+      <h2>Costos Ajustados para Payway</h2>
+
+      <p>Dado que Payway ya cuenta con suscripción de Soporte Pro, el costo de soporte se reduce al <strong>20% del costo de infraestructura</strong>.</p>
+
+      <table style="margin-top: 25px;">
+        <thead>
+          <tr>
+            <th>Componente</th>
+            <th>Costo Anual (USD)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Costo del Cluster (M40)</td>
+            <td>$9,440</td>
+          </tr>
+          <tr>
+            <td>Servicios de Red</td>
+            <td>$661</td>
+          </tr>
+          <tr>
+            <td>Servicios de Backup</td>
+            <td>$269</td>
+          </tr>
+          <tr>
+            <td>Soporte (20% Infraestructura)</td>
+            <td>$2,074</td>
+          </tr>
+          <tr style="background: #F0FFF4; font-weight: 600;">
+            <td><strong>Total Anual Ajustado</strong></td>
+            <td><strong>$12,444</strong></td>
+          </tr>
+          <tr>
+            <td colspan="2" style="text-align: center; padding: 14px; background: #001E2B; color: #00ED64; font-size: 17px; font-weight: 600;">
+              Costo Mensual: ~$1,037 / mes
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 13: COSTOS FASE 2 - ESTÁNDAR -->
+  <div class="page">
+    <div class="page-header">
+      <h1>5. Análisis de Costos - Año 2</h1>
+    </div>
+    <div class="page-content">
+      
+      <h2>Fase 2: Cluster M50 - Escenario Estándar</h2>
+
+      <p>Para la segunda fase con 400 GB de datos, se planifica escalado a <strong>Cluster M50</strong>.</p>
+
+      <table style="margin-top: 25px;">
+        <thead>
+          <tr>
+            <th>Componente</th>
+            <th>Costo Anual</th>
+            <th>Justificación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cluster (M50)</td>
+            <td>$19,634</td>
+            <td>32 GB RAM para working set ampliado</td>
+          </tr>
+          <tr>
+            <td>Servicios de Red</td>
+            <td>$1,374</td>
+            <td>Ajuste por mayor volumen</td>
+          </tr>
+          <tr>
+            <td>Servicios de Backup</td>
+            <td>$1,341</td>
+            <td>Backup proporcional (400 GB)</td>
+          </tr>
+          <tr>
+            <td>Soporte (Pro)</td>
+            <td>$9,588</td>
+            <td>Nivel de servicio premium</td>
+          </tr>
+          <tr style="background: #F0FFF4; font-weight: 600;">
+            <td><strong>Total Anual</strong></td>
+            <td><strong>$31,937</strong></td>
+            <td>~$2,661 / mes</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 14: COSTOS FASE 2 - PAYWAY -->
+  <div class="page">
+    <div class="page-header">
+      <h1>5. Análisis de Costos - Año 2 (cont.)</h1>
+    </div>
+    <div class="page-content">
+      
+      <h2>Costos Ajustados para Payway</h2>
+
+      <table style="margin-top: 25px;">
+        <thead>
+          <tr>
+            <th>Componente</th>
+            <th>Costo Anual (USD)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Costo del Cluster (M50)</td>
+            <td>$19,634</td>
+          </tr>
+          <tr>
+            <td>Servicios de Red</td>
+            <td>$1,374</td>
+          </tr>
+          <tr>
+            <td>Servicios de Backup</td>
+            <td>$1,341</td>
+          </tr>
+          <tr>
+            <td>Soporte (20% Infraestructura)</td>
+            <td>$4,470</td>
+          </tr>
+          <tr style="background: #F0FFF4; font-weight: 600;">
+            <td><strong>Total Anual Ajustado</strong></td>
+            <td><strong>$26,819</strong></td>
+          </tr>
+          <tr>
+            <td colspan="2" style="text-align: center; padding: 14px; background: #001E2B; color: #00ED64; font-size: 17px; font-weight: 600;">
+              Costo Mensual: ~$2,235 / mes
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 15: RESUMEN DE INVERSIÓN -->
+  <div class="page">
+    <div class="page-header">
+      <h1>5. Resumen de Inversión</h1>
+    </div>
+    <div class="page-content">
+
+      <div class="highlight-box">
+        <h3>Resumen por Fase</h3>
+        <p><strong>Año 1 (M40):</strong> ~$1,037 mensuales</p>
+        <p style="margin-top: 8px;">(Total anual ~$12.4K con descuento Payway)</p>
+        <p style="margin-top: 16px;"><strong>Año 2 (M50):</strong> ~$2,235 mensuales</p>
+        <p style="margin-top: 8px;">(Total anual ~$26.8K con descuento Payway)</p>
+      </div>
+
+      <p style="margin-top: 25px;">Esta estrategia optimiza costos al evitar sobre-dimensionamiento inicial y asegura que la inversión esté alineada con el crecimiento del negocio.</p>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 16: CONCLUSIÓN -->
+  <div class="page">
+    <div class="page-header">
+      <h1>6. Conclusión y Próximos Pasos</h1>
+    </div>
+    <div class="page-content">
+      
+      <h2>Estrategia Recomendada</h2>
+
+      <p>Proponemos un <strong>enfoque evolutivo</strong> que mitiga riesgos y optimiza la inversión:</p>
+
+      <div class="card">
+        <div class="card-title">✓ Fase 1: Iniciar con Cluster M40</div>
+        <ul>
+          <li>16 GB RAM garantiza working set en memoria</li>
+          <li>Cumplimiento del SLA de 500ms desde día uno</li>
+          <li>Base técnica sólida para el lanzamiento</li>
+          <li>Inversión mensual: ~$1,037 USD</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">✓ Fase 2: Escalar a Cluster M50</div>
+        <ul>
+          <li>32 GB RAM para manejar crecimiento a 400 GB</li>
+          <li>Escalado planificado y conservador</li>
+          <li>Mantenimiento del rendimiento óptimo</li>
+          <li>Inversión mensual: ~$2,235 USD</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 17: VALOR Y PRÓXIMOS PASOS -->
+  <div class="page">
+    <div class="page-header">
+      <h1>6. Conclusión (continuación)</h1>
+    </div>
+    <div class="page-content">
+
+      <div class="conclusion-box">
+        <h3>Valor de la Propuesta</h3>
+        <p>Esta estrategia proporciona la <strong>máxima confianza en el rendimiento, la escalabilidad y el éxito a largo plazo</strong> del proyecto "Réplica de Salesforce" para Payway.</p>
+        <p style="margin-top: 14px;">La inversión está alineada con el crecimiento del negocio, evitando sobre-dimensionamiento inicial mientras garantiza el cumplimiento de los SLAs críticos.</p>
+      </div>
+
+      <h2 style="margin-top: 30px;">Próximos Pasos</h2>
+
+      <ol style="font-size: 13px; line-height: 1.8; margin-top: 20px;">
+        <li><strong>Aprobación de la propuesta:</strong> Revisión y validación de la estrategia</li>
+        <li><strong>Provisión del Cluster M40:</strong> Configuración inicial en MongoDB Atlas</li>
+        <li><strong>Configuración de monitoreo:</strong> Implementación de alertas para métricas clave</li>
+        <li><strong>Plan de escalado:</strong> Establecer triggers para migración a M50</li>
+        <li><strong>Optimización continua:</strong> Revisiones trimestrales de performance</li>
+      </ol>
+
+      <div style="margin-top: 45px; padding-top: 20px; border-top: 2px solid #E8EDEB; text-align: center; color: #889397; font-size: 11px;">
+        <p>MongoDB Atlas - Propuesta de Dimensionamiento Estratégico</p>
+        <p>© 2025 MongoDB, Inc. | Preparado para Payway</p>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

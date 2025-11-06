@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dimensionamiento MongoDB Atlas - Payway</title>
+    <style>
+        /* =============================================
+   GoMDB - Sistema de Diseño Global
+   Arquitectura MongoDB para Latinoamérica
+   ============================================= */
+
+/* ============================================= 
+   1. VARIABLES CSS (Custom Properties)
+   ============================================= */
+   :root {
+    /* Colores Primarios - Basados en MongoDB */
+    --color-primary: #00ED64;           /* Verde MongoDB */
+    --color-primary-hover: #00D757;     /* Verde hover */
+    --color-primary-light: #00ED6420;   /* Verde con transparencia */
+    
+    /* Colores de Fondo */
+    --color-bg-primary: #001E2B;        /* Azul oscuro principal */
+    --color-bg-secondary: #0D2A3D;      /* Azul medio */
+    --color-bg-tertiary: #112331;       /* Azul alternativo */
+    --color-bg-card: #0D2A3D80;         /* Fondo de cards con transparencia */
+    
+    /* Colores de Acento */
+    --color-accent: #5644D4;            /* Púrpura */
+    --color-accent-light: #5644D420;    /* Púrpura con transparencia */
+    
+    /* Colores de Texto */
+    --color-text-primary: #FFFFFF;      /* Blanco */
+    --color-text-secondary: #B8C4CE;    /* Gris claro */
+    --color-text-muted: #718096;        /* Gris medio */
+    --color-text-dark: #001E2B;         /* Para texto sobre fondos claros */
+    
+    /* Colores de Estado */
+    --color-success: #00ED64;
+    --color-warning: #F59E0B;
+    --color-error: #EF4444;
+    --color-info: #3B82F6;
+    
+    /* Espaciado */
+    --spacing-xs: 0.25rem;    /* 4px */
+    --spacing-sm: 0.5rem;     /* 8px */
+    --spacing-md: 1rem;       /* 16px */
+    --spacing-lg: 1.5rem;     /* 24px */
+    --spacing-xl: 2rem;       /* 32px */
+    --spacing-2xl: 3rem;      /* 48px */
+    --spacing-3xl: 4rem;      /* 64px */
+    --spacing-4xl: 6rem;      /* 96px */
+    
+    /* Tipografía */
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+    
+    /* Tamaños de Fuente */
+    --text-xs: 0.75rem;       /* 12px */
+    --text-sm: 0.875rem;      /* 14px */
+    --text-base: 1rem;        /* 16px */
+    --text-lg: 1.125rem;      /* 18px */
+    --text-xl: 1.25rem;       /* 20px */
+    --text-2xl: 1.5rem;       /* 24px */
+    --text-3xl: 2rem;         /* 32px */
+    --text-4xl: 2.5rem;       /* 40px */
+    --text-5xl: 3rem;         /* 48px */
+    --text-6xl: 4rem;         /* 64px */
+    --text-7xl: 5rem;         /* 80px */
+    --text-8xl: 6rem;         /* 96px */
+    
+    /* Bordes y Radios */
+    --radius-sm: 0.25rem;     /* 4px */
+    --radius-md: 0.5rem;      /* 8px */
+    --radius-lg: 1rem;        /* 16px */
+    --radius-xl: 1.5rem;      /* 24px */
+    --radius-full: 9999px;    /* Circular */
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+    --shadow-glow: 0 0 40px rgba(0, 237, 100, 0.3);
+    
+    /* Transiciones */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+    
+    /* Z-Index */
+    --z-base: 1;
+    --z-dropdown: 10;
+    --z-sticky: 20;
+    --z-fixed: 30;
+    --z-modal-backdrop: 40;
+    --z-modal: 50;
+    --z-popover: 60;
+    --z-tooltip: 70;
+  }
+  
+  /* ============================================= 
+     2. RESET Y BASE
+     ============================================= */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* ============================================= 
+     3. TIPOGRAFÍA
+     ============================================= */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  h1 {
+    font-size: clamp(var(--text-4xl), 8vw, var(--text-8xl));
+  }
+  
+  h2 {
+    font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
+  }
+  
+  h3 {
+    font-size: clamp(var(--text-2xl), 3vw, var(--text-4xl));
+  }
+  
+  h4 {
+    font-size: var(--text-2xl);
+  }
+  
+  h5 {
+    font-size: var(--text-xl);
+  }
+  
+  h6 {
+    font-size: var(--text-lg);
+  }
+  
+  p {
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-secondary);
+  }
+  
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+  
+  a:hover {
+    color: var(--color-primary-hover);
+  }
+  
+  /* Texto con gradiente */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* ============================================= 
+     4. LAYOUT Y CONTENEDORES
+     ============================================= */
+  .container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+  }
+  
+  .section {
+    padding: var(--spacing-4xl) 0;
+  }
+  
+  .section-lg {
+    padding: var(--spacing-4xl) 0;
+  }
+  
+  @media (min-width: 768px) {
+    .section-lg {
+      padding: calc(var(--spacing-4xl) * 1.5) 0;
+    }
+  }
+  
+  /* ============================================= 
+     5. COMPONENTES - NAVEGACIÓN
+     ============================================= */
+  .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: var(--z-fixed);
+    transition: all var(--transition-slow);
+  }
+  
+  .navbar-scrolled {
+    background-color: rgba(0, 30, 43, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+  }
+  
+  .navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+  
+  .navbar-links {
+    display: none;
+    gap: var(--spacing-xl);
+  }
+  
+  @media (min-width: 768px) {
+    .navbar-links {
+      display: flex;
+    }
+  }
+  
+  .navbar-link {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    transition: color var(--transition-base);
+  }
+  
+  .navbar-link:hover {
+    color: var(--color-text-primary);
+  }
+  
+  /* ============================================= 
+     6. COMPONENTES - BOTONES
+     ============================================= */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-weight: 600;
+    font-size: var(--text-base);
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    text-decoration: none;
+  }
+  
+  .btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-text-muted);
+  }
+  
+  .btn-ghost:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  
+  /* Tamaños de botones */
+  .btn-sm {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--text-sm);
+  }
+  
+  .btn-lg {
+    padding: var(--spacing-lg) var(--spacing-2xl);
+    font-size: var(--text-lg);
+  }
+  
+  /* ============================================= 
+     7. COMPONENTES - CARDS
+     ============================================= */
+  .card {
+    background-color: var(--color-bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    transition: all var(--transition-base);
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .card-gradient {
+    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, rgba(13, 42, 61, 0.5) 100%);
+  }
+  
+  .card-bordered {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  /* ============================================= 
+     8. COMPONENTES - HERO
+     ============================================= */
+  .hero {
+    position: relative;
+    padding-top: calc(80px + var(--spacing-4xl));
+    padding-bottom: var(--spacing-4xl);
+    overflow: hidden;
+  }
+  
+  .hero-background {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 50%, var(--color-bg-primary) 100%);
+    z-index: -2;
+  }
+  
+  .hero-blur {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.2;
+    z-index: -1;
+  }
+  
+  .hero-blur-primary {
+    width: 300px;
+    height: 300px;
+    background-color: var(--color-primary);
+    top: 10%;
+    left: 5%;
+  }
+  
+  .hero-blur-accent {
+    width: 400px;
+    height: 400px;
+    background-color: var(--color-accent);
+    bottom: 10%;
+    right: 10%;
+  }
+  
+  /* ============================================= 
+     9. COMPONENTES - BADGES
+     ============================================= */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border-radius: var(--radius-full);
+  }
+  
+  .badge-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-dark);
+  }
+  
+  .badge-secondary {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+  }
+  
+  /* ============================================= 
+     10. COMPONENTES - GRÁFICOS Y MÉTRICAS
+     ============================================= */
+  .metric {
+    transition: transform var(--transition-base);
+    cursor: pointer;
+  }
+  
+  .metric:hover {
+    transform: scale(1.05);
+  }
+  
+  .metric-value {
+    font-size: var(--text-5xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .metric-label {
+    color: var(--color-text-secondary);
+    font-size: var(--text-base);
+  }
+  
+  .chart-container {
+    background-color: var(--color-bg-card);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+  }
+  
+  /* ============================================= 
+     11. UTILIDADES
+     ============================================= */
+  /* Espaciado */
+  .mt-0 { margin-top: 0; }
+  .mt-1 { margin-top: var(--spacing-xs); }
+  .mt-2 { margin-top: var(--spacing-sm); }
+  .mt-3 { margin-top: var(--spacing-md); }
+  .mt-4 { margin-top: var(--spacing-lg); }
+  .mt-5 { margin-top: var(--spacing-xl); }
+  .mt-6 { margin-top: var(--spacing-2xl); }
+  
+  .mb-0 { margin-bottom: 0; }
+  .mb-1 { margin-bottom: var(--spacing-xs); }
+  .mb-2 { margin-bottom: var(--spacing-sm); }
+  .mb-3 { margin-bottom: var(--spacing-md); }
+  .mb-4 { margin-bottom: var(--spacing-lg); }
+  .mb-5 { margin-bottom: var(--spacing-xl); }
+  .mb-6 { margin-bottom: var(--spacing-2xl); }
+  
+  /* Alineación de texto */
+  .text-left { text-align: left; }
+  .text-center { text-align: center; }
+  .text-right { text-align: right; }
+  
+  /* Display */
+  .hidden { display: none; }
+  .block { display: block; }
+  .inline-block { display: inline-block; }
+  .flex { display: flex; }
+  .inline-flex { display: inline-flex; }
+  .grid { display: grid; }
+  
+  /* Flex utilities */
+  .items-center { align-items: center; }
+  .items-start { align-items: flex-start; }
+  .items-end { align-items: flex-end; }
+  .justify-center { justify-content: center; }
+  .justify-between { justify-content: space-between; }
+  .justify-around { justify-content: space-around; }
+  .flex-wrap { flex-wrap: wrap; }
+  .gap-1 { gap: var(--spacing-xs); }
+  .gap-2 { gap: var(--spacing-sm); }
+  .gap-3 { gap: var(--spacing-md); }
+  .gap-4 { gap: var(--spacing-lg); }
+  .gap-5 { gap: var(--spacing-xl); }
+  
+  /* Grid */
+  .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  
+  @media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  
+  /* ============================================= 
+     12. ANIMACIONES
+     ============================================= */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+  
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(0, 237, 100, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(0, 237, 100, 0.6);
+    }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  .animate-slideInLeft {
+    animation: slideInLeft 0.6s ease-out;
+  }
+  
+  .animate-slideInRight {
+    animation: slideInRight 0.6s ease-out;
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+  
+  /* ============================================= 
+     13. RESPONSIVO
+     ============================================= */
+  /* Mobile First - Breakpoints */
+  @media (min-width: 640px) {
+    .container {
+      padding: 0 var(--spacing-xl);
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .hide-mobile {
+      display: none;
+    }
+    
+    .show-desktop {
+      display: block;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    h1 {
+      font-size: var(--text-7xl);
+    }
+    
+    h2 {
+      font-size: var(--text-5xl);
+    }
+  }
+  
+  /* ============================================= 
+     14. MODO OSCURO (ya es el default)
+     ============================================= */
+  /* Puedes agregar un modo claro en el futuro */
+  .light-mode {
+    --color-bg-primary: #FFFFFF;
+    --color-bg-secondary: #F7FAFC;
+    --color-text-primary: #001E2B;
+    --color-text-secondary: #4A5568;
+  }
+  
+  /* ============================================= 
+     15. UTILIDADES ESPECIALES PARA MONGODB
+     ============================================= */
+  .mongodb-glow {
+    box-shadow: 0 0 40px rgba(0, 237, 100, 0.3);
+  }
+  
+  .mongodb-gradient {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  }
+  
+  .code-block {
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    font-family: var(--font-mono);
+    overflow-x: auto;
+  }
+  
+  .performance-bar {
+    height: 100%;
+    background: linear-gradient(to top, var(--color-primary), rgba(0, 237, 100, 0.3));
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    transition: all var(--transition-base);
+  }
+  
+  .performance-bar:hover {
+    background: linear-gradient(to top, var(--color-primary-hover), rgba(0, 215, 87, 0.4));
+  }
+  @media (min-width: 768px) {
+    .criteria-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }
+
+  /* Custom styles for this page */
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--spacing-xl) 0;
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: var(--spacing-md);
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .comparison-table th {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  .comparison-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: var(--spacing-sm);
+  }
+
+  .status-success {
+    background-color: var(--color-success);
+  }
+
+  .status-warning {
+    background-color: var(--color-warning);
+  }
+
+  .status-error {
+    background-color: var(--color-error);
+  }
+
+  .ram-bar-container {
+    background-color: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    height: 40px;
+    overflow: hidden;
+    position: relative;
+    margin: var(--spacing-md) 0;
+  }
+
+  .ram-bar {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-md);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    transition: width 1s ease;
+  }
+
+  .phase-timeline {
+    position: relative;
+    padding-left: var(--spacing-xl);
+  }
+
+  .phase-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--color-primary), var(--color-accent));
+  }
+
+  .phase-item {
+    position: relative;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .phase-item::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--spacing-xl) - 6px);
+    top: 8px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    box-shadow: 0 0 0 4px var(--color-bg-primary);
+  }
+
+  .architecture-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    margin: var(--spacing-xl) 0;
+  }
+
+  .architecture-box {
+    background-color: var(--color-bg-tertiary);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    text-align: center;
+    min-width: 150px;
+    transition: all var(--transition-base);
+  }
+
+  .architecture-box:hover {
+    border-color: var(--color-primary);
+    transform: scale(1.05);
+  }
+
+  .architecture-arrow {
+    font-size: var(--text-3xl);
+    color: var(--color-primary);
+  }
+
+  .entity-badge {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-md);
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid rgba(0, 237, 100, 0.3);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    margin: var(--spacing-xs);
+  }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-scrolled">
+        <div class="container navbar-container">
+            <div class="navbar-logo">
+                <span class="text-gradient">MongoDB Atlas</span>
+            </div>
+            <div class="navbar-links">
+                <a href="#contexto" class="navbar-link">Contexto</a>
+                <a href="#arquitectura" class="navbar-link">Arquitectura</a>
+                <a href="#workload" class="navbar-link">Workload</a>
+                <a href="#dimensionamiento" class="navbar-link">Dimensionamiento</a>
+                <a href="#fases" class="navbar-link">Fases</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-blur hero-blur-primary"></div>
+        <div class="hero-blur hero-blur-accent"></div>
+        
+        <div class="container">
+            <div class="text-center animate-fadeIn">
+                <div class="badge badge-primary mb-4" style="margin-bottom: var(--spacing-lg);">
+                    🎯 Propuesta Estratégica · Octubre 2025
+                </div>
+                <h1 class="text-gradient mb-4">Réplica de Salesforce</h1>
+                <p style="font-size: var(--text-2xl); color: var(--color-text-secondary); max-width: 800px; margin: 0 auto var(--spacing-xl);">
+                    Dimensionamiento MongoDB Atlas para Payway
+                </p>
+                <p style="color: var(--color-text-muted); max-width: 700px; margin: 0 auto;">
+                    Solución estratégica para eliminar el riesgo de colapso por límite de consultas en Salesforce
+                </p>
+            </div>
+
+            <!-- Métricas Clave -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6" style="margin-top: var(--spacing-4xl);">
+                <div class="card card-bordered text-center animate-fadeIn">
+                    <div class="metric-value" style="font-size: var(--text-4xl);">500ms</div>
+                    <div class="metric-label">SLA Objetivo</div>
+                </div>
+                <div class="card card-bordered text-center animate-fadeIn" style="animation-delay: 0.1s;">
+                    <div class="metric-value" style="font-size: var(--text-4xl);">5-10</div>
+                    <div class="metric-label">Apps Internas</div>
+                </div>
+                <div class="card card-bordered text-center animate-fadeIn" style="animation-delay: 0.2s;">
+                    <div class="metric-value" style="font-size: var(--text-4xl);">100GB</div>
+                    <div class="metric-label">Datos Iniciales</div>
+                </div>
+                <div class="card card-bordered text-center animate-fadeIn" style="animation-delay: 0.3s;">
+                    <div class="metric-value" style="font-size: var(--text-4xl);">1.3M+</div>
+                    <div class="metric-label">Documentos</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contexto del Negocio -->
+    <section id="contexto" class="section" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <h2 class="text-center mb-5">El Desafío de Negocio</h2>
+            
+            <div class="card card-gradient card-bordered mongodb-glow" style="max-width: 900px; margin: 0 auto var(--spacing-4xl);">
+                <div style="text-align: center; font-size: var(--text-5xl); margin-bottom: var(--spacing-lg);">⚠️</div>
+                <h3 style="color: var(--color-error); text-align: center;">Problema Crítico</h3>
+                <p style="font-size: var(--text-xl); text-align: center; color: var(--color-text-primary);">
+                    Payway está alcanzando el <strong style="color: var(--color-error);">límite diario de consultas en Salesforce</strong>, 
+                    lo que genera colapso del servicio, alto riesgo operacional y latencia inaceptable.
+                </p>
+            </div>
+
+            <h3 class="text-center mb-4">Objetivos Estratégicos del Proyecto</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Objetivo 1 -->
+                <div class="card card-bordered animate-slideInLeft">
+                    <div style="font-size: var(--text-5xl); text-align: center; margin-bottom: var(--spacing-md);">🛡️</div>
+                    <h4 style="color: var(--color-primary);">Reducir el Riesgo</h4>
+                    <p>Evitar que las operaciones críticas se detengan por alcanzar el límite de consultas de Salesforce.</p>
+                    <div class="mt-3" style="padding: var(--spacing-md); background-color: rgba(239, 68, 68, 0.1); border-radius: var(--radius-md); border-left: 4px solid var(--color-error);">
+                        <strong style="color: var(--color-error);">Prioridad #1</strong>
+                        <p style="font-size: var(--text-sm); margin-bottom: 0;">La continuidad operacional es crítica para el negocio</p>
+                    </div>
+                </div>
+
+                <!-- Objetivo 2 -->
+                <div class="card card-bordered animate-fadeIn">
+                    <div style="font-size: var(--text-5xl); text-align: center; margin-bottom: var(--spacing-md);">🚀</div>
+                    <h4 style="color: var(--color-primary);">Ventaja Competitiva</h4>
+                    <p>Dar más acceso a datos a usuarios internos y externos para mejorar la experiencia y productividad.</p>
+                    <div class="mt-3" style="padding: var(--spacing-md); background-color: rgba(0, 237, 100, 0.1); border-radius: var(--radius-md); border-left: 4px solid var(--color-success);">
+                        <strong style="color: var(--color-success);">Crecimiento</strong>
+                        <p style="font-size: var(--text-sm); margin-bottom: 0;">Habilitar nuevos casos de uso y features</p>
+                    </div>
+                </div>
+
+                <!-- Objetivo 3 -->
+                <div class="card card-bordered animate-slideInRight">
+                    <div style="font-size: var(--text-5xl); text-align: center; margin-bottom: var(--spacing-md);">💰</div>
+                    <h4 style="color: var(--color-primary);">Reducir Costos y Latencia</h4>
+                    <p>Réplica local para consultas más rápidas y evitar costos adicionales en Salesforce.</p>
+                    <div class="mt-3" style="padding: var(--spacing-md); background-color: rgba(86, 68, 212, 0.1); border-radius: var(--radius-md); border-left: 4px solid var(--color-accent);">
+                        <strong style="color: var(--color-accent);">Eficiencia</strong>
+                        <p style="font-size: var(--text-sm); margin-bottom: 0;">Optimización de recursos y rendimiento</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Arquitectura del Sistema -->
+    <section id="arquitectura" class="section">
+        <div class="container">
+            <h2 class="text-center mb-5">Arquitectura de la Solución</h2>
+            
+            <!-- Arquitectura Actual -->
+            <div class="card card-bordered mb-5">
+                <h3 style="color: var(--color-primary);">⚙️ Proceso Actual: Replicación Batch</h3>
+                
+                <div class="architecture-flow">
+                    <div class="architecture-box">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">☁️</div>
+                        <strong>Salesforce</strong>
+                        <p style="font-size: var(--text-xs); margin: 0;">230 GB Total</p>
+                    </div>
+                    
+                    <div class="architecture-arrow">→</div>
+                    
+                    <div class="architecture-box" style="border-color: var(--color-warning);">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">λ</div>
+                        <strong>AWS Lambda</strong>
+                        <p style="font-size: var(--text-xs); margin: 0;">Cada 5 minutos</p>
+                    </div>
+                    
+                    <div class="architecture-arrow">→</div>
+                    
+                    <div class="architecture-box" style="border-color: var(--color-primary);">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">🍃</div>
+                        <strong>MongoDB Atlas</strong>
+                        <p style="font-size: var(--text-xs); margin: 0;">100 GB Réplica</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div style="padding: var(--spacing-md); background-color: rgba(245, 158, 11, 0.1); border-radius: var(--radius-md);">
+                        <strong style="color: var(--color-warning);">📊 Volumen de Procesamiento</strong>
+                        <p style="margin-bottom: 0;">100-1,000 novedades por ciclo de 5 minutos</p>
+                    </div>
+                    <div style="padding: var(--spacing-md); background-color: rgba(59, 130, 246, 0.1); border-radius: var(--radius-md);">
+                        <strong style="color: var(--color-info);">🔄 Frecuencia</strong>
+                        <p style="margin-bottom: 0;">Batch cada 5 minutos (visión: tiempo real)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arquitectura de Consumo -->
+            <div class="card card-gradient card-bordered mongodb-glow">
+                <h3 style="color: var(--color-primary);">🔗 Arquitectura de Consumo</h3>
+                
+                <div class="architecture-flow">
+                    <div class="architecture-box" style="border-color: var(--color-accent);">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">📨</div>
+                        <strong>Kafka</strong>
+                        <p style="font-size: var(--text-xs); margin: 0;">Event Streaming</p>
+                    </div>
+                    
+                    <div class="architecture-arrow">→</div>
+                    
+                    <div class="architecture-box">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">⚡</div>
+                        <strong>Microservicio</strong>
+                        <p style="font-size: var(--text-xs); margin: 0;">Consumidor</p>
+                    </div>
+                    
+                    <div class="architecture-arrow">→</div>
+                    
+                    <div class="architecture-box" style="border-color: var(--color-primary);">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">🍃</div>
+                        <strong>MongoDB</strong>
+                        <p style="font-size: var(--text-xs); margin: 0;">Base de Datos</p>
+                    </div>
+                    
+                    <div class="architecture-arrow">→</div>
+                    
+                    <div class="architecture-box" style="border-color: var(--color-error);">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">💾</div>
+                        <strong>Redis Cache</strong>
+                        <p style="font-size: var(--text-xs); margin: 0;">Capa de Caché</p>
+                    </div>
+                    
+                    <div class="architecture-arrow">→</div>
+                    
+                    <div class="architecture-box" style="border-color: var(--color-success);">
+                        <div style="font-size: var(--text-3xl); margin-bottom: var(--spacing-sm);">🌐</div>
+                        <strong>API REST</strong>
+                        <p style="font-size: var(--text-xs); margin: 0;">5-10 Apps</p>
+                    </div>
+                </div>
+                
+                <div class="mt-4" style="padding: var(--spacing-lg); background-color: rgba(0, 237, 100, 0.1); border-radius: var(--radius-md); border-left: 4px solid var(--color-success);">
+                    <strong style="color: var(--color-success);">✅ Aislamiento de Carga</strong>
+                    <p style="margin-bottom: 0;">Los clientes NO se conectan directamente a MongoDB. La API REST actúa como capa de abstracción, sirviendo a 5-10 aplicaciones internas.</p>
+                </div>
+            </div>
+
+            <!-- Modelo de Datos -->
+            <div class="card card-bordered mt-5">
+                <h3 style="color: var(--color-primary);">📊 Modelo de Datos y Colecciones</h3>
+                
+                <p style="margin-bottom: var(--spacing-lg);">El sistema replica las entidades principales del modelo de negocio de Salesforce:</p>
+                
+                <div style="text-align: center; margin: var(--spacing-xl) 0;">
+                    <span class="entity-badge">👤 Accounts</span>
+                    <span class="entity-badge">📦 Assets</span>
+                    <span class="entity-badge">🏪 Establishments</span>
+                    <span class="entity-badge">📦 Products</span>
+                    <span class="entity-badge">👥 Contacts</span>
+                    <span class="entity-badge">📍 Addresses (1.3M docs)</span>
+                    <span class="entity-badge">🏦 Banks</span>
+                    <span class="entity-badge">🏢 Branches</span>
+                    <span class="entity-badge">🛒 Commerce</span>
+                    <span class="entity-badge">💳 Discounts</span>
+                </div>
+                
+                <div style="padding: var(--spacing-lg); background-color: var(--color-bg-tertiary); border-radius: var(--radius-md); margin-top: var(--spacing-lg);">
+                    <h5 style="color: var(--color-accent);">🎯 Enfoque de Modelado NoSQL</h5>
+                    <p>El equipo de Payway ya está aplicando las mejores prácticas de modelado documental:</p>
+                    <div class="code-block mt-3">
+                        <code>// Ejemplo de modelo embebido<br>
+{<br>
+  "_id": ObjectId("..."),<br>
+  "sf_id": "AST-12345",<br>
+  "name": "Producto X",<br>
+  "establishments": ["EST-001", "EST-002"] // IDs embebidos<br>
+}</code>
+                    </div>
+                    <p class="mt-3" style="margin-bottom: 0;">Este patrón optimiza las consultas por <code style="color: var(--color-accent);">sf_id</code> y reduce la necesidad de joins.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Análisis del Workload -->
+    <section id="workload" class="section" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <h2 class="text-center mb-5">Análisis del Workload</h2>
+            
+            <div class="card card-gradient card-bordered mongodb-glow mb-5" style="max-width: 900px; margin: 0 auto var(--spacing-4xl);">
+                <h3 style="color: var(--color-primary);">📈 Características de la Carga</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h5 style="color: var(--color-text-primary);">Tipo de Uso</h5>
+                        <p><strong style="color: var(--color-accent);">Mixto:</strong> Transaccional + Analítica</p>
+                        <p style="font-size: var(--text-sm); margin-bottom: 0;">Por cada transacción hay una grabación en la base de datos</p>
+                    </div>
+                    <div>
+                        <h5 style="color: var(--color-text-primary);">Patrón de Consulta</h5>
+                        <p><strong style="color: var(--color-success);">Point Lookups</strong> por <code>sf_id</code></p>
+                        <p style="font-size: var(--text-sm); margin-bottom: 0;">Índices optimizados para búsquedas directas</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Caso de Uso 1 -->
+                <div class="card card-bordered animate-slideInLeft">
+                    <h4 style="color: var(--color-primary);">🎯 Caso 1: Proceso de Tasación</h4>
+                    <p>Requiere acceso instantáneo a documentos en la colección <code style="color: var(--color-accent);">assets</code></p>
+                    
+                    <div class="code-block mt-3">
+                        <code>findOne({ "sf_id": "..." })<br>on assets collection</code>
+                    </div>
+                    
+                    <p class="mt-3" style="margin-top: var(--spacing-md);">
+                        <span class="badge badge-secondary">Point Lookup</span>
+                        <span class="badge badge-secondary">Índice sf_id</span>
+                        <span class="badge badge-secondary">Alta Frecuencia</span>
+                    </p>
+                </div>
+
+                <!-- Caso de Uso 2 -->
+                <div class="card card-bordered animate-slideInRight">
+                    <h4 style="color: var(--color-primary);">💰 Caso 2: Liquidación a Comercios</h4>
+                    <p>Necesita información de <code style="color: var(--color-accent);">establishments</code> y tasas en tiempo real</p>
+                    
+                    <div class="code-block mt-3">
+                        <code>findOne({ "sf_id": "..." })<br>on accounts collection</code>
+                    </div>
+                    
+                    <p class="mt-3" style="margin-top: var(--spacing-md);">
+                        <span class="badge badge-secondary">Tiempo Real</span>
+                        <span class="badge badge-secondary">Crítico</span>
+                        <span class="badge badge-secondary">SLA 500ms</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Patrón de Consultas -->
+            <div class="card card-gradient card-bordered mt-5 mongodb-glow" style="margin-top: var(--spacing-4xl);">
+                <h3>🔍 Patrón Dominante: Point Lookups</h3>
+                <p>Las búsquedas puntuales son las más eficientes en MongoDB cuando se cumplen estas condiciones:</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div class="text-center">
+                        <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">⚡</div>
+                        <strong style="color: var(--color-primary);">Índices en RAM</strong>
+                        <p style="font-size: var(--text-sm);">Acceso instantáneo sin lectura de disco</p>
+                    </div>
+                    <div class="text-center">
+                        <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">🎯</div>
+                        <strong style="color: var(--color-primary);">Consultas Directas</strong>
+                        <p style="font-size: var(--text-sm);">Sin escaneos completos de colección</p>
+                    </div>
+                    <div class="text-center">
+                        <div style="font-size: var(--text-4xl); margin-bottom: var(--spacing-sm);">🚀</div>
+                        <strong style="color: var(--color-primary);">Respuesta &lt;500ms</strong>
+                        <p style="font-size: var(--text-sm);">Cumplimiento del SLA garantizado</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Working Set y RAM -->
+    <section id="dimensionamiento" class="section">
+        <div class="container">
+            <h2 class="text-center mb-5">El Rol Crítico de la RAM</h2>
+            
+            <div class="card card-bordered" style="max-width: 900px; margin: 0 auto var(--spacing-4xl);">
+                <h3 style="color: var(--color-primary);">¿Por qué es indispensable la RAM?</h3>
+                <p>Para cumplir consistentemente el SLA de 500ms, los índices deben residir en memoria RAM:</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div style="padding: var(--spacing-lg); background-color: rgba(0, 237, 100, 0.1); border-radius: var(--radius-md); border-left: 4px solid var(--color-success);">
+                        <h5 style="color: var(--color-success);">✅ Operación en RAM</h5>
+                        <p>Búsqueda instantánea en índice. Tiempo de respuesta mínimo y predecible.</p>
+                    </div>
+                    <div style="padding: var(--spacing-lg); background-color: rgba(239, 68, 68, 0.1); border-radius: var(--radius-md); border-left: 4px solid var(--color-error);">
+                        <h5 style="color: var(--color-error);">❌ Operación en Disco</h5>
+                        <p>Lectura desde disco necesaria. Latencia significativa que impide cumplir el SLA.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Working Set -->
+            <h3 class="text-center mb-4">Cálculo del Working Set</h3>
+            
+            <div style="overflow-x: auto;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Fase</th>
+                            <th>Tamaño de Datos</th>
+                            <th>Índices (10%)</th>
+                            <th>Datos Calientes (10%)</th>
+                            <th style="color: var(--color-primary);">Working Set Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Fase 1 - Lanzamiento</strong></td>
+                            <td>100 GB</td>
+                            <td>~10 GB</td>
+                            <td>~10 GB</td>
+                            <td><strong style="color: var(--color-primary);">~20 GB</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fase 2 - Crecimiento 1 año</strong></td>
+                            <td>400 GB</td>
+                            <td>~40 GB</td>
+                            <td>~40 GB</td>
+                            <td><strong style="color: var(--color-primary);">~80 GB</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Visualización de RAM -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                <div class="card card-bordered">
+                    <h4>Fase 1: Working Set ~20 GB</h4>
+                    <div class="ram-bar-container">
+                        <div class="ram-bar" style="width: 100%; background-color: var(--color-success);">
+                            16 GB RAM (M40) - Óptimo
+                        </div>
+                    </div>
+                    <div class="ram-bar-container">
+                        <div class="ram-bar" style="width: 40%; background-color: var(--color-error);">
+                            8 GB RAM (M30) - Insuficiente
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card card-bordered">
+                    <h4>Fase 2: Working Set ~80 GB</h4>
+                    <div class="ram-bar-container">
+                        <div class="ram-bar" style="width: 100%; background-color: var(--color-success);">
+                            32 GB RAM (M50) - Recomendado
+                        </div>
+                    </div>
+                    <div class="ram-bar-container">
+                        <div class="ram-bar" style="width: 50%; background-color: var(--color-warning);">
+                            16 GB RAM (M40) - Limitado
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Propuesta por Fases -->
+    <section id="fases" class="section" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <h2 class="text-center mb-5">Propuesta de Dimensionamiento por Fases</h2>
+            
+            <div class="phase-timeline" style="max-width: 900px; margin: 0 auto;">
+                <!-- Fase 1 -->
+                <div class="phase-item">
+                    <div class="card card-gradient card-bordered mongodb-glow">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="badge badge-primary">FASE 1</span>
+                            <h3 style="margin-bottom: 0;">Lanzamiento - Cluster M40</h3>
+                        </div>
+                        
+                        <p style="font-size: var(--text-lg); color: var(--color-text-primary); margin-bottom: var(--spacing-lg);">
+                            Working Set: <strong style="color: var(--color-primary);">~20 GB</strong> · 
+                            Datos: <strong>100 GB</strong> · 
+                            Apps: <strong>5-10 internas</strong>
+                        </p>
+                        
+                        <div style="overflow-x: auto;">
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tier</th>
+                                        <th>RAM</th>
+                                        <th>Estado</th>
+                                        <th>Análisis</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="background-color: rgba(239, 68, 68, 0.1);">
+                                        <td><strong>M30</strong></td>
+                                        <td>8 GB</td>
+                                        <td><span class="status-dot status-error"></span>Insuficiente</td>
+                                        <td>Los índices (~10 GB) no caben en memoria. Alto riesgo de incumplir SLA de 500ms.</td>
+                                    </tr>
+                                    <tr style="background-color: rgba(0, 237, 100, 0.1);">
+                                        <td><strong>M40</strong></td>
+                                        <td>16 GB</td>
+                                        <td><span class="status-dot status-success"></span>Óptimo</td>
+                                        <td>Todos los índices en memoria + espacio para datos calientes. Garantiza SLA y soporta carga mixta.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-4" style="padding: var(--spacing-md); background-color: rgba(0, 237, 100, 0.1); border-radius: var(--radius-md); border-left: 4px solid var(--color-success);">
+                            <strong style="color: var(--color-success);">✅ Recomendación:</strong> Iniciar con M40 es crítico para eliminar el riesgo de colapso operacional y garantizar el éxito desde el primer día.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fase 2 -->
+                <div class="phase-item">
+                    <div class="card card-gradient card-bordered mongodb-glow">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="badge badge-secondary" style="background-color: var(--color-accent);">FASE 2</span>
+                            <h3 style="margin-bottom: 0;">Crecimiento 1 Año - Cluster M50</h3>
+                        </div>
+                        
+                        <p style="font-size: var(--text-lg); color: var(--color-text-primary); margin-bottom: var(--spacing-lg);">
+                            Working Set: <strong style="color: var(--color-primary);">~80 GB</strong> · 
+                            Datos: <strong>400 GB</strong> · 
+                            Crecimiento: <strong>4x</strong>
+                        </p>
+                        
+                        <div style="overflow-x: auto;">
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tier</th>
+                                        <th>RAM</th>
+                                        <th>Estado</th>
+                                        <th>Análisis</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="background-color: rgba(245, 158, 11, 0.1);">
+                                        <td><strong>M40</strong></td>
+                                        <td>16 GB</td>
+                                        <td><span class="status-dot status-warning"></span>Limitado</td>
+                                        <td>Insuficiente para el working set completo. Degradación de rendimiento esperada.</td>
+                                    </tr>
+                                    <tr style="background-color: rgba(0, 237, 100, 0.1);">
+                                        <td><strong>M50</strong></td>
+                                        <td>32 GB</td>
+                                        <td><span class="status-dot status-success"></span>Recomendado</td>
+                                        <td>Balance costo-eficiente. Mantiene rendimiento con posibilidad de escalar a M60 si es necesario.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-4" style="padding: var(--spacing-md); background-color: rgba(86, 68, 212, 0.1); border-radius: var(--radius-md); border-left: 4px solid var(--color-accent);">
+                            <strong style="color: var(--color-accent);">📊 Monitoreo:</strong> Atlas permite observar el "Cache Usage Ratio" para determinar si es necesario escalar a M60 (64 GB RAM) con cero downtime.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ruta de Escalabilidad -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center mb-5">Ruta de Escalabilidad y Beneficios</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+                <div class="card card-bordered text-center">
+                    <div style="font-size: var(--text-5xl); margin-bottom: var(--spacing-md);">🚀</div>
+                    <h4 style="color: var(--color-primary);">Octubre 2025</h4>
+                    <div class="metric-value" style="font-size: var(--text-3xl);">M40</div>
+                    <p>16 GB RAM</p>
+                    <p style="font-size: var(--text-sm); color: var(--color-text-muted);">100 GB de datos · 5-10 apps</p>
+                </div>
+                
+                <div class="card card-bordered text-center">
+                    <div style="font-size: var(--text-5xl); margin-bottom: var(--spacing-md);">📈</div>
+                    <h4 style="color: var(--color-accent);">Octubre 2026</h4>
+                    <div class="metric-value" style="font-size: var(--text-3xl); color: var(--color-accent);">M50</div>
+                    <p>32 GB RAM</p>
+                    <p style="font-size: var(--text-sm); color: var(--color-text-muted);">400 GB de datos · Crecimiento 4x</p>
+                </div>
+                
+                <div class="card card-bordered text-center">
+                    <div style="font-size: var(--text-5xl); margin-bottom: var(--spacing-md);">🎯</div>
+                    <h4 style="color: var(--color-info);">Futuro</h4>
+                    <div class="metric-value" style="font-size: var(--text-3xl); color: var(--color-info);">M60+</div>
+                    <p>64+ GB RAM</p>
+                    <p style="font-size: var(--text-sm); color: var(--color-text-muted);">Expansión continua</p>
+                </div>
+            </div>
+            
+            <!-- Beneficios Clave -->
+            <div class="card card-gradient card-bordered mongodb-glow">
+                <h3 style="color: var(--color-primary);">🎯 Beneficios de esta Arquitectura</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <h5 style="color: var(--color-success);">✅ Eliminación de Riesgo</h5>
+                        <ul style="color: var(--color-text-secondary);">
+                            <li>No más límites de consultas en Salesforce</li>
+                            <li>Continuidad operacional garantizada</li>
+                            <li>Réplica local resiliente</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 style="color: var(--color-success);">⚡ Rendimiento Optimizado</h5>
+                        <ul style="color: var(--color-text-secondary);">
+                            <li>SLA de 500ms consistente</li>
+                            <li>Cache Redis + Índices en RAM</li>
+                            <li>Point lookups optimizados</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 style="color: var(--color-success);">🔄 Escalabilidad Sin Fricción</h5>
+                        <ul style="color: var(--color-text-secondary);">
+                            <li>Escalado vertical con cero downtime</li>
+                            <li>Preparado para Kafka en tiempo real</li>
+                            <li>Arquitectura lista para crecer</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 style="color: var(--color-success);">💰 Eficiencia de Costos</h5>
+                        <ul style="color: var(--color-text-secondary);">
+                            <li>Reducción de costos en Salesforce</li>
+                            <li>Mejor ROI con uso mixto</li>
+                            <li>Inversión alineada con valor</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusión -->
+    <section class="section" style="background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-primary) 100%);">
+        <div class="container">
+            <div class="text-center" style="max-width: 800px; margin: 0 auto;">
+                <h2 class="mb-4">Conclusión y Próximos Pasos</h2>
+                
+                <div class="card card-bordered mongodb-glow">
+                    <h3 style="color: var(--color-primary);">Estrategia Evolutiva para Payway</h3>
+                    
+                    <div class="grid grid-cols-1 gap-4 mt-4 text-left">
+                        <div class="flex items-start gap-3">
+                            <div style="min-width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">1</div>
+                            <div>
+                                <strong style="color: var(--color-text-primary);">Iniciar con Cluster M40 (Octubre 2025)</strong>
+                                <p style="margin-bottom: 0;">Garantiza el SLA de 500ms y elimina el riesgo crítico de colapso en Salesforce. Soporta 5-10 aplicaciones internas con carga mixta.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start gap-3">
+                            <div style="min-width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">2</div>
+                            <div>
+                                <strong style="color: var(--color-text-primary);">Escalar a Cluster M50 (12 meses)</strong>
+                                <p style="margin-bottom: 0;">Paso planificado para absorber crecimiento de 100GB a 400GB sin comprometer rendimiento.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start gap-3">
+                            <div style="min-width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">3</div>
+                            <div>
+                                <strong style="color: var(--color-text-primary);">Integración con Kafka</strong>
+                                <p style="margin-bottom: 0;">Arquitectura preparada para evolucionar de batch a tiempo real con Kafka, alineada con la visión estratégica.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <div style="min-width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">4</div>
+                            <div>
+                                <strong style="color: var(--color-text-primary);">Monitoreo Continuo</strong>
+                                <p style="margin-bottom: 0;">Usar métricas de Atlas (Cache Usage Ratio, Query Performance) para optimizar y planificar escalado futuro.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-5" style="padding: var(--spacing-xl); background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); border-radius: var(--radius-lg); margin-top: var(--spacing-xl);">
+                        <p style="font-size: var(--text-xl); font-weight: 700; color: var(--color-text-dark); margin-bottom: var(--spacing-sm);">
+                            💡 Esta solución elimina el riesgo operacional crítico y proporciona una base sólida para el crecimiento de Payway
+                        </p>
+                        <p style="font-size: var(--text-base); color: var(--color-text-dark); margin-bottom: 0;">
+                            Combina el modelo de datos NoSQL optimizado que ya están implementando con la infraestructura necesaria para garantizar rendimiento, escalabilidad y éxito a largo plazo.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="mt-5 flex gap-3 justify-center flex-wrap" style="margin-top: var(--spacing-xl);">
+                    <button class="btn btn-primary btn-lg">✅ Aprobar Propuesta</button>
+                    <button class="btn btn-secondary btn-lg">📄 Descargar PDF</button>
+                    <button class="btn btn-ghost btn-lg">📅 Agendar Reunión</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Costos -->
+    <section class="section" style="background-color: var(--color-bg-secondary);">
+        <div class="container">
+            <h2 class="text-center mb-5">💰 Inversión y Costos</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- M40 Pricing -->
+                <div class="card card-gradient card-bordered mongodb-glow">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 style="color: var(--color-primary); margin-bottom: 0;">Cluster M40</h3>
+                        <span class="badge badge-primary">FASE 1</span>
+                    </div>
+                    
+                    <div style="text-align: center; margin: var(--spacing-xl) 0;">
+                        <div style="font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--spacing-sm);">Costo Anual</div>
+                        <div class="metric-value" style="font-size: var(--text-5xl); margin-bottom: 0;">$19,958</div>
+                        <div style="font-size: var(--text-lg); color: var(--color-text-secondary);">USD/año</div>
+                    </div>
+                    
+                    <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: var(--spacing-lg); margin-top: var(--spacing-lg);">
+                        <h5 style="color: var(--color-text-primary); margin-bottom: var(--spacing-md);">Desglose de Costos</h5>
+                        
+                        <div style="background-color: rgba(255, 255, 255, 0.05); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);">
+                            <div style="font-size: var(--text-xs); color: var(--color-text-muted); margin-bottom: var(--spacing-xs);">Infraestructura Mensual</div>
+                            
+                            <div class="flex justify-between mb-2" style="margin-bottom: var(--spacing-xs);">
+                                <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">Cluster (16 GB RAM)</span>
+                                <strong style="color: var(--color-text-primary);">$9,440</strong>
+                            </div>
+                            
+                            <div class="flex justify-between mb-2" style="margin-bottom: var(--spacing-xs);">
+                                <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">Network</span>
+                                <strong style="color: var(--color-text-primary);">$661</strong>
+                            </div>
+                            
+                            <div class="flex justify-between mb-2" style="margin-bottom: var(--spacing-xs);">
+                                <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">Backup</span>
+                                <strong style="color: var(--color-text-primary);">$269</strong>
+                            </div>
+                            
+                            <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: var(--spacing-xs); margin-top: var(--spacing-xs);" class="flex justify-between">
+                                <span style="color: var(--color-text-primary); font-weight: 600;">Subtotal Infraestructura</span>
+                                <strong style="color: var(--color-text-primary);">$10,370</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between mb-2" style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm) 0;">
+                            <span style="color: var(--color-text-secondary);">
+                                Subscription Cost (Pro Support)
+                                <div style="font-size: var(--text-xs); color: var(--color-text-muted);">Soporte profesional anual</div>
+                            </span>
+                            <strong style="color: var(--color-text-primary);">$9,588</strong>
+                        </div>
+                        
+                        <div style="border-top: 2px solid var(--color-primary); padding-top: var(--spacing-md); margin-top: var(--spacing-md);" class="flex justify-between">
+                            <span style="color: var(--color-primary); font-weight: 700; font-size: var(--text-lg);">Total Anual</span>
+                            <strong style="color: var(--color-primary); font-size: var(--text-xl);">$19,958</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4" style="padding: var(--spacing-md); background-color: rgba(0, 237, 100, 0.1); border-radius: var(--radius-md); margin-top: var(--spacing-lg);">
+                        <strong style="color: var(--color-success);">✅ Incluye:</strong>
+                        <ul style="margin: var(--spacing-sm) 0 0 var(--spacing-lg); color: var(--color-text-secondary); font-size: var(--text-sm);">
+                            <li>16 GB RAM</li>
+                            <li>Región US EAST 1</li>
+                            <li>Backups automáticos</li>
+                            <li>Alta disponibilidad (3 nodos)</li>
+                            <li><strong style="color: var(--color-success);">Pro Support</strong> - Soporte profesional 24/7</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- M50 Pricing -->
+                <div class="card card-gradient card-bordered mongodb-glow">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 style="color: var(--color-accent); margin-bottom: 0;">Cluster M50</h3>
+                        <span class="badge badge-secondary" style="background-color: var(--color-accent);">FASE 2</span>
+                    </div>
+                    
+                    <div style="text-align: center; margin: var(--spacing-xl) 0;">
+                        <div style="font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--spacing-sm);">Costo Anual</div>
+                        <div class="metric-value" style="font-size: var(--text-5xl); margin-bottom: 0; color: var(--color-accent);">$31,937</div>
+                        <div style="font-size: var(--text-lg); color: var(--color-text-secondary);">USD/año</div>
+                    </div>
+                    
+                    <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: var(--spacing-lg); margin-top: var(--spacing-lg);">
+                        <h5 style="color: var(--color-text-primary); margin-bottom: var(--spacing-md);">Desglose de Costos</h5>
+                        
+                        <div style="background-color: rgba(255, 255, 255, 0.05); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);">
+                            <div style="font-size: var(--text-xs); color: var(--color-text-muted); margin-bottom: var(--spacing-xs);">Infraestructura Mensual</div>
+                            
+                            <div class="flex justify-between mb-2" style="margin-bottom: var(--spacing-xs);">
+                                <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">Cluster (32 GB RAM)</span>
+                                <strong style="color: var(--color-text-primary);">$19,634</strong>
+                            </div>
+                            
+                            <div class="flex justify-between mb-2" style="margin-bottom: var(--spacing-xs);">
+                                <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">Network</span>
+                                <strong style="color: var(--color-text-primary);">$1,374</strong>
+                            </div>
+                            
+                            <div class="flex justify-between mb-2" style="margin-bottom: var(--spacing-xs);">
+                                <span style="color: var(--color-text-secondary); font-size: var(--text-sm);">Backup</span>
+                                <strong style="color: var(--color-text-primary);">$1,341</strong>
+                            </div>
+                            
+                            <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: var(--spacing-xs); margin-top: var(--spacing-xs);" class="flex justify-between">
+                                <span style="color: var(--color-text-primary); font-weight: 600;">Subtotal Infraestructura</span>
+                                <strong style="color: var(--color-text-primary);">$22,349</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between mb-2" style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm) 0;">
+                            <span style="color: var(--color-text-secondary);">
+                                Subscription Cost (Pro Support)
+                                <div style="font-size: var(--text-xs); color: var(--color-text-muted);">Soporte profesional anual</div>
+                            </span>
+                            <strong style="color: var(--color-text-primary);">$9,588</strong>
+                        </div>
+                        
+                        <div style="border-top: 2px solid var(--color-accent); padding-top: var(--spacing-md); margin-top: var(--spacing-md);" class="flex justify-between">
+                            <span style="color: var(--color-accent); font-weight: 700; font-size: var(--text-lg);">Total Anual</span>
+                            <strong style="color: var(--color-accent); font-size: var(--text-xl);">$31,937</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4" style="padding: var(--spacing-md); background-color: rgba(86, 68, 212, 0.1); border-radius: var(--radius-md); margin-top: var(--spacing-lg);">
+                        <strong style="color: var(--color-accent);">✅ Incluye:</strong>
+                        <ul style="margin: var(--spacing-sm) 0 0 var(--spacing-lg); color: var(--color-text-secondary); font-size: var(--text-sm);">
+                            <li>32 GB RAM (2x M40)</li>
+                            <li>Región US EAST 1</li>
+                            <li>Backups automáticos</li>
+                            <li>Alta disponibilidad (3 nodos)</li>
+                            <li><strong style="color: var(--color-accent);">Pro Support</strong> - Soporte profesional 24/7</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparativa de Inversión Total -->
+            <div class="card card-bordered mt-6" style="margin-top: var(--spacing-4xl); max-width: 900px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--color-primary); text-align: center;">📊 Proyección de Inversión a 2 Años</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div class="text-center">
+                        <div style="font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--spacing-sm);">Año 1 (M40)</div>
+                        <div style="font-size: var(--text-3xl); font-weight: 700; color: var(--color-primary);">$19,958</div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div style="font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--spacing-sm);">Año 2 (M50)</div>
+                        <div style="font-size: var(--text-3xl); font-weight: 700; color: var(--color-accent);">$31,937</div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div style="font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--spacing-sm);">Inversión Total 2 Años</div>
+                        <div style="font-size: var(--text-3xl); font-weight: 700; color: var(--color-success);">$51,895</div>
+                    </div>
+                </div>
+                
+                <div class="mt-5" style="padding: var(--spacing-lg); background-color: rgba(0, 237, 100, 0.1); border-radius: var(--radius-md); margin-top: var(--spacing-xl); text-align: center;">
+                    <p style="margin-bottom: var(--spacing-sm); color: var(--color-text-primary);"><strong>💡 Beneficio Clave:</strong></p>
+                    <p style="margin-bottom: 0; font-size: var(--text-base);">Esta inversión elimina el riesgo crítico de colapso en Salesforce y reduce significativamente los costos de consultas API, generando un ROI positivo al proteger la continuidad operacional del negocio.</p>
+                </div>
+            </div>
+
+            <!-- Notas Importantes -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5" style="margin-top: var(--spacing-4xl);">
+                <div style="padding: var(--spacing-lg); background-color: var(--color-bg-tertiary); border-radius: var(--radius-md); border-left: 4px solid var(--color-info);">
+                    <h5 style="color: var(--color-info);">📝 Notas sobre Precios</h5>
+                    <ul style="color: var(--color-text-secondary); font-size: var(--text-sm); margin-top: var(--spacing-sm);">
+                        <li>Precios en USD para región US EAST 1</li>
+                        <li>Incluye infraestructura completa con 3 nodos (réplica set)</li>
+                        <li>Backups automáticos incluidos</li>
+                        <li><strong style="color: var(--color-success);">Pro Support incluido</strong> - Soporte profesional 24/7 ($9,588/año)</li>
+                        <li>Atlas Credits Quantity: uso mensual de recursos</li>
+                    </ul>
+                </div>
+                
+                <div style="padding: var(--spacing-lg); background-color: var(--color-bg-tertiary); border-radius: var(--radius-md); border-left: 4px solid var(--color-warning);">
+                    <h5 style="color: var(--color-warning);">⚡ Escalabilidad</h5>
+                    <ul style="color: var(--color-text-secondary); font-size: var(--text-sm); margin-top: var(--spacing-sm);">
+                        <li>Escalado de M40 a M50 sin downtime</li>
+                        <li>Cambio de tier en minutos</li>
+                        <li>Pago mensual flexible</li>
+                        <li>Mismo costo de soporte Pro en ambas fases</li>
+                        <li>Flexibilidad para ajustar según demanda</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="padding: var(--spacing-xl) 0; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="container">
+            <p style="color: var(--color-text-muted); margin-bottom: var(--spacing-sm);">
+                © 2025 MongoDB Atlas - Propuesta Estratégica para Payway
+            </p>
+            <p style="color: var(--color-text-muted); font-size: var(--text-sm); margin-bottom: 0;">
+                Réplica de Salesforce · Dimensionamiento M40 → M50 · Timeline: Octubre 2025
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card, .metric').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

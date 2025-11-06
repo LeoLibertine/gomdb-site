@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB FinOps - Consideraciones de Producción</title>
+    <link rel="icon" href="https://www.mongodb.com/assets/images/global/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Euclid+Circular+A:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Euclid Circular A', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #FFFFFF;
+        }
+
+        /* MongoDB Brand Colors */
+        :root {
+            --mongodb-green: #00ED64;
+            --mongodb-dark-green: #00684A;
+            --mongodb-forest: #001E2B;
+            --mongodb-slate: #21313C;
+            --mongodb-gray: #889397;
+            --mongodb-light-gray: #F9FBFA;
+            --mongodb-white: #FFFFFF;
+        }
+
+        .gradient-hero {
+            background: linear-gradient(135deg, var(--mongodb-forest) 0%, var(--mongodb-slate) 100%);
+        }
+
+        .gradient-card {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.05) 0%, rgba(255, 255, 255, 0.95) 100%);
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card-shadow:hover {
+            box-shadow: 0 8px 32px rgba(0, 237, 100, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .badge-critical {
+            background: linear-gradient(135deg, #FF4757 0%, #D63447 100%);
+        }
+
+        .badge-high {
+            background: linear-gradient(135deg, #FFA502 0%, #FF6348 100%);
+        }
+
+        .badge-medium {
+            background: linear-gradient(135deg, #FFD32A 0%, #FFA502 100%);
+        }
+
+        .mongodb-leaf {
+            color: var(--mongodb-green);
+        }
+
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, var(--mongodb-green) 50%, transparent 100%);
+        }
+
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #E8EDEB;
+        }
+
+        .icon-box {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 28px;
+            background: linear-gradient(135deg, var(--mongodb-light-gray) 0%, var(--mongodb-white) 100%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--mongodb-green) 0%, var(--mongodb-dark-green) 100%);
+        }
+
+        .code-block {
+            background: #001E2B;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #00ED64;
+            border: 1px solid #00684A;
+        }
+
+        .checklist-item {
+            transition: all 0.2s ease;
+        }
+
+        .checklist-item:hover {
+            background: var(--mongodb-light-gray);
+            padding-left: 8px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+
+        /* Accordion styles */
+        details summary {
+            cursor: pointer;
+            user-select: none;
+            list-style: none;
+        }
+
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details[open] summary .chevron {
+            transform: rotate(180deg);
+        }
+
+        .chevron {
+            transition: transform 0.3s ease;
+        }
+
+        /* Tabs */
+        .tab-active {
+            border-bottom: 3px solid var(--mongodb-green);
+            color: var(--mongodb-forest);
+            font-weight: 600;
+        }
+
+        .tab-inactive {
+            color: var(--mongodb-gray);
+        }
+    </style>
+</head>
+<body class="scroll-smooth">
+    <!-- Hero Section -->
+    <div class="gradient-hero text-white">
+        <div class="max-w-7xl mx-auto px-6 py-16">
+            <div class="flex items-center gap-3 mb-6">
+                <svg class="w-12 h-12" viewBox="0 0 1024 1024" fill="currentColor">
+                    <path d="M512 0C229.2 0 0 229.2 0 512s229.2 512 512 512 512-229.2 512-512S794.8 0 512 0zm0 928C282.2 928 96 741.8 96 512S282.2 96 512 96s416 186.2 416 416-186.2 416-416 416z"/>
+                    <path fill="#00ED64" d="M512 160c-194.4 0-352 157.6-352 352s157.6 352 352 352 352-157.6 352-352-157.6-352-352-352zm0 608c-141.4 0-256-114.6-256-256s114.6-256 256-256 256 114.6 256 256-114.6 256-256 256z"/>
+                    <path fill="#00ED64" d="M512 320c-106 0-192 86-192 192s86 192 192 192 192-86 192-192-86-192-192-192z"/>
+                </svg>
+                <div>
+                    <div class="text-sm font-medium" style="color: var(--mongodb-green);">MongoDB Professional Services</div>
+                    <h1 class="text-4xl md:text-5xl font-bold">FinOps para MongoDB Community</h1>
+                </div>
+            </div>
+            <p class="text-xl text-gray-300 mb-8 max-w-3xl">
+                Guía Completa de Consideraciones para Llevar el Demo de Métricas a Producción
+            </p>
+            <div class="flex flex-wrap gap-4">
+                <div class="flex items-center gap-2 bg-white bg-opacity-10 px-4 py-2 rounded-lg backdrop-blur">
+                    <span class="text-2xl">🎯</span>
+                    <span>Cliente: Telecom Argentina</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white bg-opacity-10 px-4 py-2 rounded-lg backdrop-blur">
+                    <span class="text-2xl">🗓️</span>
+                    <span>Fecha: Noviembre 2025</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white bg-opacity-10 px-4 py-2 rounded-lg backdrop-blur">
+                    <span class="text-2xl">⚙️</span>
+                    <span>MongoDB Community 5.x / 6.x</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sticky-nav">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex overflow-x-auto gap-8 py-4">
+                <a href="#contexto" class="tab-inactive hover:text-gray-900 whitespace-nowrap transition-colors">Contexto</a>
+                <a href="#seguridad" class="tab-inactive hover:text-gray-900 whitespace-nowrap transition-colors">Seguridad</a>
+                <a href="#arquitectura" class="tab-inactive hover:text-gray-900 whitespace-nowrap transition-colors">Arquitectura</a>
+                <a href="#requisitos" class="tab-inactive hover:text-gray-900 whitespace-nowrap transition-colors">Requisitos</a>
+                <a href="#limitaciones" class="tab-inactive hover:text-gray-900 whitespace-nowrap transition-colors">Limitaciones</a>
+                <a href="#deployment" class="tab-inactive hover:text-gray-900 whitespace-nowrap transition-colors">Despliegue</a>
+                <a href="#monitoring" class="tab-inactive hover:text-gray-900 whitespace-nowrap transition-colors">Monitoreo</a>
+                <a href="#resiliencia" class="tab-inactive hover:text-gray-900 whitespace-nowrap transition-colors">Resiliencia</a>
+                <a href="#datos" class="tab-inactive hover:text-gray-900 whitespace-nowrap transition-colors">Gestión Datos</a>
+                <a href="#testing" class="tab-inactive hover:text-gray-900 whitespace-nowrap transition-colors">Testing</a>
+                <a href="#documentacion" class="tab-inactive hover:text-gray-900 whitespace-nowrap transition-colors">Docs</a>
+                <a href="#disclaimer" class="tab-inactive hover:text-gray-900 whitespace-nowrap transition-colors">Disclaimer</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-6 py-12">
+
+        <!-- Contexto Section -->
+        <section id="contexto" class="mb-20 animate-fadeInUp">
+            <div class="card-shadow rounded-2xl p-8 bg-white border border-gray-100">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="icon-box">
+                        <span>📋</span>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Contexto del Proyecto</h2>
+                        <p class="text-gray-600">Estado actual y visión del cliente</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 p-6 rounded-xl">
+                        <h3 class="font-semibold text-lg mb-3 flex items-center gap-2">
+                            <span class="mongodb-leaf text-2xl">✓</span>
+                            Lo que tenemos HOY
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <span class="mongodb-leaf mt-1">•</span>
+                                <span>Demo funcional con script Python (<code class="bg-white px-2 py-1 rounded text-sm">generate_metrics_v2.py</code>)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="mongodb-leaf mt-1">•</span>
+                                <span>Dashboard React interactivo con visualizaciones</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="mongodb-leaf mt-1">•</span>
+                                <span>Métricas de Storage, OPS, y Memory por base de datos</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="mongodb-leaf mt-1">•</span>
+                                <span>Modelo de costeo propuesto (Storage + OPS + Memory)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="mongodb-leaf mt-1">•</span>
+                                <span>Cliente entusiasmado: <strong>"Eso es lo que estoy buscando"</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-red-50 p-6 rounded-xl border-2 border-red-200">
+                        <h3 class="font-semibold text-lg mb-3 flex items-center gap-2">
+                            <span class="text-2xl">⚠️</span>
+                            Lo que FALTA para producción
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500 mt-1">✗</span>
+                                <span>Credenciales hardcodeadas en código fuente</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500 mt-1">✗</span>
+                                <span>Sin análisis formal de requisitos con el cliente</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500 mt-1">✗</span>
+                                <span>OPS calculado por aproximación (no es real por BD)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500 mt-1">✗</span>
+                                <span>Sin manejo de errores robusto ni reintentos</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500 mt-1">✗</span>
+                                <span>MongoDB Community sin soporte oficial</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500 mt-1">✗</span>
+                                <span>No definido: ¿Quién desarrolla/mantiene?</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+                    <h4 class="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                        <span class="text-xl">💡</span>
+                        Reflexión del Equipo de PS
+                    </h4>
+                    <p class="text-blue-800 italic mb-3">
+                        "Normalmente, una demo es para demostrar un concepto. De eso a llevarlo a producción-ready, hay un mundo de diferencia. Necesitamos un proceso riguroso de análisis de aplicación y reglas de negocio con el cliente."
+                    </p>
+                    <p class="text-sm text-blue-700">
+                        - Royer Arenas & Manolo Quiroz, MongoDB Professional Services
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seguridad Section -->
+        <section id="seguridad" class="mb-20 animate-fadeInUp">
+            <div class="card-shadow rounded-2xl p-8 bg-white border border-gray-100">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="icon-box">
+                        <span>🔒</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h2 class="text-3xl font-bold text-gray-900">1. Seguridad</h2>
+                            <span class="badge-critical text-white text-xs px-3 py-1 rounded-full font-semibold">PRIORIDAD CRÍTICA</span>
+                        </div>
+                        <p class="text-gray-600">Vulnerabilidades actuales y remediación obligatoria</p>
+                    </div>
+                </div>
+
+                <!-- Critical Issues -->
+                <details class="mb-6 bg-red-50 rounded-xl border-2 border-red-200" open>
+                    <summary class="p-6 cursor-pointer font-semibold text-lg flex items-center justify-between">
+                        <span class="flex items-center gap-3">
+                            <span class="text-2xl">🚨</span>
+                            Vulnerabilidades CRÍTICAS Identificadas
+                        </span>
+                        <svg class="chevron w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6 space-y-4">
+                        <div class="bg-white p-5 rounded-lg border border-red-200">
+                            <h4 class="font-semibold text-red-900 mb-3 flex items-center gap-2">
+                                <span>⚠️</span>
+                                1.1 Credenciales en Texto Plano
+                            </h4>
+                            <p class="text-gray-700 mb-3">
+                                <strong>Ubicación:</strong> <code class="bg-gray-100 px-2 py-1 rounded text-sm">generate_metrics_v2.py:27</code>
+                            </p>
+                            <div class="code-block mb-4">
+# ❌ CÓDIGO ACTUAL (INSEGURO)
+MONGO_URI = "mongodb://leonel:Jeremias31@ec2-10-218-242-42.compute-1.amazonaws.com:27017/..."</div>
+                            <div class="bg-green-50 border border-green-300 p-4 rounded-lg">
+                                <p class="font-semibold text-green-900 mb-2">✅ Solución Recomendada:</p>
+                                <div class="code-block">
+# .env file (never commit!)
+MONGODB_URI=mongodb://user:pass@host:port/?replicaSet=rs&authSource=admin
+
+# Python script
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+MONGO_URI = os.getenv('MONGODB_URI')
+
+if not MONGO_URI:
+    raise ValueError("MONGODB_URI not found in environment")</div>
+                            </div>
+                            <div class="mt-3 text-sm text-gray-600">
+                                <strong>Impacto:</strong> Exposición de credenciales en Git, logs, procesos
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-lg border border-red-200">
+                            <h4 class="font-semibold text-red-900 mb-3 flex items-center gap-2">
+                                <span>⚠️</span>
+                                1.2 Sin Encriptación TLS/SSL
+                            </h4>
+                            <p class="text-gray-700 mb-3">
+                                Las conexiones a MongoDB no están cifradas. Credenciales y datos viajan en texto plano por la red.
+                            </p>
+                            <div class="bg-green-50 border border-green-300 p-4 rounded-lg">
+                                <p class="font-semibold text-green-900 mb-2">✅ Solución:</p>
+                                <div class="code-block">
+MONGODB_URI=mongodb://user:pass@host:port/?tls=true&tlsCAFile=/path/to/ca.pem&replicaSet=rs</div>
+                                <p class="text-sm text-gray-700 mt-2">
+                                    Asegurar que el cluster MongoDB tenga TLS habilitado y usar certificados válidos.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-lg border border-red-200">
+                            <h4 class="font-semibold text-red-900 mb-3 flex items-center gap-2">
+                                <span>⚠️</span>
+                                1.3 Archivos de Salida en Directorio Web Público
+                            </h4>
+                            <p class="text-gray-700 mb-3">
+                                <code class="bg-gray-100 px-2 py-1 rounded text-sm">/public/clientes/telecom/metrics_*.json</code>
+                            </p>
+                            <p class="text-gray-700 mb-3">
+                                Los archivos JSON con métricas podrían ser accesibles vía web, exponiendo nombres de bases de datos, tamaños, y arquitectura interna.
+                            </p>
+                            <div class="bg-green-50 border border-green-300 p-4 rounded-lg">
+                                <p class="font-semibold text-green-900 mb-2">✅ Soluciones:</p>
+                                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                    <li>Mover a directorio privado: <code class="bg-white px-2 py-1 rounded text-sm">/var/lib/mongodb-metrics/</code></li>
+                                    <li>Configurar permisos: <code class="bg-white px-2 py-1 rounded text-sm">chmod 600</code></li>
+                                    <li>Si dashboard consume los archivos, usar API con autenticación</li>
+                                    <li>Agregar <code class="bg-white px-2 py-1 rounded text-sm">*.json</code> a <code class="bg-white px-2 py-1 rounded text-sm">.gitignore</code></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Security Checklist -->
+                <details class="mb-6 bg-orange-50 rounded-xl border-2 border-orange-200">
+                    <summary class="p-6 cursor-pointer font-semibold text-lg flex items-center justify-between">
+                        <span class="flex items-center gap-3">
+                            <span class="text-2xl">✅</span>
+                            Checklist de Seguridad Pre-Producción
+                        </span>
+                        <svg class="chevron w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6">
+                        <div class="space-y-2">
+                            <div class="checklist-item flex items-start gap-3 p-3 rounded transition-all">
+                                <input type="checkbox" class="mt-1 w-5 h-5 accent-green-600">
+                                <span class="text-gray-700">Migrar credenciales a variables de entorno con <code class="bg-white px-2 py-1 rounded text-sm">python-dotenv</code></span>
+                            </div>
+                            <div class="checklist-item flex items-start gap-3 p-3 rounded transition-all">
+                                <input type="checkbox" class="mt-1 w-5 h-5 accent-green-600">
+                                <span class="text-gray-700">Crear archivo <code class="bg-white px-2 py-1 rounded text-sm">.env</code> y agregarlo a <code class="bg-white px-2 py-1 rounded text-sm">.gitignore</code></span>
+                            </div>
+                            <div class="checklist-item flex items-start gap-3 p-3 rounded transition-all">
+                                <input type="checkbox" class="mt-1 w-5 h-5 accent-green-600">
+                                <span class="text-gray-700">Implementar gestión de secretos (AWS Secrets Manager, HashiCorp Vault, Azure Key Vault)</span>
+                            </div>
+                            <div class="checklist-item flex items-start gap-3 p-3 rounded transition-all">
+                                <input type="checkbox" class="mt-1 w-5 h-5 accent-green-600">
+                                <span class="text-gray-700">Habilitar TLS/SSL para todas las conexiones MongoDB</span>
+                            </div>
+                            <div class="checklist-item flex items-start gap-3 p-3 rounded transition-all">
+                                <input type="checkbox" class="mt-1 w-5 h-5 accent-green-600">
+                                <span class="text-gray-700">Validar certificados SSL (no usar <code class="bg-white px-2 py-1 rounded text-sm">tlsInsecure=true</code>)</span>
+                            </div>
+                            <div class="checklist-item flex items-start gap-3 p-3 rounded transition-all">
+                                <input type="checkbox" class="mt-1 w-5 h-5 accent-green-600">
+                                <span class="text-gray-700">Remover rutas hardcodeadas, usar variables de entorno para <code class="bg-white px-2 py-1 rounded text-sm">OUTPUT_DIR</code></span>
+                            </div>
+                            <div class="checklist-item flex items-start gap-3 p-3 rounded transition-all">
+                                <input type="checkbox" class="mt-1 w-5 h-5 accent-green-600">
+                                <span class="text-gray-700">Configurar permisos de archivos: <code class="bg-white px-2 py-1 rounded text-sm">chmod 600</code> para JSONs, <code class="bg-white px-2 py-1 rounded text-sm">chmod 700</code> para scripts</span>
+                            </div>
+                            <div class="checklist-item flex items-start gap-3 p-3 rounded transition-all">
+                                <input type="checkbox" class="mt-1 w-5 h-5 accent-green-600">
+                                <span class="text-gray-700">Implementar autenticación en dashboards (si son accesibles vía web)</span>
+                            </div>
+                            <div class="checklist-item flex items-start gap-3 p-3 rounded transition-all">
+                                <input type="checkbox" class="mt-1 w-5 h-5 accent-green-600">
+                                <span class="text-gray-700">Usar usuario MongoDB con permisos mínimos (read-only en bases necesarias)</span>
+                            </div>
+                            <div class="checklist-item flex items-start gap-3 p-3 rounded transition-all">
+                                <input type="checkbox" class="mt-1 w-5 h-5 accent-green-600">
+                                <span class="text-gray-700">Escaneo de seguridad del código con <code class="bg-white px-2 py-1 rounded text-sm">bandit</code> (Python security linter)</span>
+                            </div>
+                            <div class="checklist-item flex items-start gap-3 p-3 rounded transition-all">
+                                <input type="checkbox" class="mt-1 w-5 h-5 accent-green-600">
+                                <span class="text-gray-700">Rotación periódica de credenciales (policy de 90 días recomendado)</span>
+                            </div>
+                            <div class="checklist-item flex items-start gap-3 p-3 rounded transition-all">
+                                <input type="checkbox" class="mt-1 w-5 h-5 accent-green-600">
+                                <span class="text-gray-700">Auditoría de logs: no incluir credenciales en mensajes de error</span>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Security Best Practices -->
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+                    <h4 class="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                        <span class="text-xl">📘</span>
+                        Mejores Prácticas de Seguridad MongoDB
+                    </h4>
+                    <ul class="space-y-2 text-blue-800">
+                        <li class="flex items-start gap-2">
+                            <span class="mongodb-leaf mt-1">•</span>
+                            <span><strong>Principio de mínimo privilegio:</strong> Usuario solo con <code class="bg-white px-2 py-1 rounded text-sm">read</code> en DBs necesarias</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="mongodb-leaf mt-1">•</span>
+                            <span><strong>Network segmentation:</strong> Firewall rules para limitar acceso al cluster</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="mongodb-leaf mt-1">•</span>
+                            <span><strong>Auditing:</strong> Habilitar MongoDB audit logs para conexiones y operaciones</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="mongodb-leaf mt-1">•</span>
+                            <span><strong>Encryption at rest:</strong> Considerar si datos sensibles requieren cifrado en disco</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Arquitectura Section -->
+        <section id="arquitectura" class="mb-20 animate-fadeInUp">
+            <div class="card-shadow rounded-2xl p-8 bg-white border border-gray-100">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="icon-box">
+                        <span>🏗️</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h2 class="text-3xl font-bold text-gray-900">2. Arquitectura y Diseño</h2>
+                            <span class="badge-high text-white text-xs px-3 py-1 rounded-full font-semibold">PRIORIDAD ALTA</span>
+                        </div>
+                        <p class="text-gray-600">Decisiones arquitectónicas a definir con el cliente</p>
+                    </div>
+                </div>
+
+                <!-- Architecture Decision 1 -->
+                <details class="mb-6 bg-purple-50 rounded-xl border-2 border-purple-200" open>
+                    <summary class="p-6 cursor-pointer font-semibold text-lg flex items-center justify-between">
+                        <span class="flex items-center gap-3">
+                            <span class="text-2xl">🤔</span>
+                            Decisión 1: ¿Prometheus/Grafana vs Dashboard Standalone?
+                        </span>
+                        <svg class="chevron w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6 space-y-4">
+                        <p class="text-gray-700 mb-4">
+                            El cliente mencionó que tiene <strong>Prometheus y Grafana</strong> en su stack actual. Necesitamos definir:
+                        </p>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-white border-2 border-purple-300 rounded-xl p-5">
+                                <h4 class="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+                                    <span>📊</span>
+                                    Opción A: Integración Prometheus/Grafana
+                                </h4>
+                                <div class="mb-3">
+                                    <p class="text-sm font-semibold text-green-700 mb-2">✅ Ventajas:</p>
+                                    <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                                        <li>• Se integra con stack existente del cliente</li>
+                                        <li>• Grafana ofrece dashboards avanzados nativos</li>
+                                        <li>• Alerting robusto out-of-the-box</li>
+                                        <li>• Escalable para múltiples fuentes de datos</li>
+                                        <li>• El equipo del cliente ya conoce la herramienta</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-red-700 mb-2">❌ Desventajas:</p>
+                                    <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                                        <li>• Requiere exportador Prometheus compatible</li>
+                                        <li>• Complejidad adicional de infraestructura</li>
+                                        <li>• Curva de aprendizaje si no lo dominan</li>
+                                    </ul>
+                                </div>
+                                <div class="mt-4 code-block text-xs">
+# Script output → Prometheus Exporter
+# Prometheus scrapes metrics
+# Grafana visualiza desde Prometheus</div>
+                            </div>
+
+                            <div class="bg-white border-2 border-blue-300 rounded-xl p-5">
+                                <h4 class="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                                    <span>🎨</span>
+                                    Opción B: Dashboard Web Standalone
+                                </h4>
+                                <div class="mb-3">
+                                    <p class="text-sm font-semibold text-green-700 mb-2">✅ Ventajas:</p>
+                                    <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                                        <li>• Solución autocontenida y simple</li>
+                                        <li>• No requiere infraestructura adicional</li>
+                                        <li>• Dashboard customizado 100% al caso de uso</li>
+                                        <li>• Menor tiempo de implementación</li>
+                                        <li>• Ya existe demo funcional</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-red-700 mb-2">❌ Desventajas:</p>
+                                    <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                                        <li>• Aislado del resto del monitoring</li>
+                                        <li>• Alerting requiere desarrollo custom</li>
+                                        <li>• Escalabilidad limitada</li>
+                                        <li>• Mantenimiento del dashboard en código</li>
+                                    </ul>
+                                </div>
+                                <div class="mt-4 code-block text-xs">
+# Script output → JSON files
+# Dashboard web lee JSON y visualiza
+# Simple pero limitado</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg">
+                            <p class="font-semibold text-yellow-900 mb-2">🎯 Recomendación del Equipo PS:</p>
+                            <p class="text-yellow-800">
+                                Preguntar explícitamente al cliente: <strong>"¿Tu equipo tiene experiencia con Prometheus/Grafana? ¿Prefieren integrarlo a su stack existente o una solución standalone más simple?"</strong>
+                            </p>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Architecture Decision 2 -->
+                <details class="mb-6 bg-green-50 rounded-xl border-2 border-green-200">
+                    <summary class="p-6 cursor-pointer font-semibold text-lg flex items-center justify-between">
+                        <span class="flex items-center gap-3">
+                            <span class="text-2xl">🗄️</span>
+                            Decisión 2: Almacenamiento de Métricas Históricas
+                        </span>
+                        <svg class="chevron w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6 space-y-4">
+                        <p class="text-gray-700 mb-4">
+                            Actualmente el script genera <code class="bg-gray-100 px-2 py-1 rounded text-sm">metrics_timeseries.jsonl</code> (append-only). ¿Es suficiente para producción?
+                        </p>
+
+                        <div class="space-y-3">
+                            <div class="bg-white border-2 border-gray-200 rounded-lg p-4">
+                                <h5 class="font-semibold text-gray-900 mb-2">📁 Opción 1: JSON Lines (actual)</h5>
+                                <p class="text-sm text-gray-700 mb-2">Archivo de texto con 1 JSON por línea, append-only.</p>
+                                <p class="text-xs text-green-700">✅ Simple, no requiere infra adicional</p>
+                                <p class="text-xs text-red-700">❌ No escalable a largo plazo, difícil de consultar</p>
+                            </div>
+
+                            <div class="bg-white border-2 border-green-300 rounded-lg p-4">
+                                <h5 class="font-semibold text-gray-900 mb-2">📊 Opción 2: Time-Series Database</h5>
+                                <p class="text-sm text-gray-700 mb-2">InfluxDB, TimescaleDB (PostgreSQL), o MongoDB Time-Series Collections (5.0+)</p>
+                                <p class="text-xs text-green-700">✅ Optimizado para series temporales, consultas eficientes, retención automática</p>
+                                <p class="text-xs text-red-700">❌ Requiere infraestructura y conocimiento adicional</p>
+                                <div class="mt-2 code-block text-xs">
+# MongoDB Time-Series Collections (5.0+)
+db.createCollection("metrics", {
+    timeseries: {
+        timeField: "timestamp",
+        metaField: "database",
+        granularity: "hours"
+    }
+})</div>
+                            </div>
+
+                            <div class="bg-white border-2 border-gray-200 rounded-lg p-4">
+                                <h5 class="font-semibold text-gray-900 mb-2">🗃️ Opción 3: Colección MongoDB Regular</h5>
+                                <p class="text-sm text-gray-700 mb-2">Insertar métricas en colección estándar con índices en timestamp.</p>
+                                <p class="text-xs text-green-700">✅ Usa infraestructura existente (mismo cluster), fácil de consultar</p>
+                                <p class="text-xs text-red-700">❌ No optimizado para time-series, requiere mantenimiento de índices</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
+                            <p class="font-semibold text-blue-900 mb-2">💡 Pregunta para el cliente:</p>
+                            <p class="text-blue-800">
+                                "¿Cuánto tiempo necesitan retener el historial de métricas? ¿30 días, 90 días, 1 año? ¿Qué tipo de análisis harán sobre datos históricos?"
+                            </p>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Architecture Components -->
+                <details class="bg-gray-50 rounded-xl border-2 border-gray-200">
+                    <summary class="p-6 cursor-pointer font-semibold text-lg flex items-center justify-between">
+                        <span class="flex items-center gap-3">
+                            <span class="text-2xl">🔧</span>
+                            Componentes de Arquitectura Necesarios
+                        </span>
+                        <svg class="chevron w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                <h5 class="font-semibold mb-2">🖥️ Servidor de Ejecución</h5>
+                                <ul class="text-sm text-gray-700 space-y-1">
+                                    <li>• ¿VM dedicada o contenedor?</li>
+                                    <li>• ¿On-premise o cloud?</li>
+                                    <li>• Specs: CPU, RAM, disco</li>
+                                    <li>• Acceso de red al cluster MongoDB</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                <h5 class="font-semibold mb-2">⏰ Scheduler</h5>
+                                <ul class="text-sm text-gray-700 space-y-1">
+                                    <li>• Cron (actual)</li>
+                                    <li>• systemd timers</li>
+                                    <li>• Kubernetes CronJob</li>
+                                    <li>• Airflow / Luigi (overkill?)</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                <h5 class="font-semibold mb-2">🗄️ Storage Backend</h5>
+                                <ul class="text-sm text-gray-700 space-y-1">
+                                    <li>• Local filesystem (actual)</li>
+                                    <li>• NFS/Shared storage</li>
+                                    <li>• S3/Object storage</li>
+                                    <li>• Database (MongoDB, InfluxDB)</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                <h5 class="font-semibold mb-2">📊 Visualización</h5>
+                                <ul class="text-sm text-gray-700 space-y-1">
+                                    <li>• Dashboard React (actual)</li>
+                                    <li>• Grafana</li>
+                                    <li>• Web server (nginx, Apache)</li>
+                                    <li>• Autenticación (si público)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- Requisitos Section -->
+        <section id="requisitos" class="mb-20 animate-fadeInUp">
+            <div class="card-shadow rounded-2xl p-8 bg-white border border-gray-100">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="icon-box"><span>📝</span></div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h2 class="text-3xl font-bold text-gray-900">3. Levantamiento de Requisitos</h2>
+                            <span class="badge-critical text-white text-xs px-3 py-1 rounded-full font-semibold">OBLIGATORIO</span>
+                        </div>
+                        <p class="text-gray-600">Preguntas esenciales para el cliente ANTES de cotizar</p>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 border-2 border-red-300 rounded-xl p-6 mb-6">
+                    <h3 class="font-semibold text-red-900 mb-3 flex items-center gap-2">
+                        <span class="text-2xl">🚫</span>
+                        NO Cotizar Sin Esta Información
+                    </h3>
+                    <p class="text-red-800 mb-3">
+                        Como señaló el equipo PS: necesitamos un <strong>proceso formal de análisis</strong> con el cliente para validar
+                        requisitos operativos y de negocio. Una demo no es suficiente para definir el alcance real.
+                    </p>
+                </div>
+
+                <details class="mb-6 bg-purple-50 rounded-xl border-2 border-purple-200" open>
+                    <summary class="p-6 cursor-pointer font-semibold text-lg flex items-center justify-between">
+                        <span class="flex items-center gap-3">
+                            <span class="text-2xl">👥</span>
+                            A. Roles y Responsabilidades
+                        </span>
+                        <svg class="chevron w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6 space-y-3">
+                        <div class="bg-white p-4 rounded-lg border border-purple-200">
+                            <h4 class="font-semibold text-purple-900 mb-2">¿Quién desarrollará la solución final?</h4>
+                            <div class="grid md:grid-cols-3 gap-3 text-sm">
+                                <div class="bg-purple-50 p-3 rounded">
+                                    <p class="font-semibold mb-1">Opción 1: MongoDB PS completo</p>
+                                    <p class="text-gray-700">Costo: $40-50K USD</p>
+                                    <p class="text-xs text-gray-600">Fuera del presupuesto cliente</p>
+                                </div>
+                                <div class="bg-green-50 p-3 rounded border-2 border-green-400">
+                                    <p class="font-semibold mb-1">Opción 2: Colaborativo ✓</p>
+                                    <p class="text-gray-700">Cliente desarrolla, MongoDB guía</p>
+                                    <p class="text-xs text-green-700">Factible con presupuesto</p>
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <p class="font-semibold mb-1">Opción 3: App Incubator</p>
+                                    <p class="text-gray-700">Costo: $12-25K USD</p>
+                                    <p class="text-xs text-blue-700">Alcance limitado</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg border border-purple-200">
+                            <h4 class="font-semibold text-purple-900 mb-2">¿El cliente tiene equipo de desarrollo?</h4>
+                            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                                <li>• ¿Cuántos developers? ¿Qué skill level (junior/senior)?</li>
+                                <li>• ¿Conocen Python? ¿MongoDB? ¿Prometheus/Grafana?</li>
+                                <li>• ¿Tienen disponibilidad para este proyecto o están full?</li>
+                                <li>• ¿Quién será el Product Owner / punto de contacto técnico?</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg border border-purple-200">
+                            <h4 class="font-semibold text-purple-900 mb-2">¿Quién mantendrá la solución?</h4>
+                            <p class="text-sm text-gray-700 mb-2">Post-implementación, cuando haya bugs o cambios necesarios:</p>
+                            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                                <li>• ¿Equipo DBA del cliente?</li>
+                                <li>• ¿Equipo de desarrollo interno?</li>
+                                <li>• ¿MongoDB PS bajo contrato de soporte ($$$ adicional)?</li>
+                                <li>• ¿Esperan documentación de transferencia de conocimiento?</li>
+                            </ul>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="mb-6 bg-blue-50 rounded-xl border-2 border-blue-200">
+                    <summary class="p-6 cursor-pointer font-semibold text-lg flex items-center justify-between">
+                        <span class="flex items-center gap-3">
+                            <span class="text-2xl">🎯</span>
+                            B. Reglas de Negocio y Costeo
+                        </span>
+                        <svg class="chevron w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6 space-y-3">
+                        <div class="bg-white p-4 rounded-lg border border-blue-200">
+                            <h4 class="font-semibold text-blue-900 mb-2">¿Cómo calculan los costos internos?</h4>
+                            <p class="text-sm text-gray-700 mb-3">Demo propone: $10/GB + $5/M ops + $2/memory. ¿Es válido?</p>
+                            <ul class="text-sm text-gray-700 space-y-2 ml-4">
+                                <li>• ¿Ya tienen modelo de costeo definido o lo definiremos juntos?</li>
+                                <li>• ¿Los precios serán fijos o variables por línea de negocio?</li>
+                                <li>• ¿Consideran costos de infraestructura (CPU, red, backup)?</li>
+                                <li>• ¿El chargeback es soft (informativo) o hard (facturación real)?</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg border border-blue-200">
+                            <h4 class="font-semibold text-blue-900 mb-2">¿Qué nivel de granularidad requieren?</h4>
+                            <div class="grid md:grid-cols-2 gap-3 text-sm mt-2">
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <p class="font-semibold mb-1">Por Base de Datos (actual demo)</p>
+                                    <p class="text-xs text-gray-700">Más simple, menos preciso</p>
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded">
+                                    <p class="font-semibold mb-1">Por Colección</p>
+                                    <p class="text-xs text-gray-700">Más complejo, más granular</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg border border-blue-200">
+                            <h4 class="font-semibold text-blue-900 mb-2">¿Cómo agrupan las bases de datos?</h4>
+                            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                                <li>• ¿Por línea de negocio (FMS, Billing, CRM)?</li>
+                                <li>• ¿Por ambiente (prod, staging, dev, test)?</li>
+                                <li>• ¿Por equipo responsable?</li>
+                                <li>• ¿Necesitan tags/labels custom?</li>
+                            </ul>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="mb-6 bg-green-50 rounded-xl border-2 border-green-200">
+                    <summary class="p-6 cursor-pointer font-semibold text-lg flex items-center justify-between">
+                        <span class="flex items-center gap-3">
+                            <span class="text-2xl">🏗️</span>
+                            C. Infraestructura y Ambiente
+                        </span>
+                        <svg class="chevron w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6 space-y-3">
+                        <div class="bg-white p-4 rounded-lg border border-green-200">
+                            <h4 class="font-semibold text-green-900 mb-2">¿Dónde se ejecutará el script?</h4>
+                            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                                <li>• ¿VM dedicada? ¿Qué OS (Linux recomendado)?</li>
+                                <li>• ¿Contenedor Docker/Kubernetes?</li>
+                                <li>• ¿On-premise o cloud (AWS, Azure, GCP)?</li>
+                                <li>• ¿Tiene conectividad de red al cluster MongoDB?</li>
+                                <li>• ¿Firewall rules necesarios?</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg border border-green-200">
+                            <h4 class="font-semibold text-green-900 mb-2">¿Dónde visualizarán las métricas?</h4>
+                            <div class="grid md:grid-cols-2 gap-3 text-sm mt-2">
+                                <div class="bg-green-50 p-3 rounded">
+                                    <p class="font-semibold mb-1">Grafana Existente</p>
+                                    <p class="text-xs text-gray-700 mb-2">Integración con stack actual</p>
+                                    <p class="text-xs text-green-700">✓ Mencionaron tener Prometheus/Grafana</p>
+                                    <p class="text-xs text-red-700">? ¿Qué versión? ¿Quién administra?</p>
+                                </div>
+                                <div class="bg-green-50 p-3 rounded">
+                                    <p class="font-semibold mb-1">Dashboard Web Nuevo</p>
+                                    <p class="text-xs text-gray-700 mb-2">Solución standalone (demo actual)</p>
+                                    <p class="text-xs text-green-700">✓ Más simple, más rápido</p>
+                                    <p class="text-xs text-red-700">? ¿Necesita autenticación?</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg border border-green-200">
+                            <h4 class="font-semibold text-green-900 mb-2">¿Cómo gestionarán secretos?</h4>
+                            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                                <li>• ¿Tienen AWS Secrets Manager / Azure Key Vault?</li>
+                                <li>• ¿HashiCorp Vault?</li>
+                                <li>• ¿O usarán archivos .env con permisos restringidos?</li>
+                                <li>• ¿Política de rotación de credenciales?</li>
+                            </ul>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="bg-orange-50 rounded-xl border-2 border-orange-200">
+                    <summary class="p-6 cursor-pointer font-semibold text-lg flex items-center justify-between">
+                        <span class="flex items-center gap-3">
+                            <span class="text-2xl">📅</span>
+                            D. Timelines y Expectativas
+                        </span>
+                        <svg class="chevron w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6 space-y-3">
+                        <div class="bg-white p-4 rounded-lg border border-orange-200">
+                            <h4 class="font-semibold text-orange-900 mb-2">¿Cuándo necesitan esto en producción?</h4>
+                            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                                <li>• ¿Es urgente o pueden esperar 2-3 meses?</li>
+                                <li>• ¿Tienen deadline por fin de año fiscal / presupuesto?</li>
+                                <li>• ¿Necesitan MVP rápido o solución completa?</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg border border-orange-200">
+                            <h4 class="font-semibold text-orange-900 mb-2">¿Qué define "éxito" para ellos?</h4>
+                            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                                <li>• ¿Dashboard visual con costos?</li>
+                                <li>• ¿Reportes mensuales automatizados?</li>
+                                <li>• ¿Alertas cuando costos superan threshold?</li>
+                                <li>• ¿Integración con sistema de facturación?</li>
+                                <li>• ¿Aprobación de stakeholders/CFO?</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg border border-orange-200">
+                            <h4 class="font-semibold text-orange-900 mb-2">¿Cómo medirán el ROI?</h4>
+                            <p class="text-sm text-gray-700">¿Qué valor esperan obtener que justifique la inversión?</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- Limitaciones Section -->
+        <section id="limitaciones" class="mb-20 animate-fadeInUp">
+            <div class="card-shadow rounded-2xl p-8 bg-white border border-gray-100">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="icon-box"><span>⚠️</span></div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h2 class="text-3xl font-bold text-gray-900">4. Limitaciones Técnicas</h2>
+                            <span class="badge-critical text-white text-xs px-3 py-1 rounded-full font-semibold">DEBE COMUNICARSE</span>
+                        </div>
+                        <p class="text-gray-600">Transparencia sobre qué NO puede hacer la solución</p>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 border-2 border-red-300 rounded-xl p-6 mb-6">
+                    <h3 class="font-semibold text-red-900 mb-3 flex items-center gap-2 text-xl">
+                        <span class="text-3xl">🚨</span>
+                        LIMITACIÓN CRÍTICA #1: OPS No Son Reales Por Base de Datos
+                    </h3>
+                    <div class="bg-white rounded-lg p-4 mb-4">
+                        <p class="text-gray-800 font-semibold mb-2">El Problema:</p>
+                        <p class="text-gray-700 mb-3">
+                            <strong>MongoDB NO expone métricas de operaciones por segundo (OPS) a nivel de base de datos individual.</strong>
+                            Solo provee OPS a nivel de servidor completo (todas las BDs agregadas).
+                        </p>
+                        <p class="text-gray-800 font-semibold mb-2">Nuestra Aproximación (en el demo):</p>
+                        <div class="code-block text-xs mb-3">
+# Distribución proporcional por storage
+total_ops_server = 1000 ops/s
+db_A_storage = 500 GB (50% del total)
+db_B_storage = 300 GB (30% del total)
+db_C_storage = 200 GB (20% del total)
+
+# OPS "estimado" (NO real)
+db_A_ops = 1000 * 0.50 = 500 ops/s
+db_B_ops = 1000 * 0.30 = 300 ops/s
+db_C_ops = 1000 * 0.20 = 200 ops/s</div>
+                        <p class="text-red-700 font-semibold mb-2">⚠️ Implicaciones:</p>
+                        <ul class="space-y-1 text-sm text-gray-700 ml-4">
+                            <li>• BD pequeña con ALTA actividad → SUBESTIMADA</li>
+                            <li>• BD grande con BAJA actividad → SOBREESTIMADA</li>
+                            <li>• <strong>NO apto para facturación precisa, solo tendencias generales</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-green-50 border border-green-300 p-4 rounded-lg">
+                        <p class="font-semibold text-green-900 mb-2">✅ Alternativas para OPS Reales:</p>
+                        <div class="grid md:grid-cols-2 gap-3 text-sm">
+                            <div>
+                                <p class="font-semibold text-gray-800 mb-1">1. MongoDB Atlas</p>
+                                <p class="text-gray-700">Tiene métricas per-database nativas</p>
+                                <p class="text-xs text-red-600">Cliente usa Community, no Atlas</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800 mb-1">2. MongoDB Profiler</p>
+                                <p class="text-gray-700">Puede loggear queries por BD</p>
+                                <p class="text-xs text-red-600">Overhead de performance significativo</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800 mb-1">3. Instrumentación App</p>
+                                <p class="text-gray-700">App reporta sus propias métricas</p>
+                                <p class="text-xs text-red-600">Requiere modificar todas las apps</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-gray-800 mb-1">4. Percona PMM / Datadog</p>
+                                <p class="text-gray-700">Tools de terceros con monitoreo avanzado</p>
+                                <p class="text-xs text-red-600">Costo de licencias adicionales</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <details class="mb-6 bg-yellow-50 rounded-xl border-2 border-yellow-200" open>
+                    <summary class="p-6 cursor-pointer font-semibold text-lg flex items-center justify-between">
+                        <span class="flex items-center gap-3">
+                            <span class="text-2xl">🔧</span>
+                            LIMITACIÓN #2: MongoDB Community Sin Soporte
+                        </span>
+                        <svg class="chevron w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6 space-y-4">
+                        <div class="bg-white p-4 rounded-lg border border-yellow-300">
+                            <p class="text-gray-800 font-semibold mb-2">Realidad de Community Edition:</p>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-red-500 mt-1">✗</span>
+                                    <span><strong>Sin soporte oficial de MongoDB</strong> - Si hay problema crítico, no hay a quién llamar</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-red-500 mt-1">✗</span>
+                                    <span><strong>Sin SLA</strong> - No hay garantía de uptime ni tiempo de respuesta</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-red-500 mt-1">✗</span>
+                                    <span><strong>Sin features enterprise</strong> - No auditing avanzado, LDAP, Kerberos, encryption at rest</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-red-500 mt-1">✗</span>
+                                    <span><strong>Cliente 100% responsable</strong> - Debe tener expertise interno para troubleshooting</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                            <p class="font-semibold text-red-900 mb-2">⚠️ Escenario de Riesgo:</p>
+                            <p class="text-red-800 text-sm italic">
+                                "Script de métricas falla en producción un viernes a las 6pm. MongoDB Community no responde queries.
+                                ¿Quién lo arregla? ¿El DBA del cliente tiene skills? ¿Hay presupuesto para consultoría de emergencia?"
+                            </p>
+                        </div>
+
+                        <div class="bg-blue-50 border border-blue-300 p-4 rounded-lg">
+                            <p class="font-semibold text-blue-900 mb-2">💡 Mitigación:</p>
+                            <ul class="space-y-1 text-sm text-blue-800 ml-4">
+                                <li>• <strong>Disclaimer explícito</strong> en contrato/SOW sobre Community limitations</li>
+                                <li>• Asegurar que cliente tiene <strong>DBA con experiencia MongoDB</strong></li>
+                                <li>• <strong>Documentación exhaustiva</strong> de troubleshooting común</li>
+                                <li>• Considerar <strong>upgrade path a Enterprise/Atlas</strong> a futuro</li>
+                                <li>• MongoDB PS puede ofrecer <strong>soporte reactivo pagado por hora</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="mb-6 bg-purple-50 rounded-xl border-2 border-purple-200">
+                    <summary class="p-6 cursor-pointer font-semibold text-lg flex items-center justify-between">
+                        <span class="flex items-center gap-3">
+                            <span class="text-2xl">📊</span>
+                            LIMITACIÓN #3: Aproximación de Métricas de Memoria
+                        </span>
+                        <svg class="chevron w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6">
+                        <div class="bg-white p-4 rounded-lg border border-purple-200">
+                            <p class="text-gray-700 text-sm mb-3">
+                                La memoria cache (WiredTiger cache) se comparte entre TODAS las bases de datos.
+                                El script estima uso por BD basado en tamaño de working set, pero <strong>no es exacto</strong>.
+                            </p>
+                            <p class="text-sm text-purple-800">
+                                ✓ Suficiente para <strong>estimaciones de tendencias</strong><br>
+                                ✗ NO para <strong>facturación precisa por MB de RAM</strong>
+                            </p>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="bg-gray-50 rounded-xl border-2 border-gray-200">
+                    <summary class="p-6 cursor-pointer font-semibold text-lg flex items-center justify-between">
+                        <span class="flex items-center gap-3">
+                            <span class="text-2xl">⏱️</span>
+                            LIMITACIÓN #4: Granularidad Temporal
+                        </span>
+                        <svg class="chevron w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-6">
+                        <div class="bg-white p-4 rounded-lg border border-gray-200">
+                            <p class="text-gray-700 text-sm mb-3">
+                                Script actual corre cada 6 horas vía cron. No captura <strong>picos de tráfico intraday</strong>.
+                            </p>
+                            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+                                <li>• Si BD tiene spike de 10,000 ops/s a las 2pm, pero script corre a las 6pm → se pierde</li>
+                                <li>• Métricas son <strong>promedios de ventana de tiempo</strong>, no real-time</li>
+                                <li>• Para monitoreo real-time: necesitan Prometheus/Grafana con exportador continuo</li>
+                            </ul>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- Deployment Section -->
+        <section id="deployment" class="mb-20 animate-fadeInUp">
+            <div class="card-shadow rounded-2xl p-8 bg-white border border-gray-100">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="icon-box"><span>🚀</span></div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                            <h2 class="text-3xl font-bold text-gray-900">5. Configuración y Despliegue</h2>
+                            <span class="badge-high text-white text-xs px-3 py-1 rounded-full font-semibold">PRIORIDAD ALTA</span>
+                        </div>
+                        <p class="text-gray-600">Pasos técnicos para llevar a producción</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-500 p-6 rounded-lg mb-6">
+                    <h3 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                        <span class="text-2xl">📋</span>
+                        Checklist de Despliegue (Paso a Paso)
+                    </h3>
+                    <p class="text-sm text-gray-700 mb-4">Validar cada item antes de go-live</p>
+                </div>
+
+                <div class="space-y-4">
+                    <details class="bg-blue-50 rounded-xl border-2 border-blue-200" open>
+                        <summary class="p-5 cursor-pointer font-semibold flex items-center justify-between">
+                            <span class="flex items-center gap-3">
+                                <span class="text-xl">🔐</span>
+                                Paso 1: Configuración de Seguridad
+                            </span>
+                            <svg class="chevron w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+                        <div class="px-5 pb-5">
+                            <div class="code-block text-xs mb-3">
+# 1.1 Crear archivo .env (NUNCA commitear a Git)
+cat > .env << 'EOF'
+MONGODB_URI=mongodb://user:password@host1:27017,host2:27017,host3:27017/?replicaSet=rs0&authSource=admin&tls=true&tlsCAFile=/path/to/ca.pem
+METRICS_OUTPUT_DIR=/var/lib/mongodb-metrics
+LOG_LEVEL=INFO
+ENVIRONMENT=production
+EOF
+
+# 1.2 Permisos restrictivos
+chmod 600 .env
+chown mongodb_user:mongodb_group .env
+
+# 1.3 Agregar a .gitignore
+echo ".env" >> .gitignore
+echo "*.json" >> .gitignore
+echo "*.jsonl" >> .gitignore</div>
+                            <div class="bg-white p-3 rounded border border-blue-200 text-sm">
+                                <p class="font-semibold text-blue-900 mb-1">✅ Validación:</p>
+                                <ul class="text-gray-700 space-y-1 ml-4">
+                                    <li>• Archivo .env NO aparece en <code class="bg-gray-100 px-1 rounded">git status</code></li>
+                                    <li>• Script puede leer variables: <code class="bg-gray-100 px-1 rounded">python3 -c "from dotenv import load_dotenv; load_dotenv(); import os; print(os.getenv('MONGODB_URI')[:20])"</code></li>
+                                    <li>• Conexión exitosa: <code class="bg-gray-100 px-1 rounded">python3 test_metrics_v2.py</code></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="bg-green-50 rounded-xl border-2 border-green-200">
+                        <summary class="p-5 cursor-pointer font-semibold flex items-center justify-between">
+                            <span class="flex items-center gap-3">
+                                <span class="text-xl">🐍</span>
+                                Paso 2: Entorno Python
+                            </span>
+                            <svg class="chevron w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+                        <div class="px-5 pb-5">
+                            <div class="code-block text-xs mb-3">
+# 2.1 Crear virtual environment
+python3 -m venv /opt/mongodb-metrics/venv
+
+# 2.2 Activar y actualizar pip
+source /opt/mongodb-metrics/venv/bin/activate
+pip install --upgrade pip setuptools wheel
+
+# 2.3 Instalar dependencias
+pip install pymongo>=4.6.0 python-dotenv>=1.0.0
+
+# 2.4 Freezear versiones exactas
+pip freeze > requirements.txt
+
+# 2.5 Test de imports
+python3 -c "import pymongo; from dotenv import load_dotenv; print('✅ Dependencies OK')"</div>
+                        </div>
+                    </details>
+
+                    <details class="bg-purple-50 rounded-xl border-2 border-purple-200">
+                        <summary class="p-5 cursor-pointer font-semibold flex items-center justify-between">
+                            <span class="flex items-center gap-3">
+                                <span class="text-xl">📂</span>
+                                Paso 3: Estructura de Directorios
+                            </span>
+                            <svg class="chevron w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+                        <div class="px-5 pb-5">
+                            <div class="code-block text-xs mb-3">
+# 3.1 Crear estructura
+mkdir -p /opt/mongodb-metrics/{bin,data,logs,config}
+mkdir -p /var/lib/mongodb-metrics
+mkdir -p /var/log/mongodb-metrics
+
+# 3.2 Copiar archivos
+cp generate_metrics_v2.py /opt/mongodb-metrics/bin/
+cp .env /opt/mongodb-metrics/config/
+cp requirements.txt /opt/mongodb-metrics/
+
+# 3.3 Permisos
+chown -R mongodb_user:mongodb_group /opt/mongodb-metrics
+chown -R mongodb_user:mongodb_group /var/lib/mongodb-metrics
+chown -R mongodb_user:mongodb_group /var/log/mongodb-metrics
+
+chmod 750 /opt/mongodb-metrics/bin/*.py
+chmod 700 /var/lib/mongodb-metrics
+chmod 755 /var/log/mongodb-metrics</div>
+                            <div class="bg-white p-3 rounded border border-purple-200 text-xs">
+<pre class="text-gray-700">/opt/mongodb-metrics/
+├── bin/
+│   └── generate_metrics_v2.py
+├── config/
+│   └── .env
+├── data/  (legacy, puede borrarse)
+├── logs/  (legacy, puede borrarse)
+├── venv/
+└── requirements.txt
+
+/var/lib/mongodb-metrics/
+├── metrics_latest.json
+└── metrics_timeseries.jsonl
+
+/var/log/mongodb-metrics/
+└── metrics_cron.log</pre>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="bg-orange-50 rounded-xl border-2 border-orange-200">
+                        <summary class="p-5 cursor-pointer font-semibold flex items-center justify-between">
+                            <span class="flex items-center gap-3">
+                                <span class="text-xl">⏰</span>
+                                Paso 4: Cron Job (Automatización)
+                            </span>
+                            <svg class="chevron w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+                        <div class="px-5 pb-5">
+                            <div class="code-block text-xs mb-3">
+# 4.1 Editar crontab
+sudo -u mongodb_user crontab -e
+
+# 4.2 Agregar job (cada 6 horas)
+0 */6 * * * cd /opt/mongodb-metrics/config && /opt/mongodb-metrics/venv/bin/python3 /opt/mongodb-metrics/bin/generate_metrics_v2.py >> /var/log/mongodb-metrics/metrics_cron.log 2>&1 || echo "ERROR: Metrics failed at $(date)" | mail -s "ALERT: MongoDB Metrics Failed" dba@telecom.com
+
+# 4.3 Validar sintaxis
+crontab -l | grep generate_metrics</div>
+                            <div class="bg-white p-3 rounded border border-orange-200 text-sm">
+                                <p class="font-semibold text-orange-900 mb-2">🕐 Frecuencias Alternativas:</p>
+                                <ul class="text-xs text-gray-700 space-y-1 ml-4">
+                                    <li>• <code class="bg-gray-100 px-1 rounded">*/30 * * * *</code> - Cada 30 minutos (más granular)</li>
+                                    <li>• <code class="bg-gray-100 px-1 rounded">0 */6 * * *</code> - Cada 6 horas (actual, balanceado)</li>
+                                    <li>• <code class="bg-gray-100 px-1 rounded">0 2 * * *</code> - Diario a las 2am (menos frecuente)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="bg-red-50 rounded-xl border-2 border-red-200">
+                        <summary class="p-5 cursor-pointer font-semibold flex items-center justify-between">
+                            <span class="flex items-center gap-3">
+                                <span class="text-xl">🔄</span>
+                                Paso 5: Rotación de Logs
+                            </span>
+                            <svg class="chevron w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+                        <div class="px-5 pb-5">
+                            <div class="code-block text-xs mb-3">
+# 5.1 Crear configuración logrotate
+cat > /etc/logrotate.d/mongodb-metrics << 'EOF'
+/var/log/mongodb-metrics/metrics_cron.log {
+    daily
+    rotate 30
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0640 mongodb_user mongodb_group
+}
+
+/var/lib/mongodb-metrics/metrics_timeseries.jsonl {
+    weekly
+    rotate 12
+    compress
+    missingok
+    notifempty
+    create 0640 mongodb_user mongodb_group
+}
+EOF
+
+# 5.2 Test de configuración
+logrotate -d /etc/logrotate.d/mongodb-metrics
+
+# 5.3 Forzar rotación manual (test)
+logrotate -f /etc/logrotate.d/mongodb-metrics</div>
+                        </div>
+                    </details>
+
+                    <details class="bg-teal-50 rounded-xl border-2 border-teal-200">
+                        <summary class="p-5 cursor-pointer font-semibold flex items-center justify-between">
+                            <span class="flex items-center gap-3">
+                                <span class="text-xl">✅</span>
+                                Paso 6: Testing Pre-Producción
+                            </span>
+                            <svg class="chevron w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </summary>
+                        <div class="px-5 pb-5">
+                            <div class="space-y-2 text-sm">
+                                <div class="checklist-item flex items-start gap-3 p-2 rounded">
+                                    <input type="checkbox" class="mt-1 w-4 h-4 accent-green-600">
+                                    <span class="text-gray-700">Ejecución manual exitosa: <code class="bg-gray-100 px-1 rounded text-xs">python3 bin/generate_metrics_v2.py</code></span>
+                                </div>
+                                <div class="checklist-item flex items-start gap-3 p-2 rounded">
+                                    <input type="checkbox" class="mt-1 w-4 h-4 accent-green-600">
+                                    <span class="text-gray-700">Archivos generados: <code class="bg-gray-100 px-1 rounded text-xs">ls -lh /var/lib/mongodb-metrics/</code></span>
+                                </div>
+                                <div class="checklist-item flex items-start gap-3 p-2 rounded">
+                                    <input type="checkbox" class="mt-1 w-4 h-4 accent-green-600">
+                                    <span class="text-gray-700">JSON válido: <code class="bg-gray-100 px-1 rounded text-xs">cat metrics_latest.json | python3 -m json.tool</code></span>
+                                </div>
+                                <div class="checklist-item flex items-start gap-3 p-2 rounded">
+                                    <input type="checkbox" class="mt-1 w-4 h-4 accent-green-600">
+                                    <span class="text-gray-700">Cron ejecuta OK (esperar 6h o modificar temporalmente a */5 para test)</span>
+                                </div>
+                                <div class="checklist-item flex items-start gap-3 p-2 rounded">
+                                    <input type="checkbox" class="mt-1 w-4 h-4 accent-green-600">
+                                    <span class="text-gray-700">Logs sin errores: <code class="bg-gray-100 px-1 rounded text-xs">tail -f /var/log/mongodb-metrics/metrics_cron.log</code></span>
+                                </div>
+                                <div class="checklist-item flex items-start gap-3 p-2 rounded">
+                                    <input type="checkbox" class="mt-1 w-4 h-4 accent-green-600">
+                                    <span class="text-gray-700">Dashboard consume métricas correctamente</span>
+                                </div>
+                                <div class="checklist-item flex items-start gap-3 p-2 rounded">
+                                    <input type="checkbox" class="mt-1 w-4 h-4 accent-green-600">
+                                    <span class="text-gray-700">Validación con stakeholder: números tienen sentido</span>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- Remaining sections would continue here with same structure...
+             Due to length constraints, showing structure for remaining sections -->
+
+        <!-- Monitoring Section (simplified for space) -->
+        <section id="monitoring" class="mb-20 animate-fadeInUp">
+            <div class="card-shadow rounded-2xl p-8 bg-white border border-gray-100">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="icon-box"><span>📊</span></div>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">6. Monitoreo y Observabilidad</h2>
+                        <p class="text-gray-600">Monitorear el monitor - Meta-monitoring</p>
+                    </div>
+                </div>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+                    <h4 class="font-semibold text-blue-900 mb-3">Métricas Clave del Colector:</h4>
+                    <ul class="space-y-2 text-sm text-blue-800">
+                        <li>• ✅ <strong>Execution success rate:</strong> % de ejecuciones exitosas vs fallidas</li>
+                        <li>• ⏱️ <strong>Execution duration:</strong> tiempo que toma cada run (detectar degradación)</li>
+                        <li>• 🔌 <strong>MongoDB connection time:</strong> latencia de conexión</li>
+                        <li>• 📦 <strong>Output file size:</strong> crecimiento de metrics_timeseries.jsonl</li>
+                        <li>• 🚨 <strong>Error types:</strong> ConnectionFailure, OperationFailure, TimeoutError</li>
+                        <li>• 💾 <strong>Disk space:</strong> /var/lib/mongodb-metrics disponible</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary of remaining sections -->
+        <section id="resiliencia" class="mb-20 animate-fadeInUp">
+            <div class="card-shadow rounded-2xl p-8 bg-white border border-gray-100">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="icon-box"><span>🛡️</span></div>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">7. Resiliencia y Manejo de Errores</h2>
+                        <p class="text-gray-600">Retry logic, circuit breakers, failover handling</p>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-orange-50 p-5 rounded-lg border border-orange-200">
+                        <h4 class="font-semibold text-orange-900 mb-2">🔄 Retry Logic</h4>
+                        <p class="text-sm text-gray-700 mb-2">Implementar exponential backoff para conexiones fallidas</p>
+                        <ul class="text-xs text-gray-600 space-y-1 ml-4">
+                            <li>• Retry 1: esperar 2s</li>
+                            <li>• Retry 2: esperar 4s</li>
+                            <li>• Retry 3: esperar 8s</li>
+                            <li>• Max 3 intentos, luego alertar</li>
+                        </ul>
+                    </div>
+                    <div class="bg-purple-50 p-5 rounded-lg border border-purple-200">
+                        <h4 class="font-semibold text-purple-900 mb-2">⚡ Circuit Breaker</h4>
+                        <p class="text-sm text-gray-700 mb-2">Si 5 fallos consecutivos → modo "open" (no reintentar por 5 min)</p>
+                        <p class="text-xs text-gray-600">Previene storm de conexiones fallidas</p>
+                    </div>
+                    <div class="bg-green-50 p-5 rounded-lg border border-green-200">
+                        <h4 class="font-semibold text-green-900 mb-2">🔀 Replica Set Failover</h4>
+                        <p class="text-sm text-gray-700">PyMongo maneja automáticamente si el URI incluye todos los nodos del replica set</p>
+                    </div>
+                    <div class="bg-red-50 p-5 rounded-lg border border-red-200">
+                        <h4 class="font-semibold text-red-900 mb-2">📧 Alerting</h4>
+                        <p class="text-sm text-gray-700">Email/Slack cuando script falla 3 veces consecutivas</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="datos" class="mb-20 animate-fadeInUp">
+            <div class="card-shadow rounded-2xl p-8 bg-white border border-gray-100">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="icon-box"><span>💾</span></div>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">8. Gestión de Datos</h2>
+                        <p class="text-gray-600">Retención, backup, compresión de métricas históricas</p>
+                    </div>
+                </div>
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg mb-4">
+                    <h4 class="font-semibold text-yellow-900 mb-2">📅 Política de Retención Recomendada:</h4>
+                    <ul class="text-sm text-yellow-800 space-y-1 ml-4">
+                        <li>• <strong>Métricas activas (JSONL):</strong> 90 días</li>
+                        <li>• <strong>Métricas comprimidas (gzip):</strong> 1 año</li>
+                        <li>• <strong>Logs de cron:</strong> 30 días</li>
+                        <li>• <strong>Agregaciones mensuales:</strong> indefinido (para históricos de FinOps)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="testing" class="mb-20 animate-fadeInUp">
+            <div class="card-shadow rounded-2xl p-8 bg-white border border-gray-100">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="icon-box"><span>🧪</span></div>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">9. Testing y QA</h2>
+                        <p class="text-gray-600">Suite de pruebas para garantizar calidad</p>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-900 mb-2">🔬 Unit Tests</h4>
+                        <p class="text-xs text-gray-700">pytest para funciones individuales</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-green-900 mb-2">🔗 Integration Tests</h4>
+                        <p class="text-xs text-gray-700">Test contra MongoDB de prueba</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-purple-900 mb-2">📊 Load Tests</h4>
+                        <p class="text-xs text-gray-700">Cluster con 1000+ databases</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="documentacion" class="mb-20 animate-fadeInUp">
+            <div class="card-shadow rounded-2xl p-8 bg-white border border-gray-100">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="icon-box"><span>📚</span></div>
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">10. Documentación para Producción</h2>
+                        <p class="text-gray-600">Runbooks y procedimientos operacionales</p>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-lg border-2 border-gray-200">
+                        <h4 class="font-semibold mb-2">📖 Runbook Operacional</h4>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>✓ Cómo ejecutar manualmente</li>
+                            <li>✓ Cómo verificar ejecución</li>
+                            <li>✓ Qué hacer si falla</li>
+                            <li>✓ Contactos de escalamiento</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border-2 border-gray-200">
+                        <h4 class="font-semibold mb-2">🔧 Troubleshooting Guide</h4>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>✓ Errores comunes y soluciones</li>
+                            <li>✓ Logs a revisar</li>
+                            <li>✓ Comandos de diagnóstico</li>
+                            <li>✓ FAQs del equipo</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="disclaimer" class="mb-20 animate-fadeInUp">
+            <div class="card-shadow rounded-2xl p-8 bg-red-50 border-2 border-red-300">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="icon-box bg-red-100"><span>⚖️</span></div>
+                    <div>
+                        <h2 class="text-3xl font-bold text-red-900 mb-2">11. Disclaimer para el Cliente</h2>
+                        <p class="text-red-700 font-semibold">DEBE estar explícito en el contrato/SOW</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg p-6 border-2 border-red-400 mb-6">
+                    <h3 class="font-bold text-red-900 mb-4 text-xl">⚠️ LIMITACIONES Y RESPONSABILIDADES</h3>
+
+                    <div class="space-y-4 text-sm">
+                        <div class="bg-red-50 p-4 rounded">
+                            <p class="font-semibold text-red-900 mb-2">1. MongoDB Community Edition Sin Soporte</p>
+                            <p class="text-gray-800">
+                                Esta solución opera sobre MongoDB Community Edition, la cual <strong>NO incluye soporte oficial de MongoDB Inc.</strong>
+                                En caso de fallo del cluster o problemas de rendimiento, el cliente es 100% responsable de la resolución.
+                                MongoDB Professional Services NO provee soporte 24/7 para Community Edition bajo este proyecto.
+                            </p>
+                        </div>
+
+                        <div class="bg-red-50 p-4 rounded">
+                            <p class="font-semibold text-red-900 mb-2">2. Métricas de OPS Son Aproximaciones</p>
+                            <p class="text-gray-800">
+                                Las operaciones por segundo (OPS) reportadas <strong>SON ESTIMACIONES</strong> basadas en distribución proporcional por storage size.
+                                MongoDB Community NO expone métricas reales de OPS per-database. Estas métricas son aptas para <strong>análisis de tendencias</strong>,
+                                NO para facturación precisa. El cliente acepta esta limitación técnica.
+                            </p>
+                        </div>
+
+                        <div class="bg-red-50 p-4 rounded">
+                            <p class="font-semibold text-red-900 mb-2">3. Sin SLA de Disponibilidad</p>
+                            <p class="text-gray-800">
+                                Este script de recolección de métricas se provee "AS-IS" sin garantías de uptime, precisión absoluta, o tiempo de respuesta ante fallos.
+                                MongoDB PS realizará <strong>best effort</strong> durante la implementación, pero no garantiza disponibilidad post-entrega sin contrato de soporte pagado.
+                            </p>
+                        </div>
+
+                        <div class="bg-red-50 p-4 rounded">
+                            <p class="font-semibold text-red-900 mb-2">4. Mantenimiento y Evolución</p>
+                            <p class="text-gray-800">
+                                Post-implementación, cualquier modificación, bug fix, o feature request será cotizado por separado como servicios profesionales adicionales.
+                                Este proyecto NO incluye mantenimiento continuo ni soporte operacional ongoing.
+                            </p>
+                        </div>
+
+                        <div class="bg-red-50 p-4 rounded">
+                            <p class="font-semibold text-red-900 mb-2">5. Responsabilidad de Seguridad</p>
+                            <p class="text-gray-800">
+                                El cliente es responsable de:
+                            </p>
+                            <ul class="mt-2 ml-4 space-y-1 text-gray-700">
+                                <li>• Gestión segura de credenciales (secrets management)</li>
+                                <li>• Rotación periódica de passwords</li>
+                                <li>• Auditoría de accesos</li>
+                                <li>• Compliance con políticas internas de seguridad</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-yellow-50 p-4 rounded border-2 border-yellow-400">
+                            <p class="font-semibold text-yellow-900 mb-2">⚠️ Recomendación de MongoDB PS:</p>
+                            <p class="text-gray-800">
+                                Para ambientes de producción críticos, MongoDB recomienda encarecidamente <strong>MongoDB Enterprise Advanced</strong> o
+                                <strong>MongoDB Atlas</strong>, los cuales incluyen:
+                            </p>
+                            <ul class="mt-2 ml-4 space-y-1 text-gray-700 text-xs">
+                                <li>✓ Soporte técnico 24/7/365</li>
+                                <li>✓ Métricas precisas per-database en Atlas</li>
+                                <li>✓ SLA de 99.995% en Atlas (M10+)</li>
+                                <li>✓ Backup automatizado</li>
+                                <li>✓ Encryption at rest</li>
+                                <li>✓ Auditing avanzado</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-900 text-white p-6 rounded-lg">
+                    <h4 class="font-bold mb-3 text-lg">📝 Lenguaje Sugerido para SOW:</h4>
+                    <div class="text-sm font-mono bg-black bg-opacity-30 p-4 rounded text-green-400">
+                        "El Cliente reconoce y acepta que esta solución opera sobre MongoDB Community Edition sin soporte oficial.
+                        Las métricas de OPS son aproximaciones técnicas no aptas para facturación de precisión absoluta.
+                        MongoDB Inc. no provee SLA ni garantías de disponibilidad bajo este engagement.
+                        El Cliente es responsable del mantenimiento operacional post-entrega.
+                        MongoDB Professional Services recomienda evaluar upgrade a Enterprise Advanced o Atlas para ambientes de misión crítica."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Summary Section -->
+        <section class="mb-20 animate-fadeInUp">
+            <div class="card-shadow rounded-2xl p-8 bg-gradient-to-br from-green-50 via-white to-blue-50 border-2 border-green-300">
+                <div class="text-center mb-8">
+                    <h2 class="text-4xl font-bold text-gray-900 mb-4">🎯 Resumen Ejecutivo</h2>
+                    <p class="text-xl text-gray-700">Para llevar el demo a producción, necesitamos:</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-red-500">
+                        <h3 class="font-bold text-red-900 mb-3 flex items-center gap-2">
+                            <span class="text-3xl">🚨</span>
+                            CRÍTICO (antes de cotizar)
+                        </h3>
+                        <ul class="text-sm space-y-2">
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500">1.</span>
+                                <span>Análisis formal de requisitos con cliente</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500">2.</span>
+                                <span>Definir quién desarrolla y mantiene</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500">3.</span>
+                                <span>Comunicar limitaciones (OPS, Community)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500">4.</span>
+                                <span>Disclaimer explícito en SOW</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-red-500">5.</span>
+                                <span>Fix seguridad: remover credenciales hardcoded</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-orange-500">
+                        <h3 class="font-bold text-orange-900 mb-3 flex items-center gap-2">
+                            <span class="text-3xl">⚡</span>
+                            ALTA (antes de desplegar)
+                        </h3>
+                        <ul class="text-sm space-y-2">
+                            <li class="flex items-start gap-2">
+                                <span class="text-orange-500">6.</span>
+                                <span>Implementar manejo robusto de errores</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-orange-500">7.</span>
+                                <span>Configurar monitoring y alerting</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-orange-500">8.</span>
+                                <span>Habilitar TLS/SSL en conexiones</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-orange-500">9.</span>
+                                <span>Setup de secrets management</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-orange-500">10.</span>
+                                <span>Runbook y documentación operacional</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-green-500">
+                        <h3 class="font-bold text-green-900 mb-3 flex items-center gap-2">
+                            <span class="text-3xl">✅</span>
+                            MEDIA (mejora continua)
+                        </h3>
+                        <ul class="text-sm space-y-2">
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-500">11.</span>
+                                <span>Suite de tests (unit + integration)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-500">12.</span>
+                                <span>CI/CD pipeline</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-500">13.</span>
+                                <span>Type hints y linting</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-500">14.</span>
+                                <span>Time-series DB para métricas</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-green-500">15.</span>
+                                <span>Anomaly detection / forecasting</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-blue-900 text-white p-6 rounded-xl">
+                    <h3 class="font-bold text-2xl mb-4 text-center">💰 Estimación de Esfuerzo</h3>
+                    <div class="grid md:grid-cols-3 gap-4 text-sm">
+                        <div class="bg-blue-800 p-4 rounded">
+                            <p class="font-semibold mb-2">Consultoría Guiada</p>
+                            <p class="text-2xl font-bold text-green-400">$7-10K</p>
+                            <p class="text-xs mt-2">Cliente desarrolla, MongoDB guía y revisa</p>
+                        </div>
+                        <div class="bg-blue-800 p-4 rounded">
+                            <p class="font-semibold mb-2">App Incubator Mediano</p>
+                            <p class="text-2xl font-bold text-yellow-400">$20-25K</p>
+                            <p class="text-xs mt-2">MongoDB PS hace development, scope limitado</p>
+                        </div>
+                        <div class="bg-blue-800 p-4 rounded">
+                            <p class="font-semibold mb-2">Full Development</p>
+                            <p class="text-2xl font-bold text-red-400">$40-50K</p>
+                            <p class="text-xs mt-2">Solución completa enterprise-grade</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="gradient-hero text-white py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="font-bold text-xl mb-3" style="color: var(--mongodb-green);">MongoDB Professional Services</h3>
+                    <p class="text-gray-300 text-sm">
+                        Guía preparada para sesión interna con equipo PS - Telecom Argentina FinOps Project
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xl mb-3">Contacto</h3>
+                    <p class="text-gray-300 text-sm">David Radzinsky - Account Executive</p>
+                    <p class="text-gray-300 text-sm">Manolo Quiroz - PS Manager</p>
+                    <p class="text-gray-300 text-sm">Leo Alarcón - Solutions Architect</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xl mb-3">Recursos</h3>
+                    <p class="text-gray-300 text-sm">MongoDB Documentation</p>
+                    <p class="text-gray-300 text-sm">Professional Services</p>
+                    <p class="text-gray-300 text-sm">Security Best Practices</p>
+                </div>
+            </div>
+            <div class="section-divider mb-8"></div>
+            <div class="text-center text-gray-400 text-sm">
+                <p>© 2025 MongoDB, Inc. - Documento Interno de Consideraciones Técnicas</p>
+                <p class="mt-2">Generado: Noviembre 2025</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Highlight active nav item on scroll
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('tab-active');
+                link.classList.add('tab-inactive');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.remove('tab-inactive');
+                    link.classList.add('tab-active');
+                }
+            });
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeInUp');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

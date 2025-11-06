@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinOps para MongoDB Community - Stack Open Source</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mongodb-green: #00ED64;
+            --mongodb-green-dark: #00684A;
+            --mongodb-black: #001E2B;
+            --white: #FFFFFF;
+            --gray-light: #F5F5F5;
+            --gray-medium: #E3E3E3;
+            --gray-text: #5C6C75;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+            color: var(--mongodb-black);
+            line-height: 1.7;
+            background: var(--white);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--white);
+            background-image:
+                repeating-linear-gradient(30deg, transparent, transparent 50px, rgba(0, 237, 100, 0.02) 50px, rgba(0, 237, 100, 0.02) 100px);
+            position: relative;
+        }
+
+        .mongo-logo {
+            width: 180px;
+            height: 60px;
+            background: var(--mongodb-green);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 24px;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 4.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--mongodb-black);
+            line-height: 1.1;
+        }
+
+        .hero h2 {
+            font-size: 2em;
+            color: var(--mongodb-green-dark);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            color: var(--gray-text);
+            margin-bottom: 50px;
+            max-width: 700px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 18px 45px;
+            background: var(--mongodb-green);
+            color: var(--mongodb-black);
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid var(--mongodb-green);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--mongodb-green);
+            border: 2px solid var(--mongodb-green);
+        }
+
+        .btn-outline:hover {
+            background: var(--mongodb-green);
+            color: var(--mongodb-black);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Section */
+        .section {
+            padding: 100px 20px;
+        }
+
+        .section-gray {
+            background: var(--gray-light);
+        }
+
+        .section-green-light {
+            background: rgba(0, 237, 100, 0.05);
+        }
+
+        .section-green {
+            background: linear-gradient(135deg, var(--mongodb-green-dark) 0%, var(--mongodb-green) 100%);
+            color: white;
+        }
+
+        .section-title {
+            font-size: 3em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--mongodb-black);
+        }
+
+        .section-subtitle {
+            font-size: 1.4em;
+            text-align: center;
+            color: var(--gray-text);
+            margin-bottom: 60px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border: 1px solid var(--gray-medium);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 237, 100, 0.2);
+            border-color: var(--mongodb-green);
+        }
+
+        .card-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--mongodb-black);
+        }
+
+        .card-text {
+            font-size: 1.1em;
+            color: var(--gray-text);
+            line-height: 1.7;
+        }
+
+        /* Architecture Diagram */
+        .architecture {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 60px 0;
+            padding: 50px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .arch-step {
+            flex: 1;
+            min-width: 180px;
+            text-align: center;
+            position: relative;
+        }
+
+        .arch-step::after {
+            content: '→';
+            position: absolute;
+            right: -35px;
+            top: 30px;
+            font-size: 2.5em;
+            color: var(--mongodb-green);
+        }
+
+        .arch-step:last-child::after {
+            content: '';
+        }
+
+        .arch-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--mongodb-green);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 25px rgba(0, 237, 100, 0.3);
+        }
+
+        .arch-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .arch-desc {
+            color: var(--gray-text);
+            font-size: 0.9em;
+        }
+
+        /* Timeline */
+        .timeline {
+            margin: 60px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 40px;
+            margin: 60px 0;
+            align-items: start;
+        }
+
+        .timeline-number {
+            width: 80px;
+            height: 80px;
+            background: var(--mongodb-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 8px 25px rgba(0, 237, 100, 0.4);
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-title {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--mongodb-black);
+        }
+
+        .timeline-text {
+            font-size: 1.2em;
+            color: var(--gray-text);
+            line-height: 1.8;
+        }
+
+        /* Formula Box */
+        .formula-box {
+            background: linear-gradient(135deg, var(--mongodb-green-dark), var(--mongodb-green));
+            border: 3px solid var(--mongodb-green);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin: 30px 0;
+            color: white;
+            box-shadow: 0 15px 50px rgba(0, 237, 100, 0.3);
+        }
+
+        .formula {
+            font-size: 1.8em;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            color: white;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: var(--mongodb-black);
+            color: var(--mongodb-green);
+            border-radius: 12px;
+            padding: 30px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .code-comment {
+            color: #888;
+        }
+
+        /* Screenshot */
+        .screenshot {
+            background: var(--gray-light);
+            border: 2px solid var(--gray-medium);
+            border-radius: 15px;
+            padding: 80px 40px;
+            text-align: center;
+            font-size: 1.3em;
+            color: var(--gray-text);
+            margin: 40px 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Two Column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin: 60px 0;
+        }
+
+        /* Roadmap */
+        .roadmap {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+            margin: 60px 0;
+            flex-wrap: wrap;
+        }
+
+        .roadmap-item {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .roadmap-circle {
+            width: 120px;
+            height: 120px;
+            background: var(--mongodb-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 25px rgba(0, 237, 100, 0.4);
+            font-weight: bold;
+            color: white;
+        }
+
+        .roadmap-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--mongodb-black);
+        }
+
+        .roadmap-text {
+            color: var(--gray-text);
+            font-size: 1.05em;
+            line-height: 1.8;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--mongodb-green);
+            color: var(--mongodb-black);
+            border-radius: 20px;
+            font-size: 0.95em;
+            font-weight: 600;
+            margin: 10px 5px;
+        }
+
+        /* Tool Card */
+        .tool-card {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border: 2px solid var(--gray-medium);
+        }
+
+        .tool-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 35px rgba(0, 237, 100, 0.2);
+            border-color: var(--mongodb-green);
+        }
+
+        .tool-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--gray-light);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .checkmark {
+            color: var(--mongodb-green);
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        /* CTA Box */
+        .cta-box {
+            background: linear-gradient(to bottom, var(--white), var(--gray-light));
+            border-radius: 20px;
+            padding: 80px 60px;
+            text-align: center;
+            margin: 80px 0;
+        }
+
+        .cta-box h2 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: var(--mongodb-black);
+        }
+
+        /* Footer */
+        footer {
+            background: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-top: 1px solid var(--gray-medium);
+        }
+
+        /* Sticky Nav */
+        .sticky-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px 30px;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sticky-nav.visible {
+            display: flex;
+        }
+
+        .sticky-nav .mongo-logo {
+            width: 120px;
+            height: 40px;
+            margin: 0;
+            font-size: 16px;
+        }
+
+        /* List */
+        ul.feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul.feature-list li {
+            padding: 12px 0;
+            font-size: 1.15em;
+            color: var(--gray-text);
+            position: relative;
+            padding-left: 35px;
+        }
+
+        ul.feature-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--mongodb-green);
+            font-size: 2em;
+            line-height: 0.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5em;
+            }
+
+            .hero h2 {
+                font-size: 1.5em;
+            }
+
+            .section-title {
+                font-size: 2em;
+            }
+
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .formula {
+                font-size: 1.2em;
+            }
+
+            .arch-step::after {
+                content: '↓';
+                right: auto;
+                top: auto;
+                bottom: -35px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .roadmap {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sticky Nav -->
+    <div class="sticky-nav" id="stickyNav">
+        <div class="mongo-logo">MongoDB</div>
+        <a href="#demo" class="btn" style="padding: 10px 25px; font-size: 1em;">Ver Demo</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="mongo-logo">MongoDB</div>
+        <h1>FinOps para MongoDB Community</h1>
+        <h2>Implemente chargeback interno sin costo adicional</h2>
+        <p>Con las herramientas que ya tiene: Grafana + Prometheus</p>
+        <a href="#solucion" class="btn">Ver Cómo Funciona ↓</a>
+    </section>
+
+    <!-- El Problema -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Su Desafío Actual</h2>
+            <p class="section-subtitle">Sin herramientas de gestión centralizada, es imposible controlar costos</p>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <span class="card-icon">📊</span>
+                    <h3 class="card-title">Sin Visibilidad</h3>
+                    <p class="card-text">No sabe qué cliente interno consume más recursos de MongoDB. Imposible identificar dónde optimizar.</p>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">💰</span>
+                    <h3 class="card-title">Sin Facturación</h3>
+                    <p class="card-text">Imposible hacer chargeback a equipos por su uso real de la base de datos. No hay accountability.</p>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">⚠️</span>
+                    <h3 class="card-title">Crecimiento Sin Control</h3>
+                    <p class="card-text">600GB+ en producción y creciendo sin poder medir impacto por área o aplicación.</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 60px;">
+                <div style="max-width: 650px; margin: 0 auto; padding: 35px; background: var(--gray-light); border-radius: 15px; border-left: 5px solid var(--mongodb-green);">
+                    <p style="font-size: 1.4em; color: var(--mongodb-black); font-weight: 600;">
+                        "Necesitamos facturar internamente por uso de MongoDB, pero no queremos invertir en licencias adicionales"
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- La Solución -->
+    <section class="section section-gray" id="solucion">
+        <div class="container">
+            <h2 class="section-title">La Solución: Stack Open Source</h2>
+            <p class="section-subtitle">Todo con herramientas que ya tiene instaladas</p>
+
+            <div class="architecture">
+                <div class="arch-step">
+                    <div class="arch-icon">🗄️</div>
+                    <div class="arch-title">MongoDB</div>
+                    <div class="arch-desc">Sus datos<br>Community Edition</div>
+                </div>
+
+                <div class="arch-step">
+                    <div class="arch-icon">🐍</div>
+                    <div class="arch-title">Python Script</div>
+                    <div class="arch-desc">Extrae métricas<br>Automatizado</div>
+                </div>
+
+                <div class="arch-step">
+                    <div class="arch-icon">📊</div>
+                    <div class="arch-title">Prometheus</div>
+                    <div class="arch-desc">Almacena series<br>Ya instalado</div>
+                </div>
+
+                <div class="arch-step">
+                    <div class="arch-icon">📈</div>
+                    <div class="arch-title">Grafana</div>
+                    <div class="arch-desc">Visualiza<br>Ya instalado</div>
+                </div>
+
+                <div class="arch-step">
+                    <div class="arch-icon">💰</div>
+                    <div class="arch-title">FinOps</div>
+                    <div class="arch-desc">Factura<br>Automatizado</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <p style="font-size: 1.3em; color: var(--mongodb-green-dark); font-weight: 600;">
+                    ✓ Sin costo adicional • ✓ Sin licencias • ✓ Con sus herramientas actuales
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cómo Funciona -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Implementación en 4 Pasos</h2>
+
+            <div class="timeline">
+                <!-- PASO 1 -->
+                <div class="timeline-item">
+                    <div class="timeline-number">1</div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">📝 Definir Modelo de Cobro</h3>
+                        <p class="timeline-text">Establezca tarifas claras y transparentes para cada componente:</p>
+                        <div class="formula-box">
+                            <div class="formula">
+                                Costo = (GB × $10) + (M_Ops × $5) + (Conexiones × $2)
+                            </div>
+                        </div>
+                        <ul class="feature-list">
+                            <li>Costo por GB de almacenamiento: <strong>$10/GB</strong></li>
+                            <li>Costo por millón de operaciones: <strong>$5</strong></li>
+                            <li>Costo por conexión activa: <strong>$2/conexión</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- PASO 2 -->
+                <div class="timeline-item">
+                    <div class="timeline-number">2</div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">🔧 Recolectar Métricas</h3>
+                        <p class="timeline-text">Script Python automatizado que consulta MongoDB cada 5 minutos:</p>
+                        <div class="code-block">
+<span class="code-comment"># Script Python que extrae métricas</span>
+db.stats()           <span class="code-comment"># Storage por base de datos</span>
+db.currentOp()       <span class="code-comment"># Operaciones activas</span>
+db.serverStatus()    <span class="code-comment"># Conexiones y stats</span>
+                        </div>
+                        <p class="timeline-text" style="margin-top: 20px;">El script ya está desarrollado y probado. Solo requiere ajustar la configuración a su entorno.</p>
+                    </div>
+                </div>
+
+                <!-- PASO 3 -->
+                <div class="timeline-item">
+                    <div class="timeline-number">3</div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">📊 Almacenar en Prometheus</h3>
+                        <p class="timeline-text">Prometheus (ya instalado) almacena métricas históricas:</p>
+                        <div class="screenshot" style="padding: 50px;">
+                            MongoDB Exporter → Prometheus → Series temporales<br><br>
+                            Retención ilimitada de datos históricos
+                        </div>
+                        <ul class="feature-list">
+                            <li>MongoDB Exporter expone métricas en formato Prometheus</li>
+                            <li>Prometheus scraping automático cada 15 segundos</li>
+                            <li>Datos históricos para análisis de tendencias</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- PASO 4 -->
+                <div class="timeline-item">
+                    <div class="timeline-number">4</div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">📈 Visualizar en Grafana</h3>
+                        <p class="timeline-text">Dashboard personalizado que muestra consumo y costos en tiempo real:</p>
+                        <div class="screenshot">
+                            📊 [Dashboard Grafana - FinOps]<br><br>
+                            Gráficos de costos por cliente<br>
+                            Tabla de facturación mensual<br>
+                            Proyecciones y tendencias
+                        </div>
+                        <p class="timeline-text" style="margin-top: 20px;">
+                            <span class="badge">Dashboard pre-construido incluido</span>
+                            <span class="badge">Exportación a Excel</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboards -->
+    <section class="section section-gray">
+        <div class="container">
+            <h2 class="section-title">Dashboards que Obtendrá</h2>
+
+            <div class="two-col">
+                <div>
+                    <div class="screenshot" style="margin-bottom: 20px;">
+                        🖥️ [Dashboard Operativo]<br><br>
+                        Para el equipo de Ops
+                    </div>
+                    <h3 style="font-size: 1.8em; margin-bottom: 15px; color: var(--mongodb-black);">Dashboard Operativo</h3>
+                    <ul class="feature-list">
+                        <li>Métricas técnicas en tiempo real</li>
+                        <li>Queries lentas y uso de índices</li>
+                        <li>Alertas proactivas</li>
+                        <li>Performance por aplicación</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <div class="screenshot" style="margin-bottom: 20px;">
+                        💰 [Dashboard Ejecutivo]<br><br>
+                        Para finanzas y gerentes
+                    </div>
+                    <h3 style="font-size: 1.8em; margin-bottom: 15px; color: var(--mongodb-black);">Dashboard Ejecutivo</h3>
+                    <ul class="feature-list">
+                        <li>Costos por departamento</li>
+                        <li>Facturación mensual automática</li>
+                        <li>Proyecciones de crecimiento</li>
+                        <li>Comparativas vs presupuesto</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Beneficios -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Beneficios de Esta Solución</h2>
+
+            <div class="cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                <div class="card">
+                    <span class="card-icon">💵</span>
+                    <h3 class="card-title">Transparencia Financiera</h3>
+                    <p class="card-text">Cada equipo ve su consumo real y puede optimizar su uso de recursos.</p>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">⚡</span>
+                    <h3 class="card-title">Sin Costo Adicional</h3>
+                    <p class="card-text">Todo con herramientas Open Source que ya tiene instaladas. Cero inversión.</p>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">🚀</span>
+                    <h3 class="card-title">Implementación Rápida</h3>
+                    <p class="card-text">Lista en 1-2 semanas de trabajo. Sin meses de desarrollo.</p>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">📊</span>
+                    <h3 class="card-title">Escalable</h3>
+                    <p class="card-text">Crece con su infraestructura sin modificaciones adicionales.</p>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">🔄</span>
+                    <h3 class="card-title">Automatizado</h3>
+                    <p class="card-text">Reportes mensuales automáticos para finanzas y gerencia.</p>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">🎯</span>
+                    <h3 class="card-title">Base para Enterprise</h3>
+                    <p class="card-text">Fundación sólida para migrar a MongoDB Enterprise en el futuro.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Herramientas Actuales -->
+    <section class="section section-green-light">
+        <div class="container">
+            <h2 class="section-title">Ya Cuenta con las Herramientas</h2>
+            <p class="section-subtitle">Todo está listo para implementar FinOps hoy mismo</p>
+
+            <div class="cards-grid">
+                <div class="tool-card">
+                    <div class="tool-logo">📊</div>
+                    <h3 style="font-size: 1.5em; margin-bottom: 10px; color: var(--mongodb-black);">Grafana</h3>
+                    <p style="color: var(--gray-text); margin-bottom: 15px;">Dashboard y visualización</p>
+                    <p class="checkmark">✅ Ya instalado</p>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-logo">📈</div>
+                    <h3 style="font-size: 1.5em; margin-bottom: 10px; color: var(--mongodb-black);">Prometheus</h3>
+                    <p style="color: var(--gray-text); margin-bottom: 15px;">Almacenamiento de métricas</p>
+                    <p class="checkmark">✅ Ya instalado</p>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-logo">🐍</div>
+                    <h3 style="font-size: 1.5em; margin-bottom: 10px; color: var(--mongodb-black);">Python</h3>
+                    <p style="color: var(--gray-text); margin-bottom: 15px;">Scripts de extracción</p>
+                    <p class="checkmark">✅ Listo para usar</p>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-logo">🗄️</div>
+                    <h3 style="font-size: 1.5em; margin-bottom: 10px; color: var(--mongodb-black);">MongoDB</h3>
+                    <p style="color: var(--gray-text); margin-bottom: 15px;">Comandos nativos</p>
+                    <p class="checkmark">✅ Sin agentes externos</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 50px;">
+                <div style="display: inline-block; padding: 30px 60px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
+                    <p style="font-size: 1.8em; font-weight: 700; color: var(--mongodb-green);">
+                        $0 en licencias adicionales
+                    </p>
+                    <p style="font-size: 1.2em; color: var(--gray-text); margin-top: 10px;">
+                        100% con herramientas Open Source
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Plan de Implementación</h2>
+
+            <div class="roadmap">
+                <div class="roadmap-item">
+                    <div class="roadmap-circle">Semana 1</div>
+                    <div class="roadmap-title">Setup Inicial</div>
+                    <div class="roadmap-text">
+                        • Setup de MongoDB Exporter<br>
+                        • Configuración Prometheus<br>
+                        • Script Python de métricas<br>
+                        • Testing inicial
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-circle">Semana 2</div>
+                    <div class="roadmap-title">Dashboards</div>
+                    <div class="roadmap-text">
+                        • Dashboards en Grafana<br>
+                        • Validación con usuarios<br>
+                        • Ajustes de modelo de cobro<br>
+                        • Refinamiento de métricas
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <div class="roadmap-circle">Semana 3+</div>
+                    <div class="roadmap-title">Producción</div>
+                    <div class="roadmap-text">
+                        • Despliegue en producción<br>
+                        • Monitoreo continuo<br>
+                        • Reportes mensuales<br>
+                        • Optimización
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 50px;">
+                <span class="badge" style="font-size: 1.2em; padding: 15px 30px;">
+                    ⚡ Implementación en 2-3 semanas
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo -->
+    <section class="section section-gray" id="demo">
+        <div class="container">
+            <div class="cta-box" style="margin: 0;">
+                <h2>¿Listo para Ver Cómo Funciona?</h2>
+                <p style="font-size: 1.3em; color: var(--gray-text); margin: 30px 0 50px;">Dashboard interactivo con datos reales de MongoDB</p>
+                <a href="dashboard_simple.html" class="btn" style="margin: 0 15px 15px; font-size: 1.3em; padding: 20px 50px;">
+                    👉 Ver Dashboard de Demo
+                </a>
+                <br>
+                <a href="calculadora_costos.html" class="btn btn-outline" style="margin: 0 15px 15px; font-size: 1.3em; padding: 20px 50px;">
+                    🧮 Calculadora de Costos
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Siguiente Paso -->
+    <section class="section section-green">
+        <div class="container">
+            <h2 style="font-size: 3em; text-align: center; margin-bottom: 60px; color: white;">
+                Siguiente Paso
+            </h2>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <span class="card-icon">📅</span>
+                    <h3 class="card-title">Agendar Workshop</h3>
+                    <p class="card-text">Sesión técnica de 2 horas con su equipo. Revisamos arquitectura y definimos roadmap personalizado.</p>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="#" class="btn">Agendar Ahora</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">📖</span>
+                    <h3 class="card-title">Documentación</h3>
+                    <p class="card-text">Guía paso a paso para implementar. Incluye scripts, configuraciones y dashboards pre-construidos.</p>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="#" class="btn btn-outline">Ver Documentación</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <span class="card-icon">💬</span>
+                    <h3 class="card-title">Consultoría</h3>
+                    <p class="card-text">Servicios profesionales MongoDB para acelerar implementación. Soporte completo durante el proyecto.</p>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="#" class="btn btn-outline">Contactar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="mongo-logo" style="margin: 0 auto 30px;">MongoDB</div>
+            <p style="color: var(--gray-text); margin: 20px 0; font-size: 1.1em;">
+                Presentado por MongoDB Professional Services
+            </p>
+            <p style="color: var(--gray-text); font-size: 0.95em; margin-top: 30px;">
+                Octubre 2025
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Sticky Navigation
+        window.addEventListener('scroll', function() {
+            const stickyNav = document.getElementById('stickyNav');
+            if (window.scrollY > 100) {
+                stickyNav.classList.add('visible');
+            } else {
+                stickyNav.classList.remove('visible');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

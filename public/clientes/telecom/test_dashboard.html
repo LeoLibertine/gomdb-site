@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a1929;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+        }
+        .success {
+            color: #00ED64;
+        }
+        .error {
+            color: #ff5555;
+        }
+        #status {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test de Dashboard</h1>
+        <div id="status">Cargando librerías...</div>
+
+        <div class="card">
+            <h2>Status de Librerías</h2>
+            <div id="libraries"></div>
+        </div>
+
+        <div class="card">
+            <h2>Datos de Prueba</h2>
+            <div id="data"></div>
+        </div>
+    </div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
+
+    <script>
+        window.addEventListener('load', () => {
+            const statusDiv = document.getElementById('status');
+            const librariesDiv = document.getElementById('libraries');
+            const dataDiv = document.getElementById('data');
+
+            // Verificar React
+            const reactLoaded = typeof React !== 'undefined';
+            const reactDomLoaded = typeof ReactDOM !== 'undefined';
+            const babelLoaded = typeof Babel !== 'undefined';
+            const rechartsLoaded = typeof Recharts !== 'undefined';
+
+            let html = '<ul>';
+            html += `<li class="${reactLoaded ? 'success' : 'error'}">React: ${reactLoaded ? '✅' : '❌'}</li>`;
+            html += `<li class="${reactDomLoaded ? 'success' : 'error'}">ReactDOM: ${reactDomLoaded ? '✅' : '❌'}</li>`;
+            html += `<li class="${babelLoaded ? 'success' : 'error'}">Babel: ${babelLoaded ? '✅' : '❌'}</li>`;
+            html += `<li class="${rechartsLoaded ? 'success' : 'error'}">Recharts: ${rechartsLoaded ? '✅' : '❌'}</li>`;
+            html += '</ul>';
+
+            librariesDiv.innerHTML = html;
+
+            if (reactLoaded && reactDomLoaded && babelLoaded) {
+                statusDiv.innerHTML = '<span class="success">✅ Todas las librerías cargadas correctamente</span>';
+
+                // Cargar datos de prueba
+                fetch('metricas_mongodb.json')
+                    .then(res => res.json())
+                    .then(data => {
+                        dataDiv.innerHTML = `
+                            <p><strong>Timestamp:</strong> ${data.timestamp}</p>
+                            <p><strong>Clientes encontrados:</strong> ${data.clientes.length}</p>
+                            <p><strong>Storage total:</strong> ${data.totales.storage_total} GB</p>
+                            <p><strong>Costo total:</strong> $${data.totales.cost_total}</p>
+                            <hr style="margin: 20px 0; border-color: #334155;">
+                            <p class="success">✅ Los datos se están cargando correctamente</p>
+                            <p>Puedes usar dashboard.html con confianza</p>
+                        `;
+                    })
+                    .catch(err => {
+                        dataDiv.innerHTML = `<p class="error">❌ Error cargando datos: ${err.message}</p>
+                            <p>Ejecuta: <code>python3 generate_metrics.py</code></p>`;
+                    });
+            } else {
+                statusDiv.innerHTML = '<span class="error">❌ Error cargando librerías - Revisa tu conexión a internet</span>';
+            }
+        });
+    </script>
+</body>
+</html>

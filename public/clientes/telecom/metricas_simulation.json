@@ -1,0 +1,566 @@
+{
+  "timestamp": "2025-10-30T02:13:14Z",
+  "clientes": [
+    {
+      "nombre": "FMS",
+      "storage_gb": 600.0,
+      "operations_millions": 186.21,
+      "connections_avg": 43,
+      "cost_monthly": 7017.05,
+      "databases": [
+        "fms_production",
+        "fms_analytics",
+        "fms_backup",
+        "dev_main"
+      ],
+      "database_details": [
+        {
+          "name": "fms_production",
+          "storage_gb": 334.34,
+          "collections": 45,
+          "documents": 5000000,
+          "indexes_size_gb": 25.3
+        },
+        {
+          "name": "fms_analytics",
+          "storage_gb": 171.89,
+          "collections": 20,
+          "documents": 3200000,
+          "indexes_size_gb": 12.1
+        },
+        {
+          "name": "fms_backup",
+          "storage_gb": 66.58,
+          "collections": 15,
+          "documents": 1500000,
+          "indexes_size_gb": 5.2
+        },
+        {
+          "name": "dev_main",
+          "storage_gb": 27.19,
+          "collections": 12,
+          "documents": 800000,
+          "indexes_size_gb": 2.3
+        }
+      ],
+      "color": "#00ED64",
+      "timeseries": [
+        {
+          "timestamp": "2025-10-30T01:43:14Z",
+          "operations": 184.87,
+          "connections": 42
+        },
+        {
+          "timestamp": "2025-10-30T01:44:14Z",
+          "operations": 191.83,
+          "connections": 44
+        },
+        {
+          "timestamp": "2025-10-30T01:45:14Z",
+          "operations": 178.6,
+          "connections": 41
+        },
+        {
+          "timestamp": "2025-10-30T01:46:14Z",
+          "operations": 191.02,
+          "connections": 42
+        },
+        {
+          "timestamp": "2025-10-30T01:47:14Z",
+          "operations": 194.79,
+          "connections": 42
+        },
+        {
+          "timestamp": "2025-10-30T01:48:14Z",
+          "operations": 191.37,
+          "connections": 44
+        },
+        {
+          "timestamp": "2025-10-30T01:49:14Z",
+          "operations": 190.21,
+          "connections": 44
+        },
+        {
+          "timestamp": "2025-10-30T01:50:14Z",
+          "operations": 177.24,
+          "connections": 44
+        },
+        {
+          "timestamp": "2025-10-30T01:51:14Z",
+          "operations": 178.01,
+          "connections": 44
+        },
+        {
+          "timestamp": "2025-10-30T01:52:14Z",
+          "operations": 182.91,
+          "connections": 44
+        },
+        {
+          "timestamp": "2025-10-30T01:53:14Z",
+          "operations": 179.59,
+          "connections": 45
+        },
+        {
+          "timestamp": "2025-10-30T01:54:14Z",
+          "operations": 195.25,
+          "connections": 43
+        },
+        {
+          "timestamp": "2025-10-30T01:55:14Z",
+          "operations": 181.73,
+          "connections": 41
+        },
+        {
+          "timestamp": "2025-10-30T01:56:14Z",
+          "operations": 191.45,
+          "connections": 44
+        },
+        {
+          "timestamp": "2025-10-30T01:57:14Z",
+          "operations": 192.81,
+          "connections": 42
+        },
+        {
+          "timestamp": "2025-10-30T01:58:14Z",
+          "operations": 184.49,
+          "connections": 45
+        },
+        {
+          "timestamp": "2025-10-30T01:59:14Z",
+          "operations": 187.93,
+          "connections": 42
+        },
+        {
+          "timestamp": "2025-10-30T02:00:14Z",
+          "operations": 178.82,
+          "connections": 42
+        },
+        {
+          "timestamp": "2025-10-30T02:01:14Z",
+          "operations": 181.84,
+          "connections": 43
+        },
+        {
+          "timestamp": "2025-10-30T02:02:14Z",
+          "operations": 193.02,
+          "connections": 45
+        },
+        {
+          "timestamp": "2025-10-30T02:03:14Z",
+          "operations": 191.22,
+          "connections": 45
+        },
+        {
+          "timestamp": "2025-10-30T02:04:14Z",
+          "operations": 190.88,
+          "connections": 41
+        },
+        {
+          "timestamp": "2025-10-30T02:05:14Z",
+          "operations": 177.19,
+          "connections": 41
+        },
+        {
+          "timestamp": "2025-10-30T02:06:14Z",
+          "operations": 191.76,
+          "connections": 44
+        },
+        {
+          "timestamp": "2025-10-30T02:07:14Z",
+          "operations": 188.41,
+          "connections": 42
+        },
+        {
+          "timestamp": "2025-10-30T02:08:14Z",
+          "operations": 178.24,
+          "connections": 41
+        },
+        {
+          "timestamp": "2025-10-30T02:09:14Z",
+          "operations": 189.28,
+          "connections": 43
+        },
+        {
+          "timestamp": "2025-10-30T02:10:14Z",
+          "operations": 185.63,
+          "connections": 44
+        },
+        {
+          "timestamp": "2025-10-30T02:11:14Z",
+          "operations": 181.1,
+          "connections": 42
+        },
+        {
+          "timestamp": "2025-10-30T02:12:14Z",
+          "operations": 177.37,
+          "connections": 41
+        }
+      ]
+    },
+    {
+      "nombre": "Desarrollo",
+      "storage_gb": 50.0,
+      "operations_millions": 14.77,
+      "connections_avg": 7,
+      "cost_monthly": 587.85,
+      "databases": [
+        "dev_staging",
+        "test_integration"
+      ],
+      "database_details": [
+        {
+          "name": "dev_staging",
+          "storage_gb": 31.8,
+          "collections": 10,
+          "documents": 500000,
+          "indexes_size_gb": 1.8
+        },
+        {
+          "name": "test_integration",
+          "storage_gb": 18.2,
+          "collections": 8,
+          "documents": 250000,
+          "indexes_size_gb": 1.1
+        }
+      ],
+      "color": "#FFB800",
+      "timeseries": [
+        {
+          "timestamp": "2025-10-30T01:43:14Z",
+          "operations": 15.48,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T01:44:14Z",
+          "operations": 15.18,
+          "connections": 8
+        },
+        {
+          "timestamp": "2025-10-30T01:45:14Z",
+          "operations": 14.33,
+          "connections": 6
+        },
+        {
+          "timestamp": "2025-10-30T01:46:14Z",
+          "operations": 14.47,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T01:47:14Z",
+          "operations": 15.19,
+          "connections": 6
+        },
+        {
+          "timestamp": "2025-10-30T01:48:14Z",
+          "operations": 14.12,
+          "connections": 5
+        },
+        {
+          "timestamp": "2025-10-30T01:49:14Z",
+          "operations": 15.12,
+          "connections": 6
+        },
+        {
+          "timestamp": "2025-10-30T01:50:14Z",
+          "operations": 14.65,
+          "connections": 5
+        },
+        {
+          "timestamp": "2025-10-30T01:51:14Z",
+          "operations": 14.26,
+          "connections": 9
+        },
+        {
+          "timestamp": "2025-10-30T01:52:14Z",
+          "operations": 14.96,
+          "connections": 9
+        },
+        {
+          "timestamp": "2025-10-30T01:53:14Z",
+          "operations": 15.12,
+          "connections": 8
+        },
+        {
+          "timestamp": "2025-10-30T01:54:14Z",
+          "operations": 14.91,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T01:55:14Z",
+          "operations": 14.93,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T01:56:14Z",
+          "operations": 14.24,
+          "connections": 8
+        },
+        {
+          "timestamp": "2025-10-30T01:57:14Z",
+          "operations": 14.46,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T01:58:14Z",
+          "operations": 14.77,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T01:59:14Z",
+          "operations": 15.24,
+          "connections": 8
+        },
+        {
+          "timestamp": "2025-10-30T02:00:14Z",
+          "operations": 14.28,
+          "connections": 5
+        },
+        {
+          "timestamp": "2025-10-30T02:01:14Z",
+          "operations": 14.31,
+          "connections": 8
+        },
+        {
+          "timestamp": "2025-10-30T02:02:14Z",
+          "operations": 14.75,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T02:03:14Z",
+          "operations": 14.23,
+          "connections": 8
+        },
+        {
+          "timestamp": "2025-10-30T02:04:14Z",
+          "operations": 15.5,
+          "connections": 9
+        },
+        {
+          "timestamp": "2025-10-30T02:05:14Z",
+          "operations": 14.05,
+          "connections": 8
+        },
+        {
+          "timestamp": "2025-10-30T02:06:14Z",
+          "operations": 14.49,
+          "connections": 6
+        },
+        {
+          "timestamp": "2025-10-30T02:07:14Z",
+          "operations": 15.27,
+          "connections": 5
+        },
+        {
+          "timestamp": "2025-10-30T02:08:14Z",
+          "operations": 14.64,
+          "connections": 6
+        },
+        {
+          "timestamp": "2025-10-30T02:09:14Z",
+          "operations": 14.84,
+          "connections": 6
+        },
+        {
+          "timestamp": "2025-10-30T02:10:14Z",
+          "operations": 15.37,
+          "connections": 5
+        },
+        {
+          "timestamp": "2025-10-30T02:11:14Z",
+          "operations": 15.23,
+          "connections": 5
+        },
+        {
+          "timestamp": "2025-10-30T02:12:14Z",
+          "operations": 14.78,
+          "connections": 6
+        }
+      ]
+    },
+    {
+      "nombre": "Testing",
+      "storage_gb": 20.0,
+      "operations_millions": 6.12,
+      "connections_avg": 5,
+      "cost_monthly": 240.6,
+      "databases": [
+        "test_qa",
+        "sample_mflix"
+      ],
+      "database_details": [
+        {
+          "name": "test_qa",
+          "storage_gb": 19.92,
+          "collections": 6,
+          "documents": 150000,
+          "indexes_size_gb": 0.7
+        },
+        {
+          "name": "sample_mflix",
+          "storage_gb": 0.08,
+          "collections": 3,
+          "documents": 23098,
+          "indexes_size_gb": 0.0
+        }
+      ],
+      "color": "#3B7EF7",
+      "timeseries": [
+        {
+          "timestamp": "2025-10-30T01:43:14Z",
+          "operations": 6.02,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T01:44:14Z",
+          "operations": 6.12,
+          "connections": 4
+        },
+        {
+          "timestamp": "2025-10-30T01:45:14Z",
+          "operations": 5.93,
+          "connections": 3
+        },
+        {
+          "timestamp": "2025-10-30T01:46:14Z",
+          "operations": 6.36,
+          "connections": 5
+        },
+        {
+          "timestamp": "2025-10-30T01:47:14Z",
+          "operations": 6.22,
+          "connections": 3
+        },
+        {
+          "timestamp": "2025-10-30T01:48:14Z",
+          "operations": 6.2,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T01:49:14Z",
+          "operations": 5.89,
+          "connections": 3
+        },
+        {
+          "timestamp": "2025-10-30T01:50:14Z",
+          "operations": 5.88,
+          "connections": 3
+        },
+        {
+          "timestamp": "2025-10-30T01:51:14Z",
+          "operations": 6.0,
+          "connections": 3
+        },
+        {
+          "timestamp": "2025-10-30T01:52:14Z",
+          "operations": 6.04,
+          "connections": 5
+        },
+        {
+          "timestamp": "2025-10-30T01:53:14Z",
+          "operations": 6.3,
+          "connections": 5
+        },
+        {
+          "timestamp": "2025-10-30T01:54:14Z",
+          "operations": 5.91,
+          "connections": 5
+        },
+        {
+          "timestamp": "2025-10-30T01:55:14Z",
+          "operations": 5.83,
+          "connections": 6
+        },
+        {
+          "timestamp": "2025-10-30T01:56:14Z",
+          "operations": 5.96,
+          "connections": 6
+        },
+        {
+          "timestamp": "2025-10-30T01:57:14Z",
+          "operations": 6.19,
+          "connections": 5
+        },
+        {
+          "timestamp": "2025-10-30T01:58:14Z",
+          "operations": 6.2,
+          "connections": 4
+        },
+        {
+          "timestamp": "2025-10-30T01:59:14Z",
+          "operations": 6.01,
+          "connections": 4
+        },
+        {
+          "timestamp": "2025-10-30T02:00:14Z",
+          "operations": 6.23,
+          "connections": 5
+        },
+        {
+          "timestamp": "2025-10-30T02:01:14Z",
+          "operations": 5.94,
+          "connections": 4
+        },
+        {
+          "timestamp": "2025-10-30T02:02:14Z",
+          "operations": 6.0,
+          "connections": 3
+        },
+        {
+          "timestamp": "2025-10-30T02:03:14Z",
+          "operations": 6.11,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T02:04:14Z",
+          "operations": 6.31,
+          "connections": 4
+        },
+        {
+          "timestamp": "2025-10-30T02:05:14Z",
+          "operations": 5.98,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T02:06:14Z",
+          "operations": 5.91,
+          "connections": 4
+        },
+        {
+          "timestamp": "2025-10-30T02:07:14Z",
+          "operations": 5.86,
+          "connections": 5
+        },
+        {
+          "timestamp": "2025-10-30T02:08:14Z",
+          "operations": 6.02,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T02:09:14Z",
+          "operations": 5.82,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T02:10:14Z",
+          "operations": 6.23,
+          "connections": 7
+        },
+        {
+          "timestamp": "2025-10-30T02:11:14Z",
+          "operations": 6.22,
+          "connections": 4
+        },
+        {
+          "timestamp": "2025-10-30T02:12:14Z",
+          "operations": 5.99,
+          "connections": 6
+        }
+      ]
+    }
+  ],
+  "totales": {
+    "storage_total": 670.0,
+    "cost_total": 7845.5,
+    "clients_count": 3
+  }
+}
