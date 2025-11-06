@@ -1,6 +1,8 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import GoMDBLanding from './components/gomdblanding';
+import ClientesDirectory from './pages/clientes/ClientesDirectory';
+import ClientContent from './pages/clientes/ClientContent';
 import DocumentMongo from './pages/Clientes/cencosud/document-mongo';
 import BancolombiaDocument from './pages/Clientes/Bancolombia/document-mongo';
 import DocumentoDemo from './pages/clientes/demo/DocumentoDemo';
@@ -16,7 +18,13 @@ function App() {
       <Route path="/demo" element={<DocumentoDemo />} />
       <Route path="/clientes/demo/documento" element={<DocumentoDemo />} />
 
-      {/* Protected Client Routes */}
+      {/* Clientes Directory - Public (list of clients) */}
+      <Route path="/clientes" element={<ClientesDirectory />} />
+
+      {/* Client Content Pages - Protected internally by client ID */}
+      <Route path="/clientes/:clientId" element={<ClientContent />} />
+
+      {/* Protected Client Document Routes */}
       <Route
         path="/clientes/cencosud/document-mongo"
         element={
