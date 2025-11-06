@@ -198,18 +198,29 @@ export const NuevoClientePropuesta = () => (
 
 When adding a new client to the system:
 
-1. **Add access code** to constants file (when implemented):
+1. **Add access code** to constants file:
 ```javascript
 // src/constants/accessCodes.js
-ACCESS_CODES = {
+export const ACCESS_CODES = {
   'nuevocliente': 'NUEVO2025',
   // ... existing codes
 }
 ```
 
 2. **Create client documents** under `/clientes/nuevocliente/`
-3. **Test access** with new code
-4. **Share code** with client via secure channel (WhatsApp, email)
+3. **Wrap routes** in App.jsx with ProtectedRoute:
+```javascript
+<Route
+  path="/clientes/nuevocliente/documento"
+  element={
+    <ProtectedRoute client="nuevocliente">
+      <NuevoClienteDocumento />
+    </ProtectedRoute>
+  }
+/>
+```
+4. **Test access** with new code
+5. **Share code** with client via secure channel (WhatsApp, email)
 
 ---
 
@@ -264,15 +275,78 @@ ACCESS_CODES = {
 
 ### Implementation Status
 
-**Current Status:** 📝 DOCUMENTED (Not yet implemented)
+**Current Status:** ✅ IMPLEMENTED (Commit: 03e892d)
 
-**When this section is implemented, it will include:**
-- `ProtectedRoute` component in `src/components/auth/`
-- `AccessModal` component with MongoDB branding
-- `useAuth` custom hook in `src/hooks/`
-- Access codes in `src/constants/accessCodes.js`
+**Implemented Components:**
+- ✅ `ProtectedRoute` component in `src/components/auth/ProtectedRoute.jsx`
+- ✅ `AccessModal` component with MongoDB branding in `src/components/auth/AccessModal.jsx`
+- ✅ `AccessModal` styles in `src/components/auth/AccessModal.css`
+- ✅ `useAuth` custom hook in `src/hooks/useAuth.js`
+- ✅ Access codes in `src/constants/accessCodes.js` (13 clients + master)
+- ✅ Barrel export in `src/components/auth/index.js`
+- ✅ `App.jsx` updated with ProtectedRoute wrappers
 
-**Testing After Implementation:**
+**Implementation Details:**
+
+**File: `src/constants/accessCodes.js`**
+```javascript
+export const ACCESS_CODES = {
+  'bancolombia': 'BCO2025',
+  'yape': 'YAPE2024',
+  'cencosud': 'CEN2025',
+  'etb': 'ETB2025',
+  'kushki': 'KUSH2025',
+  'segurosbolivar': 'SEG2025',
+  'payway': 'PAY2025',
+  'bdp': 'BDP2025',
+  'coppel': 'COP2025',
+  'falape': 'FAL2025',
+  'bintec': 'BIN2025',
+  'mongodb': 'MDB-MASTER-2025'
+}
+
+export const validateAccessCode = (client, code) => {
+  if (!code || !client) return false
+  if (code === ACCESS_CODES['mongodb']) return true // Master code works everywhere
+  return ACCESS_CODES[client] === code
+}
+```
+
+**File: `src/hooks/useAuth.js`**
+- `hasAccess`: boolean indicating if user has access
+- `hasMasterAccess`: boolean indicating if user has master access
+- `validateCode(code)`: validates and stores code in localStorage
+- `clearAccess()`: removes access code from localStorage
+- `checkAccess()`: checks localStorage for existing access
+
+**File: `src/components/auth/ProtectedRoute.jsx`**
+- Wraps protected content
+- Checks access on mount using `useAuth` hook
+- Shows `AccessModal` if no access
+- Renders children if access granted
+
+**File: `src/components/auth/AccessModal.jsx`**
+- Modal UI with MongoDB branding (green #00ED64, purple #5644D4)
+- Form for entering access code
+- Error handling with shake animation
+- Loading state during validation
+- Accessibility features (ESC key, focus management)
+
+**Usage Example in App.jsx:**
+```javascript
+import { ProtectedRoute } from './components/auth'
+
+<Route
+  path="/clientes/bancolombia/document-mongo"
+  element={
+    <ProtectedRoute client="bancolombia">
+      <BancolombiaDashboard />
+    </ProtectedRoute>
+  }
+/>
+```
+
+**Testing Checklist:**
 - [ ] Test with client code (should grant access to client docs only)
 - [ ] Test with master code (should grant access to all docs)
 - [ ] Test with wrong code (should show error)
