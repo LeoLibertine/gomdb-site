@@ -89,41 +89,17 @@ const ClientContent = () => {
     }
   }, [clientId, client, checkAccess])
 
-  // Si no existe el cliente, redirigir al directorio
-  // Este return debe ir DESPUÉS de todos los hooks
-  if (!client) {
-    return <Navigate to="/clientes" replace />
-  }
-
-  // Si no tiene acceso, mostrar modal
-  if (!hasAccess) {
-    const handleSubmit = (code) => {
-      return validateCode(code)
-    }
-
-    const handleCancel = () => {
-      window.location.href = '/clientes'
-    }
-
-    const displayClient = client.name
-
-    return (
-      <AccessModal
-        client={displayClient}
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-      />
-    )
-  }
-
+  // TODOS los useMemo deben estar ANTES de cualquier early return
   // Obtener todas las categorías únicas
   const categories = useMemo(() => {
+    if (!client) return ['all']
     const cats = [...new Set(client.content.map(item => item.category))]
     return ['all', ...cats]
   }, [client])
 
   // Filtrar contenido por categoría y búsqueda
   const filteredContent = useMemo(() => {
+    if (!client) return []
     let filtered = client.content
 
     // Filtrar por categoría
@@ -155,6 +131,33 @@ const ClientContent = () => {
     })
     return groups
   }, [filteredContent])
+
+  // AHORA sí podemos hacer early returns después de TODOS los hooks
+  // Si no existe el cliente, redirigir al directorio
+  if (!client) {
+    return <Navigate to="/clientes" replace />
+  }
+
+  // Si no tiene acceso, mostrar modal
+  if (!hasAccess) {
+    const handleSubmit = (code) => {
+      return validateCode(code)
+    }
+
+    const handleCancel = () => {
+      window.location.href = '/clientes'
+    }
+
+    const displayClient = client.name
+
+    return (
+      <AccessModal
+        client={displayClient}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+      />
+    )
+  }
 
   const ClientIcon = getClientIcon(client.icon)
 
