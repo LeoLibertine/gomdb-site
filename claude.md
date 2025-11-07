@@ -371,6 +371,194 @@ Al crear una nueva página o componente:
 
 ---
 
+## 📝 Gestión de Clientes y Documentos
+
+**IMPORTANTE:** El sistema de clientes es dinámico y se actualiza desde un único archivo central. Cada cambio debe reflejarse automáticamente en todas las páginas.
+
+### Fuente Única de Verdad: `src/data/clientsData.js`
+
+Este archivo contiene:
+- **Lista completa de clientes** (nombre, industria, país, icono)
+- **Todos los documentos por cliente** (título, descripción, path, categoría)
+- **Metadata del cliente** (descripción, logo)
+
+**Regla de Oro:** NUNCA modificar las páginas de UI directamente. SIEMPRE actualizar `clientsData.js`.
+
+---
+
+### ➕ Cómo Agregar un Nuevo Cliente
+
+**Pasos:**
+
+1. **Agregar código de acceso** en `src/hooks/useAuth.js`:
+
+```javascript
+const ACCESS_CODES = {
+  // ... códigos existentes
+  nuevocliente: 'NUE2025',  // Formato: 3 letras + año
+  mongodb: 'MDB-MASTER-2025'
+}
+```
+
+2. **Agregar cliente completo** en `src/data/clientsData.js`:
+
+```javascript
+export const CLIENTS_DATA = [
+  // ... clientes existentes
+  {
+    id: 'nuevocliente',  // Minúsculas, sin espacios, sin acentos
+    name: 'Nuevo Cliente S.A.',
+    industry: 'Tecnología',  // Banca, Fintech, Retail, Telecom, Seguros, Tecnología
+    country: 'Colombia',  // País completo
+    icon: 'tech',  // bank, fintech, retail, telecom, insurance, tech
+    description: 'Descripción breve del cliente (1-2 líneas)',
+    content: [
+      {
+        title: 'Primer Documento',
+        description: 'Descripción del documento',
+        path: '/clientes/nuevocliente/documento.html',  // O ruta JSX
+        type: 'html',  // 'html', 'jsx', o 'placeholder'
+        category: 'Comparativas'  // Ver categorías disponibles abajo
+      }
+      // ... más documentos
+    ]
+  }
+]
+```
+
+3. **Resultado Automático:**
+   - ✅ Aparece en `/clientes` (Directorio de Clientes)
+   - ✅ Tiene página propia en `/clientes/nuevocliente`
+   - ✅ Modal de acceso funciona automáticamente
+   - ✅ Estadísticas se actualizan (total clientes, documentos)
+   - ✅ Búsqueda incluye al nuevo cliente
+
+**NO necesitas modificar:**
+- ❌ ClientesDirectory.jsx
+- ❌ ClientContent.jsx
+- ❌ App.jsx (rutas)
+- ❌ Ningún componente de UI
+
+---
+
+### 📄 Cómo Agregar un Nuevo Documento a Cliente Existente
+
+**Pasos:**
+
+1. **Crear el archivo del documento:**
+   - HTML estático: `public/clientes/[cliente]/documento.html`
+   - JSX dinámico: `src/pages/clientes/[cliente]/Documento.jsx`
+
+2. **Agregar entrada en `src/data/clientsData.js`:**
+
+```javascript
+{
+  id: 'bancolombia',
+  name: 'Bancolombia',
+  // ... metadata
+  content: [
+    // ... documentos existentes
+    {
+      title: 'Nuevo Documento',
+      description: 'Descripción clara del contenido (1 línea)',
+      path: '/clientes/bancolombia/nuevo-doc.html',  // Ruta completa
+      type: 'html',  // 'html' o 'jsx'
+      category: 'Arquitectura'  // Una de las categorías estándar
+    }
+  ]
+}
+```
+
+3. **Si es JSX, agregar ruta en `App.jsx`** (solo para documentos JSX):
+
+```javascript
+<Route
+  path="/clientes/bancolombia/nuevo-doc"
+  element={<NuevoDoc />}
+/>
+```
+
+4. **Resultado Automático:**
+   - ✅ Aparece en la página del cliente (`/clientes/bancolombia`)
+   - ✅ Tarjeta con icono de categoría correcto
+   - ✅ Filtros incluyen la nueva categoría
+   - ✅ Búsqueda encuentra el documento
+   - ✅ Contador de documentos se actualiza
+
+---
+
+### 📚 Categorías de Documentos Disponibles
+
+Usa estas categorías estándar para consistencia visual:
+
+| Categoría | Icono | Uso |
+|-----------|-------|-----|
+| `Comparativas` | CompareIcon | MongoDB vs X, Comparaciones técnicas |
+| `Casos de Uso` | DocumentIcon | Casos específicos, implementaciones |
+| `Arquitectura` | ArchitectureIcon | Diseños técnicos, diagramas |
+| `IA & ML` | AIIcon | AI, ML, Vector Search |
+| `Integraciones` | IntegrationIcon | Kafka, Salesforce, APIs |
+| `Estrategia` | StrategyIcon | Roadmaps, planning, propuestas |
+| `Infraestructura` | ArchitectureIcon | Cloud, deployment, DevOps |
+| `Comercial` | DocumentIcon | Propuestas comerciales, licencias |
+| `Sizing` | DocumentIcon | Dimensionamiento, capacity planning |
+| `Migraciones` | IntegrationIcon | Procesos de migración |
+| `FAQ` | DocumentIcon | Preguntas frecuentes |
+| `Seguridad` | InsuranceIcon | Security, compliance |
+| `POC` | TechIcon | Proof of concepts |
+| `Operaciones` | TechIcon | Operaciones, monitoring |
+| `Patrones` | ArchitectureIcon | Design patterns |
+| `Configuración` | TechIcon | Setup, config |
+| `Propuestas` | StrategyIcon | Propuestas técnicas |
+| `Optimización` | StrategyIcon | Performance tuning |
+| `General` | DocumentIcon | Default/genérico |
+
+**Agregar nueva categoría:** Solo agrégala en `clientsData.js`, el sistema la detectará automáticamente.
+
+---
+
+### 🔄 Flujo de Actualización
+
+```
+1. Usuario actualiza clientsData.js
+   ↓
+2. Sistema detecta cambios automáticamente
+   ↓
+3. Páginas se regeneran:
+   - /clientes (lista actualizada)
+   - /clientes/[cliente] (contenido actualizado)
+   ↓
+4. Componentes React actualizan:
+   - Búsqueda
+   - Filtros
+   - Estadísticas
+   - Grids de tarjetas
+```
+
+**No se requiere ningún cambio manual en componentes.**
+
+---
+
+### ✅ Checklist al Agregar Cliente/Documento
+
+**Nuevo Cliente:**
+- [ ] Código de acceso en `useAuth.js`
+- [ ] Objeto completo en `CLIENTS_DATA`
+- [ ] Icono correcto (`bank`, `fintech`, etc.)
+- [ ] Al menos 1 documento en `content: []`
+- [ ] Build y verificar en `/clientes`
+
+**Nuevo Documento:**
+- [ ] Archivo HTML/JSX creado
+- [ ] Entrada en `content: []` del cliente
+- [ ] Categoría válida (de la tabla)
+- [ ] Path correcto (empieza con `/clientes/[cliente]/`)
+- [ ] Type correcto (`html`, `jsx`, `placeholder`)
+- [ ] Si es JSX: ruta agregada en `App.jsx`
+- [ ] Build y verificar en página del cliente
+
+---
+
 ## 🔐 Security & Access Control
 
 **CRITICAL:** This site shares confidential client information. All content under `/clientes/` is protected with access codes.
