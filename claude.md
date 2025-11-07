@@ -51,6 +51,288 @@
 
 ---
 
+## 🎨 Sistema de Iconos SVG Premium
+
+**IMPORTANTE**: Este proyecto usa un sistema de iconos SVG personalizados alineados con el diseño de MongoDB. **NO uses emojis** - siempre usa los componentes de iconos.
+
+### Librería de Iconos Disponibles
+
+Todos los iconos están en `src/components/icons/MongoIcons.jsx` y exportados en `src/components/icons/index.js`.
+
+#### **Iconos de Industria/Cliente:**
+
+```javascript
+import { BankIcon, FintechIcon, RetailIcon, TelecomIcon, InsuranceIcon, TechIcon } from '../../components/icons'
+```
+
+| Icono | Uso | Descripción Visual |
+|-------|-----|-------------------|
+| `BankIcon` | Bancos e instituciones financieras | Edificio con columnas y base sólida |
+| `FintechIcon` | Fintech, pagos digitales, billeteras | Flechas de intercambio circulares |
+| `RetailIcon` | Retail, e-commerce, tiendas | Casa/tienda con puerta |
+| `TelecomIcon` | Telecomunicaciones, telefonía | Ondas de radio concéntricas |
+| `InsuranceIcon` | Seguros, protección | Escudo con checkmark |
+| `TechIcon` | Tecnología, software | Monitor con código |
+
+#### **Iconos de Contenido/UI:**
+
+```javascript
+import { DocumentIcon, SearchIcon, LocationIcon, IndustryIcon } from '../../components/icons'
+```
+
+| Icono | Uso | Descripción Visual |
+|-------|-----|-------------------|
+| `DocumentIcon` | Documentos, archivos, general | Documento con líneas |
+| `SearchIcon` | Búsqueda, filtros | Lupa |
+| `LocationIcon` | Ubicación, país, región | Pin de mapa |
+| `IndustryIcon` | Industria, sector | Gráfico de barras |
+
+#### **Iconos de Categoría de Contenido:**
+
+```javascript
+import { CompareIcon, ArchitectureIcon, AIIcon, IntegrationIcon, StrategyIcon } from '../../components/icons'
+```
+
+| Icono | Uso | Descripción Visual |
+|-------|-----|-------------------|
+| `CompareIcon` | Comparativas (MongoDB vs X) | Dos rectángulos lado a lado |
+| `ArchitectureIcon` | Arquitectura, infraestructura | Cuadrados conectados en grid |
+| `AIIcon` | IA, ML, Vector Search | Estrella con rayos (neural) |
+| `IntegrationIcon` | Integraciones, conectores | Círculos conectados |
+| `StrategyIcon` | Estrategia, roadmap, planning | Capas apiladas |
+
+### Características del Diseño
+
+Todos los iconos siguen estas especificaciones:
+
+- **Colores**: Gradientes MongoDB Green (#00ED64 → #00A846 → #00684A)
+- **Tamaño**: Escalable vía prop `size` (default: 24px)
+- **Formato**: SVG puro (no dependencias externas)
+- **Efectos**: Drop shadows con glow verde
+- **Animaciones**: Compatible con `transition` y `transform`
+
+### Cómo Usar los Iconos
+
+#### **Uso Básico:**
+
+```jsx
+import { BankIcon, SearchIcon } from '../../components/icons'
+
+// Tamaño por defecto (24px)
+<BankIcon />
+
+// Tamaño personalizado
+<BankIcon size={32} />
+
+// Con clase CSS personalizada
+<SearchIcon size={20} className="search-icon" />
+```
+
+#### **En Contenedores con Estilo:**
+
+```jsx
+// Contenedor con gradiente y efectos
+<div className="icon-container">
+  <BankIcon size={56} className="client-icon" />
+</div>
+```
+
+```css
+.icon-container {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(0, 168, 70, 0.05) 100%);
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.icon-container:hover {
+  background: linear-gradient(135deg, rgba(0, 237, 100, 0.2) 0%, rgba(0, 168, 70, 0.1) 100%);
+  transform: scale(1.05);
+}
+
+.client-icon {
+  filter: drop-shadow(0 2px 8px rgba(0, 237, 100, 0.3));
+}
+```
+
+#### **Selección Dinámica de Iconos:**
+
+```jsx
+// Helper para obtener icono por tipo
+const getClientIcon = (iconType) => {
+  const icons = {
+    bank: BankIcon,
+    fintech: FintechIcon,
+    retail: RetailIcon,
+    telecom: TelecomIcon,
+    insurance: InsuranceIcon,
+    tech: TechIcon
+  }
+  return icons[iconType] || BankIcon
+}
+
+// Uso
+const ClientIcon = getClientIcon(client.icon)
+return <ClientIcon size={80} />
+```
+
+### Mapeo de Categorías a Iconos
+
+Para contenido de clientes, usa este mapeo estándar:
+
+```javascript
+const getCategoryIcon = (category) => {
+  const categoryIcons = {
+    'Comparativas': CompareIcon,           // MongoDB vs X
+    'Casos de Uso': DocumentIcon,          // Casos específicos
+    'Arquitectura': ArchitectureIcon,      // Diseños técnicos
+    'IA & ML': AIIcon,                     // AI, Vector Search
+    'Integraciones': IntegrationIcon,      // Kafka, Salesforce, etc.
+    'Estrategia': StrategyIcon,            // Roadmaps, planning
+    'Infraestructura': ArchitectureIcon,   // Cloud, deployment
+    'Comercial': DocumentIcon,             // Propuestas, licencias
+    'Sizing': DocumentIcon,                // Dimensionamiento
+    'Migraciones': IntegrationIcon,        // Procesos de migración
+    'FAQ': DocumentIcon,                   // Preguntas frecuentes
+    'Seguridad': InsuranceIcon,            // Security, compliance
+    'POC': TechIcon,                       // Proof of concepts
+    'Operaciones': TechIcon,               // DevOps, monitoring
+    'Patrones': ArchitectureIcon,          // Design patterns
+    'Configuración': TechIcon,             // Setup, config
+    'Propuestas': StrategyIcon,            // Propuestas comerciales
+    'Optimización': StrategyIcon,          // Performance tuning
+    'General': DocumentIcon                // Default/genérico
+  }
+  return categoryIcons[category] || DocumentIcon
+}
+```
+
+### Cuándo Crear Nuevos Iconos
+
+**ANTES de crear un nuevo icono**, verifica:
+
+1. ✅ **¿Ya existe un icono similar?** Revisa la librería completa arriba
+2. ✅ **¿Se usará en 2+ lugares?** Si no, usa un icono existente genérico
+3. ✅ **¿Es específico del dominio?** Iconos genéricos (check, arrow, etc.) no van aquí
+
+### Cómo Crear Nuevos Iconos
+
+Si necesitas crear un nuevo icono (raro), sigue este proceso:
+
+#### **1. Diseño del Icono:**
+
+- **Tamaño**: ViewBox de 24x24 (estándar)
+- **Estilo**: Líneas limpias, formas geométricas simples
+- **Colores**: Gradientes verdes MongoDB
+- **Formato**: SVG puro sin dependencias
+
+#### **2. Template de Código:**
+
+```jsx
+// En src/components/icons/MongoIcons.jsx
+
+export const NuevoIcon = ({ size = 24, className = '' }) => (
+  <IconWrapper size={size} className={className}>
+    {/* Tu SVG aquí */}
+    <path
+      d="M12 2L2 7L12 12L22 7L12 2Z"
+      fill="url(#nuevoGradient)"
+      opacity="0.3"
+    />
+    <path
+      d="M12 2L2 7L12 12L22 7L12 2Z"
+      stroke="#00ED64"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <defs>
+      <linearGradient id="nuevoGradient" x1="12" y1="2" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#00ED64" />
+        <stop offset="1" stopColor="#00684A" />
+      </linearGradient>
+    </defs>
+  </IconWrapper>
+)
+
+NuevoIcon.propTypes = {
+  size: PropTypes.number,
+  className: PropTypes.string
+}
+```
+
+#### **3. Exportar el Icono:**
+
+```javascript
+// En src/components/icons/index.js
+export { NuevoIcon } from './MongoIcons'
+```
+
+#### **4. Documentar en claude.md:**
+
+Agrega el nuevo icono a la tabla correspondiente arriba con:
+- Nombre del icono
+- Casos de uso
+- Descripción visual
+
+### Ejemplos de Páginas que Usan Iconos
+
+#### **Directorio de Clientes** (`src/pages/clientes/ClientesDirectory.jsx`):
+```jsx
+import { BankIcon, SearchIcon, LocationIcon, IndustryIcon, DocumentIcon } from '../../components/icons'
+
+// Logo del cliente
+const ClientIcon = getClientIcon(client.icon)
+<ClientIcon size={56} />
+
+// Metadata
+<IndustryIcon size={14} /> {client.industry}
+<LocationIcon size={14} /> {client.country}
+<DocumentIcon size={16} /> {client.content.length} documentos
+```
+
+#### **Contenido de Cliente** (`src/pages/clientes/ClientContent.jsx`):
+```jsx
+import { /* todos los iconos */ } from '../../components/icons'
+
+// Logo grande
+const ClientIcon = getClientIcon(client.icon)
+<ClientIcon size={80} />
+
+// Título de categoría
+const CategoryIcon = getCategoryIcon(category)
+<CategoryIcon size={28} /> {category}
+
+// Tarjeta de documento
+const DocIcon = getCategoryIcon(item.category)
+<DocIcon size={32} />
+```
+
+### Principios de Diseño Visual
+
+1. **Consistencia**: Todos los iconos deben sentirse parte de la misma familia
+2. **Simplicidad**: Formas geométricas simples, evita detalles excesivos
+3. **Escala**: Debe verse bien desde 16px hasta 80px
+4. **Contraste**: Verde brillante (#00ED64) sobre fondo oscuro
+5. **Propósito**: Cada icono debe ser inmediatamente reconocible
+
+### Checklist para Nuevas Páginas
+
+Al crear una nueva página o componente:
+
+- [ ] ✅ Importa iconos desde `src/components/icons`
+- [ ] ✅ **NO uses emojis** (❌ 🏦 💳) - usa `<BankIcon />` (✅)
+- [ ] ✅ Usa helpers `getClientIcon()` y `getCategoryIcon()` para selección dinámica
+- [ ] ✅ Aplica drop-shadow CSS para glow effect
+- [ ] ✅ Usa contenedores con gradientes para iconos grandes
+- [ ] ✅ Prueba hover effects con `transform: scale()`
+
+---
+
 ## 🔐 Security & Access Control
 
 **CRITICAL:** This site shares confidential client information. All content under `/clientes/` is protected with access codes.
