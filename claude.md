@@ -330,6 +330,44 @@ Al crear una nueva página o componente:
 - [ ] ✅ Aplica drop-shadow CSS para glow effect
 - [ ] ✅ Usa contenedores con gradientes para iconos grandes
 - [ ] ✅ Prueba hover effects con `transform: scale()`
+- [ ] ✅ **IMPORTANTE**: Usa `color: #fff !important` en texto sobre fondos oscuros
+- [ ] ✅ Aplica `!important` cuando el CSS global pueda sobrescribir colores
+
+### Reglas de Color en Fondos Oscuros
+
+**CRÍTICO**: Las páginas de clientes usan fondos oscuros (`#001e2b`, `#00111a`). El CSS global puede sobrescribir colores.
+
+**Colores Requeridos:**
+
+```css
+/* Tarjetas y contenedores */
+.document-card,
+.client-card {
+  color: #fff !important; /* Texto blanco principal */
+}
+
+/* Títulos */
+.document-title,
+.client-name {
+  color: #fff !important; /* Blanco para títulos */
+}
+
+/* Descripciones */
+.document-description,
+.client-description {
+  color: rgba(255, 255, 255, 0.7) !important; /* Blanco 70% para texto secundario */
+}
+
+/* Títulos de categoría */
+.category-title {
+  color: #00ED64 !important; /* Verde MongoDB para categorías */
+}
+```
+
+**Por qué `!important`:**
+- El CSS global (`gomdb-global.css`) puede tener reglas `.card` o `.document-*`
+- Vite puede cambiar el orden de carga de CSS
+- `!important` garantiza que los colores correctos siempre se apliquen
 
 ---
 
