@@ -25,10 +25,21 @@
   margin-top: 30px;
 }
 
-.client-logo-large {
-  font-size: 80px;
-  line-height: 1;
+/* Logo Container with SVG */
+.client-logo-large-container {
   flex-shrink: 0;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 30, 43, 0.2);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.client-logo-large-svg {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
 }
 
 .client-details {
@@ -52,14 +63,14 @@
 .meta-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 14px;
   color: rgba(0, 30, 43, 0.8);
   font-weight: 500;
 }
 
-.meta-icon {
-  font-size: 16px;
+.meta-icon-svg-content {
+  opacity: 0.7;
 }
 
 .client-details .client-description {
@@ -181,6 +192,13 @@
   margin: 0 0 24px;
   padding-bottom: 12px;
   border-bottom: 2px solid rgba(0, 237, 100, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.category-icon-svg {
+  filter: drop-shadow(0 2px 6px rgba(0, 237, 100, 0.4));
 }
 
 /* Documents Grid */
@@ -221,9 +239,25 @@
   box-shadow: none;
 }
 
-.document-icon {
-  font-size: 32px;
-  line-height: 1;
+/* Document Icon Container */
+.document-icon-container {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(0, 237, 100, 0.15) 0%, rgba(0, 168, 70, 0.05) 100%);
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.document-card:hover .document-icon-container {
+  background: linear-gradient(135deg, rgba(0, 237, 100, 0.25) 0%, rgba(0, 168, 70, 0.15) 100%);
+  transform: scale(1.1);
+}
+
+.document-icon-svg {
+  filter: drop-shadow(0 2px 6px rgba(0, 237, 100, 0.3));
 }
 
 .document-title {

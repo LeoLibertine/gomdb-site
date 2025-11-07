@@ -3,17 +3,75 @@ import { Link, useParams, Navigate } from 'react-router-dom'
 import { getClientById } from '../../data/clientsData'
 import { useAuth } from '../../hooks/useAuth'
 import { AccessModal } from '../../components/auth/AccessModal'
+import {
+  BankIcon,
+  FintechIcon,
+  RetailIcon,
+  TelecomIcon,
+  InsuranceIcon,
+  TechIcon,
+  DocumentIcon,
+  SearchIcon,
+  LocationIcon,
+  IndustryIcon,
+  CompareIcon,
+  ArchitectureIcon,
+  AIIcon,
+  IntegrationIcon,
+  StrategyIcon
+} from '../../components/icons'
 import './ClientContent.css'
 
 /**
  * ClientContent - Página de contenido específico de un cliente
  *
  * Muestra:
- * - Información del cliente
+ * - Información del cliente con icono SVG
  * - Lista categorizada de documentos disponibles
  * - Links a cada documento (JSX o HTML)
+ * - Iconos por categoría de contenido
  * - Protección con código de acceso
  */
+
+// Helper para obtener el icono del cliente
+const getClientIcon = (iconType) => {
+  const icons = {
+    bank: BankIcon,
+    fintech: FintechIcon,
+    retail: RetailIcon,
+    telecom: TelecomIcon,
+    insurance: InsuranceIcon,
+    tech: TechIcon
+  }
+  return icons[iconType] || BankIcon
+}
+
+// Helper para obtener el icono por categoría de documento
+const getCategoryIcon = (category) => {
+  const categoryIcons = {
+    'Comparativas': CompareIcon,
+    'Casos de Uso': DocumentIcon,
+    'Arquitectura': ArchitectureIcon,
+    'IA & ML': AIIcon,
+    'Integraciones': IntegrationIcon,
+    'Estrategia': StrategyIcon,
+    'Infraestructura': ArchitectureIcon,
+    'Comercial': DocumentIcon,
+    'Sizing': DocumentIcon,
+    'Migraciones': IntegrationIcon,
+    'FAQ': DocumentIcon,
+    'Seguridad': InsuranceIcon,
+    'POC': TechIcon,
+    'Operaciones': TechIcon,
+    'Patrones': ArchitectureIcon,
+    'Configuración': TechIcon,
+    'Propuestas': StrategyIcon,
+    'Optimización': StrategyIcon,
+    'General': DocumentIcon
+  }
+  return categoryIcons[category] || DocumentIcon
+}
+
 const ClientContent = () => {
   const { clientId } = useParams()
   const client = getClientById(clientId)
@@ -94,6 +152,8 @@ const ClientContent = () => {
     return groups
   }, [filteredContent])
 
+  const ClientIcon = getClientIcon(client.icon)
+
   return (
     <div className="client-content-page">
       {/* Header */}
@@ -104,20 +164,22 @@ const ClientContent = () => {
           </Link>
 
           <div className="client-info">
-            <div className="client-logo-large">{client.logo}</div>
+            <div className="client-logo-large-container">
+              <ClientIcon size={80} className="client-logo-large-svg" />
+            </div>
             <div className="client-details">
               <h1>{client.name}</h1>
               <div className="client-meta-info">
                 <span className="meta-item">
-                  <span className="meta-icon">🏢</span>
+                  <IndustryIcon size={18} className="meta-icon-svg-content" />
                   {client.industry}
                 </span>
                 <span className="meta-item">
-                  <span className="meta-icon">📍</span>
+                  <LocationIcon size={18} className="meta-icon-svg-content" />
                   {client.country}
                 </span>
                 <span className="meta-item">
-                  <span className="meta-icon">📄</span>
+                  <DocumentIcon size={18} className="meta-icon-svg-content" />
                   {client.content.length} documentos
                 </span>
               </div>
@@ -139,7 +201,7 @@ const ClientContent = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input-small"
             />
-            <span className="search-icon-small">🔍</span>
+            <SearchIcon size={18} className="search-icon-small" />
           </div>
 
           {/* Category Filters */}
@@ -161,16 +223,22 @@ const ClientContent = () => {
       <div className="content-section">
         <div className="content-container">
           {Object.keys(groupedContent).length > 0 ? (
-            Object.entries(groupedContent).map(([category, items]) => (
-              <div key={category} className="category-section">
-                <h2 className="category-title">{category}</h2>
-                <div className="documents-grid">
-                  {items.map((item, index) => (
-                    <DocumentCard key={index} item={item} clientId={clientId} />
-                  ))}
+            Object.entries(groupedContent).map(([category, items]) => {
+              const CategoryIcon = getCategoryIcon(category)
+              return (
+                <div key={category} className="category-section">
+                  <h2 className="category-title">
+                    <CategoryIcon size={28} className="category-icon-svg" />
+                    {category}
+                  </h2>
+                  <div className="documents-grid">
+                    {items.map((item, index) => (
+                      <DocumentCard key={index} item={item} category={category} clientId={clientId} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))
+              )
+            })
           ) : (
             <div className="no-content">
               <p>No se encontraron documentos con "{searchTerm}"</p>
@@ -185,16 +253,19 @@ const ClientContent = () => {
 /**
  * DocumentCard - Tarjeta individual de documento
  */
-const DocumentCard = ({ item, clientId }) => {
+const DocumentCard = ({ item, category, clientId }) => {
   const isPlaceholder = item.type === 'placeholder'
   const isExternal = item.path.startsWith('http')
   const isJsx = item.type === 'jsx'
+  const DocIcon = getCategoryIcon(category)
 
   // Si es placeholder, no renderizar link
   if (isPlaceholder) {
     return (
       <div className="document-card placeholder">
-        <div className="document-icon">📝</div>
+        <div className="document-icon-container">
+          <DocIcon size={32} className="document-icon-svg" />
+        </div>
         <h3 className="document-title">{item.title}</h3>
         <p className="document-description">{item.description}</p>
         <div className="document-footer">
@@ -213,7 +284,9 @@ const DocumentCard = ({ item, clientId }) => {
         rel="noopener noreferrer"
         className="document-card"
       >
-        <div className="document-icon">{isJsx ? '⚛️' : '📄'}</div>
+        <div className="document-icon-container">
+          <DocIcon size={32} className="document-icon-svg" />
+        </div>
         <h3 className="document-title">{item.title}</h3>
         <p className="document-description">{item.description}</p>
         <div className="document-footer">
@@ -228,7 +301,9 @@ const DocumentCard = ({ item, clientId }) => {
   if (isJsx) {
     return (
       <Link to={item.path} className="document-card">
-        <div className="document-icon">⚛️</div>
+        <div className="document-icon-container">
+          <DocIcon size={32} className="document-icon-svg" />
+        </div>
         <h3 className="document-title">{item.title}</h3>
         <p className="document-description">{item.description}</p>
         <div className="document-footer">
@@ -242,7 +317,9 @@ const DocumentCard = ({ item, clientId }) => {
   // HTML estático - usar <a>
   return (
     <a href={item.path} className="document-card" target="_blank" rel="noopener noreferrer">
-      <div className="document-icon">📄</div>
+      <div className="document-icon-container">
+        <DocIcon size={32} className="document-icon-svg" />
+      </div>
       <h3 className="document-title">{item.title}</h3>
       <p className="document-description">{item.description}</p>
       <div className="document-footer">
