@@ -16,7 +16,7 @@ export const CLIENTS_DATA = [
     industry: 'Banca y Servicios Financieros',
     country: 'Colombia',
     description: 'Grupo Bancolombia es el holding financiero más grande de Colombia y uno de los más importantes de América Latina.',
-    logo: '🏦',
+    icon: 'bank',
     content: [
       {
         title: 'MongoDB vs DocumentDB',
@@ -131,7 +131,7 @@ export const CLIENTS_DATA = [
     industry: 'Fintech & Pagos Digitales',
     country: 'Perú',
     description: 'Yape es la billetera digital del BCP, líder en pagos móviles en Perú con millones de usuarios activos.',
-    logo: '💜',
+    icon: 'fintech',
     content: [
       {
         title: 'Propuesta Final',
@@ -190,7 +190,7 @@ export const CLIENTS_DATA = [
     industry: 'Retail & Comercio',
     country: 'Chile',
     description: 'Cencosud es uno de los conglomerados de retail más grandes de Latinoamérica, operando en múltiples países.',
-    logo: '🛒',
+    icon: 'retail',
     content: [
       {
         title: 'SQL vs NoSQL Decision Matrix',
@@ -214,7 +214,7 @@ export const CLIENTS_DATA = [
     industry: 'Telecomunicaciones',
     country: 'Colombia',
     description: 'ETB es una empresa de telecomunicaciones colombiana que provee servicios de telefonía, internet y datos.',
-    logo: '📡',
+    icon: 'telecom',
     content: [
       {
         title: 'Propuesta Atlas Enterprise Advanced',
@@ -259,7 +259,7 @@ export const CLIENTS_DATA = [
     industry: 'Fintech & Procesamiento de Pagos',
     country: 'Ecuador/LATAM',
     description: 'Kushki es una plataforma de pagos online que procesa transacciones para miles de comercios en América Latina.',
-    logo: '💳',
+    icon: 'fintech',
     content: [
       {
         title: 'OpenSearch vs MongoDB',
@@ -297,7 +297,7 @@ export const CLIENTS_DATA = [
     industry: 'Seguros & Servicios Financieros',
     country: 'Colombia',
     description: 'Seguros Bolívar es una de las compañías de seguros más grandes de Colombia, parte del Grupo Bolívar.',
-    logo: '🛡️',
+    icon: 'insurance',
     content: [
       {
         title: 'POC - Proof of Concept',
@@ -321,7 +321,7 @@ export const CLIENTS_DATA = [
     industry: 'Fintech & Procesamiento de Pagos',
     country: 'Argentina',
     description: 'Payway es un procesador de pagos digital que ofrece soluciones de pago online en Argentina.',
-    logo: '💰',
+    icon: 'fintech',
     content: [
       {
         title: 'Integración con Kafka',
@@ -366,7 +366,7 @@ export const CLIENTS_DATA = [
     industry: 'Banca & Servicios Financieros',
     country: 'Ecuador',
     description: 'Banco de desarrollo productivo del Ecuador que financia sectores estratégicos de la economía.',
-    logo: '🏛️',
+    icon: 'bank',
     content: [
       {
         title: 'Configuración de Réplica',
@@ -383,7 +383,7 @@ export const CLIENTS_DATA = [
     industry: 'Retail & Servicios Financieros',
     country: 'México',
     description: 'Coppel es una cadena de tiendas departamentales mexicana con presencia en toda Latinoamérica.',
-    logo: '🏬',
+    icon: 'retail',
     content: [
       {
         title: 'Matriz Universal de Decisión',
@@ -400,7 +400,7 @@ export const CLIENTS_DATA = [
     industry: 'Retail & E-commerce',
     country: 'Perú',
     description: 'Falabella es una de las cadenas de retail más grandes de Sudamérica con fuerte presencia en Perú.',
-    logo: '🛍️',
+    icon: 'retail',
     content: [
       // No hay archivos específicos encontrados en la búsqueda
       {
@@ -418,7 +418,7 @@ export const CLIENTS_DATA = [
     industry: 'Tecnología & Software',
     country: 'Colombia',
     description: 'Empresa de tecnología especializada en soluciones de software empresarial.',
-    logo: '💻',
+    icon: 'tech',
     content: [
       // Contenido de Bintec está dentro de la carpeta de Bancolombia
       {

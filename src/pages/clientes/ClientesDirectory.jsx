@@ -1,18 +1,44 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getAllClients } from '../../data/clientsData'
+import {
+  BankIcon,
+  FintechIcon,
+  RetailIcon,
+  TelecomIcon,
+  InsuranceIcon,
+  TechIcon,
+  SearchIcon,
+  LocationIcon,
+  IndustryIcon,
+  DocumentIcon
+} from '../../components/icons'
 import './ClientesDirectory.css'
 
 /**
  * ClientesDirectory - Página principal del directorio de clientes
  *
  * Muestra lista de todos los clientes con:
- * - Logo y nombre
- * - Industria y país
+ * - Logo SVG premium y nombre
+ * - Industria y país con iconos
  * - Descripción breve
  * - Cantidad de documentos disponibles
  * - Link a página de contenido del cliente
  */
+
+// Helper para obtener el componente de icono según el tipo
+const getClientIcon = (iconType) => {
+  const icons = {
+    bank: BankIcon,
+    fintech: FintechIcon,
+    retail: RetailIcon,
+    telecom: TelecomIcon,
+    insurance: InsuranceIcon,
+    tech: TechIcon
+  }
+  return icons[iconType] || BankIcon
+}
+
 const ClientesDirectory = () => {
   const clients = getAllClients()
   const [searchTerm, setSearchTerm] = useState('')
@@ -52,7 +78,7 @@ const ClientesDirectory = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
           />
-          <span className="search-icon">🔍</span>
+          <SearchIcon size={20} className="search-icon" />
         </div>
       </div>
 
@@ -77,33 +103,45 @@ const ClientesDirectory = () => {
       {/* Clients Grid */}
       <div className="clients-grid">
         {filteredClients.length > 0 ? (
-          filteredClients.map((client) => (
-            <Link
-              key={client.id}
-              to={`/clientes/${client.id}`}
-              className="client-card"
-            >
-              <div className="client-card-header">
-                <span className="client-logo">{client.logo}</span>
-                <div className="client-meta">
-                  <span className="client-industry">{client.industry}</span>
-                  <span className="client-country">📍 {client.country}</span>
+          filteredClients.map((client) => {
+            const ClientIcon = getClientIcon(client.icon)
+            return (
+              <Link
+                key={client.id}
+                to={`/clientes/${client.id}`}
+                className="client-card"
+              >
+                <div className="client-card-header">
+                  <div className="client-logo-container">
+                    <ClientIcon size={56} className="client-logo-svg" />
+                  </div>
+                  <div className="client-meta">
+                    <span className="client-industry">
+                      <IndustryIcon size={14} className="meta-icon-svg" />
+                      {client.industry}
+                    </span>
+                    <span className="client-country">
+                      <LocationIcon size={14} className="meta-icon-svg" />
+                      {client.country}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
               <h2 className="client-name">{client.name}</h2>
               <p className="client-description">{client.description}</p>
 
-              <div className="client-card-footer">
-                <span className="content-count">
-                  📄 {client.content.length} documento{client.content.length !== 1 ? 's' : ''}
-                </span>
-                <span className="view-link">
-                  Ver contenido →
-                </span>
-              </div>
-            </Link>
-          ))
+                <div className="client-card-footer">
+                  <span className="content-count">
+                    <DocumentIcon size={16} className="doc-icon-svg" />
+                    {client.content.length} documento{client.content.length !== 1 ? 's' : ''}
+                  </span>
+                  <span className="view-link">
+                    Ver contenido →
+                  </span>
+                </div>
+              </Link>
+            )
+          })
         ) : (
           <div className="no-results">
             <p>No se encontraron clientes con "{searchTerm}"</p>
