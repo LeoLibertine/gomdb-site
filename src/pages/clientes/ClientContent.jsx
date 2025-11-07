@@ -75,6 +75,9 @@ const getCategoryIcon = (category) => {
 const ClientContent = () => {
   const { clientId } = useParams()
   const client = getClientById(clientId)
+
+  // IMPORTANTE: Todos los hooks deben llamarse ANTES de cualquier early return
+  // para mantener el orden consistente de hooks en cada render
   const { hasAccess, validateCode, checkAccess } = useAuth(clientId)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
@@ -84,9 +87,10 @@ const ClientContent = () => {
     if (client) {
       checkAccess()
     }
-  }, [clientId, client])
+  }, [clientId, client, checkAccess])
 
   // Si no existe el cliente, redirigir al directorio
+  // Este return debe ir DESPUÉS de todos los hooks
   if (!client) {
     return <Navigate to="/clientes" replace />
   }
