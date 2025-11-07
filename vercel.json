@@ -11,6 +11,15 @@
     { "handle": "filesystem" },
 
     {
+      "src": "/clientes$",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/clientes/([^/]+)$",
+      "dest": "/index.html"
+    },
+
+    {
       "src": "/clientes/fp/sync1(?:/.*)?$",
       "dest": "/clientes/fp/sync1.html"
     },
