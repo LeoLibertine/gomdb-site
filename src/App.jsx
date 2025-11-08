@@ -6,6 +6,7 @@ import ClientContent from './pages/clientes/ClientContent';
 import DocumentMongo from './pages/clientes/cencosud/document-mongo';
 import BancolombiaDocument from './pages/clientes/bancolombia/document-mongo';
 import DocumentoDemo from './pages/clientes/demo/DocumentoDemo';
+import Cosmica from './pages/Cosmica';
 import NotFound from './components/NotFound';
 import { ProtectedRoute } from './components/auth';
 import './styles/gomdb-global.css';
@@ -17,6 +18,7 @@ function App() {
       <Route path="/" element={<GoMDBLanding />} />
       <Route path="/demo" element={<DocumentoDemo />} />
       <Route path="/clientes/demo/documento" element={<DocumentoDemo />} />
+      <Route path="/cosmica" element={<Cosmica />} />
 
       {/* Clientes Directory - Public (list of clients) */}
       <Route path="/clientes" element={<ClientesDirectory />} />
