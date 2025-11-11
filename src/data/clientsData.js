@@ -374,6 +374,13 @@ export const CLIENTS_DATA = [
         path: '/clientes/bdp/bdp-replica.html',
         type: 'html',
         category: 'Configuración'
+      },
+      {
+        title: 'Arquitecturas DRP Híbrido',
+        description: 'Estrategias de Disaster Recovery desde Atlas a On-Premise con análisis de RPO/RTO',
+        path: '/clientes/bdp/arquitectura-drp',
+        type: 'jsx',
+        category: 'Arquitectura'
       }
     ]
   },

@@ -7,6 +7,7 @@ import DocumentMongo from './pages/clientes/cencosud/document-mongo';
 import BancolombiaDocument from './pages/clientes/bancolombia/document-mongo';
 import DocumentoDemo from './pages/clientes/demo/DocumentoDemo';
 import Cosmica from './pages/Cosmica';
+import ArquitecturaDRP from './pages/clientes/bdp/ArquitecturaDRP';
 import NotFound from './components/NotFound';
 import { ProtectedRoute } from './components/auth';
 import './styles/gomdb-global.css';
@@ -40,6 +41,14 @@ function App() {
         element={
           <ProtectedRoute client="bancolombia">
             <BancolombiaDocument />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/clientes/bdp/arquitectura-drp"
+        element={
+          <ProtectedRoute client="bdp">
+            <ArquitecturaDRP />
           </ProtectedRoute>
         }
       />
