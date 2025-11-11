@@ -132,98 +132,143 @@ const ArquitecturaDRP = () => {
             <div className="diagram-container">
               <h3 className="diagram-title">Arquitectura de Implementación</h3>
 
-              <svg className="architecture-diagram" viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+              <svg className="architecture-diagram" viewBox="0 0 1400 700" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  {/* Arrow markers */}
+                  <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#00ED64" />
+                  </marker>
+                  <marker id="arrowhead-failover" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#FFD700" />
+                  </marker>
+
+                  {/* Cloud icon SVG */}
+                  <g id="cloud-icon">
+                    <path d="M 0 8 C 0 3.5 3.5 0 8 0 C 10 0 11.8 0.8 13 2 C 14.7 0.8 16.8 0 19 0 C 24 0 28 4 28 9 C 28 9.3 28 9.6 27.9 9.9 C 30.6 10.6 32.5 13 32.5 16 C 32.5 19.6 29.6 22.5 26 22.5 L 7 22.5 C 3.1 22.5 0 19.4 0 15.5 C 0 12.5 1.8 9.9 4.3 8.9 C 4.1 8.6 4 8.3 4 8 Z" fill="#1E90FF" opacity="0.8"/>
+                  </g>
+
+                  {/* Database icon SVG */}
+                  <g id="database-icon">
+                    <ellipse cx="12" cy="4" rx="12" ry="4" fill="#00ED64" opacity="0.9"/>
+                    <path d="M 0 4 L 0 12 C 0 14.2 5.4 16 12 16 C 18.6 16 24 14.2 24 12 L 24 4" fill="#00ED64" opacity="0.7"/>
+                    <ellipse cx="12" cy="12" rx="12" ry="4" fill="#00ED64" opacity="0.9"/>
+                  </g>
+
+                  {/* Server/Building icon SVG */}
+                  <g id="building-icon">
+                    <rect x="2" y="4" width="20" height="20" rx="1" fill="#FFA500" opacity="0.8"/>
+                    <rect x="5" y="7" width="4" height="4" fill="#0a0e27" opacity="0.5"/>
+                    <rect x="5" y="13" width="4" height="4" fill="#0a0e27" opacity="0.5"/>
+                    <rect x="10" y="7" width="4" height="4" fill="#0a0e27" opacity="0.5"/>
+                    <rect x="10" y="13" width="4" height="4" fill="#0a0e27" opacity="0.5"/>
+                    <rect x="15" y="7" width="4" height="4" fill="#0a0e27" opacity="0.5"/>
+                    <rect x="15" y="13" width="4" height="4" fill="#0a0e27" opacity="0.5"/>
+                    <rect x="8" y="19" width="8" height="5" fill="#0a0e27" opacity="0.7"/>
+                  </g>
+                </defs>
+
                 {/* Cloud Section */}
-                <rect x="50" y="50" width="400" height="200" rx="10" className="cloud-box" />
-                <text x="250" y="80" className="section-label">☁️ MongoDB Atlas (Cloud)</text>
+                <rect x="50" y="50" width="650" height="250" rx="15" className="cloud-box" />
+                <use href="#cloud-icon" x="80" y="60" width="40" height="30"/>
+                <text x="130" y="85" className="section-label">MongoDB Atlas (Cloud)</text>
 
                 {/* Atlas Cluster */}
                 <g className="component atlas-cluster">
-                  <rect x="80" y="110" width="150" height="100" rx="8" className="component-box atlas" />
-                  <text x="155" y="140" className="component-title">Atlas Cluster</text>
-                  <text x="155" y="165" className="component-subtitle">Producción</text>
-                  <circle cx="120" cy="190" r="8" className="node-circle" />
-                  <circle cx="155" cy="190" r="8" className="node-circle" />
-                  <circle cx="190" cy="190" r="8" className="node-circle" />
+                  <rect x="80" y="120" width="180" height="140" rx="10" className="component-box atlas" />
+                  <use href="#database-icon" x="140" y="135" width="35" height="25"/>
+                  <text x="170" y="180" className="component-title">Atlas Cluster</text>
+                  <text x="170" y="200" className="component-subtitle">Producción</text>
+                  <circle cx="130" cy="230" r="10" className="node-circle active" />
+                  <circle cx="170" cy="230" r="10" className="node-circle active" />
+                  <circle cx="210" cy="230" r="10" className="node-circle active" />
                 </g>
 
                 {/* Snapshots */}
                 <g className="component snapshots">
-                  <rect x="270" y="110" width="150" height="100" rx="8" className="component-box snapshot" />
-                  <text x="345" y="140" className="component-title">Snapshots</text>
-                  <text x="345" y="165" className="component-subtitle">Backups</text>
-                  <rect x="290" y="175" width="30" height="25" rx="3" className="snapshot-icon" />
-                  <rect x="330" y="175" width="30" height="25" rx="3" className="snapshot-icon" />
-                  <rect x="370" y="175" width="30" height="25" rx="3" className="snapshot-icon" />
+                  <rect x="310" y="120" width="180" height="140" rx="10" className="component-box snapshot" />
+                  <text x="400" y="155" className="component-title">Snapshots</text>
+                  <text x="400" y="175" className="component-subtitle">Automated Backups</text>
+                  <rect x="330" y="195" width="40" height="35" rx="4" className="snapshot-icon" />
+                  <rect x="380" y="195" width="40" height="35" rx="4" className="snapshot-icon" />
+                  <rect x="430" y="195" width="40" height="35" rx="4" className="snapshot-icon" />
+                  <text x="400" y="250" className="script-code">Daily/Hourly</text>
                 </g>
 
                 {/* Arrow from Atlas to Snapshots */}
-                <path d="M 230 160 L 270 160" className="flow-arrow" markerEnd="url(#arrowhead)" />
-                <text x="235" y="150" className="flow-label">Automated</text>
+                <path d="M 260 190 L 310 190" className="flow-arrow" markerEnd="url(#arrowhead)" />
+                <text x="265" y="180" className="flow-label">Auto</text>
 
                 {/* Script/API Section */}
                 <g className="component api-script">
-                  <rect x="500" y="110" width="180" height="100" rx="8" className="component-box script" />
-                  <text x="590" y="140" className="component-title">Script Automatizado</text>
-                  <text x="590" y="165" className="component-subtitle">API de Atlas</text>
-                  <text x="590" y="190" className="script-code">📥 Download Snapshot</text>
+                  <rect x="540" y="120" width="140" height="140" rx="10" className="component-box script" />
+                  <text x="610" y="155" className="component-title">API Script</text>
+                  <text x="610" y="175" className="component-subtitle">Scheduler</text>
+                  <circle cx="610" cy="205" r="25" fill="rgba(0,206,209,0.3)" stroke="#00CED1" strokeWidth="2"/>
+                  <path d="M 600 205 L 607 212 L 620 195" stroke="#00CED1" strokeWidth="3" fill="none" strokeLinecap="round"/>
+                  <text x="610" y="245" className="script-code" fontSize="11">Download</text>
                 </g>
 
                 {/* Arrow from Snapshots to Script */}
-                <path d="M 420 160 L 500 160" className="flow-arrow" markerEnd="url(#arrowhead)" />
-                <text x="430" y="150" className="flow-label">API Call</text>
+                <path d="M 490 190 L 540 190" className="flow-arrow" markerEnd="url(#arrowhead)" />
+                <text x="495" y="180" className="flow-label">API Call</text>
 
                 {/* On-Premise Section */}
-                <rect x="50" y="350" width="850" height="200" rx="10" className="onprem-box" />
-                <text x="475" y="380" className="section-label">🏢 On-Premise</text>
+                <rect x="50" y="380" width="1300" height="270" rx="15" className="onprem-box" />
+                <use href="#building-icon" x="80" y="395" width="35" height="30"/>
+                <text x="125" y="420" className="section-label">On-Premise Infrastructure</text>
+
+                {/* Download Arrow (Cloud to OnPrem) */}
+                <path d="M 610 260 L 610 330 L 240 330 L 240 450" className="flow-arrow download" markerEnd="url(#arrowhead)" strokeWidth="3"/>
+                <text x="500" y="325" className="flow-label">Scheduled Download</text>
 
                 {/* Local Storage */}
                 <g className="component storage">
-                  <rect x="80" y="410" width="180" height="100" rx="8" className="component-box storage" />
-                  <text x="170" y="440" className="component-title">Local Storage</text>
-                  <text x="170" y="465" className="component-subtitle">Snapshot Files</text>
-                  <rect x="110" y="480" width="120" height="15" rx="3" className="file-bar" />
+                  <rect x="120" y="450" width="240" height="150" rx="10" className="component-box storage" />
+                  <text x="240" y="485" className="component-title">Local Storage</text>
+                  <text x="240" y="505" className="component-subtitle">Snapshot Files</text>
+                  <rect x="150" y="525" width="180" height="20" rx="4" className="file-bar" />
+                  <rect x="150" y="555" width="180" height="20" rx="4" className="file-bar" />
+                  <text x="240" y="585" className="script-code" fontSize="11">*.tar.gz</text>
                 </g>
 
-                {/* Arrow from Script to Storage */}
-                <path d="M 590 210 L 590 300 L 170 300 L 170 410" className="flow-arrow download" markerEnd="url(#arrowhead)" />
-                <text x="450" y="290" className="flow-label">Download (Scheduled)</text>
-
-                {/* EA Cluster (Warm) */}
+                {/* EA Cluster (Warm - Inactive) */}
                 <g className="component ea-cluster">
-                  <rect x="320" y="410" width="180" height="100" rx="8" className="component-box ea-warm" />
-                  <text x="410" y="440" className="component-title">MongoDB EA</text>
-                  <text x="410" y="465" className="component-subtitle">Estado: WARM</text>
-                  <circle cx="365" cy="490" r="8" className="node-circle inactive" />
-                  <circle cx="410" cy="490" r="8" className="node-circle inactive" />
-                  <circle cx="455" cy="490" r="8" className="node-circle inactive" />
+                  <rect x="420" y="450" width="240" height="150" rx="10" className="component-box ea-warm" />
+                  <use href="#database-icon" x="510" y="470" width="35" height="25"/>
+                  <text x="540" y="515" className="component-title">MongoDB EA</text>
+                  <text x="540" y="535" className="component-subtitle">Estado: WARM</text>
+                  <circle cx="480" cy="565" r="10" className="node-circle inactive" />
+                  <circle cx="540" cy="565" r="10" className="node-circle inactive" />
+                  <circle cx="600" cy="565" r="10" className="node-circle inactive" />
+                  <text x="540" y="585" className="script-code" fontSize="10">(Standby)</text>
                 </g>
 
-                {/* Restore Arrow */}
-                <path d="M 260 460 L 320 460" className="flow-arrow restore" markerEnd="url(#arrowhead)" strokeDasharray="8,4" />
-                <text x="265" y="450" className="flow-label failover">mongorestore</text>
-                <text x="270" y="475" className="flow-label-small">(en Desastre)</text>
+                {/* Restore Arrow (Failover - Dashed) */}
+                <path d="M 360 525 L 420 525" className="flow-arrow restore" markerEnd="url(#arrowhead-failover)" strokeDasharray="10,5" strokeWidth="3"/>
+                <text x="365" y="515" className="flow-label failover">mongorestore</text>
+                <text x="370" y="540" className="flow-label-small">(en Desastre)</text>
 
                 {/* Applications */}
                 <g className="component apps">
-                  <rect x="720" y="410" width="150" height="100" rx="8" className="component-box apps" />
-                  <text x="795" y="440" className="component-title">Aplicaciones</text>
-                  <circle cx="755" cy="475" r="12" className="app-circle" />
-                  <circle cx="795" cy="475" r="12" className="app-circle" />
-                  <circle cx="835" cy="475" r="12" className="app-circle" />
+                  <rect x="1050" y="450" width="240" height="150" rx="10" className="component-box apps" />
+                  <text x="1170" y="485" className="component-title">Aplicaciones</text>
+                  <text x="1170" y="505" className="component-subtitle">Clientes</text>
+                  <circle cx="1100" cy="545" r="15" className="app-circle" />
+                  <circle cx="1170" cy="545" r="15" className="app-circle" />
+                  <circle cx="1240" cy="545" r="15" className="app-circle" />
+                  <text x="1095" y="550" className="app-icon">A</text>
+                  <text x="1165" y="550" className="app-icon">B</text>
+                  <text x="1235" y="550" className="app-icon">C</text>
                 </g>
 
-                {/* Connection Switch Arrow */}
-                <path d="M 500 460 L 720 460" className="flow-arrow failover" markerEnd="url(#arrowhead)" strokeDasharray="8,4" />
-                <text x="570" y="450" className="flow-label failover">Connection Switch</text>
-                <text x="585" y="475" className="flow-label-small">(Failover)</text>
+                {/* Connection Switch Arrow (Failover - Dashed) */}
+                <path d="M 660 525 L 1050 525" className="flow-arrow failover" markerEnd="url(#arrowhead-failover)" strokeDasharray="10,5" strokeWidth="3"/>
+                <text x="800" y="515" className="flow-label failover">Connection Switch</text>
+                <text x="830" y="540" className="flow-label-small">(Failover)</text>
 
-                {/* Arrow definitions */}
-                <defs>
-                  <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                    <polygon points="0 0, 10 3, 0 6" fill="#00ED64" />
-                  </marker>
-                </defs>
+                {/* Normal operation connection (dotted - currently not active) */}
+                <path d="M 610 60 Q 900 50 1170 450" className="flow-arrow" strokeDasharray="2,4" strokeWidth="1.5" opacity="0.3"/>
+                <text x="850" y="200" className="flow-label-small" opacity="0.5">Normal: Atlas → Apps</text>
               </svg>
 
               <div className="diagram-legend">
@@ -301,131 +346,189 @@ const ArquitecturaDRP = () => {
             <div className="diagram-container">
               <h3 className="diagram-title">Arquitectura de Implementación</h3>
 
-              <svg className="architecture-diagram hot" viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+              <svg className="architecture-diagram hot" viewBox="0 0 1600 800" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  {/* Arrow markers */}
+                  <marker id="arrowhead-hot" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#FF4500" />
+                  </marker>
+                  <marker id="arrowhead-failover2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#FFD700" />
+                  </marker>
+                  <marker id="arrowhead-monitor" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#00CED1" />
+                  </marker>
+
+                  {/* Wave icon for streams */}
+                  <g id="wave-icon">
+                    <path d="M 0 10 Q 5 5, 10 10 T 20 10" stroke="#00CED1" strokeWidth="2" fill="none"/>
+                    <path d="M 0 15 Q 5 10, 10 15 T 20 15" stroke="#00CED1" strokeWidth="2" fill="none" opacity="0.7"/>
+                    <path d="M 0 20 Q 5 15, 10 20 T 20 20" stroke="#00CED1" strokeWidth="2" fill="none" opacity="0.5"/>
+                  </g>
+
+                  {/* Gear/Process icon */}
+                  <g id="gear-icon">
+                    <circle cx="12" cy="12" r="8" fill="none" stroke="#8A2BE2" strokeWidth="2"/>
+                    <circle cx="12" cy="12" r="3" fill="#8A2BE2"/>
+                    <rect x="10" y="0" width="4" height="6" fill="#8A2BE2"/>
+                    <rect x="10" y="18" width="4" height="6" fill="#8A2BE2"/>
+                    <rect x="0" y="10" width="6" height="4" fill="#8A2BE2"/>
+                    <rect x="18" y="10" width="6" height="4" fill="#8A2BE2"/>
+                  </g>
+
+                  {/* Queue/Message icon */}
+                  <g id="queue-icon">
+                    <rect x="2" y="4" width="20" height="6" rx="2" fill="#8A2BE2" opacity="0.8"/>
+                    <rect x="2" y="12" width="20" height="6" rx="2" fill="#8A2BE2" opacity="0.6"/>
+                    <rect x="2" y="20" width="20" height="6" rx="2" fill="#8A2BE2" opacity="0.4"/>
+                  </g>
+
+                  {/* Shield/VPN icon */}
+                  <g id="shield-icon">
+                    <path d="M 12 2 L 4 6 L 4 12 C 4 16.4 7.6 20.5 12 22 C 16.4 20.5 20 16.4 20 12 L 20 6 L 12 2 Z" fill="none" stroke="#8A2BE2" strokeWidth="2"/>
+                    <path d="M 9 12 L 11 14 L 15 9" stroke="#8A2BE2" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                  </g>
+
+                  {/* Monitor/Chart icon */}
+                  <g id="monitor-icon">
+                    <rect x="2" y="3" width="20" height="14" rx="2" fill="none" stroke="#00CED1" strokeWidth="2"/>
+                    <path d="M 6 12 L 9 9 L 12 11 L 16 6" stroke="#00CED1" strokeWidth="2" fill="none"/>
+                    <circle cx="6" cy="12" r="1.5" fill="#00CED1"/>
+                    <circle cx="9" cy="9" r="1.5" fill="#00CED1"/>
+                    <circle cx="12" cy="11" r="1.5" fill="#00CED1"/>
+                    <circle cx="16" cy="6" r="1.5" fill="#00CED1"/>
+                  </g>
+                </defs>
+
                 {/* Cloud Section */}
-                <rect x="50" y="50" width="500" height="280" rx="10" className="cloud-box" />
-                <text x="300" y="80" className="section-label">☁️ MongoDB Atlas + Cloud Services</text>
+                <rect x="50" y="50" width="750" height="320" rx="15" className="cloud-box" />
+                <use href="#cloud-icon" x="80" y="60" width="40" height="30"/>
+                <text x="130" y="85" className="section-label">MongoDB Atlas + Cloud Services</text>
 
-                {/* Atlas Cluster with Oplog */}
+                {/* Atlas Cluster with Change Streams */}
                 <g className="component atlas-cluster">
-                  <rect x="80" y="110" width="180" height="120" rx="8" className="component-box atlas" />
-                  <text x="170" y="140" className="component-title">Atlas Cluster</text>
-                  <text x="170" y="165" className="component-subtitle">Producción</text>
-                  <circle cx="120" cy="200" r="8" className="node-circle active" />
-                  <circle cx="170" cy="200" r="8" className="node-circle active" />
-                  <circle cx="220" cy="200" r="8" className="node-circle active" />
+                  <rect x="80" y="120" width="200" height="180" rx="10" className="component-box atlas" />
+                  <use href="#database-icon" x="150" y="135" width="35" height="25"/>
+                  <text x="180" y="180" className="component-title">Atlas Cluster</text>
+                  <text x="180" y="200" className="component-subtitle">Producción</text>
+                  <circle cx="130" cy="235" r="10" className="node-circle active" />
+                  <circle cx="180" cy="235" r="10" className="node-circle active" />
+                  <circle cx="230" cy="235" r="10" className="node-circle active" />
+
+                  <rect x="95" y="255" width="170" height="30" rx="5" fill="rgba(0,206,209,0.2)" stroke="#00CED1" strokeWidth="2"/>
+                  <use href="#wave-icon" x="105" y="260" width="20" height="20"/>
+                  <text x="180" y="275" className="component-subtitle" fill="#00CED1">Change Streams</text>
                 </g>
 
-                {/* Change Streams */}
-                <g className="component change-streams">
-                  <rect x="80" y="250" width="180" height="60" rx="8" className="component-box streams" />
-                  <text x="170" y="275" className="component-title">Change Streams</text>
-                  <text x="170" y="295" className="component-subtitle">📡 Oplog Seguro</text>
-                </g>
-
-                {/* Cloud Consumer */}
+                {/* Cloud Consumer Worker */}
                 <g className="component cloud-consumer">
-                  <rect x="320" y="110" width="200" height="80" rx="8" className="component-box consumer" />
-                  <text x="420" y="140" className="component-title">Consumidor Cloud</text>
-                  <text x="420" y="165" className="component-subtitle">Worker / Lambda</text>
+                  <rect x="340" y="120" width="220" height="100" rx="10" className="component-box consumer" />
+                  <use href="#gear-icon" x="425" y="135" width="30" height="30"/>
+                  <text x="450" y="185" className="component-title">Cloud Worker</text>
+                  <text x="450" y="205" className="component-subtitle">Lambda/K8s Pod</text>
                 </g>
 
-                {/* Message Queue (Kafka/RabbitMQ) */}
+                {/* Arrow from Atlas to Worker */}
+                <path d="M 280 210 L 340 180" className="flow-arrow realtime" markerEnd="url(#arrowhead-hot)" strokeWidth="3"/>
+                <text x="290" y="190" className="flow-label realtime">Subscribe</text>
+
+                {/* Message Queue (Kafka) */}
                 <g className="component message-queue">
-                  <rect x="320" y="210" width="200" height="100" rx="8" className="component-box queue" />
-                  <text x="420" y="240" className="component-title">Cola de Mensajes</text>
-                  <text x="420" y="265" className="component-subtitle">Kafka / RabbitMQ</text>
-                  <rect x="340" y="280" width="35" height="20" rx="2" className="message-box" />
-                  <rect x="385" y="280" width="35" height="20" rx="2" className="message-box" />
-                  <rect x="430" y="280" width="35" height="20" rx="2" className="message-box" />
-                  <rect x="475" y="280" width="35" height="20" rx="2" className="message-box" />
+                  <rect x="340" y="250" width="220" height="100" rx="10" className="component-box queue" />
+                  <use href="#queue-icon" x="425" y="265" width="30" height="30"/>
+                  <text x="450" y="315" className="component-title">Message Queue</text>
+                  <text x="450" y="335" className="component-subtitle">Kafka/RabbitMQ</text>
                 </g>
 
-                {/* Arrow from Change Streams to Consumer */}
-                <path d="M 260 280 L 290 280 L 290 150 L 320 150" className="flow-arrow realtime" markerEnd="url(#arrowhead-hot)" />
-                <text x="270" y="140" className="flow-label realtime">Subscribe</text>
+                {/* Arrow from Worker to Queue */}
+                <path d="M 450 220 L 450 250" className="flow-arrow realtime" markerEnd="url(#arrowhead-hot)" strokeWidth="3"/>
+                <text x="460" y="240" className="flow-label realtime">Publish</text>
 
-                {/* Arrow from Consumer to Queue */}
-                <path d="M 420 190 L 420 210" className="flow-arrow realtime" markerEnd="url(#arrowhead-hot)" />
-                <text x="430" y="205" className="flow-label realtime">Publish</text>
+                {/* VPN/Secure Connection Bridge */}
+                <g className="component vpn-bridge">
+                  <rect x="620" y="180" width="150" height="140" rx="10" className="bridge-box" />
+                  <use href="#shield-icon" x="675" y="200" width="30" height="30"/>
+                  <text x="695" y="250" className="section-label-small">VPN/Secure</text>
+                  <text x="695" y="270" className="section-label-small">Connection</text>
+                  <text x="695" y="290" className="section-label-small">Bridge</text>
+                </g>
 
-                {/* Internet/VPN Bridge */}
-                <rect x="570" y="200" width="120" height="120" rx="10" className="bridge-box" />
-                <text x="630" y="230" className="section-label-small">🌐 VPN /</text>
-                <text x="630" y="255" className="section-label-small">Secure</text>
-                <text x="630" y="280" className="section-label-small">Connection</text>
-
-                {/* Arrow from Queue to Bridge */}
-                <path d="M 520 260 L 570 260" className="flow-arrow realtime" markerEnd="url(#arrowhead-hot)" />
-                <text x="525" y="250" className="flow-label realtime">Stream</text>
+                {/* Arrow from Queue to VPN */}
+                <path d="M 560 300 L 620 280" className="flow-arrow realtime" markerEnd="url(#arrowhead-hot)" strokeWidth="3"/>
+                <text x="565" y="285" className="flow-label realtime">Stream</text>
 
                 {/* On-Premise Section */}
-                <rect x="50" y="400" width="1100" height="250" rx="10" className="onprem-box" />
-                <text x="600" y="430" className="section-label">🏢 On-Premise Infrastructure</text>
+                <rect x="50" y="430" width="1500" height="320" rx="15" className="onprem-box" />
+                <use href="#building-icon" x="80" y="445" width="35" height="30"/>
+                <text x="125" y="470" className="section-label">On-Premise Infrastructure</text>
 
-                {/* OnPrem Consumer */}
+                {/* Arrow from VPN to OnPrem (crossing boundary) */}
+                <path d="M 695 320 L 695 390 L 280 390 L 280 500" className="flow-arrow realtime" markerEnd="url(#arrowhead-hot)" strokeWidth="3"/>
+                <text x="600" y="385" className="flow-label realtime">Secure Streaming</text>
+
+                {/* OnPrem Consumer Microservice */}
                 <g className="component onprem-consumer">
-                  <rect x="80" y="460" width="220" height="140" rx="8" className="component-box consumer-onprem" />
-                  <text x="190" y="490" className="component-title">Consumidor On-Prem</text>
-                  <text x="190" y="515" className="component-subtitle">Microservicio</text>
-                  <text x="190" y="545" className="script-code">• Lee de Cola</text>
-                  <text x="190" y="565" className="script-code">• Traduce Eventos</text>
-                  <text x="190" y="585" className="script-code">• Aplica Cambios</text>
+                  <rect x="120" y="500" width="280" height="180" rx="10" className="component-box consumer-onprem" />
+                  <use href="#gear-icon" x="240" y="515" width="30" height="30"/>
+                  <text x="260" y="565" className="component-title">Consumer Service</text>
+                  <text x="260" y="585" className="component-subtitle">Microservicio On-Prem</text>
+                  <text x="260" y="610" className="script-code" fontSize="12">• Suscribe a Cola</text>
+                  <text x="260" y="630" className="script-code" fontSize="12">• Traduce Eventos</text>
+                  <text x="260" y="650" className="script-code" fontSize="12">• Aplica a EA (idempotente)</text>
+                  <text x="260" y="670" className="script-code" fontSize="12">• Gestiona Resume Tokens</text>
                 </g>
 
-                {/* Arrow from Bridge to OnPrem Consumer */}
-                <path d="M 630 320 L 630 380 L 190 380 L 190 460" className="flow-arrow realtime" markerEnd="url(#arrowhead-hot)" />
-                <text x="500" y="370" className="flow-label realtime">Subscribe to Queue</text>
-
-                {/* EA Cluster (Hot) */}
+                {/* EA Cluster (Hot - Active) */}
                 <g className="component ea-cluster-hot">
-                  <rect x="360" y="460" width="220" height="140" rx="8" className="component-box ea-hot" />
-                  <text x="470" y="490" className="component-title">MongoDB EA</text>
-                  <text x="470" y="515" className="component-subtitle">Estado: HOT 🔥</text>
-                  <text x="470" y="545" className="script-code">Actualizado en</text>
-                  <text x="470" y="565" className="script-code">Tiempo Real</text>
-                  <circle cx="410" cy="580" r="10" className="node-circle hot" />
-                  <circle cx="470" cy="580" r="10" className="node-circle hot" />
-                  <circle cx="530" cy="580" r="10" className="node-circle hot" />
+                  <rect x="480" y="500" width="280" height="180" rx="10" className="component-box ea-hot" />
+                  <use href="#database-icon" x="590" y="515" width="35" height="25"/>
+                  <text x="620" y="560" className="component-title">MongoDB EA</text>
+                  <text x="620" y="580" className="component-subtitle">Estado: HOT (Activo)</text>
+                  <text x="620" y="610" className="script-code" fontSize="11">Actualizado en Tiempo Real</text>
+                  <circle cx="550" cy="645" r="12" className="node-circle hot" />
+                  <circle cx="620" cy="645" r="12" className="node-circle hot" />
+                  <circle cx="690" cy="645" r="12" className="node-circle hot" />
+                  <text x="620" y="670" className="script-code" fontSize="10">Lag: ~segundos</text>
                 </g>
 
                 {/* Arrow from Consumer to EA */}
-                <path d="M 300 530 L 360 530" className="flow-arrow realtime" markerEnd="url(#arrowhead-hot)" />
-                <text x="305" y="520" className="flow-label realtime">Apply Ops</text>
+                <path d="M 400 590 L 480 590" className="flow-arrow realtime" markerEnd="url(#arrowhead-hot)" strokeWidth="3"/>
+                <text x="410" y="580" className="flow-label realtime">Apply Ops</text>
 
-                {/* Monitor/Lag Tracking */}
+                {/* Monitor/Metrics */}
                 <g className="component monitor">
-                  <rect x="640" y="460" width="200" height="80" rx="8" className="component-box monitor" />
-                  <text x="740" y="490" className="component-title">Monitoreo</text>
-                  <text x="740" y="515" className="component-subtitle">📊 Lag Tracking</text>
+                  <rect x="840" y="500" width="240" height="110" rx="10" className="component-box monitor" />
+                  <use href="#monitor-icon" x="935" y="515" width="30" height="25"/>
+                  <text x="960" y="560" className="component-title">Monitoreo</text>
+                  <text x="960" y="580" className="component-subtitle">Lag & Metrics</text>
+                  <text x="960" y="600" className="script-code" fontSize="11">Offset Tracking</text>
                 </g>
 
                 {/* Arrow from EA to Monitor */}
-                <path d="M 580 500 L 640 500" className="flow-arrow" markerEnd="url(#arrowhead)" strokeDasharray="4,2" />
+                <path d="M 760 555 L 840 555" className="flow-arrow" markerEnd="url(#arrowhead-monitor)" strokeDasharray="4,3" strokeWidth="2"/>
 
                 {/* Applications */}
                 <g className="component apps-hot">
-                  <rect x="900" y="460" width="220" height="140" rx="8" className="component-box apps" />
-                  <text x="1010" y="490" className="component-title">Aplicaciones</text>
-                  <text x="1010" y="515" className="component-subtitle">Production Apps</text>
-                  <circle cx="945" cy="555" r="15" className="app-circle" />
-                  <circle cx="1010" cy="555" r="15" className="app-circle" />
-                  <circle cx="1075" cy="555" r="15" className="app-circle" />
+                  <rect x="1180" y="500" width="280" height="180" rx="10" className="component-box apps" />
+                  <text x="1320" y="545" className="component-title">Aplicaciones</text>
+                  <text x="1320" y="565" className="component-subtitle">Production Clients</text>
+                  <circle cx="1230" cy="610" r="18" className="app-circle" />
+                  <circle cx="1320" cy="610" r="18" className="app-circle" />
+                  <circle cx="1410" cy="610" r="18" className="app-circle" />
+                  <text x="1223" y="617" className="app-icon">A</text>
+                  <text x="1313" y="617" className="app-icon">B</text>
+                  <text x="1403" y="617" className="app-icon">C</text>
+                  <text x="1320" y="645" className="script-code" fontSize="10">Failover = DNS Switch</text>
                 </g>
 
-                {/* Failover Arrow */}
-                <path d="M 580 540 L 750 540 L 750 530 L 900 530" className="flow-arrow failover" markerEnd="url(#arrowhead-failover)" strokeDasharray="8,4" />
-                <text x="700" y="530" className="flow-label failover">Failover (Mínimo)</text>
+                {/* Failover Arrow (Minimal) */}
+                <path d="M 760 625 L 1180 625" className="flow-arrow failover" markerEnd="url(#arrowhead-failover2)" strokeDasharray="10,5" strokeWidth="4"/>
+                <text x="900" y="615" className="flow-label failover">Connection Switch (Failover Mínimo)</text>
+                <text x="935" y="640" className="flow-label-small">RTO: Minutos</text>
 
-                {/* Arrow definitions */}
-                <defs>
-                  <marker id="arrowhead-hot" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                    <polygon points="0 0, 10 3, 0 6" fill="#FF6B6B" />
-                  </marker>
-                  <marker id="arrowhead-failover" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                    <polygon points="0 0, 10 3, 0 6" fill="#FFA500" />
-                  </marker>
-                </defs>
+                {/* Normal operation (Atlas to Apps - currently not used in Hot DRP) */}
+                <path d="M 180 50 Q 800 30 1320 500" className="flow-arrow" strokeDasharray="2,4" strokeWidth="1.5" opacity="0.2"/>
+                <text x="650" y="200" className="flow-label-small" opacity="0.4">Normal: Atlas → Apps (via Internet)</text>
               </svg>
 
               <div className="diagram-legend">
