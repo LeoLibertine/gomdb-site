@@ -254,9 +254,122 @@
 /* ============ ARCHITECTURE DETAIL ============ */
 
 .architecture-detail {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto 4rem auto;
   animation: fadeInUp 0.6s ease-out;
+}
+
+/* ============ CONCEPT SECTION ============ */
+
+.concept-section {
+  background: rgba(255, 215, 0, 0.05);
+  border-left: 4px solid #FFD700;
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 3rem;
+}
+
+.concept-title {
+  color: #FFD700;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0 0 1rem 0;
+}
+
+.concept-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin: 0 0 1rem 0;
+}
+
+.concept-text:last-child {
+  margin-bottom: 0;
+}
+
+/* ============ MECHANICS SECTION ============ */
+
+.mechanics-section {
+  margin-bottom: 3rem;
+}
+
+.mechanics-title {
+  color: #00ED64;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0 0 2rem 0;
+  text-align: center;
+}
+
+.mechanics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.mechanic-card {
+  background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(0, 206, 209, 0.1) 100%);
+  border: 2px solid rgba(0, 237, 100, 0.3);
+  border-radius: 15px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.mechanic-card:hover {
+  transform: translateY(-5px);
+  border-color: #00ED64;
+  box-shadow: 0 10px 40px rgba(0, 237, 100, 0.3);
+}
+
+.mechanic-number {
+  position: absolute;
+  top: -15px;
+  left: 20px;
+  background: linear-gradient(135deg, #00ED64 0%, #00A847 100%);
+  color: #0a0e27;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.3rem;
+  box-shadow: 0 4px 15px rgba(0, 237, 100, 0.4);
+}
+
+.mechanic-card h4 {
+  color: #00ED64;
+  font-size: 1.3rem;
+  margin: 1rem 0 1rem 0;
+  font-weight: 700;
+}
+
+.mechanic-card p {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0 0 0.8rem 0;
+}
+
+.mechanic-card p:last-child {
+  margin-bottom: 0;
+}
+
+.mechanic-card strong {
+  color: #00CED1;
+  font-weight: 700;
+}
+
+/* ============ DIAGRAM SUBTITLE ============ */
+
+.diagram-subtitle {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
+  margin: -0.5rem 0 2rem 0;
+  font-weight: 500;
 }
 
 @keyframes fadeInUp {

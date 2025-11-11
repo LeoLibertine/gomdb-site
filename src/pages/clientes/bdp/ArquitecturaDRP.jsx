@@ -342,9 +342,53 @@ const ArquitecturaDRP = () => {
               <p className="option-tagline">Arquitectura avanzada para RPO/RTO de segundos/minutos</p>
             </div>
 
+            {/* Concepto Técnico */}
+            <div className="concept-section">
+              <h3 className="concept-title">📋 Concepto Técnico</h3>
+              <p className="concept-text">
+                El sistema DRP on-premise se mantiene <strong>"caliente" (hot)</strong>, recibiendo un flujo constante de cambios
+                desde Atlas casi en tiempo real. Esto se logra tratando la base de datos como un <strong>productor de eventos</strong>.
+              </p>
+              <p className="concept-text">
+                Esta arquitectura es ideal para sistemas críticos que requieren <strong>RPO y RTO muy bajos</strong> (minutos o segundos),
+                donde la pérdida de datos debe ser mínima y el tiempo de recuperación debe ser casi instantáneo.
+              </p>
+            </div>
+
+            {/* Mecánica de Implementación */}
+            <div className="mechanics-section">
+              <h3 className="mechanics-title">⚙️ Mecánica de Implementación</h3>
+              <div className="mechanics-grid">
+                <div className="mechanic-card">
+                  <div className="mechanic-number">1</div>
+                  <h4>Fuente de Datos</h4>
+                  <p><strong>Atlas Change Streams:</strong> Expone el oplog de Atlas de forma segura, permitiendo suscripción a todos los cambios (inserts, updates, deletes) en tiempo real.</p>
+                </div>
+                <div className="mechanic-card">
+                  <div className="mechanic-number">2</div>
+                  <h4>Pipeline de Eventos</h4>
+                  <p><strong>Consumidor Cloud:</strong> Un microservicio (Lambda/K8s) se suscribe al Change Stream de Atlas.</p>
+                  <p><strong>Cola de Mensajería:</strong> Los eventos se publican en Kafka/RabbitMQ para desacoplar sistemas y proporcionar durabilidad.</p>
+                </div>
+                <div className="mechanic-card">
+                  <div className="mechanic-number">3</div>
+                  <h4>Consumidor On-Prem</h4>
+                  <p>Microservicio on-premise que se suscribe a la cola, traduce eventos y los aplica en el clúster EA local de forma <strong>idempotente</strong>.</p>
+                  <p>Gestiona <strong>resume tokens</strong> y offsets para recuperación ante fallas.</p>
+                </div>
+                <div className="mechanic-card">
+                  <div className="mechanic-number">4</div>
+                  <h4>Estado DRP</h4>
+                  <p>El clúster EA on-prem está <strong>HOT (activo)</strong>, recibiendo y procesando cambios continuamente.</p>
+                  <p>Lag típico: <strong>segundos a minutos</strong> dependiendo del volumen de cambios.</p>
+                </div>
+              </div>
+            </div>
+
             {/* Diagrama Opción 2 */}
             <div className="diagram-container">
-              <h3 className="diagram-title">Arquitectura de Implementación</h3>
+              <h3 className="diagram-title">🏗️ Arquitectura de Implementación</h3>
+              <p className="diagram-subtitle">Pipeline completo de replicación por eventos en tiempo real</p>
 
               <svg className="architecture-diagram hot" viewBox="0 0 1600 800" xmlns="http://www.w3.org/2000/svg">
                 <defs>
