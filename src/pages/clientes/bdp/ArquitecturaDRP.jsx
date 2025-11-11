@@ -359,6 +359,28 @@ const ArquitecturaDRP = () => {
                     <polygon points="0 0, 10 3, 0 6" fill="#00CED1" />
                   </marker>
 
+                  {/* Shared icons from Option 1 */}
+                  <g id="cloud-icon">
+                    <path d="M 0 8 C 0 3.5 3.5 0 8 0 C 10 0 11.8 0.8 13 2 C 14.7 0.8 16.8 0 19 0 C 24 0 28 4 28 9 C 28 9.3 28 9.6 27.9 9.9 C 30.6 10.6 32.5 13 32.5 16 C 32.5 19.6 29.6 22.5 26 22.5 L 7 22.5 C 3.1 22.5 0 19.4 0 15.5 C 0 12.5 1.8 9.9 4.3 8.9 C 4.1 8.6 4 8.3 4 8 Z" fill="#1E90FF" opacity="0.8"/>
+                  </g>
+
+                  <g id="database-icon">
+                    <ellipse cx="12" cy="4" rx="12" ry="4" fill="#00ED64" opacity="0.9"/>
+                    <path d="M 0 4 L 0 12 C 0 14.2 5.4 16 12 16 C 18.6 16 24 14.2 24 12 L 24 4" fill="#00ED64" opacity="0.7"/>
+                    <ellipse cx="12" cy="12" rx="12" ry="4" fill="#00ED64" opacity="0.9"/>
+                  </g>
+
+                  <g id="building-icon">
+                    <rect x="2" y="4" width="20" height="20" rx="1" fill="#FFA500" opacity="0.8"/>
+                    <rect x="5" y="7" width="4" height="4" fill="#0a0e27" opacity="0.5"/>
+                    <rect x="5" y="13" width="4" height="4" fill="#0a0e27" opacity="0.5"/>
+                    <rect x="10" y="7" width="4" height="4" fill="#0a0e27" opacity="0.5"/>
+                    <rect x="10" y="13" width="4" height="4" fill="#0a0e27" opacity="0.5"/>
+                    <rect x="15" y="7" width="4" height="4" fill="#0a0e27" opacity="0.5"/>
+                    <rect x="15" y="13" width="4" height="4" fill="#0a0e27" opacity="0.5"/>
+                    <rect x="8" y="19" width="8" height="5" fill="#0a0e27" opacity="0.7"/>
+                  </g>
+
                   {/* Wave icon for streams */}
                   <g id="wave-icon">
                     <path d="M 0 10 Q 5 5, 10 10 T 20 10" stroke="#00CED1" strokeWidth="2" fill="none"/>
