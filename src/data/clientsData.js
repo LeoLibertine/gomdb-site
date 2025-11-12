@@ -19,6 +19,27 @@ export const CLIENTS_DATA = [
     icon: 'bank',
     content: [
       {
+        title: 'Org Chart Álvaro Carmona - Use Cases MongoDB',
+        description: 'Organigrama VP Servicios de Tecnología con 34 personas mapeadas a casos de uso MongoDB',
+        path: '/clientes/bancolombia/orgchart-alvaro-carmona',
+        type: 'jsx',
+        category: 'Estrategia'
+      },
+      {
+        title: 'Org Chart Fidel Vargas - Payment Ecosystem',
+        description: 'Organigrama VP Payment Ecosystem con 47 personas y use cases de pagos, canales y arquitectura',
+        path: '/clientes/bancolombia/orgchart-fidel-vargas',
+        type: 'jsx',
+        category: 'Estrategia'
+      },
+      {
+        title: 'Org Chart Fidel Vargas - Negocios Digitales',
+        description: 'Organigrama VP Negocios con 28 personas: BaaS, Marketplaces (TU360), ECOs y Bienestar Financiero',
+        path: '/clientes/bancolombia/orgchart-fidel-vargas-negocios',
+        type: 'jsx',
+        category: 'Estrategia'
+      },
+      {
         title: 'MongoDB vs DocumentDB',
         description: 'Comparativa técnica y de costos entre MongoDB Atlas y Amazon DocumentDB',
         path: '/clientes/bancolombia/document-mongo',
