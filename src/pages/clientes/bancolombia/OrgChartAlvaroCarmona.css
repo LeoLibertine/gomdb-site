@@ -100,6 +100,29 @@
   box-shadow: 0 4px 16px rgba(0, 237, 100, 0.15);
 }
 
+/* Force all hero text to be white */
+.org-hero h1,
+.org-hero h2 {
+  font-size: 48px;
+  font-weight: 700;
+  color: #ffffff !important;
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 8px rgba(0, 237, 100, 0.2);
+}
+
+.org-hero h2 {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.org-hero p,
+.org-hero .org-subtitle {
+  font-size: 18px;
+  color: #ffffff !important;
+  line-height: 1.6;
+  margin: 0;
+}
+
 .org-hero-text h1 {
   font-size: 48px;
   font-weight: 700;
@@ -117,7 +140,7 @@
 
 .org-hero-desc {
   font-size: 18px;
-  color: rgba(255, 255, 255, 0.8) !important;
+  color: #ffffff !important;
   line-height: 1.6;
   margin: 0;
 }
@@ -483,11 +506,12 @@
   font-size: 14px;
   color: #00ED64 !important;
   margin: 0 0 6px 0;
+  font-weight: 600;
 }
 
 .webinar-desc {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: #ffffff !important;
   margin: 0;
   line-height: 1.5;
 }
