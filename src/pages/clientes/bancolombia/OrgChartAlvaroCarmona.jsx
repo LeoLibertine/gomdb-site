@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ClientDocumentLayout } from '../../../components/layouts'
 import { CodeBlock, MetricsCard } from '../../../components/shared'
 import {
@@ -10,9 +10,36 @@ import {
   Target as StrategyIcon,
   FileText as DocumentIcon,
   Search as SearchIcon,
-  GitCompare as CompareIcon
+  GitCompare as CompareIcon,
+  ChevronDown,
+  ChevronUp,
+  Users
 } from 'lucide-react'
 import './OrgChartAlvaroCarmona.css'
+
+// Componente colapsable para Managers
+const ManagersSection = ({ directorName, children }) => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <div className="managers-section">
+      <button
+        className="managers-toggle"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <Users size={20} />
+        <span>Ver Managers de {directorName}</span>
+        {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+      </button>
+
+      {isOpen && (
+        <div className="managers-content">
+          {children}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export const OrgChartAlvaroCarmona = () => {
   return (
@@ -177,6 +204,128 @@ export const OrgChartAlvaroCarmona = () => {
             </div>
           </div>
         </div>
+
+        {/* Managers bajo Diana Carolina Pulgarin */}
+        <ManagersSection directorName="Diana Carolina Pulgarin">
+
+          {/* Juan Esteban Tobon Mendez */}
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <IntegrationIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>Juan Esteban Tobon Mendez</h4>
+                <p className="persona-role">Evolución Core Productos Canales</p>
+                <p className="reports-to">Reporta a: Diana Carolina Pulgarin</p>
+              </div>
+            </div>
+
+            <div className="use-case-container compact">
+              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <h5 className="use-case-title">
+                <IntegrationIcon size={18} /> Core Banking Modernization (Strangler Pattern)
+              </h5>
+              <p className="use-case-desc">
+                Desacople gradual del core bancario legacy hacia microservicios, empezando por productos de alta demanda.
+              </p>
+
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Multi-Document ACID:</strong>
+                  <span>Consistencia en transferencias complejas</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Change Streams:</strong>
+                  <span>Sincronización bidireccional core ↔ microservicios</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Modelo Flexible:</strong>
+                  <span>Cuentas y productos sin rigidez relacional</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Natalia Maria Hernandez */}
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <TechIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>Natalia Maria Hernandez</h4>
+                <p className="persona-role">Evolución Digital TI</p>
+                <p className="reports-to">Reporta a: Diana Carolina Pulgarin</p>
+              </div>
+            </div>
+
+            <div className="use-case-container compact">
+              <div className="use-case-badge high-priority">ALTA PRIORIDAD</div>
+              <h5 className="use-case-title">
+                <TechIcon size={18} /> Mobile Banking Backend (App Bancolombia/Nequi)
+              </h5>
+              <p className="use-case-desc">
+                Backend de alto performance para aplicación móvil con capacidad de sincronización offline y alta disponibilidad.
+              </p>
+
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Baja Latencia:</strong>
+                  <span>Queries en milisegundos para millones de usuarios</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Geospatial Queries:</strong>
+                  <span>Cajeros cercanos, sucursales por ubicación</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Alta Disponibilidad:</strong>
+                  <span>Multi-region deployment para 99.99% uptime</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Juan Alejandro Arias */}
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <ArchitectureIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>Juan Alejandro Arias</h4>
+                <p className="persona-role">Modernización Procesos y Ops</p>
+                <p className="reports-to">Reporta a: Diana Carolina Pulgarin</p>
+              </div>
+            </div>
+
+            <div className="use-case-container compact">
+              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <h5 className="use-case-title">
+                <ArchitectureIcon size={18} /> Business Process Management (BPM) & Workflow
+              </h5>
+              <p className="use-case-desc">
+                Motor de workflows complejos (aprobación de créditos, onboarding) con seguimiento de estados, SLAs y auditoría.
+              </p>
+
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>State Machine Pattern:</strong>
+                  <span>Modelado natural de estados y transiciones</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Change Streams:</strong>
+                  <span>Notificaciones automáticas de cambios de estado</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>TTL Indexes:</strong>
+                  <span>Escalamiento automático por SLA vencido</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </ManagersSection>
 
         {/* Juan Carlos Sepúlveda */}
         <div className="persona-card director-card">
