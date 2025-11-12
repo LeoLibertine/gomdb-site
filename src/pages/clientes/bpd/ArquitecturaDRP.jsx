@@ -11,7 +11,7 @@ const ArquitecturaDRP = () => {
       <header className="doc-header">
         <div className="header-bg"></div>
         <div className="header-content">
-          <div className="client-badge">BDP</div>
+          <div className="client-badge">BPD</div>
           <h1 className="doc-title">Arquitecturas DRP Híbrido</h1>
           <p className="doc-subtitle">MongoDB Atlas a On-Premise</p>
           <div className="doc-meta">
@@ -750,7 +750,7 @@ const ArquitecturaDRP = () => {
           <div className="footer-content">
             <div className="footer-logo">
               <div className="mongo-logo">MongoDB</div>
-              <div className="client-name">BDP</div>
+              <div className="client-name">BPD</div>
             </div>
             <div className="footer-meta">
               <p>Documento Técnico de Arquitectura</p>

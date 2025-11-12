@@ -10,8 +10,8 @@ import { OrgChartFidelVargas } from './pages/clientes/bancolombia/OrgChartFidelV
 import { OrgChartFidelVargasNegocios } from './pages/clientes/bancolombia/OrgChartFidelVargasNegocios';
 import DocumentoDemo from './pages/clientes/demo/DocumentoDemo';
 import Cosmica from './pages/Cosmica';
-import ArquitecturaDRP from './pages/clientes/bdp/ArquitecturaDRP';
-import DRPHibrido from './pages/clientes/bdp/DRPHibrido';
+import ArquitecturaDRP from './pages/clientes/bpd/ArquitecturaDRP';
+import DRPHibrido from './pages/clientes/bpd/DRPHibrido';
 import NotFound from './components/NotFound';
 import { ProtectedRoute } from './components/auth';
 import './styles/gomdb-global.css';
@@ -73,17 +73,17 @@ function App() {
         }
       />
       <Route
-        path="/clientes/bdp/arquitectura-drp"
+        path="/clientes/bpd/arquitectura-drp"
         element={
-          <ProtectedRoute client="bdp">
+          <ProtectedRoute client="bpd">
             <ArquitecturaDRP />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/clientes/bdp/drp-hibrido"
+        path="/clientes/bpd/drp-hibrido"
         element={
-          <ProtectedRoute client="bdp">
+          <ProtectedRoute client="bpd">
             <DRPHibrido />
           </ProtectedRoute>
         }

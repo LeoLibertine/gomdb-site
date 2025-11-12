@@ -382,31 +382,31 @@ export const CLIENTS_DATA = [
     ]
   },
   {
-    id: 'bdp',
-    name: 'BDP (Banco de Producción)',
+    id: 'bpd',
+    name: 'BPD (Banco Popular Dominicano)',
     industry: 'Banca & Servicios Financieros',
-    country: 'Ecuador',
-    description: 'Banco de desarrollo productivo del Ecuador que financia sectores estratégicos de la economía.',
+    country: 'República Dominicana',
+    description: 'Banco Popular Dominicano, líder en el mercado financiero dominicano con amplia presencia en el Caribe.',
     icon: 'bank',
     content: [
       {
         title: 'Configuración de Réplica',
         description: 'Setup de replica sets y alta disponibilidad',
-        path: '/clientes/bdp/bdp-replica.html',
+        path: '/clientes/bpd/bpd-replica.html',
         type: 'html',
         category: 'Configuración'
       },
       {
         title: 'Arquitecturas DRP Híbrido',
         description: 'Estrategias de Disaster Recovery desde Atlas a On-Premise con análisis de RPO/RTO',
-        path: '/clientes/bdp/arquitectura-drp',
+        path: '/clientes/bpd/arquitectura-drp',
         type: 'jsx',
         category: 'Arquitectura'
       },
       {
         title: 'Estrategias DRP Híbrido - Guía Simplificada',
         description: 'Guía estratégica simplificada de DRP Híbrido: Bóveda de Respaldo vs Espejo en Vivo, con alternativas a Kafka',
-        path: '/clientes/bdp/drp-hibrido',
+        path: '/clientes/bpd/drp-hibrido',
         type: 'jsx',
         category: 'Estrategia'
       }

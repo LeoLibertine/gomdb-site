@@ -203,7 +203,7 @@ const DRPHibrido = () => {
         <div className="header-content">
           <div className="header-badge">
             <Shield size={16} />
-            <span>BDP</span>
+            <span>BPD</span>
           </div>
           <h1 className="header-title">Estrategias de DRP Híbrido</h1>
           <p className="header-subtitle">Atlas a On-Premise: Guía Estratégica Simplificada</p>
@@ -631,7 +631,7 @@ const DRPHibrido = () => {
               <span>MongoDB Professional Services</span>
             </div>
             <div className="footer-meta">
-              <span>Documento Técnico - BDP</span>
+              <span>Documento Técnico - BPD</span>
               <span>•</span>
               <span>Estrategias DRP Híbrido</span>
               <span>•</span>

@@ -30,7 +30,7 @@ export const ACCESS_CODES = {
   'kushki': 'KUSH2025',
   'segurosbolivar': 'SEG2025',
   'payway': 'PAY2025',
-  'bdp': 'BDP2025',
+  'bpd': 'BPD2025',
   'coppel': 'COP2025',
   'falape': 'FAL2025',
   'bintec': 'BIN2025',
