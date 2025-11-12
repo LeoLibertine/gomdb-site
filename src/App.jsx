@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import GoMDBLanding from './components/gomdblanding';
 import DocumentMongo from './pages/Clientes/cencosud/document-mongo';
 import BancolombiaDocument from './pages/Clientes/Bancolombia/document-mongo';
+import { OrgChartAlvaroCarmona } from './pages/clientes/bancolombia/OrgChartAlvaroCarmona';
 import DocumentoDemo from './pages/clientes/demo/DocumentoDemo';
 import NotFound from './components/NotFound';
 import { ProtectedRoute } from './components/auth';
@@ -30,6 +31,14 @@ function App() {
         element={
           <ProtectedRoute client="bancolombia">
             <BancolombiaDocument />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/clientes/bancolombia/orgchart-alvaro-carmona"
+        element={
+          <ProtectedRoute client="bancolombia">
+            <OrgChartAlvaroCarmona />
           </ProtectedRoute>
         }
       />
