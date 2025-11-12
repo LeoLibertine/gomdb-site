@@ -45,7 +45,15 @@ const ManagersSection = ({ directorName, children }) => {
 
 export const OrgChartFidelVargas = () => {
   return (
-    <ClientDocumentLayout>
+    <ClientDocumentLayout
+      client="Bancolombia"
+      title="Org Chart Fidel Vargas - Use Cases MongoDB"
+      subtitle="VP Servicios de Tecnología - Payment Ecosystem"
+      author="Leo Alarcón"
+      date="2025-01-12"
+      tags={['orgchart', 'use-cases', 'payment-hub', 'arquitectura']}
+      showExportButton={true}
+    >
       {/* Hero Section */}
       <div className="org-hero">
         <div className="org-hero-icon">
