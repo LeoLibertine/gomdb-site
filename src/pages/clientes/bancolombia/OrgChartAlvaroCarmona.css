@@ -1,5 +1,15 @@
 /* Org Chart Álvaro Carmona - Premium Styles */
 
+/* Force proper background for org chart pages */
+.client-document-layout {
+  background: #0a0e27 !important;
+  min-height: 100vh;
+}
+
+.document-content {
+  background: transparent !important;
+}
+
 /* Override MetricsCard for dark backgrounds */
 .org-section .metrics-card {
   background: rgba(0, 17, 26, 0.8) !important;
