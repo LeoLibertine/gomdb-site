@@ -26,8 +26,15 @@ import {
 import './OrgChartAlvaroCarmona.css'
 
 // Componente colapsable para Managers
-const ManagersSection = ({ directorName, children }) => {
+const ManagersSection = ({ directorName, children, searchTerm = '' }) => {
   const [isOpen, setIsOpen] = useState(false)
+
+  // Auto-expand si hay búsqueda activa
+  React.useEffect(() => {
+    if (searchTerm && searchTerm.length > 0) {
+      setIsOpen(true)
+    }
+  }, [searchTerm])
 
   return (
     <div className="managers-section">
@@ -39,6 +46,7 @@ const ManagersSection = ({ directorName, children }) => {
         <span>Ver Managers de {directorName}</span>
         {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
       </button>
+
       {isOpen && (
         <div className="managers-content">
           {children}
@@ -49,6 +57,26 @@ const ManagersSection = ({ directorName, children }) => {
 }
 
 export const OrgChartFidelVargasNegocios = () => {
+  const [searchTerm, setSearchTerm] = useState('')
+
+  // Helper para determinar si una persona coincide con la búsqueda
+  const matchesSearch = (personName) => {
+    if (!searchTerm) return true
+    return personName.toLowerCase().includes(searchTerm.toLowerCase())
+  }
+
+  // Helper para resaltar texto que coincide con la búsqueda
+  const highlightText = (text) => {
+    if (!searchTerm || !text) return text
+
+    const regex = new RegExp(`(${searchTerm})`, 'gi')
+    const parts = text.split(regex)
+
+    return parts.map((part, index) =>
+      regex.test(part) ? <mark key={index} className="highlight">{part}</mark> : part
+    )
+  }
+
   return (
     <ClientDocumentLayout
       client="Bancolombia"
@@ -70,6 +98,34 @@ export const OrgChartFidelVargasNegocios = () => {
         <p>Casos de Uso Estratégicos de MongoDB por Persona - Enfoque en nuevos negocios digitales: Marketplaces, Banking-as-a-Service, Ecosistemas Digitales y Productos Especializados.</p>
       </div>
 
+      {/* Search Bar */}
+      <div className="org-search-container">
+        <div className="org-search-wrapper">
+          <SearchIcon size={20} className="search-icon" />
+          <input
+            type="text"
+            className="org-search-input"
+            placeholder="Buscar persona por nombre..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {searchTerm && (
+            <button
+              className="search-clear"
+              onClick={() => setSearchTerm('')}
+              aria-label="Limpiar búsqueda"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        {searchTerm && (
+          <p className="search-hint">
+            Buscando: "<strong>{searchTerm}</strong>" - Las secciones de managers se expandirán automáticamente
+          </p>
+        )}
+      </div>
+
       {/* VP SECTION */}
       <div className="org-section">
         <div className="section-header">
@@ -77,13 +133,13 @@ export const OrgChartFidelVargasNegocios = () => {
           <h2>VP LEVEL</h2>
         </div>
 
-        <div className="persona-card vp-card">
+        <div className={`persona-card vp-card ${!matchesSearch('Fidel Andres Vargas Londoño') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <BusinessIcon size={40} style={{ color: '#5644D4' }} />
             </div>
             <div className="persona-info">
-              <h3>Fidel Andres Vargas Londoño</h3>
+              <h3>{highlightText('Fidel Andres Vargas Londoño')}</h3>
               <p className="persona-role">Vicepresidente Tecnología para Negocios</p>
             </div>
           </div>
@@ -124,13 +180,13 @@ export const OrgChartFidelVargasNegocios = () => {
         </div>
 
         {/* Director 1: Mariluz Echeverri */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Mariluz De La Inmaculada Echeverri') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <GlobeIcon size={32} style={{ color: '#00ED64' }} />
             </div>
             <div className="persona-info">
-              <h3>Mariluz De La Inmaculada Echeverri</h3>
+              <h3>{highlightText('Mariluz De La Inmaculada Echeverri')}</h3>
               <p className="persona-role">Líder Técnico ECO DIG y TEC Bazar</p>
             </div>
           </div>
@@ -187,14 +243,14 @@ export const OrgChartFidelVargasNegocios = () => {
           </div>
 
           {/* Managers bajo Mariluz */}
-          <ManagersSection directorName="Mariluz Echeverri">
-            <div className="manager-card">
+          <ManagersSection directorName="Mariluz Echeverri" searchTerm={searchTerm}>
+            <div className={`manager-card ${!matchesSearch('Edwin Torres Cardona') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <CodeIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Edwin Torres Cardona</h4>
+                  <h4>{highlightText('Edwin Torres Cardona')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC EXP Digital 3 TI</p>
                   <p className="reports-to">Reports to: Mariluz Echeverri</p>
                 </div>
@@ -210,13 +266,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('Sebastian Amezquita') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <CodeIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Sebastian Amezquita</h4>
+                  <h4>{highlightText('Sebastian Amezquita')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC Portal Contenidos 1 TI</p>
                   <p className="reports-to">Reports to: Mariluz Echeverri</p>
                 </div>
@@ -232,13 +288,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('Yohana Monsalve Suarez') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <CodeIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Yohana Monsalve Suarez</h4>
+                  <h4>{highlightText('Yohana Monsalve Suarez')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC EXP Digital 4 TI</p>
                   <p className="reports-to">Reports to: Mariluz Echeverri</p>
                 </div>
@@ -254,13 +310,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('Fredy Yoana Roman') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <CodeIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Fredy Yoana Roman</h4>
+                  <h4>{highlightText('Fredy Yoana Roman')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC Portal Contenidos 2 TI</p>
                   <p className="reports-to">Reports to: Mariluz Echeverri</p>
                 </div>
@@ -276,13 +332,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('Maria Alejandra Pareja Velez') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <CodeIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Maria Alejandra Pareja Velez</h4>
+                  <h4>{highlightText('Maria Alejandra Pareja Velez')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC Mecánico TI</p>
                   <p className="reports-to">Reports to: Mariluz Echeverri</p>
                 </div>
@@ -298,13 +354,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('Juan Arturo Villegas Gomez') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <CodeIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Juan Arturo Villegas Gomez</h4>
+                  <h4>{highlightText('Juan Arturo Villegas Gomez')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC EXP Digital 1 TI</p>
                   <p className="reports-to">Reports to: Mariluz Echeverri</p>
                 </div>
@@ -320,13 +376,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('Camila Andrea Arango') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <CodeIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Camila Andrea Arango</h4>
+                  <h4>{highlightText('Camila Andrea Arango')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC EXP Digital 2 TI</p>
                   <p className="reports-to">Reports to: Mariluz Echeverri</p>
                 </div>
@@ -342,13 +398,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('Alejandro Botero Agudelo') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <CodeIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Alejandro Botero Agudelo</h4>
+                  <h4>{highlightText('Alejandro Botero Agudelo')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC EXP Digital 3 TI</p>
                   <p className="reports-to">Reports to: Mariluz Echeverri</p>
                 </div>
@@ -364,13 +420,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('David Alonso Silva') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <CodeIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>David Alonso Silva</h4>
+                  <h4>{highlightText('David Alonso Silva')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC EXP Digital 3 TI</p>
                   <p className="reports-to">Reports to: Mariluz Echeverri</p>
                 </div>
@@ -386,13 +442,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('Adriana Maria Botero') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <CodeIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Adriana Maria Botero</h4>
+                  <h4>{highlightText('Adriana Maria Botero')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC EXP Digital 1 TI</p>
                   <p className="reports-to">Reports to: Mariluz Echeverri</p>
                 </div>
@@ -411,13 +467,13 @@ export const OrgChartFidelVargasNegocios = () => {
         </div>
 
         {/* Director 2: Andres Molina */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Andres Felipe Molina Sanabria') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <HomeIcon size={32} style={{ color: '#00ED64' }} />
             </div>
             <div className="persona-info">
-              <h3>Andres Felipe Molina Sanabria</h3>
+              <h3>{highlightText('Andres Felipe Molina Sanabria')}</h3>
               <p className="persona-role">Líder Técnico ECO TU360 Inmobiliario TI</p>
             </div>
           </div>
@@ -470,14 +526,14 @@ export const OrgChartFidelVargasNegocios = () => {
           </div>
 
           {/* Managers bajo Andres Molina */}
-          <ManagersSection directorName="Andres Molina">
-            <div className="manager-card">
+          <ManagersSection directorName="Andres Molina" searchTerm={searchTerm}>
+            <div className={`manager-card ${!matchesSearch('Juan Felipe Londoño') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <HomeIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Juan Felipe Londoño</h4>
+                  <h4>{highlightText('Juan Felipe Londoño')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento ECO TU360 Inmobiliario 1 TI</p>
                   <p className="reports-to">Reports to: Andres Molina</p>
                 </div>
@@ -493,13 +549,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('Laura Escobar Cortez') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <HomeIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Laura Escobar Cortez</h4>
+                  <h4>{highlightText('Laura Escobar Cortez')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento ECO TU360 Inmobiliario 1 TI</p>
                   <p className="reports-to">Reports to: Andres Molina</p>
                 </div>
@@ -518,13 +574,13 @@ export const OrgChartFidelVargasNegocios = () => {
         </div>
 
         {/* Director 3: Christian Restrepo */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Christian Alexander Restrepo Hernandez') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <HeartIcon size={32} style={{ color: '#00ED64' }} />
             </div>
             <div className="persona-info">
-              <h3>Christian Alexander Restrepo Hernandez</h3>
+              <h3>{highlightText('Christian Alexander Restrepo Hernandez')}</h3>
               <p className="persona-role">Líder Técnico ECO Bienestar Financiero TI</p>
             </div>
           </div>
@@ -577,14 +633,14 @@ export const OrgChartFidelVargasNegocios = () => {
           </div>
 
           {/* Managers bajo Christian Restrepo */}
-          <ManagersSection directorName="Christian Restrepo">
-            <div className="manager-card">
+          <ManagersSection directorName="Christian Restrepo" searchTerm={searchTerm}>
+            <div className={`manager-card ${!matchesSearch('Juan Camilo Agudelo') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <HeartIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Juan Camilo Agudelo</h4>
+                  <h4>{highlightText('Juan Camilo Agudelo')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC Bienestar Financiero 2 TI</p>
                   <p className="reports-to">Reports to: Christian Restrepo</p>
                 </div>
@@ -600,13 +656,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('Cristian Vargas Ramirez') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <HeartIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Cristian Vargas Ramirez</h4>
+                  <h4>{highlightText('Cristian Vargas Ramirez')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC Bienestar Financiero 1 TI</p>
                   <p className="reports-to">Reports to: Christian Restrepo</p>
                 </div>
@@ -625,13 +681,13 @@ export const OrgChartFidelVargasNegocios = () => {
         </div>
 
         {/* Director 4: Guido Bautista */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Guido Andres Bautista Molfin') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <ApiIcon size={32} style={{ color: '#00ED64' }} />
             </div>
             <div className="persona-info">
-              <h3>Guido Andres Bautista Molfin</h3>
+              <h3>{highlightText('Guido Andres Bautista Molfin')}</h3>
               <p className="persona-role">Líder Técnico ECO Finanzas BAAS TI</p>
             </div>
           </div>
@@ -684,14 +740,14 @@ export const OrgChartFidelVargasNegocios = () => {
           </div>
 
           {/* Managers bajo Guido Bautista */}
-          <ManagersSection directorName="Guido Bautista">
-            <div className="manager-card">
+          <ManagersSection directorName="Guido Bautista" searchTerm={searchTerm}>
+            <div className={`manager-card ${!matchesSearch('Maria Victoria Ospina') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <ApiIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Maria Victoria Ospina</h4>
+                  <h4>{highlightText('Maria Victoria Ospina')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC Finanzas Abiertas</p>
                   <p className="reports-to">Reports to: Guido Bautista</p>
                 </div>
@@ -707,13 +763,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('Andres Esteban Mejia') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <ApiIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Andres Esteban Mejia</h4>
+                  <h4>{highlightText('Andres Esteban Mejia')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento Marketplace TI</p>
                   <p className="reports-to">Reports to: Guido Bautista</p>
                 </div>
@@ -729,13 +785,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('Johvany Esteban') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <ApiIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Johvany Esteban</h4>
+                  <h4>{highlightText('Johvany Esteban')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC BAAS TI</p>
                   <p className="reports-to">Reports to: Guido Bautista</p>
                 </div>
@@ -754,13 +810,13 @@ export const OrgChartFidelVargasNegocios = () => {
         </div>
 
         {/* Director 5: Laura Villa */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Laura Maria Villa Mendoza') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <CartIcon size={32} style={{ color: '#00ED64' }} />
             </div>
             <div className="persona-info">
-              <h3>Laura Maria Villa Mendoza</h3>
+              <h3>{highlightText('Laura Maria Villa Mendoza')}</h3>
               <p className="persona-role">Líder Técnico ECO Marketplaces TU360 Compras TI</p>
             </div>
           </div>
@@ -812,14 +868,14 @@ export const OrgChartFidelVargasNegocios = () => {
           </div>
 
           {/* Managers bajo Laura Villa */}
-          <ManagersSection directorName="Laura Villa">
-            <div className="manager-card">
+          <ManagersSection directorName="Laura Villa" searchTerm={searchTerm}>
+            <div className={`manager-card ${!matchesSearch('Arley David Montoya') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <CartIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Arley David Montoya</h4>
+                  <h4>{highlightText('Arley David Montoya')}</h4>
                   <p className="persona-role">Líder Línea de Conocimiento ECO TU360 Compras TI</p>
                   <p className="reports-to">Reports to: Laura Villa</p>
                 </div>
@@ -835,13 +891,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('Christian Camilo Duque') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <CartIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Christian Camilo Duque</h4>
+                  <h4>{highlightText('Christian Camilo Duque')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC TU360 Compras 1 TI</p>
                   <p className="reports-to">Reports to: Laura Villa</p>
                 </div>
@@ -860,13 +916,13 @@ export const OrgChartFidelVargasNegocios = () => {
         </div>
 
         {/* Director 6: Carolina Marin */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Carolina Marin Salazar') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <CarIcon size={32} style={{ color: '#00ED64' }} />
             </div>
             <div className="persona-info">
-              <h3>Carolina Marin Salazar</h3>
+              <h3>{highlightText('Carolina Marin Salazar')}</h3>
               <p className="persona-role">Líder Técnico ECO TU360 Movilidad TI</p>
             </div>
           </div>
@@ -918,14 +974,14 @@ export const OrgChartFidelVargasNegocios = () => {
           </div>
 
           {/* Managers bajo Carolina Marin */}
-          <ManagersSection directorName="Carolina Marin">
-            <div className="manager-card">
+          <ManagersSection directorName="Carolina Marin" searchTerm={searchTerm}>
+            <div className={`manager-card ${!matchesSearch('Ronald Andres Suarez') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <CarIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Ronald Andres Suarez</h4>
+                  <h4>{highlightText('Ronald Andres Suarez')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento FC ECO TU360 Movilidad TI</p>
                   <p className="reports-to">Reports to: Carolina Marin</p>
                 </div>
@@ -944,13 +1000,13 @@ export const OrgChartFidelVargasNegocios = () => {
         </div>
 
         {/* Director 7: Oscar Cardona */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Oscar Eduardo Cardona Gonzalez') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <BusinessIcon size={32} style={{ color: '#00ED64' }} />
             </div>
             <div className="persona-info">
-              <h3>Oscar Eduardo Cardona Gonzalez</h3>
+              <h3>{highlightText('Oscar Eduardo Cardona Gonzalez')}</h3>
               <p className="persona-role">Líder Técnico ECO NEG Digitales y Transversales</p>
             </div>
           </div>
@@ -999,14 +1055,14 @@ export const OrgChartFidelVargasNegocios = () => {
           </div>
 
           {/* Managers bajo Oscar Cardona */}
-          <ManagersSection directorName="Oscar Cardona">
-            <div className="manager-card">
+          <ManagersSection directorName="Oscar Cardona" searchTerm={searchTerm}>
+            <div className={`manager-card ${!matchesSearch('Marvin Andres Marin Valencia') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <DatabaseIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>Marvin Andres Marin Valencia</h4>
+                  <h4>{highlightText('Marvin Andres Marin Valencia')}</h4>
                   <p className="persona-role">Líder Línea de Conocimiento ECO Transversal TI</p>
                   <p className="reports-to">Reports to: Oscar Cardona</p>
                 </div>
@@ -1022,13 +1078,13 @@ export const OrgChartFidelVargasNegocios = () => {
               </div>
             </div>
 
-            <div className="manager-card">
+            <div className={`manager-card ${!matchesSearch('David Alexander Lopez') ? 'search-hidden' : ''}`}>
               <div className="persona-header">
                 <div className="persona-avatar manager-avatar">
                   <StoreIcon size={24} style={{ color: '#5644D4' }} />
                 </div>
                 <div className="persona-info">
-                  <h4>David Alexander Lopez</h4>
+                  <h4>{highlightText('David Alexander Lopez')}</h4>
                   <p className="persona-role">Líder Línea Conocimiento Marketplace TI</p>
                   <p className="reports-to">Reports to: Oscar Cardona</p>
                 </div>

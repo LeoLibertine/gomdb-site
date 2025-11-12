@@ -20,8 +20,15 @@ import {
 import './OrgChartAlvaroCarmona.css'
 
 // Componente colapsable para Managers
-const ManagersSection = ({ directorName, children }) => {
+const ManagersSection = ({ directorName, children, searchTerm = '' }) => {
   const [isOpen, setIsOpen] = useState(false)
+
+  // Auto-expand si hay búsqueda activa
+  React.useEffect(() => {
+    if (searchTerm && searchTerm.length > 0) {
+      setIsOpen(true)
+    }
+  }, [searchTerm])
 
   return (
     <div className="managers-section">
@@ -44,6 +51,26 @@ const ManagersSection = ({ directorName, children }) => {
 }
 
 export const OrgChartFidelVargas = () => {
+  const [searchTerm, setSearchTerm] = useState('')
+
+  // Helper para determinar si una persona coincide con la búsqueda
+  const matchesSearch = (personName) => {
+    if (!searchTerm) return true
+    return personName.toLowerCase().includes(searchTerm.toLowerCase())
+  }
+
+  // Helper para resaltar texto que coincide con la búsqueda
+  const highlightText = (text) => {
+    if (!searchTerm || !text) return text
+
+    const regex = new RegExp(`(${searchTerm})`, 'gi')
+    const parts = text.split(regex)
+
+    return parts.map((part, index) =>
+      regex.test(part) ? <mark key={index} className="highlight">{part}</mark> : part
+    )
+  }
+
   return (
     <ClientDocumentLayout
       client="Bancolombia"
@@ -68,6 +95,34 @@ export const OrgChartFidelVargas = () => {
         </p>
       </div>
 
+      {/* Search Bar */}
+      <div className="org-search-container">
+        <div className="org-search-wrapper">
+          <SearchIcon size={20} className="search-icon" />
+          <input
+            type="text"
+            className="org-search-input"
+            placeholder="Buscar persona por nombre..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {searchTerm && (
+            <button
+              className="search-clear"
+              onClick={() => setSearchTerm('')}
+              aria-label="Limpiar búsqueda"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        {searchTerm && (
+          <p className="search-hint">
+            Buscando: "<strong>{searchTerm}</strong>" - Las secciones de managers se expandirán automáticamente
+          </p>
+        )}
+      </div>
+
       {/* VP Level */}
       <section className="org-section">
         <div className="section-header">
@@ -76,13 +131,13 @@ export const OrgChartFidelVargas = () => {
         </div>
 
         {/* Fidel Vargas */}
-        <div className="persona-card vp-card">
+        <div className={`persona-card vp-card ${!matchesSearch('Fidel Andres Vargas Londoño') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar vp-avatar">
               <BankIcon size={48} />
             </div>
             <div className="persona-info">
-              <h3>Fidel Andres Vargas Londoño</h3>
+              <h3>{highlightText('Fidel Andres Vargas Londoño')}</h3>
               <p className="persona-role">VP Servicios de Tecnología</p>
             </div>
           </div>
@@ -138,13 +193,13 @@ export const OrgChartFidelVargas = () => {
         </div>
 
         {/* Luis Gabriel Correa */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Luis Gabriel Correa Gutiérrez') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <IntegrationIcon size={42} />
             </div>
             <div className="persona-info">
-              <h3>Luis Gabriel Correa Gutiérrez</h3>
+              <h3>{highlightText('Luis Gabriel Correa Gutiérrez')}</h3>
               <p className="persona-role">Líder Entorno Canales y Clientes</p>
             </div>
           </div>
@@ -198,16 +253,16 @@ export const OrgChartFidelVargas = () => {
         </div>
 
         {/* Managers bajo Luis Gabriel Correa */}
-        <ManagersSection directorName="Luis Gabriel Correa">
+        <ManagersSection directorName="Luis Gabriel Correa" searchTerm={searchTerm}>
 
           {/* Laura Lily Villa Cardona */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Laura Lily Villa Cardona') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <TechIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Laura Lily Villa Cardona</h4>
+                <h4>{highlightText('Laura Lily Villa Cardona')}</h4>
                 <p className="persona-role">Habilitador Distri Multicanal</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
@@ -234,13 +289,13 @@ export const OrgChartFidelVargas = () => {
           </div>
 
           {/* Maria Jose Torres Pertuz */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Maria Jose Torres Pertuz') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <DocumentIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Maria Jose Torres Pertuz</h4>
+                <h4>{highlightText('Maria Jose Torres Pertuz')}</h4>
                 <p className="persona-role">Distrib A Distancia (Video Banking)</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
@@ -267,13 +322,13 @@ export const OrgChartFidelVargas = () => {
           </div>
 
           {/* Santiago Zuluaga */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Santiago Zuluaga Zuluaga') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <SearchIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Santiago Zuluaga Zuluaga</h4>
+                <h4>{highlightText('Santiago Zuluaga Zuluaga')}</h4>
                 <p className="persona-role">Conocimiento Cliente TI</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
@@ -300,13 +355,13 @@ export const OrgChartFidelVargas = () => {
           </div>
 
           {/* Cindy Johana Castaño */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Cindy Johana Castaño') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <DocumentIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Cindy Johana Castaño</h4>
+                <h4>{highlightText('Cindy Johana Castaño')}</h4>
                 <p className="persona-role">Ciclo de Crédito</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
@@ -333,13 +388,13 @@ export const OrgChartFidelVargas = () => {
           </div>
 
           {/* David Aguirre */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('David Aguirre') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <TechIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>David Aguirre</h4>
+                <h4>{highlightText('David Aguirre')}</h4>
                 <p className="persona-role">Galaxia Modern Canales TI</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
@@ -366,13 +421,13 @@ export const OrgChartFidelVargas = () => {
           </div>
 
           {/* Jose Jaime Tllano Vega */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Jose Jaime Tllano Vega') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <IntegrationIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Jose Jaime Tllano Vega</h4>
+                <h4>{highlightText('Jose Jaime Tllano Vega')}</h4>
                 <p className="persona-role">Distribución Física TI</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
@@ -399,13 +454,13 @@ export const OrgChartFidelVargas = () => {
           </div>
 
           {/* Millerlley Gonzalez Garcia */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Millerlley Gonzalez Garcia') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <TechIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Millerlley Gonzalez Garcia</h4>
+                <h4>{highlightText('Millerlley Gonzalez Garcia')}</h4>
                 <p className="persona-role">Distribución Digital</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
@@ -432,13 +487,13 @@ export const OrgChartFidelVargas = () => {
           </div>
 
           {/* Lina Maria Herrera Castaño */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Lina Maria Herrera Castaño') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <IntegrationIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Lina Maria Herrera Castaño</h4>
+                <h4>{highlightText('Lina Maria Herrera Castaño')}</h4>
                 <p className="persona-role">Distribución Digital SNAS TI</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
@@ -467,13 +522,13 @@ export const OrgChartFidelVargas = () => {
         </ManagersSection>
 
         {/* Lina Maria Vergara */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Lina Maria Vergara Villarraga') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <PaymentIcon size={42} />
             </div>
             <div className="persona-info">
-              <h3>Lina Maria Vergara Villarraga</h3>
+              <h3>{highlightText('Lina Maria Vergara Villarraga')}</h3>
               <p className="persona-role">Líder Payment Service Hub</p>
             </div>
           </div>
@@ -538,13 +593,13 @@ export const OrgChartFidelVargas = () => {
         </div>
 
         {/* Managers bajo Lina Maria Vergara - Payment Hub */}
-        <ManagersSection directorName="Lina Maria Vergara">
+        <ManagersSection directorName="Lina Maria Vergara" searchTerm={searchTerm}>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Jorge Valderrama Beta') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><PaymentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Jorge Valderrama Beta</h4>
+                <h4>{highlightText('Jorge Valderrama Beta')}</h4>
                 <p className="persona-role">Factoring TI</p>
                 <p className="reports-to">Reporta a: Lina Maria Vergara</p>
               </div>
@@ -556,11 +611,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Diego Jose Moreno Rincon') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><PaymentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Diego Jose Moreno Rincon</h4>
+                <h4>{highlightText('Diego Jose Moreno Rincon')}</h4>
                 <p className="persona-role">Aceptación SLNS Pago Internacional</p>
                 <p className="reports-to">Reporta a: Lina Maria Vergara</p>
               </div>
@@ -572,11 +627,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Andres Arias') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><StrategyIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Andres Arias</h4>
+                <h4>{highlightText('Andres Arias')}</h4>
                 <p className="persona-role">Pricing TI</p>
                 <p className="reports-to">Reporta a: Lina Maria Vergara</p>
               </div>
@@ -588,11 +643,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Sandra Milena Crespo') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><DocumentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Sandra Milena Crespo</h4>
+                <h4>{highlightText('Sandra Milena Crespo')}</h4>
                 <p className="persona-role">Inmobiliario</p>
                 <p className="reports-to">Reporta a: Lina Maria Vergara</p>
               </div>
@@ -604,11 +659,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Andres Felipe Isaza Vergara') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><DocumentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Andres Felipe Isaza Vergara</h4>
+                <h4>{highlightText('Andres Felipe Isaza Vergara')}</h4>
                 <p className="persona-role">Leasing Renta y Uso</p>
                 <p className="reports-to">Reporta a: Lina Maria Vergara</p>
               </div>
@@ -620,11 +675,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Adriana Patricia') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><DocumentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Adriana Patricia</h4>
+                <h4>{highlightText('Adriana Patricia')}</h4>
                 <p className="persona-role">Seguros TI</p>
                 <p className="reports-to">Reporta a: Lina Maria Vergara</p>
               </div>
@@ -636,11 +691,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Mauricio Alexis Mesa') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><PaymentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Mauricio Alexis Mesa</h4>
+                <h4>{highlightText('Mauricio Alexis Mesa')}</h4>
                 <p className="persona-role">Financiación y Proyectos TI</p>
                 <p className="reports-to">Reporta a: Lina Maria Vergara</p>
               </div>
@@ -652,11 +707,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Juan Camilo Largo Gomez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><WalletIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Juan Camilo Largo Gomez</h4>
+                <h4>{highlightText('Juan Camilo Largo Gomez')}</h4>
                 <p className="persona-role">Medios de Pago</p>
                 <p className="reports-to">Reporta a: Lina Maria Vergara</p>
               </div>
@@ -668,11 +723,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Yuly Andrea Hernandez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><PaymentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Yuly Andrea Hernandez</h4>
+                <h4>{highlightText('Yuly Andrea Hernandez')}</h4>
                 <p className="persona-role">Transferencias Nvex SIST Pago</p>
                 <p className="reports-to">Reporta a: Lina Maria Vergara</p>
               </div>
@@ -684,11 +739,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Cristian Hasbid Herrera') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><PaymentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Cristian Hasbid Herrera</h4>
+                <h4>{highlightText('Cristian Hasbid Herrera')}</h4>
                 <p className="persona-role">Cash Management TI</p>
                 <p className="reports-to">Reporta a: Lina Maria Vergara</p>
               </div>
@@ -700,11 +755,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Luis Fernando Arbelaez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><PaymentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Luis Fernando Arbelaez</h4>
+                <h4>{highlightText('Luis Fernando Arbelaez')}</h4>
                 <p className="persona-role">Depósitos y CTAS</p>
                 <p className="reports-to">Reporta a: Lina Maria Vergara</p>
               </div>
@@ -716,11 +771,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Miguel Leonardo Alvarado') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><IntegrationIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Miguel Leonardo Alvarado</h4>
+                <h4>{highlightText('Miguel Leonardo Alvarado')}</h4>
                 <p className="persona-role">Serv Estratégicos Negocio LRU TI</p>
                 <p className="reports-to">Reporta a: Lina Maria Vergara</p>
               </div>
@@ -735,13 +790,13 @@ export const OrgChartFidelVargas = () => {
         </ManagersSection>
 
         {/* Felipe Restrepo */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Felipe Restrepo Fernandez') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <InvestmentIcon size={42} />
             </div>
             <div className="persona-info">
-              <h3>Felipe Restrepo Fernandez</h3>
+              <h3>{highlightText('Felipe Restrepo Fernandez')}</h3>
               <p className="persona-role">Líder Productos Especializados</p>
             </div>
           </div>
@@ -790,13 +845,13 @@ export const OrgChartFidelVargas = () => {
         </div>
 
         {/* Managers bajo Felipe Restrepo */}
-        <ManagersSection directorName="Felipe Restrepo">
+        <ManagersSection directorName="Felipe Restrepo" searchTerm={searchTerm}>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Frank Ricardo Muñoz') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><InvestmentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Frank Ricardo Muñoz</h4>
+                <h4>{highlightText('Frank Ricardo Muñoz')}</h4>
                 <p className="persona-role">Tesorería TI</p>
                 <p className="reports-to">Reporta a: Felipe Restrepo</p>
               </div>
@@ -808,11 +863,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Jonathan Antonio Bayona') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><AIIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Jonathan Antonio Bayona</h4>
+                <h4>{highlightText('Jonathan Antonio Bayona')}</h4>
                 <p className="persona-role">Inversiones TI</p>
                 <p className="reports-to">Reporta a: Felipe Restrepo</p>
               </div>
@@ -824,11 +879,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Juan Esteban Echaverry') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><DocumentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Juan Esteban Echaverry</h4>
+                <h4>{highlightText('Juan Esteban Echaverry')}</h4>
                 <p className="persona-role">Negocios Fiduciarios TI</p>
                 <p className="reports-to">Reporta a: Felipe Restrepo</p>
               </div>
@@ -843,13 +898,13 @@ export const OrgChartFidelVargas = () => {
         </ManagersSection>
 
         {/* Rafael Gustavo Meneses */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Rafael Gustavo Meneses Ramirez') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <ArchitectureIcon size={42} />
             </div>
             <div className="persona-info">
-              <h3>Rafael Gustavo Meneses Ramirez</h3>
+              <h3>{highlightText('Rafael Gustavo Meneses Ramirez')}</h3>
               <p className="persona-role">Líder CDE Arquitectura Empresarial</p>
             </div>
           </div>
@@ -903,13 +958,13 @@ export const OrgChartFidelVargas = () => {
         </div>
 
         {/* Managers bajo Rafael Meneses - 12 Arquitectos */}
-        <ManagersSection directorName="Rafael Gustavo Meneses">
+        <ManagersSection directorName="Rafael Gustavo Meneses" searchTerm={searchTerm}>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Carlos Andres Ruiz Tobon') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Carlos Andres Ruiz Tobon</h4>
+                <h4>{highlightText('Carlos Andres Ruiz Tobon')}</h4>
                 <p className="persona-role">Arquitecto Empresarial</p>
                 <p className="reports-to">Reporta a: Rafael Meneses</p>
               </div>
@@ -921,11 +976,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Diana Patricia Tejada') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Diana Patricia Tejada</h4>
+                <h4>{highlightText('Diana Patricia Tejada')}</h4>
                 <p className="persona-role">Arquitecto Empresarial</p>
                 <p className="reports-to">Reporta a: Rafael Meneses</p>
               </div>
@@ -937,11 +992,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Cristian Andres Cadena') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><IntegrationIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Cristian Andres Cadena</h4>
+                <h4>{highlightText('Cristian Andres Cadena')}</h4>
                 <p className="persona-role">Arquitecto Empresarial</p>
                 <p className="reports-to">Reporta a: Rafael Meneses</p>
               </div>
@@ -953,11 +1008,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Adriana Noguera Rojas') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><DocumentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Adriana Noguera Rojas</h4>
+                <h4>{highlightText('Adriana Noguera Rojas')}</h4>
                 <p className="persona-role">Arquitecto Empresarial</p>
                 <p className="reports-to">Reporta a: Rafael Meneses</p>
               </div>
@@ -969,11 +1024,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Danny Yoan Hernandez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Danny Yoan Hernandez</h4>
+                <h4>{highlightText('Danny Yoan Hernandez')}</h4>
                 <p className="persona-role">Arquitecto Empresarial</p>
                 <p className="reports-to">Reporta a: Rafael Meneses</p>
               </div>
@@ -985,11 +1040,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Nicolas Alejandro') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Nicolas Alejandro</h4>
+                <h4>{highlightText('Nicolas Alejandro')}</h4>
                 <p className="persona-role">Arquitecto Empresarial</p>
                 <p className="reports-to">Reporta a: Rafael Meneses</p>
               </div>
@@ -1001,11 +1056,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Freddy Arley Parra') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Freddy Arley Parra</h4>
+                <h4>{highlightText('Freddy Arley Parra')}</h4>
                 <p className="persona-role">Arquitecto Empresarial</p>
                 <p className="reports-to">Reporta a: Rafael Meneses</p>
               </div>
@@ -1017,11 +1072,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Carlos Mario Velasquez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><TechIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Carlos Mario Velasquez</h4>
+                <h4>{highlightText('Carlos Mario Velasquez')}</h4>
                 <p className="persona-role">Arquitecto Empresarial</p>
                 <p className="reports-to">Reporta a: Rafael Meneses</p>
               </div>
@@ -1033,11 +1088,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Maryon Marin Giraldo') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><TechIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Maryon Marin Giraldo</h4>
+                <h4>{highlightText('Maryon Marin Giraldo')}</h4>
                 <p className="persona-role">Arquitecto Empresarial</p>
                 <p className="reports-to">Reporta a: Rafael Meneses</p>
               </div>
@@ -1049,11 +1104,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Alejandro Pulgarin') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><DocumentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Alejandro Pulgarin</h4>
+                <h4>{highlightText('Alejandro Pulgarin')}</h4>
                 <p className="persona-role">Arquitecto Empresarial</p>
                 <p className="reports-to">Reporta a: Rafael Meneses</p>
               </div>
@@ -1065,11 +1120,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Sergio Andres Trujillo') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Sergio Andres Trujillo</h4>
+                <h4>{highlightText('Sergio Andres Trujillo')}</h4>
                 <p className="persona-role">Arquitecto Empresarial</p>
                 <p className="reports-to">Reporta a: Rafael Meneses</p>
               </div>
@@ -1081,11 +1136,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Manuel Alejandro') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><AIIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Manuel Alejandro</h4>
+                <h4>{highlightText('Manuel Alejandro')}</h4>
                 <p className="persona-role">Arquitecto Empresarial</p>
                 <p className="reports-to">Reporta a: Rafael Meneses</p>
               </div>
@@ -1100,13 +1155,13 @@ export const OrgChartFidelVargas = () => {
         </ManagersSection>
 
         {/* Alejandra Maria Guillen */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Alejandra Maria Guillen Gallego') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <Users size={42} />
             </div>
             <div className="persona-info">
-              <h3>Alejandra Maria Guillen Gallego</h3>
+              <h3>{highlightText('Alejandra Maria Guillen Gallego')}</h3>
               <p className="persona-role">Líder Entorno Ecosistemas y Corporativo</p>
             </div>
           </div>
@@ -1159,13 +1214,13 @@ export const OrgChartFidelVargas = () => {
         </div>
 
         {/* Managers bajo Alejandra Guillen */}
-        <ManagersSection directorName="Alejandra Maria Guillen">
+        <ManagersSection directorName="Alejandra Maria Guillen" searchTerm={searchTerm}>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Luz Maria Augusto Mejia') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><Users size={36} /></div>
               <div className="persona-info">
-                <h4>Luz Maria Augusto Mejia</h4>
+                <h4>{highlightText('Luz Maria Augusto Mejia')}</h4>
                 <p className="persona-role">Administrativo Talento y Cultura</p>
                 <p className="reports-to">Reporta a: Alejandra Guillen</p>
               </div>
@@ -1177,11 +1232,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Carolina Perez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><StrategyIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Carolina Perez</h4>
+                <h4>{highlightText('Carolina Perez')}</h4>
                 <p className="persona-role">Gestión Integral Riesgos TI</p>
                 <p className="reports-to">Reporta a: Alejandra Guillen</p>
               </div>
@@ -1193,11 +1248,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Marcelino Vasquez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Marcelino Vasquez</h4>
+                <h4>{highlightText('Marcelino Vasquez')}</h4>
                 <p className="persona-role">Analista BANISTMO</p>
                 <p className="reports-to">Reporta a: Alejandra Guillen</p>
               </div>
@@ -1209,11 +1264,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Adriana Marcela Ramirez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><DocumentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Adriana Marcela Ramirez</h4>
+                <h4>{highlightText('Adriana Marcela Ramirez')}</h4>
                 <p className="persona-role">Financiero y Contable</p>
                 <p className="reports-to">Reporta a: Alejandra Guillen</p>
               </div>
@@ -1225,11 +1280,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Jairo Humberto Salazar') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><IntegrationIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Jairo Humberto Salazar</h4>
+                <h4>{highlightText('Jairo Humberto Salazar')}</h4>
                 <p className="persona-role">Línea Conocimiento OFF SHORE TI</p>
                 <p className="reports-to">Reporta a: Alejandra Guillen</p>
               </div>
@@ -1241,11 +1296,11 @@ export const OrgChartFidelVargas = () => {
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Fernando Enrique') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><DocumentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Fernando Enrique</h4>
+                <h4>{highlightText('Fernando Enrique')}</h4>
                 <p className="persona-role">Otras Funciones Corporativas</p>
                 <p className="reports-to">Reporta a: Alejandra Guillen</p>
               </div>

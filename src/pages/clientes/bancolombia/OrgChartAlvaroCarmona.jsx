@@ -18,8 +18,15 @@ import {
 import './OrgChartAlvaroCarmona.css'
 
 // Componente colapsable para Managers
-const ManagersSection = ({ directorName, children }) => {
+const ManagersSection = ({ directorName, children, searchTerm = '' }) => {
   const [isOpen, setIsOpen] = useState(false)
+
+  // Auto-expand si hay búsqueda activa
+  React.useEffect(() => {
+    if (searchTerm && searchTerm.length > 0) {
+      setIsOpen(true)
+    }
+  }, [searchTerm])
 
   return (
     <div className="managers-section">
@@ -42,6 +49,26 @@ const ManagersSection = ({ directorName, children }) => {
 }
 
 export const OrgChartAlvaroCarmona = () => {
+  const [searchTerm, setSearchTerm] = useState('')
+
+  // Helper para determinar si una persona coincide con la búsqueda
+  const matchesSearch = (personName) => {
+    if (!searchTerm) return true
+    return personName.toLowerCase().includes(searchTerm.toLowerCase())
+  }
+
+  // Helper para resaltar texto que coincide con la búsqueda
+  const highlightText = (text) => {
+    if (!searchTerm || !text) return text
+
+    const regex = new RegExp(`(${searchTerm})`, 'gi')
+    const parts = text.split(regex)
+
+    return parts.map((part, index) =>
+      regex.test(part) ? <mark key={index} className="highlight">{part}</mark> : part
+    )
+  }
+
   return (
     <ClientDocumentLayout
       client="Bancolombia"
@@ -68,6 +95,34 @@ export const OrgChartAlvaroCarmona = () => {
         </div>
       </section>
 
+      {/* Search Bar */}
+      <div className="org-search-container">
+        <div className="org-search-wrapper">
+          <SearchIcon size={20} className="search-icon" />
+          <input
+            type="text"
+            className="org-search-input"
+            placeholder="Buscar persona por nombre..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {searchTerm && (
+            <button
+              className="search-clear"
+              onClick={() => setSearchTerm('')}
+              aria-label="Limpiar búsqueda"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        {searchTerm && (
+          <p className="search-hint">
+            Buscando: "<strong>{searchTerm}</strong>" - Las secciones de managers se expandirán automáticamente
+          </p>
+        )}
+      </div>
+
       {/* VP Level */}
       <section className="org-section">
         <div className="section-header">
@@ -75,13 +130,13 @@ export const OrgChartAlvaroCarmona = () => {
           <h2>VP Level - Visión Estratégica</h2>
         </div>
 
-        <div className="persona-card vp-card">
+        <div className={`persona-card vp-card ${!matchesSearch('Álvaro Carmona') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <StrategyIcon size={48} />
             </div>
             <div className="persona-info">
-              <h3>Álvaro Carmona</h3>
+              <h3>{highlightText('Álvaro Carmona')}</h3>
               <p className="persona-role">VP Servicios de Tecnología</p>
             </div>
           </div>
@@ -129,13 +184,13 @@ export const OrgChartAlvaroCarmona = () => {
         </div>
 
         {/* Diana Carolina Pulgarin */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Diana Carolina Pulgarin López') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <DocumentIcon size={42} />
             </div>
             <div className="persona-info">
-              <h3>Diana Carolina Pulgarin López</h3>
+              <h3>{highlightText('Diana Carolina Pulgarin López')}</h3>
               <p className="persona-role">Líder Habilitadores de Producto y Operación</p>
             </div>
           </div>
@@ -206,16 +261,16 @@ export const OrgChartAlvaroCarmona = () => {
         </div>
 
         {/* Managers bajo Diana Carolina Pulgarin */}
-        <ManagersSection directorName="Diana Carolina Pulgarin">
+        <ManagersSection directorName="Diana Carolina Pulgarin" searchTerm={searchTerm}>
 
           {/* Juan Esteban Tobon Mendez */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Juan Esteban Tobon Mendez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <IntegrationIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Juan Esteban Tobon Mendez</h4>
+                <h4>{highlightText('Juan Esteban Tobon Mendez')}</h4>
                 <p className="persona-role">Evolución Core Productos Canales</p>
                 <p className="reports-to">Reporta a: Diana Carolina Pulgarin</p>
               </div>
@@ -248,13 +303,13 @@ export const OrgChartAlvaroCarmona = () => {
           </div>
 
           {/* Natalia Maria Hernandez */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Natalia Maria Hernandez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <TechIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Natalia Maria Hernandez</h4>
+                <h4>{highlightText('Natalia Maria Hernandez')}</h4>
                 <p className="persona-role">Evolución Digital TI</p>
                 <p className="reports-to">Reporta a: Diana Carolina Pulgarin</p>
               </div>
@@ -287,13 +342,13 @@ export const OrgChartAlvaroCarmona = () => {
           </div>
 
           {/* Juan Alejandro Arias */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Juan Alejandro Arias') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <ArchitectureIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Juan Alejandro Arias</h4>
+                <h4>{highlightText('Juan Alejandro Arias')}</h4>
                 <p className="persona-role">Modernización Procesos y Ops</p>
                 <p className="reports-to">Reporta a: Diana Carolina Pulgarin</p>
               </div>
@@ -328,13 +383,13 @@ export const OrgChartAlvaroCarmona = () => {
         </ManagersSection>
 
         {/* Juan Carlos Sepúlveda */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Juan Carlos Sepúlveda Villegas') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <AIIcon size={42} />
             </div>
             <div className="persona-info">
-              <h3>Juan Carlos Sepúlveda Villegas</h3>
+              <h3>{highlightText('Juan Carlos Sepúlveda Villegas')}</h3>
               <p className="persona-role">Líder Entorno Datos, AI, Analítica e Integración</p>
             </div>
           </div>
@@ -429,16 +484,16 @@ db.documentos.aggregate([
         </div>
 
         {/* Managers bajo Juan Carlos Sepúlveda */}
-        <ManagersSection directorName="Juan Carlos Sepúlveda">
+        <ManagersSection directorName="Juan Carlos Sepúlveda" searchTerm={searchTerm}>
 
           {/* Marco Antonio Estrada */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Marco Antonio Estrada') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <IntegrationIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Marco Antonio Estrada</h4>
+                <h4>{highlightText('Marco Antonio Estrada')}</h4>
                 <p className="persona-role">Servicios e Integraciones, API Management</p>
                 <p className="reports-to">Reporta a: Juan Carlos Sepúlveda</p>
               </div>
@@ -471,13 +526,13 @@ db.documentos.aggregate([
           </div>
 
           {/* Helder Ivan Ramirez */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Helder Ivan Ramirez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <AIIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Helder Ivan Ramirez</h4>
+                <h4>{highlightText('Helder Ivan Ramirez')}</h4>
                 <p className="persona-role">Datos, Analítica, IA, Blockchain</p>
                 <p className="reports-to">Reporta a: Juan Carlos Sepúlveda</p>
               </div>
@@ -512,13 +567,13 @@ db.documentos.aggregate([
         </ManagersSection>
 
         {/* Camilo Piedrahita */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Camilo Piedrahita Macias') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <TechIcon size={42} />
             </div>
             <div className="persona-info">
-              <h3>Camilo Piedrahita Macias</h3>
+              <h3>{highlightText('Camilo Piedrahita Macias')}</h3>
               <p className="persona-role">Líder Centro Excelencia Desarrollo</p>
             </div>
           </div>
@@ -605,16 +660,16 @@ db.transacciones.aggregate([
         </div>
 
         {/* Managers bajo Camilo Piedrahita */}
-        <ManagersSection directorName="Camilo Piedrahita">
+        <ManagersSection directorName="Camilo Piedrahita" searchTerm={searchTerm}>
 
           {/* Ruben Dario Cardenas */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Ruben Dario Cardenas') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <TechIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Ruben Dario Cardenas</h4>
+                <h4>{highlightText('Ruben Dario Cardenas')}</h4>
                 <p className="persona-role">Capacidades Ciclovida TI</p>
                 <p className="reports-to">Reporta a: Camilo Piedrahita</p>
               </div>
@@ -647,13 +702,13 @@ db.transacciones.aggregate([
           </div>
 
           {/* Youlin Alejandro Varela */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Youlin Alejandro Varela') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <SearchIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Youlin Alejandro Varela</h4>
+                <h4>{highlightText('Youlin Alejandro Varela')}</h4>
                 <p className="persona-role">Gestión Fraude TI</p>
                 <p className="reports-to">Reporta a: Camilo Piedrahita</p>
               </div>
@@ -686,13 +741,13 @@ db.transacciones.aggregate([
           </div>
 
           {/* Emanuel Medina Gomez */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Emanuel Medina Gomez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <ArchitectureIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Emanuel Medina Gomez</h4>
+                <h4>{highlightText('Emanuel Medina Gomez')}</h4>
                 <p className="persona-role">Ingeniería Plataformas TI</p>
                 <p className="reports-to">Reporta a: Camilo Piedrahita</p>
               </div>
@@ -727,13 +782,13 @@ db.transacciones.aggregate([
         </ManagersSection>
 
         {/* David Jaramillo */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('David Alberto Jaramillo Morales') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <ArchitectureIcon size={42} />
             </div>
             <div className="persona-info">
-              <h3>David Alberto Jaramillo Morales</h3>
+              <h3>{highlightText('David Alberto Jaramillo Morales')}</h3>
               <p className="persona-role">Líder Centro Excelencia Infraestructura</p>
             </div>
           </div>
@@ -802,16 +857,16 @@ db.transacciones.aggregate([
         </div>
 
         {/* Managers bajo David Jaramillo */}
-        <ManagersSection directorName="David Jaramillo">
+        <ManagersSection directorName="David Jaramillo" searchTerm={searchTerm}>
 
           {/* Ana Catalina Cedeivid Lopez */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Ana Catalina Cedeivid Lopez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <SearchIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Ana Catalina Cedeivid Lopez</h4>
+                <h4>{highlightText('Ana Catalina Cedeivid Lopez')}</h4>
                 <p className="persona-role">Conocimiento Plataformas</p>
                 <p className="reports-to">Reporta a: David Jaramillo</p>
               </div>
@@ -844,11 +899,11 @@ db.transacciones.aggregate([
           </div>
 
           {/* Managers restantes de David Jaramillo - Formato compacto */}
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Daniel Umberto Avila') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><TechIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Daniel Umberto Avila</h4>
+                <h4>{highlightText('Daniel Umberto Avila')}</h4>
                 <p className="persona-role">Ingeniería DEVEXP (Developer Experience)</p>
                 <p className="reports-to">Reporta a: David Jaramillo</p>
               </div>
@@ -859,11 +914,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Diego Leon Gamboa') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><IntegrationIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Diego Leon Gamboa</h4>
+                <h4>{highlightText('Diego Leon Gamboa')}</h4>
                 <p className="persona-role">Integración Continua</p>
                 <p className="reports-to">Reporta a: David Jaramillo</p>
               </div>
@@ -874,11 +929,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Walter Anibal Duque') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Walter Anibal Duque</h4>
+                <h4>{highlightText('Walter Anibal Duque')}</h4>
                 <p className="persona-role">Plataformas Centrales</p>
                 <p className="reports-to">Reporta a: David Jaramillo</p>
               </div>
@@ -889,11 +944,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('John Alexander Sierra') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
               <div className="persona-info">
-                <h4>John Alexander Sierra</h4>
+                <h4>{highlightText('John Alexander Sierra')}</h4>
                 <p className="persona-role">Integrada Operación TI</p>
                 <p className="reports-to">Reporta a: David Jaramillo</p>
               </div>
@@ -904,11 +959,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Gerardo Plazas') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><IntegrationIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Gerardo Plazas</h4>
+                <h4>{highlightText('Gerardo Plazas')}</h4>
                 <p className="persona-role">Diseño Operación Telco TI</p>
                 <p className="reports-to">Reporta a: David Jaramillo</p>
               </div>
@@ -919,11 +974,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Jorge Andres Ochoa') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><TechIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Jorge Andres Ochoa</h4>
+                <h4>{highlightText('Jorge Andres Ochoa')}</h4>
                 <p className="persona-role">Plataformas Servicios X86 TI</p>
                 <p className="reports-to">Reporta a: David Jaramillo</p>
               </div>
@@ -934,11 +989,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Juan David Franco') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Juan David Franco</h4>
+                <h4>{highlightText('Juan David Franco')}</h4>
                 <p className="persona-role">EMMA TI</p>
                 <p className="reports-to">Reporta a: David Jaramillo</p>
               </div>
@@ -949,11 +1004,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Rogelio Adolfo Duque') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><TechIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Rogelio Adolfo Duque</h4>
+                <h4>{highlightText('Rogelio Adolfo Duque')}</h4>
                 <p className="persona-role">Análisis ING Confiabilidad (SRE)</p>
                 <p className="reports-to">Reporta a: David Jaramillo</p>
               </div>
@@ -964,11 +1019,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Hernan Zuleta') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><DocumentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Hernan Zuleta</h4>
+                <h4>{highlightText('Hernan Zuleta')}</h4>
                 <p className="persona-role">Conocimiento Plataforma Aplicaciones</p>
                 <p className="reports-to">Reporta a: David Jaramillo</p>
               </div>
@@ -982,13 +1037,13 @@ db.transacciones.aggregate([
         </ManagersSection>
 
         {/* Juan David Vergara */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Juan David Vergara Pérez') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <ArchitectureIcon size={42} />
             </div>
             <div className="persona-info">
-              <h3>Juan David Vergara Pérez</h3>
+              <h3>{highlightText('Juan David Vergara Pérez')}</h3>
               <p className="persona-role">Líder Centro Excelencia Arquitectura</p>
             </div>
           </div>
@@ -1049,13 +1104,13 @@ db.transacciones.aggregate([
         </div>
 
         {/* Managers bajo Juan David Vergara */}
-        <ManagersSection directorName="Juan David Vergara">
+        <ManagersSection directorName="Juan David Vergara" searchTerm={searchTerm}>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Sebastian Osorio') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><AIIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Sebastian Osorio</h4>
+                <h4>{highlightText('Sebastian Osorio')}</h4>
                 <p className="persona-role">Arquitectura Innovación TI</p>
                 <p className="reports-to">Reporta a: Juan David Vergara</p>
               </div>
@@ -1067,11 +1122,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Yenni Andrea Cano') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><StrategyIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Yenni Andrea Cano</h4>
+                <h4>{highlightText('Yenni Andrea Cano')}</h4>
                 <p className="persona-role">FINOPS TI</p>
                 <p className="reports-to">Reporta a: Juan David Vergara</p>
               </div>
@@ -1083,11 +1138,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Alexis Eduardo Ocampo') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Alexis Eduardo Ocampo</h4>
+                <h4>{highlightText('Alexis Eduardo Ocampo')}</h4>
                 <p className="persona-role">Arquitectura Solución TI</p>
                 <p className="reports-to">Reporta a: Juan David Vergara</p>
               </div>
@@ -1098,11 +1153,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Esnaider Estrada') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Esnaider Estrada</h4>
+                <h4>{highlightText('Esnaider Estrada')}</h4>
                 <p className="persona-role">Arquitectura Solución TI</p>
                 <p className="reports-to">Reporta a: Juan David Vergara</p>
               </div>
@@ -1113,11 +1168,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Bryan Camilo Mosquera') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><TechIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Bryan Camilo Mosquera</h4>
+                <h4>{highlightText('Bryan Camilo Mosquera')}</h4>
                 <p className="persona-role">Arquitectura Técnica TI</p>
                 <p className="reports-to">Reporta a: Juan David Vergara</p>
               </div>
@@ -1128,11 +1183,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Luis Eduardo Gonzalez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Luis Eduardo Gonzalez</h4>
+                <h4>{highlightText('Luis Eduardo Gonzalez')}</h4>
                 <p className="persona-role">Arquitectura de TI</p>
                 <p className="reports-to">Reporta a: Juan David Vergara</p>
               </div>
@@ -1143,11 +1198,11 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Erick Allan Wales') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar"><DocumentIcon size={36} /></div>
               <div className="persona-info">
-                <h4>Erick Allan Wales</h4>
+                <h4>{highlightText('Erick Allan Wales')}</h4>
                 <p className="persona-role">Arquitectura de TI</p>
                 <p className="reports-to">Reporta a: Juan David Vergara</p>
               </div>
@@ -1161,13 +1216,13 @@ db.transacciones.aggregate([
         </ManagersSection>
 
         {/* Alicia Cano */}
-        <div className="persona-card director-card">
+        <div className={`persona-card director-card ${!matchesSearch('Alicia María Cano Cano') ? 'search-hidden' : ''}`}>
           <div className="persona-header">
             <div className="persona-avatar">
               <DocumentIcon size={42} />
             </div>
             <div className="persona-info">
-              <h3>Alicia María Cano Cano</h3>
+              <h3>{highlightText('Alicia María Cano Cano')}</h3>
               <p className="persona-role">Líder Oficina Gobierno TI</p>
             </div>
           </div>
@@ -1238,15 +1293,15 @@ db.transacciones.aggregate([
         </div>
 
         {/* Managers bajo Alicia Cano */}
-        <ManagersSection directorName="Alicia María Cano">
+        <ManagersSection directorName="Alicia María Cano" searchTerm={searchTerm}>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('Maria Elsy Giraldo') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <DocumentIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>Maria Elsy Giraldo</h4>
+                <h4>{highlightText('Maria Elsy Giraldo')}</h4>
                 <p className="persona-role">NEON TI</p>
                 <p className="reports-to">Reporta a: Alicia María Cano</p>
               </div>
@@ -1274,13 +1329,13 @@ db.transacciones.aggregate([
             </div>
           </div>
 
-          <div className="persona-card manager-card">
+          <div className={`persona-card manager-card ${!matchesSearch('David Elias Marin') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <ArchitectureIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>David Elias Marin</h4>
+                <h4>{highlightText('David Elias Marin')}</h4>
                 <p className="persona-role">Modelo Operativo TI</p>
                 <p className="reports-to">Reporta a: Alicia María Cano</p>
               </div>
