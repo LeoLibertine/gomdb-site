@@ -12,6 +12,7 @@ import DocumentoDemo from './pages/clientes/demo/DocumentoDemo';
 import Cosmica from './pages/Cosmica';
 import ArquitecturaDRP from './pages/clientes/bpd/ArquitecturaDRP';
 import DRPHibrido from './pages/clientes/bpd/DRPHibrido';
+import DRPFailback from './pages/clientes/bpd/DRPFailback';
 import NotFound from './components/NotFound';
 import { ProtectedRoute } from './components/auth';
 import './styles/gomdb-global.css';
@@ -85,6 +86,14 @@ function App() {
         element={
           <ProtectedRoute client="bpd">
             <DRPHibrido />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/clientes/bpd/drp-failback"
+        element={
+          <ProtectedRoute client="bpd">
+            <DRPFailback />
           </ProtectedRoute>
         }
       />
