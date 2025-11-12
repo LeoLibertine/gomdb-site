@@ -409,6 +409,13 @@ export const CLIENTS_DATA = [
         path: '/clientes/bpd/drp-hibrido',
         type: 'jsx',
         category: 'Estrategia'
+      },
+      {
+        title: 'Estrategia de Failback & Gobernanza del DRP',
+        description: 'Guía completa del proceso de Failback (regreso a la nube) con plan de comunicación y gobernanza en crisis',
+        path: '/clientes/bpd/drp-failback',
+        type: 'jsx',
+        category: 'Gobernanza'
       }
     ]
   },
