@@ -6,6 +6,7 @@ import ClientContent from './pages/clientes/ClientContent';
 import DocumentMongo from './pages/clientes/cencosud/document-mongo';
 import BancolombiaDocument from './pages/clientes/bancolombia/document-mongo';
 import { OrgChartAlvaroCarmona } from './pages/clientes/bancolombia/OrgChartAlvaroCarmona';
+import { OrgChartFidelVargas } from './pages/clientes/bancolombia/OrgChartFidelVargas';
 import DocumentoDemo from './pages/clientes/demo/DocumentoDemo';
 import Cosmica from './pages/Cosmica';
 import ArquitecturaDRP from './pages/clientes/bdp/ArquitecturaDRP';
@@ -50,6 +51,14 @@ function App() {
         element={
           <ProtectedRoute client="bancolombia">
             <OrgChartAlvaroCarmona />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/clientes/bancolombia/orgchart-fidel-vargas"
+        element={
+          <ProtectedRoute client="bancolombia">
+            <OrgChartFidelVargas />
           </ProtectedRoute>
         }
       />
