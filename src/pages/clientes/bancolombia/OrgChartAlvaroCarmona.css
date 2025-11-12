@@ -2,12 +2,39 @@
 
 /* Force proper background for org chart pages */
 .client-document-layout {
-  background: #0a0e27 !important;
+  background: linear-gradient(135deg, #0a1628 0%, #050b14 100%) !important;
   min-height: 100vh;
 }
 
 .document-content {
   background: transparent !important;
+  color: #ffffff !important;
+}
+
+/* Force all text to be readable with good contrast */
+.client-document-layout h1,
+.client-document-layout h2,
+.client-document-layout h3,
+.client-document-layout h4,
+.client-document-layout h5,
+.client-document-layout h6 {
+  color: #ffffff !important;
+}
+
+.client-document-layout p,
+.client-document-layout span,
+.client-document-layout div,
+.client-document-layout li {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.client-document-layout strong {
+  color: #00ED64 !important;
+  font-weight: 700;
+}
+
+.client-document-layout a {
+  color: #00ED64 !important;
 }
 
 /* Override MetricsCard for dark backgrounds */
