@@ -55,6 +55,7 @@ const getCategoryIcon = (category) => {
     'IA & ML': AIIcon,
     'Integraciones': IntegrationIcon,
     'Estrategia': StrategyIcon,
+    'Gobernanza': InsuranceIcon,
     'Infraestructura': ArchitectureIcon,
     'Comercial': DocumentIcon,
     'Sizing': DocumentIcon,
