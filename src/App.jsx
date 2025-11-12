@@ -11,6 +11,7 @@ import { OrgChartFidelVargasNegocios } from './pages/clientes/bancolombia/OrgCha
 import DocumentoDemo from './pages/clientes/demo/DocumentoDemo';
 import Cosmica from './pages/Cosmica';
 import ArquitecturaDRP from './pages/clientes/bdp/ArquitecturaDRP';
+import DRPHibrido from './pages/clientes/bdp/DRPHibrido';
 import NotFound from './components/NotFound';
 import { ProtectedRoute } from './components/auth';
 import './styles/gomdb-global.css';
@@ -76,6 +77,14 @@ function App() {
         element={
           <ProtectedRoute client="bdp">
             <ArquitecturaDRP />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/clientes/bdp/drp-hibrido"
+        element={
+          <ProtectedRoute client="bdp">
+            <DRPHibrido />
           </ProtectedRoute>
         }
       />

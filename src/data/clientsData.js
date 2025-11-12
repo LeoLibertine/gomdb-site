@@ -402,6 +402,13 @@ export const CLIENTS_DATA = [
         path: '/clientes/bdp/arquitectura-drp',
         type: 'jsx',
         category: 'Arquitectura'
+      },
+      {
+        title: 'Estrategias DRP Híbrido - Guía Simplificada',
+        description: 'Guía estratégica simplificada de DRP Híbrido: Bóveda de Respaldo vs Espejo en Vivo, con alternativas a Kafka',
+        path: '/clientes/bdp/drp-hibrido',
+        type: 'jsx',
+        category: 'Estrategia'
       }
     ]
   },
