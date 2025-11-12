@@ -1,5 +1,39 @@
 /* Org Chart Álvaro Carmona - Premium Styles */
 
+/* Override MetricsCard for dark backgrounds */
+.org-section .metrics-card {
+  background: rgba(0, 17, 26, 0.8) !important;
+  border-left: 4px solid #00ED64 !important;
+  border-radius: 12px;
+}
+
+.org-section .metrics-card__title {
+  color: #00ED64 !important;
+  font-weight: 700;
+}
+
+.org-section .metric-label {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-weight: 600;
+}
+
+.org-section .metric-value {
+  color: #fff !important;
+  font-weight: 700;
+}
+
+.org-section .metric-unit {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.org-section .trend-up {
+  color: #00ED64 !important;
+}
+
+.org-section .trend-down {
+  color: #FF3B30 !important;
+}
+
 /* Hero Section */
 .org-hero {
   background: linear-gradient(135deg, #001e2b 0%, #00111a 100%);
