@@ -428,6 +428,89 @@ db.documentos.aggregate([
           </div>
         </div>
 
+        {/* Managers bajo Juan Carlos Sepúlveda */}
+        <ManagersSection directorName="Juan Carlos Sepúlveda">
+
+          {/* Marco Antonio Estrada */}
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <IntegrationIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>Marco Antonio Estrada</h4>
+                <p className="persona-role">Servicios e Integraciones, API Management</p>
+                <p className="reports-to">Reporta a: Juan Carlos Sepúlveda</p>
+              </div>
+            </div>
+
+            <div className="use-case-container compact">
+              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <h5 className="use-case-title">
+                <IntegrationIcon size={18} /> API Gateway Metadata Store
+              </h5>
+              <p className="use-case-desc">
+                Almacén de configuración para API Gateway (Kong, Apigee) con políticas, rate limits, tokens y routing.
+              </p>
+
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Lecturas Ultra-Rápidas:</strong>
+                  <span>Cacheo y reads &lt;1ms para routing en tiempo real</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Esquema Flexible:</strong>
+                  <span>APIs REST, GraphQL, gRPC en un solo lugar</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Change Streams:</strong>
+                  <span>Propagación instantánea de cambios a todos los nodos</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Helder Ivan Ramirez */}
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <AIIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>Helder Ivan Ramirez</h4>
+                <p className="persona-role">Datos, Analítica, IA, Blockchain</p>
+                <p className="reports-to">Reporta a: Juan Carlos Sepúlveda</p>
+              </div>
+            </div>
+
+            <div className="use-case-container compact">
+              <div className="use-case-badge high-priority">ALTA PRIORIDAD</div>
+              <h5 className="use-case-title">
+                <AIIcon size={18} /> Feature Store para ML
+              </h5>
+              <p className="use-case-desc">
+                Almacenamiento y serving de features pre-calculados para modelos de ML (scoring de riesgo, propensión).
+              </p>
+
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Baja Latencia (Serving):</strong>
+                  <span>Entrega features en &lt;5ms para inferencia real-time</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Time Series Collections:</strong>
+                  <span>Features temporales (gasto últimos 30 días)</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Aggregation Pipeline:</strong>
+                  <span>Feature engineering dentro de la BD</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </ManagersSection>
+
         {/* Camilo Piedrahita */}
         <div className="persona-card director-card">
           <div className="persona-header">
@@ -521,6 +604,128 @@ db.transacciones.aggregate([
           </div>
         </div>
 
+        {/* Managers bajo Camilo Piedrahita */}
+        <ManagersSection directorName="Camilo Piedrahita">
+
+          {/* Ruben Dario Cardenas */}
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <TechIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>Ruben Dario Cardenas</h4>
+                <p className="persona-role">Capacidades Ciclovida TI</p>
+                <p className="reports-to">Reporta a: Camilo Piedrahita</p>
+              </div>
+            </div>
+
+            <div className="use-case-container compact">
+              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <h5 className="use-case-title">
+                <TechIcon size={18} /> CI/CD Pipeline Metadata (Trazabilidad DevOps)
+              </h5>
+              <p className="use-case-desc">
+                Repositorio centralizado de trazabilidad completa del ciclo de vida: commits, builds, deploys, ambientes, resultados de pruebas.
+              </p>
+
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Change Streams:</strong>
+                  <span>Notificaciones push a Slack/Jira cuando falla un deploy</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Modelo de Documento:</strong>
+                  <span>Jerarquía del pipeline en un solo documento</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>TTL Indexes:</strong>
+                  <span>Limpieza automática de logs antiguos (&gt;90 días)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Youlin Alejandro Varela */}
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <SearchIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>Youlin Alejandro Varela</h4>
+                <p className="persona-role">Gestión Fraude TI</p>
+                <p className="reports-to">Reporta a: Camilo Piedrahita</p>
+              </div>
+            </div>
+
+            <div className="use-case-container compact">
+              <div className="use-case-badge high-priority">ALTA PRIORIDAD - ROI DIRECTO</div>
+              <h5 className="use-case-title">
+                <SearchIcon size={18} /> Fraud Rules Engine (Motor de Reglas)
+              </h5>
+              <p className="use-case-desc">
+                Backend para motor de reglas de fraude que evalúa cientos de reglas contra perfil de cliente en &lt;50ms.
+              </p>
+
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Aggregation Pipeline:</strong>
+                  <span>Reglas complejas ejecutadas en milisegundos</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Índices Optimizados:</strong>
+                  <span>Pattern matching rápido sobre historial transaccional</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Updates Atómicos:</strong>
+                  <span>Actualización de scores y contadores concurrente y segura</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Emanuel Medina Gomez */}
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <ArchitectureIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>Emanuel Medina Gomez</h4>
+                <p className="persona-role">Ingeniería Plataformas TI</p>
+                <p className="reports-to">Reporta a: Camilo Piedrahita</p>
+              </div>
+            </div>
+
+            <div className="use-case-container compact">
+              <div className="use-case-badge strategic">ESTRATÉGICO</div>
+              <h5 className="use-case-title">
+                <ArchitectureIcon size={18} /> Internal Developer Platform (IDP) Backend
+              </h5>
+              <p className="use-case-desc">
+                Backend para portal self-service de developers (IDP/Backstage), gestionando catálogo de servicios, APIs y recursos cloud.
+              </p>
+
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Multi-Tenancy (RBAC):</strong>
+                  <span>Cada equipo solo ve sus propios servicios</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Atlas Data API:</strong>
+                  <span>API REST/GraphQL automática para el frontend</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Schema Validation:</strong>
+                  <span>Servicios cumplen estándares de gobernabilidad</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </ManagersSection>
+
         {/* David Jaramillo */}
         <div className="persona-card director-card">
           <div className="persona-header">
@@ -596,6 +801,186 @@ db.transacciones.aggregate([
           </div>
         </div>
 
+        {/* Managers bajo David Jaramillo */}
+        <ManagersSection directorName="David Jaramillo">
+
+          {/* Ana Catalina Cedeivid Lopez */}
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <SearchIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>Ana Catalina Cedeivid Lopez</h4>
+                <p className="persona-role">Conocimiento Plataformas</p>
+                <p className="reports-to">Reporta a: David Jaramillo</p>
+              </div>
+            </div>
+
+            <div className="use-case-container compact">
+              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <h5 className="use-case-title">
+                <SearchIcon size={18} /> Knowledge Base con Search Semántica
+              </h5>
+              <p className="use-case-desc">
+                Base de conocimiento técnico (KEDB) para infraestructura y operaciones con búsqueda semántica inteligente.
+              </p>
+
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Atlas Search & Vector Search:</strong>
+                  <span>Combina búsqueda full-text con semántica</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Filtros Facetados:</strong>
+                  <span>Filtrar por plataforma, tipo de error, tecnología</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Highlighting:</strong>
+                  <span>Resalta respuestas exactas dentro del documento</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Managers restantes de David Jaramillo - Formato compacto */}
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><TechIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Daniel Umberto Avila</h4>
+                <p className="persona-role">Ingeniería DEVEXP (Developer Experience)</p>
+                <p className="reports-to">Reporta a: David Jaramillo</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><TechIcon size={18} /> Developer Sandbox Automation</h5>
+              <p className="use-case-desc">Aprovisionamiento automático de ambientes de desarrollo efímeros con datos de prueba.</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><IntegrationIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Diego Leon Gamboa</h4>
+                <p className="persona-role">Integración Continua</p>
+                <p className="reports-to">Reporta a: David Jaramillo</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><IntegrationIcon size={18} /> Test Results Repository & Analytics</h5>
+              <p className="use-case-desc">Almacenamiento masivo de resultados de tests unitarios, integración y E2E para análisis de calidad.</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Walter Anibal Duque</h4>
+                <p className="persona-role">Plataformas Centrales</p>
+                <p className="reports-to">Reporta a: David Jaramillo</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><ArchitectureIcon size={18} /> Multi-tenant Platform Backend</h5>
+              <p className="use-case-desc">Backend para plataforma compartida con aislamiento de datos por tenant (cliente interno o área).</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>John Alexander Sierra</h4>
+                <p className="persona-role">Integrada Operación TI</p>
+                <p className="reports-to">Reporta a: David Jaramillo</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><ArchitectureIcon size={18} /> Unified Monitoring Dashboard</h5>
+              <p className="use-case-desc">Consolidación de métricas de múltiples fuentes en un dashboard unificado de operaciones.</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><IntegrationIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Gerardo Plazas</h4>
+                <p className="persona-role">Diseño Operación Telco TI</p>
+                <p className="reports-to">Reporta a: David Jaramillo</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><IntegrationIcon size={18} /> Network Performance Monitoring</h5>
+              <p className="use-case-desc">Métricas de red en tiempo real (CDRs, performance) con time series collections.</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><TechIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Jorge Andres Ochoa</h4>
+                <p className="persona-role">Plataformas Servicios X86 TI</p>
+                <p className="reports-to">Reporta a: David Jaramillo</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><TechIcon size={18} /> VM Inventory & Dynamic CMDB</h5>
+              <p className="use-case-desc">Inventario dinámico de activos (CMDB), VMs y configuraciones con auto-discovery.</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Juan David Franco</h4>
+                <p className="persona-role">EMMA TI</p>
+                <p className="reports-to">Reporta a: David Jaramillo</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><ArchitectureIcon size={18} /> Enterprise Monitoring Aggregation</h5>
+              <p className="use-case-desc">Agregación de datos de monitoreo de múltiples herramientas (Prometheus, DataDog, etc).</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><TechIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Rogelio Adolfo Duque</h4>
+                <p className="persona-role">Análisis ING Confiabilidad (SRE)</p>
+                <p className="reports-to">Reporta a: David Jaramillo</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><TechIcon size={18} /> SRE Metrics & Post-mortems</h5>
+              <p className="use-case-desc">Tracking de MTBF, MTTR, error budgets, incidents y post-mortems con time series.</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><DocumentIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Hernan Zuleta</h4>
+                <p className="persona-role">Conocimiento Plataforma Aplicaciones</p>
+                <p className="reports-to">Reporta a: David Jaramillo</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><DocumentIcon size={18} /> Application Portfolio Repository (APM)</h5>
+              <p className="use-case-desc">Inventario centralizado de aplicaciones del banco con tech stack, propietarios y dependencias.</p>
+            </div>
+          </div>
+
+        </ManagersSection>
+
         {/* Juan David Vergara */}
         <div className="persona-card director-card">
           <div className="persona-header">
@@ -662,6 +1047,118 @@ db.transacciones.aggregate([
             </div>
           </div>
         </div>
+
+        {/* Managers bajo Juan David Vergara */}
+        <ManagersSection directorName="Juan David Vergara">
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><AIIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Sebastian Osorio</h4>
+                <p className="persona-role">Arquitectura Innovación TI</p>
+                <p className="reports-to">Reporta a: Juan David Vergara</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <div className="use-case-badge strategic">ESTRATÉGICO</div>
+              <h5 className="use-case-title"><AIIcon size={18} /> Innovation Lab Project Tracker</h5>
+              <p className="use-case-desc">Seguimiento de POCs, experimentos de innovación y evaluaciones de tecnología (Gen AI, Blockchain, etc).</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><StrategyIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Yenni Andrea Cano</h4>
+                <p className="persona-role">FINOPS TI</p>
+                <p className="reports-to">Reporta a: Juan David Vergara</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <div className="use-case-badge high-priority">ALTA PRIORIDAD - AHORRO COSTOS</div>
+              <h5 className="use-case-title"><StrategyIcon size={18} /> Cloud Cost Analytics & Optimization (FinOps)</h5>
+              <p className="use-case-desc">Plataforma de FinOps para análisis granular de costos de nube (AWS, Azure, GCP) con atribución detallada.</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Alexis Eduardo Ocampo</h4>
+                <p className="persona-role">Arquitectura Solución TI</p>
+                <p className="reports-to">Reporta a: Juan David Vergara</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><ArchitectureIcon size={18} /> Solution Architecture Repository & Standards</h5>
+              <p className="use-case-desc">Repositorio de blueprints de arquitectura y patrones de diseño con GridFS para diagramas grandes.</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Esnaider Estrada</h4>
+                <p className="persona-role">Arquitectura Solución TI</p>
+                <p className="reports-to">Reporta a: Juan David Vergara</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><ArchitectureIcon size={18} /> Microservices Catalog</h5>
+              <p className="use-case-desc">Inventario de microservicios con APIs y dependencias usando graph queries para service mesh topology.</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><TechIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Bryan Camilo Mosquera</h4>
+                <p className="persona-role">Arquitectura Técnica TI</p>
+                <p className="reports-to">Reporta a: Juan David Vergara</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><TechIcon size={18} /> Technical Debt Registry</h5>
+              <p className="use-case-desc">Tracking de deuda técnica con priorización usando aggregations para scoring y Atlas Charts para visibility.</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><ArchitectureIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Luis Eduardo Gonzalez</h4>
+                <p className="persona-role">Arquitectura de TI</p>
+                <p className="reports-to">Reporta a: Juan David Vergara</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><ArchitectureIcon size={18} /> Enterprise Architecture Roadmap</h5>
+              <p className="use-case-desc">Roadmap de arquitectura empresarial con capabilities y esquema flexible para diferentes tipos de initiatives.</p>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar"><DocumentIcon size={36} /></div>
+              <div className="persona-info">
+                <h4>Erick Allan Wales</h4>
+                <p className="persona-role">Arquitectura de TI</p>
+                <p className="reports-to">Reporta a: Juan David Vergara</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <h5 className="use-case-title"><DocumentIcon size={18} /> Security Controls Catalog</h5>
+              <p className="use-case-desc">Inventario de controles de seguridad y compliance con Field-Level Encryption para datos sensibles.</p>
+            </div>
+          </div>
+
+        </ManagersSection>
 
         {/* Alicia Cano */}
         <div className="persona-card director-card">
@@ -739,6 +1236,79 @@ db.transacciones.aggregate([
             </div>
           </div>
         </div>
+
+        {/* Managers bajo Alicia Cano */}
+        <ManagersSection directorName="Alicia María Cano">
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <DocumentIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>Maria Elsy Giraldo</h4>
+                <p className="persona-role">NEON TI</p>
+                <p className="reports-to">Reporta a: Alicia María Cano</p>
+              </div>
+            </div>
+
+            <div className="use-case-container compact">
+              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <h5 className="use-case-title">
+                <DocumentIcon size={18} /> Operating Model Documentation (NEON/ITIL)
+              </h5>
+              <p className="use-case-desc">
+                Documentación centralizada del modelo operativo ITIL/NEON con procesos,
+                procedimientos y flujos de trabajo de TI.
+              </p>
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Atlas Search:</strong>
+                  <span>Búsqueda en procedimientos operativos</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Change Streams:</strong>
+                  <span>Notificaciones automáticas de actualizaciones a procesos</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="persona-card manager-card">
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <ArchitectureIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>David Elias Marin</h4>
+                <p className="persona-role">Modelo Operativo TI</p>
+                <p className="reports-to">Reporta a: Alicia María Cano</p>
+              </div>
+            </div>
+
+            <div className="use-case-container compact">
+              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <h5 className="use-case-title">
+                <ArchitectureIcon size={18} /> Team Topology & Resource Allocation
+              </h5>
+              <p className="use-case-desc">
+                Estructura de equipos, asignación de recursos y métricas de productividad
+                del modelo operativo de TI.
+              </p>
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Time Series:</strong>
+                  <span>Métricas de carga de trabajo por equipo</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Atlas Charts:</strong>
+                  <span>Dashboards de resource allocation y capacity planning</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </ManagersSection>
       </section>
 
       {/* Prioridades */}
