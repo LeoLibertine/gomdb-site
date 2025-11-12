@@ -6,6 +6,34 @@
   min-height: 100vh;
 }
 
+/* Document Header - White background with black text */
+.client-document-layout .document-header,
+.client-document-layout header,
+.client-document-layout .document-metadata {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.client-document-layout .document-header h1,
+.client-document-layout .document-header h2,
+.client-document-layout .document-header p,
+.client-document-layout .document-header span,
+.client-document-layout .document-header div,
+.client-document-layout header h1,
+.client-document-layout header h2,
+.client-document-layout header p,
+.client-document-layout header span,
+.client-document-layout header div,
+.client-document-layout .document-metadata h1,
+.client-document-layout .document-metadata h2,
+.client-document-layout .document-metadata p,
+.client-document-layout .document-metadata span,
+.client-document-layout .document-metadata div {
+  color: #000000 !important;
+}
+
 .document-content {
   background: transparent !important;
   color: #ffffff !important;
