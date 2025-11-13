@@ -22,18 +22,18 @@
  */
 
 export const ACCESS_CODES = {
-  // Active Clients (13)
-  'bancolombia': 'BCO2025',
-  'yape': 'YAPE2024',
-  'cencosud': 'CEN2025',
-  'etb': 'ETB2025',
-  'kushki': 'KUSH2025',
-  'segurosbolivar': 'SEG2025',
-  'payway': 'PAY2025',
-  'bpd': 'BPD2025',
-  'coppel': 'COP2025',
-  'falape': 'FAL2025',
-  'bintec': 'BIN2025',
+  // Active Clients (13) - Códigos sofisticados con hash SHA-like format
+  'bancolombia': 'BCO-7k9m2Lx4Pq-2025',
+  'yape': 'YAPE-3n8Hw5Zt6Vr-2024',
+  'cencosud': 'CEN-9Qw4Js7Km2Fx-2025',
+  'etb': 'ETB-6Hx3Mn9Rp5Tw-2025',
+  'kushki': 'KUSH-2Lp8Xv4Qn7Js-2025',
+  'segurosbolivar': 'SEG-5Zt9Km3Vx8Lw-2025',
+  'payway': 'PAY-4Np7Qr2Xt5Mw-2025',
+  'bpd': 'BPD-8Lm3Zv6Qx9Kp-2025',
+  'coppel': 'COP-7Xw5Mn4Rt8Lp-2025',
+  'falape': 'FAL-3Qv9Kx2Np7Tm-2025',
+  'bintec': 'BIN-6Lw4Zt8Mx3Vp-2025',
 
   // MongoDB Internal (Master Code - Universal Access)
   'mongodb': 'MDB-MASTER-2025',

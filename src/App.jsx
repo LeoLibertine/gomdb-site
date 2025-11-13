@@ -26,8 +26,15 @@ function App() {
       <Route path="/clientes/demo/documento" element={<DocumentoDemo />} />
       <Route path="/cosmica" element={<Cosmica />} />
 
-      {/* Clientes Directory - Public (list of clients) */}
-      <Route path="/clientes" element={<ClientesDirectory />} />
+      {/* Clientes Directory - Protected (MongoDB internal only) */}
+      <Route
+        path="/clientes"
+        element={
+          <ProtectedRoute client="mongodb">
+            <ClientesDirectory />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Client Content Pages - Protected internally by client ID */}
       <Route path="/clientes/:clientId" element={<ClientContent />} />
