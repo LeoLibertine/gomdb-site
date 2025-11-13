@@ -14,6 +14,7 @@ import ArquitecturaDRP from './pages/clientes/bpd/ArquitecturaDRP';
 import DRPHibrido from './pages/clientes/bpd/DRPHibrido';
 import DRPFailback from './pages/clientes/bpd/DRPFailback';
 import { SizingSuraPersonaUnica } from './pages/clientes/sura/SizingSuraPersonaUnica';
+import { DesignReviewPersonaUnica } from './pages/clientes/sura/DesignReviewPersonaUnica';
 import NotFound from './components/NotFound';
 import { ProtectedRoute } from './components/auth';
 import './styles/gomdb-global.css';
@@ -110,6 +111,14 @@ function App() {
         element={
           <ProtectedRoute client="sura">
             <SizingSuraPersonaUnica />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/clientes/sura/design-review-persona-unica"
+        element={
+          <ProtectedRoute client="sura">
+            <DesignReviewPersonaUnica />
           </ProtectedRoute>
         }
       />

@@ -486,6 +486,13 @@ export const CLIENTS_DATA = [
         path: '/clientes/sura/sizing-persona-unica',
         type: 'jsx',
         category: 'Sizing'
+      },
+      {
+        title: 'Design Review: Modelo de Datos e Indexación',
+        description: 'Estrategia completa de diseño para Persona Única: Extended Reference Pattern, 8 índices recomendados, análisis de latencia actual (220-270ms) y justificación M40',
+        path: '/clientes/sura/design-review-persona-unica',
+        type: 'jsx',
+        category: 'Arquitectura'
       }
     ]
   }
