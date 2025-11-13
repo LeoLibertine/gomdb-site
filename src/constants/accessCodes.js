@@ -22,7 +22,7 @@
  */
 
 export const ACCESS_CODES = {
-  // Active Clients (13) - Códigos sofisticados con hash SHA-like format
+  // Active Clients (14) - Códigos sofisticados con hash SHA-like format
   'bancolombia': 'BCO-7k9m2Lx4Pq-2025',
   'yape': 'YAPE-3n8Hw5Zt6Vr-2024',
   'cencosud': 'CEN-9Qw4Js7Km2Fx-2025',
@@ -34,6 +34,7 @@ export const ACCESS_CODES = {
   'coppel': 'COP-7Xw5Mn4Rt8Lp-2025',
   'falape': 'FAL-3Qv9Kx2Np7Tm-2025',
   'bintec': 'BIN-6Lw4Zt8Mx3Vp-2025',
+  'sura': 'SURA-9Rx4Vm2Ln7Qp-2025',
 
   // MongoDB Internal (Master Code - Universal Access)
   'mongodb': 'MDB-MASTER-2025',

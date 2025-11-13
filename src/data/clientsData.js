@@ -471,6 +471,23 @@ export const CLIENTS_DATA = [
         category: 'General'
       }
     ]
+  },
+  {
+    id: 'sura',
+    name: 'Sura Seguros México',
+    industry: 'Seguros',
+    country: 'México',
+    description: 'Compañía líder en seguros de vida, salud y pensiones en América Latina. Proyecto "Persona Única" para Golden Record.',
+    icon: 'insurance',
+    content: [
+      {
+        title: 'Sizing MongoDB Atlas - Persona Única',
+        description: 'Dimensionamiento técnico completo para el proyecto Golden Record: arquitectura M10/M30/M40, análisis de Working Set y justificación de latencia',
+        path: '/clientes/sura/sizing-persona-unica',
+        type: 'jsx',
+        category: 'Sizing'
+      }
+    ]
   }
 ]
 

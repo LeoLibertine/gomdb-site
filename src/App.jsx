@@ -13,6 +13,7 @@ import Cosmica from './pages/Cosmica';
 import ArquitecturaDRP from './pages/clientes/bpd/ArquitecturaDRP';
 import DRPHibrido from './pages/clientes/bpd/DRPHibrido';
 import DRPFailback from './pages/clientes/bpd/DRPFailback';
+import { SizingSuraPersonaUnica } from './pages/clientes/sura/SizingSuraPersonaUnica';
 import NotFound from './components/NotFound';
 import { ProtectedRoute } from './components/auth';
 import './styles/gomdb-global.css';
@@ -101,6 +102,14 @@ function App() {
         element={
           <ProtectedRoute client="bpd">
             <DRPFailback />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/clientes/sura/sizing-persona-unica"
+        element={
+          <ProtectedRoute client="sura">
+            <SizingSuraPersonaUnica />
           </ProtectedRoute>
         }
       />
