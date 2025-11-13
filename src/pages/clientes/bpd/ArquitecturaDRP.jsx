@@ -56,6 +56,7 @@ const ArquitecturaDRP = () => {
           <div className="section-header">
             <h2 className="section-title">Métricas Clave de Negocio</h2>
             <div className="title-underline"></div>
+            <p className="section-description">Estas métricas determinan la arquitectura y complejidad de tu solución DRP</p>
           </div>
 
           <div className="metrics-grid">
@@ -70,7 +71,7 @@ const ArquitecturaDRP = () => {
               <div className="metric-label">Recovery Point Objective</div>
               <div className="metric-question">¿Cuánta pérdida de datos es aceptable?</div>
               <div className="metric-impact">
-                <strong>Impacto Técnico:</strong>
+                <strong>Impacto Técnico</strong>
                 <p>Define la frecuencia y método de replicación. RPO de "horas" vs "segundos" requiere arquitecturas totalmente diferentes.</p>
               </div>
             </div>
@@ -86,7 +87,7 @@ const ArquitecturaDRP = () => {
               <div className="metric-label">Recovery Time Objective</div>
               <div className="metric-question">¿En cuánto tiempo debe estar operativo el DRP?</div>
               <div className="metric-impact">
-                <strong>Impacto Técnico:</strong>
+                <strong>Impacto Técnico</strong>
                 <p>Define el estado del sistema DRP (cold/warm/hot) y la complejidad de automatización del failover.</p>
               </div>
             </div>
