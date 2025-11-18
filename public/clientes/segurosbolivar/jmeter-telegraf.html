@@ -1,47 +1,246 @@
-1. El Reto Técnico: JMeter a MongoDB (El "Missing Link")
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta de Arquitectura: JMeter + MongoDB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Mongo Neutral & Green (bg-slate-50, text-slate-800, accent-green-600) -->
+    <!-- Application Structure Plan: Designed a 3-section persuasive flow for a technical presentation. 1. An HTML/CSS diagram of the architecture (rebuilt from Mermaid, no-SVG/no-Mermaid). 2. A tabbed view for the 'zero-code' configuration snippets (Input/Output). 3. A 3-card layout for the key technical benefits (Argumentario). This structure guides the user from 'What' (diagram) to 'How' (code) to 'Why' (benefits), which is optimal for a technical sales proposal. -->
+    <!-- Visualization & Content Choices: Report Info: Mermaid Diagram -> Goal: Organize/Inform -> Viz/Method: HTML/Tailwind diagram using flexbox/grid and styled divs (NO SVG/Mermaid) -> Interaction: Static visual flow, superior to text -> Justification: Adheres to no-SVG/Mermaid constraint while presenting the core visual. | Report Info: TOML code snippets -> Goal: Inform -> Viz/Method: Tabbed <pre> blocks -> Interaction: JS onClick to toggle visibility -> Justification: Improves clarity, reduces cognitive load. | Report Info: 3 Technical Benefits -> Goal: Persuade -> Viz/Method: 3-column card layout (HTML/Tailwind) -> Interaction: Static visual grouping -> Justification: Clear, standard, digestible format for key features. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .code-block {
+            background-color: #001E2B;
+            color: #E6F7FF;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .tab-active {
+            background-color: #00A35C;
+            color: white;
+            border-color: #00A35C;
+        }
+        .tab-inactive {
+            background-color: white;
+            color: #374151;
+            border-color: #D1D5DB;
+        }
+        .diagram-box {
+            @apply border-2 border-slate-300 bg-white rounded-lg p-4 shadow-lg text-center font-semibold text-slate-700 min-h-[80px] flex items-center justify-center;
+        }
+        .diagram-group {
+            @apply border-2 border-dashed border-slate-400 bg-slate-100 rounded-xl p-6 shadow-inner;
+        }
+        .arrow {
+            @apply relative flex items-center justify-center text-4xl font-light text-green-600;
+        }
+        .arrow-horizontal::after {
+            content: '\2192';
+            @apply absolute;
+        }
+        .arrow-vertical::after {
+            content: '\2193';
+            @apply absolute;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
 
-El cliente tiene razón en su preocupación. JMeter tiene un Backend Listener nativo para InfluxDB, pero no existe uno nativo oficial soportado por Apache para MongoDB.
-Para resolver el requerimiento de "ingesta asíncrona, ligera y sin bloquear las pruebas", tenemos dos caminos que puedo presentarles:
-Opción A (Recomendada - Arquitectura Desacoplada): Usar un agente intermedio como Telegraf.
-Cómo funciona: JMeter envía datos (usando el protocolo Graphite o Influx) a Telegraf (que es muy ligero). Telegraf acumula los datos (batching) y los escribe en MongoDB de forma asíncrona.
-Ventaja: No requiere desarrollo Java personalizado en JMeter. Es configuración pura. Es el estándar de la industria para migraciones de Influx a Mongo.
-Opción B (Desarrollo a Medida): Implementar un Custom Backend Listener en Java para JMeter.
-Ventaja: Conexión directa.
-Desventaja: Requiere mantener código Java dentro del cliente. Si se hace mal, bloquea los threads de prueba.
+    <main class="container mx-auto p-4 md:p-8 max-w-6xl">
+        
+        <header class="text-center mb-12">
+            <h1 class="text-3xl md:text-5xl font-bold text-green-700 mb-3">Arquitectura de Referencia</h1>
+            <h2 class="text-xl md:text-2xl font-semibold text-slate-600">JMeter + Telegraf + MongoDB Atlas</h2>
+        </header>
 
-2. La Visualización
+        <!-- Sección 1: Diagrama de Flujo de Datos -->
+        <section id="architecture" class="mb-16">
+            <h3 class="text-2xl font-bold text-center mb-4">Diagrama de Flujo de Datos</h3>
+            <p class="text-lg text-slate-700 text-center max-w-3xl mx-auto mb-8">
+                Esta es la arquitectura recomendada para una ingesta de datos asíncrona, ligera y sin bloqueos. Recrea el flujo de datos desde la generación de la carga hasta su visualización, utilizando un agente intermedio (Telegraf) para optimizar el rendimiento.
+            </p>
 
-Atlas Charts es el camino natural y más rápido. Sin embargo, si ellos aman Grafana, recuerden que tenemos el MongoDB Enterprise Plugin para Grafana. No los forcemos a dejar Grafana si es un "deal breaker", pero Charts les ahorrará costos de infraestructura de visualización.
+            <div class="w-full max-w-5xl mx-auto p-4 md:p-8 bg-white rounded-xl shadow-xl border border-slate-200">
+                <div class="flex flex-col md:flex-row md:items-start md:space-x-6">
+                    
+                    <!-- Grupo 1: Servidor de Pruebas -->
+                    <div class="diagram-group flex-1">
+                        <h4 class="font-bold text-slate-600 text-center mb-4">Servidor de Pruebas (Inyector)</h4>
+                        <div class="flex flex-col space-y-4">
+                            <div class="diagram-box bg-red-100 border-red-300 text-red-700">Apache JMeter</div>
+                            <div class="arrow-vertical h-12"></div>
+                            <div class="diagram-box bg-gray-100 border-gray-300">Backend Listener (Graphite)</div>
+                            <div class="arrow-vertical h-12">
+                                <span class="text-sm text-slate-500 absolute top-1/2 -translate-y-1/2 px-2 bg-slate-100">Protocolo Graphite (Fire & Forget)</span>
+                            </div>
+                            <div class="diagram-box bg-green-100 border-green-300 text-green-700">Agente Telegraf</div>
+                        </div>
+                    </div>
 
-3. Definición de Alcances (Advisory vs. PS)
+                    <!-- Flecha de Conexión -->
+                    <div class="arrow-vertical md:arrow-horizontal h-16 md:h-auto md:w-24 md:mt-60">
+                         <span class="text-sm text-slate-500 absolute top-1/2 -translate-y-1/2 px-2 bg-white whitespace-nowrap">Batching & Bulk Write (Optimizado)</span>
+                    </div>
 
-Para que la reunión sea exitosa, debemos trazar la línea clara:
-Mi Rol (Advisory/Leo):
-Diseñar la arquitectura de referencia (Diagrama de flujo: JMeter -> Telegraf -> Atlas Time Series).
-Recomendar el diseño del esquema (Schema Design) óptimo para Series de Tiempo (clave para el rendimiento).
-Proveer ejemplos de configuración de Telegraf o snippets de código de referencia.
-Servicios Profesionales (PS):
-Si el cliente elige la "Opción B" (Plugin Java), PS debería escribir ese código.
-Configuración de los Dashboards complejos en Charts/Grafana.
-Ejecución de las pruebas de carga (PoC) "manos en el teclado".
+                    <!-- Grupo 2 y 3: Cloud y Visualización -->
+                    <div class="flex-1 flex flex-col space-y-6">
+                        <!-- Grupo 2: MongoDB Atlas -->
+                        <div class="diagram-group">
+                            <h4 class="font-bold text-slate-600 text-center mb-4">MongoDB Atlas (Cloud)</h4>
+                            <div class="flex flex-col space-y-4">
+                                <div class="diagram-box bg-green-100 border-green-300 text-green-700">Atlas Cluster</div>
+                                <div class="arrow-vertical h-12"></div>
+                                <div class="diagram-box bg-green-50 border-green-200 text-green-600">Time Series Collection</div>
+                            </div>
+                        </div>
 
-Próximos Pasos para mí
+                        <!-- Flecha -->
+                        <div class="arrow-vertical h-12"></div>
 
-Revisión: Terminaré de ver la grabación para captar matices técnicos sobre sus volúmenes de datos.
-Material: Prepararé un slide de arquitectura "JMeter to Atlas Patterns" para presentar en la reunión.
-Pregunta para ustedes: ¿Saben si tienen flexibilidad para instalar un agente ligero (Telegraf) en los servidores donde corre JMeter? Esa sería la vía rápida para lograr el objetivo "este año".
-Quedo atento a sus comentarios.
-Saludos,
-Leo Alarcón
-Advisory Solutions Architect | MongoDB
+                        <!-- Grupo 3: Visualización -->
+                        <div class="diagram-group">
+                             <h4 class="font-bold text-slate-600 text-center mb-4">Visualización</h4>
+                             <div class="diagram-box bg-blue-900 border-blue-700 text-white">Atlas Charts</div>
+                        </div>
+                    </div>
 
-Por qué esta respuesta funciona:
+                </div>
+            </div>
+        </section>
 
-Demuestra Expertise: Identificas inmediatamente que no existe un conector nativo y propones una solución estándar de la industria (Telegraf) en lugar de improvisar.
-Protege tu tiempo: Defines claramente que tú diseñas (Advisory) y otros construyen (PS o el Cliente). Esto ayuda a Juan y Fernanda a vender los Servicios Profesionales.
-Resuelve la objeción técnica: Atacas directamente el miedo del cliente sobre la "ralentización" proponiendo una arquitectura asíncrona probada.
-Es accionable: Llegas a la reunión con un diagrama/propuesta visual, no solo a escuchar.
+        <!-- Sección 2: Configuración "Zero-Code" -->
+        <section id="config" class="mb-16">
+            <h3 class="text-2xl font-bold text-center mb-4">Configuración "Zero-Code"</h3>
+            <p class="text-lg text-slate-700 text-center max-w-3xl mx-auto mb-8">
+                La implementación no requiere desarrollo Java. Se basa únicamente en la configuración del agente Telegraf. Haga clic en las pestañas para ver cómo Telegraf escucha a JMeter (Input) y escribe en MongoDB (Output).
+            </p>
 
-Siguiente paso que puedo hacer por ti:
+            <div class="max-w-3xl mx-auto">
+                <!-- Pestañas de Navegación -->
+                <div class="flex border-b border-slate-300 mb-4">
+                    <button id="tab-input" class="tab-active text-lg font-semibold py-3 px-6 rounded-t-lg border-b-2">
+                        Paso 1: Input (JMeter)
+                    </button>
+                    <button id="tab-output" class="tab-inactive text-lg font-semibold py-3 px-6 rounded-t-lg border-b-2">
+                        Paso 2: Output (Mongo)
+                    </button>
+                </div>
 
-¿Te gustaría que prepare el diagrama de arquitectura conceptual (JMeter + Telegraf + Atlas) o un snippet de configuración de ejemplo para que lo tengas listo para tu reunión?
+                <!-- Contenido de las Pestañas -->
+                <div>
+                    <!-- Contenido Input -->
+                    <div id="code-input" class="code-block p-6 rounded-lg shadow-lg">
+<span class="text-gray-400"># telegraf.conf</span>
+
+<span class="text-gray-400"># Input Plugin: Graphite</span>
+[[inputs.socket_listener]]
+  service_address = <span class="text-yellow-300">"tcp://localhost:2003"</span>  <span class="text-gray-400"># Puerto estándar Graphite</span>
+  data_format = <span class="text-yellow-300">"graphite"</span>
+  
+  <span class="text-gray-400"># Templates: Transforman la métrica plana de JMeter en documentos estructurados</span>
+  <span class="text-gray-400"># Ejemplo: "jmeter.test.login.avg_rt 150" -> {measurement: jmeter, test: login, metric: avg_rt, value: 150}</span>
+  templates = [
+    <span class="text-yellow-300">"jmeter.* measurement.simulation.request.field"</span>,
+  ]
+                    </div>
+                    
+                    <!-- Contenido Output -->
+                    <div id="code-output" class="code-block p-6 rounded-lg shadow-lg hidden">
+<span class="text-gray-400"># Output Plugin: MongoDB</span>
+[[outputs.mongodb]]
+  <span class="text-gray-400"># Connection String de Atlas (Seguro y estándar)</span>
+  address = <span class="text-yellow-300">"mongodb+srv://usuario:password@cluster.mongodb.net"</span>
+  
+  database = <span class="text-yellow-300">"jmeter_metrics"</span>
+  
+  <span class="text-gray-400"># OPTIMIZACIÓN CLAVE: Time Series</span>
+  <span class="text-gray-400"># Esto le dice a Mongo que trate estos datos como series de tiempo automáticamente</span>
+  [outputs.mongodb.timeseries]
+    enabled = <span class="text-blue-300">true</span>
+    time_field = <span class="text-yellow-300">"timestamp"</span>
+    meta_field = <span class="text-yellow-300">"metadata"</span>
+    granularity = <span class="text-yellow-300">"seconds"</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 3: Ventajas Clave (Argumentario) -->
+        <section id="benefits">
+            <h3 class="text-2xl font-bold text-center mb-4">Ventajas Clave de la Arquitectura</h3>
+            <p class="text-lg text-slate-700 text-center max-w-3xl mx-auto mb-8">
+                Esta arquitectura desacoplada no solo es una sustitución de stack, sino una mejora fundamental que proporciona resiliencia, eficiencia y mantenibilidad a largo plazo.
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Card 1: Desacoplamiento -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200">
+                    <span class="text-4xl">🛡️</span>
+                    <h4 class="text-xl font-bold text-green-700 my-3">Desacoplamiento (Resiliencia)</h4>
+                    <p class="text-slate-600">
+                        Si la red hacia Atlas tiene latencia, Telegraf actúa como un buffer, guardando datos en RAM. JMeter **nunca se entera** y sigue la prueba a máxima velocidad, sin perder métricas y sin afectar los resultados.
+                    </p>
+                </div>
+
+                <!-- Card 2: Eficiencia -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200">
+                    <span class="text-4xl">🚀</span>
+                    <h4 class="text-xl font-bold text-green-700 my-3">Eficiencia de Red (Batching)</h4>
+                    <p class="text-slate-600">
+                        JMeter genera miles de métricas por segundo. Telegraf las agrupa (ej. 1,000 métricas) y las envía a Atlas en **una sola solicitud** de red (Bulk Write), reduciendo drásticamente el uso de CPU y red.
+                    </p>
+                </div>
+
+                <!-- Card 3: Mantenibilidad -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200">
+                    <span class="text-4xl">⚙️</span>
+                    <h4 class="text-xl font-bold text-green-700 my-3">Mantenibilidad ("Zero-Code")</h4>
+                    <p class="text-slate-600">
+                        No hay código Java que mantener. Si JMeter se actualiza, la configuración sigue funcionando. Si MongoDB se actualiza, solo se actualiza el agente Telegraf, no el script de pruebas.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center p-8 mt-12 border-t border-slate-200">
+        <p class="text-slate-500">Propuesta de Arquitectura por MongoDB</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabInput = document.getElementById('tab-input');
+            const tabOutput = document.getElementById('tab-output');
+            const codeInput = document.getElementById('code-input');
+            const codeOutput = document.getElementById('code-output');
+
+            tabInput.addEventListener('click', () => {
+                codeInput.classList.remove('hidden');
+                codeOutput.classList.add('hidden');
+                
+                tabInput.classList.add('tab-active');
+                tabInput.classList.remove('tab-inactive');
+                tabOutput.classList.add('tab-inactive');
+                tabOutput.classList.remove('tab-active');
+            });
+
+            tabOutput.addEventListener('click', () => {
+                codeInput.classList.add('hidden');
+                codeOutput.classList.remove('hidden');
+
+                tabOutput.classList.add('tab-active');
+                tabOutput.classList.remove('tab-inactive');
+                tabInput.classList.add('tab-inactive');
+                tabInput.classList.remove('tab-active');
+            });
+        });
+    </script>
+</body>
+</html>
