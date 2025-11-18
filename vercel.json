@@ -96,6 +96,26 @@
       "src": "/clientes/segurosbolivar/poc(?:/.*)?$",
       "dest": "/clientes/segurosbolivar/poc.html"
     },
+    {
+      "src": "/clientes/segurosbolivar/jmeter(?:/.*)?$",
+      "dest": "/clientes/segurosbolivar/jmeter.html"
+    },
+    {
+      "src": "/clientes/segurosbolivar/jmeter-telegraf(?:/.*)?$",
+      "dest": "/clientes/segurosbolivar/jmeter-telegraf.html"
+    },
+    {
+      "src": "/clientes/segurosbolivar/jmeter-patterns(?:/.*)?$",
+      "dest": "/clientes/segurosbolivar/jmeter-patterns.html"
+    },
+    {
+      "src": "/clientes/segurosbolivar/desarrollo(?:/.*)?$",
+      "dest": "/clientes/segurosbolivar/desarrollo.html"
+    },
+    {
+      "src": "/clientes/segurosbolivar/grafana(?:/.*)?$",
+      "dest": "/clientes/segurosbolivar/grafana.html"
+    },
 
     {
       "src": "/clientes/yape/propuesta-final(?:/.*)?$",

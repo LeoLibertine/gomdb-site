@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Dive: Custom Java Backend Listener</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: "Developer Mode" (Dark Slate, Code Blue, Warning Amber) -->
+    <!-- Application Structure Plan: 
+         1. Hero Section: Technical definition of the "Code-First" approach.
+         2. Architecture Blueprint: A visually complex diagram showing the internal wiring inside the JMeter JVM.
+         3. The "Anatomy of the Code": A code block showing the required Java interface implementation.
+         4. Risk Analysis (The Critical Section): Visualizing Thread Blocking and Buffer management.
+         5. Implementation Checklist: The "To-Do" list for Professional Services vs Client.
+    -->
+    <!-- Visualization & Content Choices:
+         - Blueprint Diagram: Uses CSS Grid/Flex to simulate a system architecture schematic inside a JVM container.
+         - Code Window: styled like a VS Code editor to emphasize "Development Work".
+         - Risk Meters: CSS-based gauges to show Maintenance and Performance risks.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        .blueprint-grid {
+            background-image: linear-gradient(#1e293b 1px, transparent 1px), linear-gradient(90deg, #1e293b 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-color: #0f172a;
+        }
+
+        .java-keyword { color: #c678dd; }
+        .java-class { color: #e5c07b; }
+        .java-string { color: #98c379; }
+        .java-comment { color: #5c6370; font-style: italic; }
+        .java-method { color: #61afef; }
+
+        .risk-bar {
+            transition: width 1.5s ease-out;
+        }
+        
+        /* Custom Scrollbar for code block */
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #1e293b; 
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 selection:bg-blue-500 selection:text-white">
+
+    <!-- Header / Context -->
+    <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center font-mono font-bold text-white">{}</div>
+                <span class="font-bold text-lg tracking-tight">Opción B <span class="text-slate-500 font-normal">| Desarrollo a Medida</span></span>
+            </div>
+            <div class="text-xs font-mono text-blue-400 border border-blue-900 bg-blue-900/20 px-3 py-1 rounded-full">
+                JMeter Native Integration
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-12 space-y-24">
+
+        <!-- 1. Hero Section: The Developer's Path -->
+        <section class="text-center max-w-3xl mx-auto animate-fade-in">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
+                Control Total via <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">Código Java Personalizado</span>
+            </h1>
+            <p class="text-lg text-slate-400">
+                Implementación de un <code>BackendListenerClient</code> nativo dentro de la JVM de JMeter. 
+                Conexión directa a MongoDB Atlas sin intermediarios, gestionada enteramente por código propietario.
+            </p>
+        </section>
+
+        <!-- 2. Architecture Blueprint (Visualizing the Complexity) -->
+        <section class="relative rounded-xl overflow-hidden border border-slate-700 shadow-2xl">
+            <div class="blueprint-grid p-8 md:p-12">
+                <div class="flex flex-col items-center">
+                    <h3 class="text-blue-400 font-mono text-sm mb-8 uppercase tracking-widest">Architecture Schematic: Inside the JVM</h3>
+                    
+                    <!-- The JVM Container -->
+                    <div class="w-full max-w-4xl border-2 border-dashed border-slate-600 bg-slate-800/80 rounded-lg p-6 md:p-10 relative">
+                        <div class="absolute -top-3 left-4 bg-slate-900 px-2 text-slate-500 text-xs font-mono">JMeter JVM Process</div>
+                        
+                        <div class="flex flex-col md:flex-row gap-8 items-stretch">
+                            
+                            <!-- Thread Group (Source) -->
+                            <div class="flex-1 bg-slate-900 border border-slate-700 p-4 rounded flex flex-col items-center justify-center gap-2">
+                                <div class="text-slate-400 text-xs uppercase font-bold">Thread Group</div>
+                                <div class="flex gap-1">
+                                    <div class="w-2 h-8 bg-green-500 rounded-full animate-pulse"></div>
+                                    <div class="w-2 h-8 bg-green-500 rounded-full animate-pulse" style="animation-delay: 0.1s"></div>
+                                    <div class="w-2 h-8 bg-green-500 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                                </div>
+                                <div class="text-xs text-slate-500 mt-2">Generación de Carga</div>
+                            </div>
+
+                            <!-- The Arrow -->
+                            <div class="flex items-center justify-center text-slate-500">
+                                <span class="font-mono text-xs bg-slate-900 px-2 z-10">SampleResult Object</span>
+                                <div class="w-12 h-[2px] bg-slate-600 -ml-16"></div>
+                                <div class="text-xl">►</div>
+                            </div>
+
+                            <!-- The Custom Plugin (The Work) -->
+                            <div class="flex-[2] bg-blue-900/20 border-2 border-blue-500/50 p-5 rounded relative">
+                                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg whitespace-nowrap">Custom Plugin (Java)</div>
+                                
+                                <div class="space-y-3 mt-2">
+                                    <!-- Logic Step 1 -->
+                                    <div class="flex items-center gap-3 bg-slate-900 p-2 rounded border border-slate-700/50">
+                                        <div class="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-[10px] font-bold">1</div>
+                                        <div class="text-xs text-slate-300 font-mono">Data Extraction & ETL</div>
+                                    </div>
+                                    <!-- Logic Step 2 -->
+                                    <div class="flex items-center gap-3 bg-slate-900 p-2 rounded border border-slate-700/50">
+                                        <div class="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center text-[10px] font-bold text-black">2</div>
+                                        <div class="text-xs text-slate-300 font-mono">Queue Management (Buffer)</div>
+                                    </div>
+                                    <!-- Logic Step 3 -->
+                                    <div class="flex items-center gap-3 bg-slate-900 p-2 rounded border border-slate-700/50">
+                                        <div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-[10px] font-bold text-black">3</div>
+                                        <div class="text-xs text-slate-300 font-mono">Mongo Driver Async Write</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- The Arrow Out -->
+                            <div class="flex items-center justify-center text-slate-500">
+                                <div class="w-12 h-[2px] bg-slate-600"></div>
+                                <div class="text-xl">►</div>
+                            </div>
+
+                            <!-- Mongo Atlas -->
+                            <div class="flex-1 bg-green-900/20 border border-green-500/30 p-4 rounded flex flex-col items-center justify-center">
+                                <div class="text-green-400 text-4xl mb-2">🍃</div>
+                                <div class="text-green-400 text-xs font-bold uppercase">Atlas Cloud</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Anatomy of the Code (The Reality Check) -->
+        <section class="grid md:grid-cols-2 gap-12 items-start">
+            
+            <!-- Explanation -->
+            <div class="space-y-6">
+                <h2 class="text-3xl font-bold text-white">Anatomía del Código</h2>
+                <p class="text-slate-400 leading-relaxed">
+                    Para implementar esta opción, su equipo (o Servicios Profesionales) debe crear una clase Java que implemente la interfaz <code>BackendListenerClient</code>.
+                    <br><br>
+                    Este código se compila en un archivo <code>.jar</code> que debe distribuirse manualmente a cada inyector de carga JMeter y colocarse en la carpeta <code>/lib/ext</code>.
+                </p>
+                
+                <div class="bg-amber-900/20 border border-amber-500/30 p-4 rounded-lg flex items-start gap-3">
+                    <span class="text-2xl">⚠️</span>
+                    <div>
+                        <h4 class="font-bold text-amber-500 text-sm">Responsabilidad Crítica</h4>
+                        <p class="text-xs text-amber-200/70 mt-1">
+                            Usted es responsable de gestionar el pool de conexiones a MongoDB. Si el pool se satura, los threads de prueba de JMeter se bloquearán esperando una conexión, falseando los resultados de la prueba.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Block -->
+            <div class="bg-[#282c34] rounded-lg shadow-2xl overflow-hidden border border-slate-700 font-mono text-sm">
+                <div class="bg-[#21252b] px-4 py-2 flex items-center justify-between border-b border-slate-700">
+                    <span class="text-slate-400 text-xs">MongoBackendListener.java</span>
+                    <div class="flex gap-1.5">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                </div>
+                <div class="p-4 custom-scroll overflow-x-auto text-xs md:text-sm leading-relaxed">
+<span class="java-keyword">public class</span> <span class="java-class">MongoBackendListener</span> <span class="java-keyword">extends</span> <span class="java-class">AbstractBackendListenerClient</span> {
+
+    <span class="java-keyword">private</span> <span class="java-class">MongoClient</span> mongoClient;
+    <span class="java-keyword">private</span> <span class="java-class">MongoCollection</span>&lt;<span class="java-class">Document</span>&gt; collection;
+
+    <span class="java-comment">@Override</span>
+    <span class="java-keyword">public void</span> <span class="java-method">setupTest</span>(<span class="java-class">BackendListenerContext</span> context) {
+        <span class="java-comment">// 1. Establish Connection (Careful with pool size!)</span>
+        <span class="java-class">String</span> uri = context.getParameter(<span class="java-string">"mongoUri"</span>);
+        <span class="java-keyword">this</span>.mongoClient = <span class="java-class">MongoClients</span>.create(uri);
+        <span class="java-comment">// ... database setup logic</span>
+    }
+
+    <span class="java-comment">@Override</span>
+    <span class="java-keyword">public void</span> <span class="java-method">handleSampleResults</span>(<span class="java-class">List</span>&lt;<span class="java-class">SampleResult</span>&gt; sampleResults, <span class="java-class">BackendListenerContext</span> context) {
+        
+        <span class="java-class">List</span>&lt;<span class="java-class">Document</span>&gt; batch = <span class="java-keyword">new</span> <span class="java-class">ArrayList</span>&lt;&gt;();
+
+        <span class="java-keyword">for</span> (<span class="java-class">SampleResult</span> r : sampleResults) {
+            <span class="java-comment">// 2. Transform Sample to BSON (ETL)</span>
+            <span class="java-class">Document</span> doc = <span class="java-keyword">new</span> <span class="java-class">Document</span>()
+                .append(<span class="java-string">"timestamp"</span>, r.getTimeStamp())
+                .append(<span class="java-string">"latency"</span>, r.getLatency())
+                .append(<span class="java-string">"responseCode"</span>, r.getResponseCode());
+            batch.add(doc);
+        }
+
+        <span class="java-comment">// 3. Write to Mongo (Sync or Async?)</span>
+        <span class="java-comment">// WARNING: If Sync, this BLOCKS the JMeter thread!</span>
+        <span class="java-keyword">try</span> {
+            collection.insertMany(batch); 
+        } <span class="java-keyword">catch</span> (<span class="java-class">Exception</span> e) {
+            <span class="java-comment">// Handle write failure without crashing test</span>
+            log.error(<span class="java-string">"Failed to write metrics"</span>, e);
+        }
+    }
+    
+    <span class="java-comment">// ... teardown logic</span>
+}
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Risk & Overhead Analysis -->
+        <section class="bg-slate-800 rounded-xl p-8 md:p-12 border border-slate-700">
+            <h2 class="text-2xl font-bold text-white mb-8 text-center">Análisis de Sobrecarga (Trade-offs)</h2>
+            
+            <div class="space-y-8 max-w-3xl mx-auto">
+                
+                <!-- Metric 1 -->
+                <div>
+                    <div class="flex justify-between text-sm font-bold mb-2">
+                        <span class="text-slate-300">Esfuerzo de Mantenimiento</span>
+                        <span class="text-red-400">Alto (Código Propio)</span>
+                    </div>
+                    <div class="h-4 bg-slate-900 rounded-full overflow-hidden">
+                        <div class="h-full bg-red-500 w-[85%]"></div>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">Requiere recompilación y despliegue de JARs ante cambios en API o drivers.</p>
+                </div>
+
+                <!-- Metric 2 -->
+                <div>
+                    <div class="flex justify-between text-sm font-bold mb-2">
+                        <span class="text-slate-300">Riesgo de "Observer Effect"</span>
+                        <span class="text-amber-400">Medio-Alto</span>
+                    </div>
+                    <div class="h-4 bg-slate-900 rounded-full overflow-hidden">
+                        <div class="h-full bg-amber-500 w-[65%]"></div>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">El procesamiento de métricas consume CPU/Memoria dentro de la misma JVM que genera la carga.</p>
+                </div>
+
+                <!-- Metric 3 -->
+                <div>
+                    <div class="flex justify-between text-sm font-bold mb-2">
+                        <span class="text-slate-300">Control sobre los Datos</span>
+                        <span class="text-green-400">Máximo</span>
+                    </div>
+                    <div class="h-4 bg-slate-900 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500 w-[95%]"></div>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">Permite transformaciones complejas de datos antes de enviarlos a Mongo.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 5. Implementation Checklist (Roles) -->
+        <section class="grid md:grid-cols-3 gap-6">
+            <div class="col-span-3 text-center mb-4">
+                <h2 class="text-2xl font-bold text-white">Checklist de Implementación</h2>
+                <p class="text-slate-400 text-sm">¿Qué necesitamos para ejecutar esta opción?</p>
+            </div>
+
+            <!-- Step 1 -->
+            <div class="bg-slate-800 p-6 rounded-lg border-t-4 border-blue-500">
+                <h3 class="font-bold text-white mb-2">1. Desarrollo Java</h3>
+                <ul class="text-sm text-slate-400 space-y-2 list-disc pl-4">
+                    <li>Escribir el código del Listener.</li>
+                    <li>Implementar lógica de Buffering asíncrono.</li>
+                    <li>Integrar librería <code>mongo-java-driver</code>.</li>
+                </ul>
+                <div class="mt-4 text-xs bg-slate-900 p-2 text-blue-300 rounded border border-slate-700 inline-block">
+                    Responsable: PS / Cliente
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="bg-slate-800 p-6 rounded-lg border-t-4 border-blue-500">
+                <h3 class="font-bold text-white mb-2">2. Build & Deploy</h3>
+                <ul class="text-sm text-slate-400 space-y-2 list-disc pl-4">
+                    <li>Compilar el JAR (Maven/Gradle).</li>
+                    <li>Descargar dependencias (Fat Jar o /lib).</li>
+                    <li>Distribuir físicamente a todos los servidores JMeter.</li>
+                </ul>
+                <div class="mt-4 text-xs bg-slate-900 p-2 text-blue-300 rounded border border-slate-700 inline-block">
+                    Responsable: DevOps Cliente
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="bg-slate-800 p-6 rounded-lg border-t-4 border-blue-500">
+                <h3 class="font-bold text-white mb-2">3. Pruebas de Estabilidad</h3>
+                <ul class="text-sm text-slate-400 space-y-2 list-disc pl-4">
+                    <li>Verificar que el Listener no consuma >5% de CPU.</li>
+                    <li>Asegurar que no haya fugas de memoria (Memory Leaks).</li>
+                </ul>
+                <div class="mt-4 text-xs bg-slate-900 p-2 text-blue-300 rounded border border-slate-700 inline-block">
+                    Responsable: PS / QA
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Decision -->
+        <footer class="border-t border-slate-800 pt-12 pb-6 text-center">
+            <p class="text-slate-500 text-sm mb-4">Documento de Asesoría Técnica | MongoDB Professional Services</p>
+            <div class="inline-block bg-slate-800 px-4 py-2 rounded text-xs text-slate-400">
+                Recomendación: Utilizar esta opción solo si el uso de agentes externos (Telegraf) está prohibido por políticas de seguridad.
+            </div>
+        </footer>
+
+    </main>
+
+</body>
+</html>

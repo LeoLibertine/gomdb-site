@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estrategia de Integración: JMeter & MongoDB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: MongoDB Enterprise (Spring Green, Slate Dark, White) -->
+    <!-- Application Structure Plan: Single page "scrollytelling" layout. 
+         1. Hero: Context & Goal. 
+         2. The Challenge: Visualizing the "Missing Link".
+         3. The Solution: Side-by-side comparison cards (Option A vs B) with interaction to reveal details.
+         4. Visualization Strategy: Toggle between Charts & Grafana.
+         5. Scope Matrix: Explicit table distinguishing Advisory vs PS.
+         6. Strategic Summary: Footer with key takeaways. 
+         Designed to be projected during a meeting. -->
+    <!-- Visualization & Content Choices: 
+         - Challenge Section: CSS-based flow diagram (No SVG) showing the disconnect.
+         - Comparison: Interactive cards using Hover/Click states to show pros/cons.
+         - Scope: Clean grid layout to strictly define roles.
+         - Chart.js: Used to simulate "Real-time vs Blocking" performance impact visualization. 
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+        
+        body { font-family: 'DM Sans', sans-serif; }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .mongo-gradient {
+            background: linear-gradient(135deg, #001E2B 0%, #00ED64 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Custom CSS for Diagram Arrows (No SVG) */
+        .arrow-right::after {
+            content: '→';
+            font-size: 2rem;
+            color: #94a3b8;
+        }
+        .arrow-down::after {
+            content: '↓';
+            font-size: 2rem;
+            color: #94a3b8;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 selection:bg-green-200 selection:text-green-900">
+
+    <!-- Navigation / Header -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-8 bg-green-500 rounded-sm"></div>
+                    <span class="font-bold text-xl tracking-tight text-slate-800">MongoDB <span class="font-normal text-slate-500">| Advisory</span></span>
+                </div>
+                <div class="text-sm font-medium text-slate-500">
+                    Caso: Grupo Bolívar
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+
+        <!-- 1. Hero Section -->
+        <section class="text-center max-w-4xl mx-auto animate-fade-in">
+            <div class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs font-bold uppercase tracking-wide mb-4">
+                Estrategia de Modernización
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold text-slate-900 mb-6 leading-tight">
+                Integración de Alto Rendimiento: <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-500">JMeter & MongoDB Atlas</span>
+            </h1>
+            <p class="text-xl text-slate-600 max-w-2xl mx-auto">
+                Superando el reto de la ingesta asíncrona y definiendo la hoja de ruta para una PoC exitosa este año.
+            </p>
+        </section>
+
+        <!-- 2. El Reto Técnico (The Missing Link) -->
+        <section class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="p-8 md:p-12">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+                    <div class="md:w-1/2">
+                        <h2 class="text-3xl font-bold text-slate-900 mb-4">1. El Reto Técnico: <br><span class="text-red-500">"The Missing Link"</span></h2>
+                        <p class="text-lg text-slate-600 mb-6">
+                            El cliente tiene razón en su preocupación. JMeter tiene conectores nativos para InfluxDB, pero <strong>no existe</strong> un soporte nativo oficial asíncrono para MongoDB en Apache.
+                        </p>
+                        <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg">
+                            <p class="text-amber-800 font-medium">
+                                ⚠️ Riesgo Principal: Bloqueo de Threads
+                            </p>
+                            <p class="text-amber-700 text-sm mt-1">
+                                Una conexión directa mal implementada causará que JMeter gaste CPU escribiendo en la BD en lugar de probar la aplicación ("Efecto Observador").
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Diagrama Conceptual (CSS shapes) -->
+                    <div class="md:w-1/2 bg-slate-50 rounded-2xl p-8 border border-slate-200 w-full">
+                        <h3 class="text-sm font-bold uppercase text-slate-400 mb-6 text-center">Diagrama de Fricción Actual</h3>
+                        <div class="flex items-center justify-center gap-4">
+                            <!-- JMeter Node -->
+                            <div class="flex flex-col items-center">
+                                <div class="w-24 h-24 bg-red-100 rounded-xl flex items-center justify-center border-2 border-red-200 shadow-sm">
+                                    <span class="text-2xl">⚡</span>
+                                </div>
+                                <span class="mt-2 font-bold text-slate-700">JMeter</span>
+                            </div>
+
+                            <!-- Missing Link -->
+                            <div class="flex flex-col items-center px-4 relative">
+                                <div class="h-1 w-24 bg-slate-300 rounded-full"></div>
+                                <div class="absolute -top-4 bg-white px-2 py-1 rounded border border-red-200 text-xs text-red-500 font-bold">? Missing Link</div>
+                                <div class="text-2xl text-slate-300 absolute top-[-10px]">✕</div>
+                            </div>
+
+                            <!-- Mongo Node -->
+                            <div class="flex flex-col items-center">
+                                <div class="w-24 h-24 bg-green-100 rounded-xl flex items-center justify-center border-2 border-green-200 shadow-sm">
+                                    <span class="text-2xl">🍃</span>
+                                </div>
+                                <span class="mt-2 font-bold text-slate-700">MongoDB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Las Dos Opciones (Interactive Comparison) -->
+        <section>
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-slate-900">Caminos de Solución</h2>
+                <p class="text-slate-500">Para lograr el objetivo de "Ingesta Asíncrona y Ligera"</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                
+                <!-- Opción A: Recomendada -->
+                <div id="card-option-a" class="relative group cursor-pointer card-hover bg-white rounded-2xl shadow-lg border-2 border-green-500 p-8">
+                    <div class="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg uppercase">
+                        Recomendada (Leo)
+                    </div>
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-2xl font-bold">A</div>
+                        <h3 class="text-xl font-bold text-slate-900">Arquitectura Desacoplada <br>(Telegraf Agent)</h3>
+                    </div>
+                    
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">✓</span>
+                            <span class="text-slate-600 text-sm"><strong>Configuración Pura:</strong> Sin código Java que mantener.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">✓</span>
+                            <span class="text-slate-600 text-sm"><strong>Asíncrono Real:</strong> Telegraf hace buffering y batching.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">✓</span>
+                            <span class="text-slate-600 text-sm"><strong>Estándar:</strong> Método probado para migrar de InfluxDB.</span>
+                        </li>
+                    </ul>
+
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-xs text-slate-500 font-mono">
+                        JMeter (Graphite Protocol) → localhost:2003 (Telegraf) → MongoDB Atlas
+                    </div>
+                </div>
+
+                <!-- Opción B: Custom -->
+                <div id="card-option-b" class="relative group cursor-pointer card-hover bg-white rounded-2xl shadow p-8 border border-slate-200 opacity-80 hover:opacity-100">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-2xl font-bold">B</div>
+                        <h3 class="text-xl font-bold text-slate-900">Desarrollo a Medida <br>(Custom Listener)</h3>
+                    </div>
+
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start gap-2">
+                            <span class="text-amber-500 mt-1">!</span>
+                            <span class="text-slate-600 text-sm"><strong>Conexión Directa:</strong> Java Plugin dentro de JMeter.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-red-500 mt-1">✕</span>
+                            <span class="text-slate-600 text-sm"><strong>Alto Mantenimiento:</strong> Requiere mantener código custom en el cliente.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-red-500 mt-1">✕</span>
+                            <span class="text-slate-600 text-sm"><strong>Riesgo:</strong> Si se programa mal, bloquea la prueba.</span>
+                        </li>
+                    </ul>
+
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-xs text-slate-500 font-mono">
+                        JMeter (Java Code) → Internet → MongoDB Atlas
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 4. Visualización & Performance (Chart) -->
+        <section class="bg-slate-900 text-white rounded-3xl overflow-hidden shadow-2xl">
+            <div class="grid md:grid-cols-2">
+                <div class="p-10 flex flex-col justify-center">
+                    <h2 class="text-3xl font-bold mb-4">2. Visualización y Performance</h2>
+                    <p class="text-slate-300 mb-6">
+                        <strong>Atlas Charts</strong> es el camino más rápido y económico (nativo). Si el cliente insiste en <strong>Grafana</strong>, existe el plugin Enterprise, pero añade costos de infraestructura.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-slate-800 rounded-lg border border-slate-700">
+                            <span>Atlas Charts</span>
+                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-bold">Incluido</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                            <span>Grafana + Plugin</span>
+                            <span class="px-2 py-1 bg-slate-600 text-slate-300 rounded text-xs font-bold">Requiere Infra</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart Visualizer -->
+                <div class="bg-slate-800 p-8 flex flex-col items-center justify-center relative">
+                    <h4 class="text-sm font-bold text-slate-400 mb-4 absolute top-6 left-6">Impacto Estimado en Threads</h4>
+                    <!-- Container required for Chart.js responsiveness -->
+                    <div class="chart-container">
+                        <canvas id="impactChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Definición de Alcances (Scope) -->
+        <section>
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-slate-900">3. Definición de Roles</h2>
+                <p class="text-slate-500">Para asegurar el éxito de la PoC este año</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200">
+                    
+                    <!-- Leo's Role -->
+                    <div class="p-8 bg-green-50/50">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="bg-green-600 text-white p-2 rounded-lg font-bold">Advisory</div>
+                            <h3 class="text-xl font-bold text-slate-800">Mi Rol (Leo)</h3>
+                        </div>
+                        <ul class="space-y-4">
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-600 text-xl">🎯</span>
+                                <span class="text-slate-700 text-sm">Diseño de Arquitectura de Referencia (Diagramas).</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-600 text-xl">📝</span>
+                                <span class="text-slate-700 text-sm">Recomendación de Schema Design para Time Series (Best Practices).</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-green-600 text-xl">💡</span>
+                                <span class="text-slate-700 text-sm">Proveer ejemplos de configuración (Snippets) de Telegraf.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- PS Role -->
+                    <div class="p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="bg-slate-800 text-white p-2 rounded-lg font-bold">Professional Services</div>
+                            <h3 class="text-xl font-bold text-slate-800">Ejecución (PS / Cliente)</h3>
+                        </div>
+                        <ul class="space-y-4">
+                            <li class="flex items-start gap-3">
+                                <span class="text-slate-400 text-xl">⌨️</span>
+                                <span class="text-slate-700 text-sm">"Manos en el teclado": Instalación de agentes en servidores.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-slate-400 text-xl">⚙️</span>
+                                <span class="text-slate-700 text-sm">Desarrollo de Código Java (si eligen Opción B).</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-slate-400 text-xl">📊</span>
+                                <span class="text-slate-700 text-sm">Construcción fina de Dashboards complejos.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer / Call to Action -->
+        <section class="bg-slate-100 rounded-2xl p-8 text-center border border-slate-200 mt-12">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Próximos Pasos</h3>
+            <p class="text-slate-600 mb-6 max-w-2xl mx-auto">
+                Revisión de grabaciones para volumen de datos y preparación de material visual para la reunión.
+            </p>
+            <div class="inline-block bg-white px-6 py-3 rounded-lg border border-slate-300 shadow-sm">
+                <span class="font-bold text-green-600">Pregunta Clave:</span> 
+                <span class="text-slate-700">¿Tienen flexibilidad para instalar Telegraf en los servidores JMeter?</span>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('impactChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['0s', '10s', '20s', '30s', '40s', '50s'],
+                    datasets: [
+                        {
+                            label: 'Latencia (Opción A - Telegraf)',
+                            data: [10, 12, 11, 13, 11, 12],
+                            borderColor: '#4ade80', // Green
+                            backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Latencia (Opción B - Síncrona)',
+                            data: [15, 45, 80, 120, 150, 200],
+                            borderColor: '#f87171', // Red
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Crucial for container fit
+                    plugins: {
+                        legend: {
+                            labels: { color: '#cbd5e1' }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#334155' },
+                            ticks: { color: '#94a3b8' },
+                            title: { display: true, text: 'Latencia Agregada (ms)', color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

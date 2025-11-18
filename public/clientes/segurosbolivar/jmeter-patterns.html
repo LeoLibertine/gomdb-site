@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JMeter to Atlas: Integration Patterns</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Architectural Blue-Print (Slate, Indigo, White) + Status Colors -->
+    <!-- Application Structure Plan: 
+         1. Header: Clear title for the presentation slide.
+         2. Pattern Grid: Three distinct columns representing the architectural options.
+            - Pattern 1: The Agent (Recommended)
+            - Pattern 2: The Native Code (High Effort)
+            - Pattern 3: The Log Shipper (High Latency)
+         3. Visual Flow: CSS-based diagrams for each pattern to visualize the data path.
+         4. Scorecard: A comparison table at the bottom for quick decision making.
+    -->
+    <!-- Visualization & Content Choices:
+         - CSS Flow Diagrams: Simple block flows to show "Where the data goes".
+         - Traffic Light System: Green/Yellow/Red accents to guide the recommendation.
+    -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+
+        .pattern-card {
+            transition: all 0.3s ease;
+        }
+        .pattern-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Connector Lines for CSS Diagrams */
+        .connector-line {
+            width: 2px;
+            height: 20px;
+            background-color: #94a3b8; /* Slate 400 */
+            margin: 0 auto;
+        }
+        .connector-arrow::after {
+            content: '↓';
+            display: block;
+            text-align: center;
+            color: #94a3b8;
+            font-weight: bold;
+        }
+        
+        /* Badge Styling */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <!-- Slide Header -->
+    <header class="bg-white border-b border-slate-200 py-8">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="text-indigo-600 font-bold tracking-widest text-xs uppercase mb-2">MongoDB Advisory Services</div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900">JMeter to Atlas <span class="text-indigo-600">Patterns</span></h1>
+            <p class="text-slate-500 mt-3 text-lg">Arquitecturas de Ingesta para Pruebas de Rendimiento</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-12">
+
+        <!-- Patterns Grid -->
+        <div class="grid md:grid-cols-3 gap-8 mb-16">
+
+            <!-- PATTERN 1: The Sidecar (Recommended) -->
+            <div class="pattern-card bg-white rounded-2xl shadow-lg border-t-8 border-green-500 p-6 flex flex-col relative overflow-hidden">
+                <div class="absolute top-4 right-4">
+                    <span class="badge bg-green-100 text-green-800">Recomendado</span>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-2">1. The Agent Sidecar</h2>
+                <p class="text-sm text-slate-500 mb-6 h-10">Desacoplamiento total usando un agente ligero (Telegraf) como buffer intermedio.</p>
+
+                <!-- Diagram 1 -->
+                <div class="bg-slate-50 rounded-lg p-6 border border-slate-200 mb-6 flex-grow">
+                    <div class="flex flex-col items-center space-y-1">
+                        <div class="w-32 py-2 bg-red-100 border border-red-200 rounded text-center text-xs font-bold text-red-700">JMeter</div>
+                        <div class="connector-arrow text-xs text-slate-400">Graphite (UDP)</div>
+                        <div class="w-32 py-2 bg-blue-100 border border-blue-200 rounded text-center text-xs font-bold text-blue-700 shadow-md">Telegraf (Agent)</div>
+                        <div class="connector-arrow text-xs text-green-600 font-bold">Bulk Write</div>
+                        <div class="w-32 py-2 bg-green-100 border border-green-200 rounded text-center text-xs font-bold text-green-700">MongoDB Atlas</div>
+                    </div>
+                    <div class="mt-4 text-xs text-center text-slate-500 italic">
+                        *JMeter "dispara y olvida". Telegraf gestiona la red.*
+                    </div>
+                </div>
+
+                <!-- Pros/Cons -->
+                <ul class="space-y-2 text-sm mb-6">
+                    <li class="flex items-center text-green-700"><span class="mr-2">✓</span> Zero Code en Java</li>
+                    <li class="flex items-center text-green-700"><span class="mr-2">✓</span> Buffer anti-bloqueo</li>
+                    <li class="flex items-center text-green-700"><span class="mr-2">✓</span> Estándar de la industria</li>
+                </ul>
+                
+                <div class="mt-auto pt-4 border-t border-slate-100">
+                    <p class="text-xs font-bold text-slate-400 uppercase">Esfuerzo</p>
+                    <div class="w-full bg-slate-200 rounded-full h-2 mt-1">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: 20%"></div>
+                    </div>
+                    <p class="text-right text-xs text-green-600 mt-1">Bajo (Configuración)</p>
+                </div>
+            </div>
+
+            <!-- PATTERN 2: Custom Java (The Hard Way) -->
+            <div class="pattern-card bg-white rounded-2xl shadow-lg border-t-8 border-amber-500 p-6 flex flex-col">
+                <div class="absolute top-4 right-4">
+                    <span class="badge bg-amber-100 text-amber-800">Alto Control</span>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-2">2. Custom Listener</h2>
+                <p class="text-sm text-slate-500 mb-6 h-10">Implementación nativa en Java dentro del proceso de JMeter.</p>
+
+                <!-- Diagram 2 -->
+                <div class="bg-slate-50 rounded-lg p-6 border border-slate-200 mb-6 flex-grow">
+                    <div class="flex flex-col items-center space-y-1">
+                        <div class="w-32 py-2 bg-red-100 border border-red-200 rounded-t text-center text-xs font-bold text-red-700 relative z-10">
+                            JMeter
+                            <div class="absolute -bottom-4 left-0 w-full bg-amber-100 border border-amber-200 text-[10px] py-1 text-amber-800 rounded-b">Java Plugin</div>
+                        </div>
+                        <div class="h-8"></div> <!-- Spacer for overlap -->
+                        <div class="connector-arrow text-xs text-amber-600 font-bold">Direct TCP</div>
+                        <div class="w-32 py-2 bg-green-100 border border-green-200 rounded text-center text-xs font-bold text-green-700">MongoDB Atlas</div>
+                    </div>
+                    <div class="mt-9 text-xs text-center text-slate-500 italic">
+                        *El plugin comparte recursos (CPU/RAM) con la prueba.*
+                    </div>
+                </div>
+
+                <!-- Pros/Cons -->
+                <ul class="space-y-2 text-sm mb-6">
+                    <li class="flex items-center text-green-700"><span class="mr-2">✓</span> Transformación compleja</li>
+                    <li class="flex items-center text-red-600"><span class="mr-2">✕</span> Riesgo de bloqueo de threads</li>
+                    <li class="flex items-center text-red-600"><span class="mr-2">✕</span> Alto mantenimiento (Code)</li>
+                </ul>
+
+                <div class="mt-auto pt-4 border-t border-slate-100">
+                    <p class="text-xs font-bold text-slate-400 uppercase">Esfuerzo</p>
+                    <div class="w-full bg-slate-200 rounded-full h-2 mt-1">
+                        <div class="bg-amber-500 h-2 rounded-full" style="width: 90%"></div>
+                    </div>
+                    <p class="text-right text-xs text-amber-600 mt-1">Alto (Desarrollo)</p>
+                </div>
+            </div>
+
+            <!-- PATTERN 3: Log Shipper (The Fallback) -->
+            <div class="pattern-card bg-white rounded-2xl shadow-lg border-t-8 border-slate-400 p-6 flex flex-col opacity-80 hover:opacity-100">
+                <div class="absolute top-4 right-4">
+                    <span class="badge bg-slate-100 text-slate-600">Alternativa</span>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-2">3. Log Tailing</h2>
+                <p class="text-sm text-slate-500 mb-6 h-10">JMeter escribe en disco (CSV/JTL) y un agente lee el archivo.</p>
+
+                <!-- Diagram 3 -->
+                <div class="bg-slate-50 rounded-lg p-6 border border-slate-200 mb-6 flex-grow">
+                    <div class="flex flex-col items-center space-y-1">
+                        <div class="w-32 py-2 bg-red-100 border border-red-200 rounded text-center text-xs font-bold text-red-700">JMeter</div>
+                        <div class="connector-arrow text-xs text-slate-400">Write Disk</div>
+                        <div class="w-32 py-2 bg-gray-200 border border-gray-300 rounded text-center text-xs font-mono text-gray-600">results.jtl</div>
+                        <div class="connector-arrow text-xs text-slate-400">Read (Tail)</div>
+                        <div class="w-32 py-2 bg-green-100 border border-green-200 rounded text-center text-xs font-bold text-green-700">MongoDB Atlas</div>
+                    </div>
+                    <div class="mt-4 text-xs text-center text-slate-500 italic">
+                        *Introduce latencia en la visualización (No es Real-Time puro).*
+                    </div>
+                </div>
+
+                <!-- Pros/Cons -->
+                <ul class="space-y-2 text-sm mb-6">
+                    <li class="flex items-center text-green-700"><span class="mr-2">✓</span> Muy seguro (File System)</li>
+                    <li class="flex items-center text-red-600"><span class="mr-2">✕</span> Alta latencia (Disk I/O)</li>
+                    <li class="flex items-center text-amber-600"><span class="mr-2">!</span> Gestión de rotación de logs</li>
+                </ul>
+
+                <div class="mt-auto pt-4 border-t border-slate-100">
+                    <p class="text-xs font-bold text-slate-400 uppercase">Esfuerzo</p>
+                    <div class="w-full bg-slate-200 rounded-full h-2 mt-1">
+                        <div class="bg-slate-400 h-2 rounded-full" style="width: 50%"></div>
+                    </div>
+                    <p class="text-right text-xs text-slate-600 mt-1">Medio (Configuración)</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Comparison Table -->
+        <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                <h3 class="font-bold text-slate-700">Matriz de Decisión Técnica</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b">
+                        <tr>
+                            <th class="px-6 py-3">Criterio</th>
+                            <th class="px-6 py-3 text-green-700 font-bold">1. Telegraf (Agent)</th>
+                            <th class="px-6 py-3">2. Custom Java</th>
+                            <th class="px-6 py-3">3. Log Tailing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white border-b hover:bg-slate-50">
+                            <td class="px-6 py-4 font-medium text-slate-900">Impacto en JMeter</td>
+                            <td class="px-6 py-4 text-green-600 font-bold">Mínimo (Fire & Forget)</td>
+                            <td class="px-6 py-4 text-red-500">Alto (Bloqueante)</td>
+                            <td class="px-6 py-4 text-amber-500">Medio (Disk I/O)</td>
+                        </tr>
+                        <tr class="bg-white border-b hover:bg-slate-50">
+                            <td class="px-6 py-4 font-medium text-slate-900">Tiempo Real</td>
+                            <td class="px-6 py-4 text-green-600 font-bold">Excelente (&lt;1s)</td>
+                            <td class="px-6 py-4 text-green-600">Excelente (Inmediato)</td>
+                            <td class="px-6 py-4 text-amber-500">Con retraso (Lag)</td>
+                        </tr>
+                        <tr class="bg-white border-b hover:bg-slate-50">
+                            <td class="px-6 py-4 font-medium text-slate-900">Mantenimiento</td>
+                            <td class="px-6 py-4 text-green-600 font-bold">Configuración (TOML)</td>
+                            <td class="px-6 py-4 text-red-500">Código (Java Compilado)</td>
+                            <td class="px-6 py-4 text-slate-500">Configuración (Regex)</td>
+                        </tr>
+                        <tr class="bg-white hover:bg-slate-50">
+                            <td class="px-6 py-4 font-medium text-slate-900">Robustez de Red</td>
+                            <td class="px-6 py-4 text-green-600 font-bold">Alta (Buffer Local)</td>
+                            <td class="px-6 py-4 text-red-500">Baja (Fallo directo)</td>
+                            <td class="px-6 py-4 text-green-600">Alta (Persistencia en disco)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <footer class="mt-12 text-center text-sm text-slate-400">
+            Documento de Soporte para Reunión Técnica | Grupo Bolívar & MongoDB
+        </footer>
+
+    </main>
+
+</body>
+</html>
