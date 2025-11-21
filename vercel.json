@@ -167,6 +167,10 @@
       "dest": "/clientes/bancolombia/matrix.html"
     },
     {
+      "src": "/clientes/bancolombia/queryflux-sizing(?:/.*)?$",
+      "dest": "/clientes/bancolombia/queryflux-sizing.html"
+    },
+    {
       "src": "/clientes/bancolombia/matrizopciones(?:/.*)?$",
       "dest": "/clientes/bancolombia/matrizopciones.html"
     },
