@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QueryFlux | Dimensionamiento Financiero</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mongo-green: #00ED64;
+            --mongo-dark: #001E2B;
+            --mongo-card: #011621;
+            --text-light: #E8F1F2;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--mongo-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        .font-mono { font-family: 'Fira Code', monospace; }
+        
+        /* Utilities */
+        .text-mongo { color: var(--mongo-green); }
+        .bg-mongo { background-color: var(--mongo-green); }
+        .border-mongo { border-color: var(--mongo-green); }
+
+        /* Glassmorphism Cards */
+        .pricing-card {
+            background: linear-gradient(145deg, rgba(1, 22, 33, 0.9) 0%, rgba(0, 30, 43, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--mongo-green);
+            box-shadow: 0 20px 40px -12px rgba(0, 237, 100, 0.1);
+        }
+
+        /* Animations */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .bar-fill {
+            width: 0;
+            transition: width 1.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bg-grid-pattern {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col bg-grid-pattern">
+
+    <!-- Header -->
+    <nav class="w-full bg-[#001E2B]/90 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i data-lucide="pie-chart" class="text-mongo h-6 w-6"></i>
+                <span class="font-bold text-lg tracking-tight">QueryFlux <span class="text-gray-500 font-normal">| Sizing Exercises</span></span>
+            </div>
+            <div class="text-sm text-gray-400 font-mono bg-white/5 px-3 py-1 rounded-full border border-white/10">
+                <span class="w-2 h-2 rounded-full bg-mongo inline-block mr-2 animate-pulse"></span>
+                USD / YEAR
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-12">
+        
+        <div class="text-center mb-16 fade-in-up">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-white">Escenarios de Inversión</h1>
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                Comparativa financiera proyectada anualmente incluyendo infraestructura y soporte <strong>MongoDB Pro</strong>.
+            </p>
+        </div>
+
+        <!-- Pricing Cards Grid -->
+        <div class="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto mb-20">
+            
+            <!-- Card 1: M50 (Base) -->
+            <div class="pricing-card rounded-2xl p-8 relative group fade-in-up" style="animation-delay: 0.1s;">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-1 bg-gray-600 rounded-b-full opacity-50"></div>
+                
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-400">Escenario 1</h3>
+                        <div class="text-3xl font-bold text-white mt-1">M50 Base</div>
+                    </div>
+                    <i data-lucide="server" class="text-gray-500 h-8 w-8"></i>
+                </div>
+
+                <div class="space-y-4 mb-8">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Infraestructura (M50)</span>
+                        <span class="font-mono text-white">$22,823</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400 flex items-center gap-1"><i data-lucide="life-buoy" class="w-3 h-3 text-mongo"></i> Soporte Pro</span>
+                        <span class="font-mono text-mongo">$9,588</span>
+                    </div>
+                    <div class="h-px bg-white/10 my-2"></div>
+                    <div class="flex justify-between items-end">
+                        <span class="text-gray-300 font-semibold">Total Anual</span>
+                        <span class="text-3xl font-bold text-white font-mono">$32,411</span>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 rounded-lg p-4 text-sm text-gray-400 border border-white/5">
+                    <p class="mb-2"><strong class="text-white">Perfil:</strong> Entrada eficiente.</p>
+                    <ul class="list-disc list-inside space-y-1 text-xs opacity-80">
+                        <li>32GB RAM</li>
+                        <li>Sin aislamiento de búsqueda</li>
+                        <li>Ideal para fases iniciales</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Card 2: M50 + 2xS50 (Recommended) -->
+            <div class="pricing-card rounded-2xl p-8 relative group border-mongo shadow-[0_0_30px_rgba(0,237,100,0.1)] fade-in-up" style="animation-delay: 0.2s; transform: scale(1.02);">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-mongo text-black text-xs font-bold px-4 py-1 rounded-full shadow-lg tracking-wider uppercase">
+                    Arquitectura Ideal
+                </div>
+                
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h3 class="text-lg font-medium text-mongo">Escenario 2</h3>
+                        <div class="text-3xl font-bold text-white mt-1">M50 + 2xS50</div>
+                    </div>
+                    <i data-lucide="layers" class="text-mongo h-8 w-8"></i>
+                </div>
+
+                <div class="space-y-4 mb-8">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Cluster + Search Nodes</span>
+                        <span class="font-mono text-white">$41,101</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400 flex items-center gap-1"><i data-lucide="life-buoy" class="w-3 h-3 text-mongo"></i> Soporte Pro</span>
+                        <span class="font-mono text-mongo">$9,588</span>
+                    </div>
+                    <div class="h-px bg-white/10 my-2"></div>
+                    <div class="flex justify-between items-end">
+                        <span class="text-gray-300 font-semibold">Total Anual</span>
+                        <span class="text-3xl font-bold text-white font-mono">$50,689</span>
+                    </div>
+                </div>
+
+                <div class="bg-mongo/10 rounded-lg p-4 text-sm text-gray-300 border border-mongo/20">
+                    <p class="mb-2"><strong class="text-white">Perfil:</strong> Máximo Rendimiento.</p>
+                    <ul class="list-disc list-inside space-y-1 text-xs text-mongo">
+                        <li>Aislamiento Total (Search dedicado)</li>
+                        <li>Mismo precio que M60</li>
+                        <li>SLA Garantizado</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Card 3: M60 (Consolidated) -->
+            <div class="pricing-card rounded-2xl p-8 relative group fade-in-up" style="animation-delay: 0.3s;">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-1 bg-blue-500 rounded-b-full opacity-50"></div>
+
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h3 class="text-lg font-medium text-blue-400">Escenario 3</h3>
+                        <div class="text-3xl font-bold text-white mt-1">M60 Base</div>
+                    </div>
+                    <i data-lucide="box" class="text-blue-500 h-8 w-8"></i>
+                </div>
+
+                <div class="space-y-4 mb-8">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Infraestructura (M60)</span>
+                        <span class="font-mono text-white">$40,942</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400 flex items-center gap-1"><i data-lucide="life-buoy" class="w-3 h-3 text-mongo"></i> Soporte Pro</span>
+                        <span class="font-mono text-mongo">$9,588</span>
+                    </div>
+                    <div class="h-px bg-white/10 my-2"></div>
+                    <div class="flex justify-between items-end">
+                        <span class="text-gray-300 font-semibold">Total Anual</span>
+                        <span class="text-3xl font-bold text-white font-mono">$50,530</span>
+                    </div>
+                </div>
+
+                <div class="bg-blue-900/10 rounded-lg p-4 text-sm text-gray-400 border border-blue-500/20">
+                    <p class="mb-2"><strong class="text-white">Perfil:</strong> Potencia Bruta.</p>
+                    <ul class="list-disc list-inside space-y-1 text-xs opacity-80">
+                        <li>64GB RAM Compartida</li>
+                        <li>Gestión simplificada</li>
+                        <li>Riesgo de contención IOPS</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Analysis Section -->
+        <div class="max-w-4xl mx-auto fade-in-up" style="animation-delay: 0.4s;">
+            <div class="bg-[#011621] border border-white/10 rounded-2xl p-8 shadow-2xl">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                    <i data-lucide="bar-chart-2" class="text-mongo"></i> Análisis de Costo vs Beneficio
+                </h2>
+                
+                <!-- Cost Bar Comparison -->
+                <div class="space-y-6 mb-8">
+                    <!-- Bar 1 -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-400">Escenario 1 (M50)</span>
+                            <span class="text-white font-mono">$32k</span>
+                        </div>
+                        <div class="h-4 bg-gray-800 rounded-full overflow-hidden">
+                            <div class="bar-fill h-full bg-gray-500" style="width: 0;" data-width="64%"></div>
+                        </div>
+                    </div>
+                    <!-- Bar 2 -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-mongo font-bold">Escenario 2 (M50 + S50)</span>
+                            <span class="text-mongo font-mono font-bold">$50.6k</span>
+                        </div>
+                        <div class="h-4 bg-gray-800 rounded-full overflow-hidden relative">
+                            <div class="bar-fill h-full bg-mongo" style="width: 0;" data-width="100%"></div>
+                        </div>
+                    </div>
+                    <!-- Bar 3 -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-blue-400">Escenario 3 (M60)</span>
+                            <span class="text-white font-mono">$50.5k</span>
+                        </div>
+                        <div class="h-4 bg-gray-800 rounded-full overflow-hidden">
+                            <div class="bar-fill h-full bg-blue-500" style="width: 0;" data-width="99.5%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-l-4 border-mongo bg-mongo/5 p-6 rounded-r-lg">
+                    <h3 class="text-lg font-bold text-white mb-2">Insight Clave del Arquitecto</h3>
+                    <p class="text-gray-300 leading-relaxed">
+                        Existe una <strong>paridad de precio casi exacta</strong> (Diferencia < $200/año) entre el Escenario 2 y el Escenario 3.
+                        <br><br>
+                        Esto significa que <strong>no hay incentivo financiero para elegir la arquitectura consolidada (M60)</strong>. Por el mismo precio, el Escenario 2 ofrece hardware dedicado para búsqueda, eliminando el riesgo de "vecino ruidoso" y garantizando el SLA de fraude.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-[#00151F] mt-12 py-8">
+        <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+            <p>&copy; 2025 MongoDB Technical Services. Cifras basadas en estimaciones de lista (US East).</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Simple animation trigger for bars
+        setTimeout(() => {
+            document.querySelectorAll('.bar-fill').forEach(bar => {
+                bar.style.width = bar.getAttribute('data-width');
+            });
+        }, 500);
+    </script>
+</body>
+</html>

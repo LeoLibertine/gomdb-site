@@ -171,6 +171,10 @@
       "dest": "/clientes/bancolombia/queryflux-sizing.html"
     },
     {
+      "src": "/clientes/bancolombia/queryflux-price(?:/.*)?$",
+      "dest": "/clientes/bancolombia/queryflux-price.html"
+    },
+    {
       "src": "/clientes/bancolombia/matrizopciones(?:/.*)?$",
       "dest": "/clientes/bancolombia/matrizopciones.html"
     },
