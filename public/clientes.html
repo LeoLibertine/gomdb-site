@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casos de Éxito | MongoDB Latam</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Euclid+Circular+A:wght@300;400;500;600;700&family=Source+Serif+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mongo: {
+                            DEFAULT: '#00ED64',
+                            dark: '#001E2B',
+                            navy: '#213542',
+                            slate: '#023430'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Euclid Circular A', 'sans-serif'],
+                        serif: ['Source Serif Pro', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #001E2B;
+            color: #FFFFFF;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #001E2B; }
+        ::-webkit-scrollbar-thumb { background: #00684A; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00ED64; }
+
+        .client-card {
+            background: #213542;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            aspect-ratio: 4/3;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .client-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 237, 100, 0.15);
+            border-color: #00ED64;
+        }
+
+        .client-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00ED64, #00A0DC);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .client-card:hover::before {
+            opacity: 1;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: white;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .filter-btn:hover {
+            background: rgba(0, 237, 100, 0.1);
+            border-color: #00ED64;
+        }
+
+        .filter-btn.active {
+            background: #00ED64;
+            color: #001E2B;
+            border-color: #00ED64;
+            font-weight: 600;
+        }
+
+        .industry-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-fintech { background: rgba(0, 160, 220, 0.2); color: #00A0DC; }
+        .tag-retail { background: rgba(255, 105, 180, 0.2); color: #FF69B4; }
+        .tag-telecom { background: rgba(138, 43, 226, 0.2); color: #BA8BF; }
+        .tag-insurance { background: rgba(255, 165, 0, 0.2); color: #FFA500; }
+        .tag-banking { background: rgba(0, 237, 100, 0.2); color: #00ED64; }
+        .tag-payments { background: rgba(100, 200, 255, 0.2); color: #64C8FF; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-[#001E2B]/95 backdrop-blur-xl border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <svg class="h-8 w-8" viewBox="0 0 1024 1024" fill="#00ED64">
+                        <path d="M512 0L73.14 204.8v614.4L512 1024l438.86-204.8V204.8L512 0zm262.83 699.43L512 819.2 249.17 699.43V324.57L512 204.8l262.83 119.77v374.86z"/>
+                    </svg>
+                    <div class="leading-none">
+                        <span class="block font-bold text-white text-lg">MongoDB</span>
+                        <span class="text-xs text-gray-400">Customer Success Stories</span>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="/" class="text-sm text-gray-300 hover:text-mongo transition-colors">Home</a>
+                    <a href="#casos" class="text-sm text-mongo font-semibold">Casos de Éxito</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-16 px-4 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-mongo-navy via-mongo-dark to-mongo-slate opacity-50"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6 font-serif">
+                    Historias de <span class="text-mongo">Transformación</span>
+                </h1>
+                <p class="text-xl text-gray-300 leading-relaxed">
+                    Descubre cómo las empresas líderes de Latinoamérica están innovando con MongoDB Atlas,
+                    construyendo aplicaciones modernas que impulsan el crecimiento y la competitividad.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="py-8 px-4 border-b border-white/10 sticky top-16 bg-[#001E2B]/95 backdrop-blur-xl z-40">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-wrap gap-3 items-center">
+                <span class="text-sm text-gray-400 font-medium mr-2">Filtrar por industria:</span>
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="fintech">Fintech</button>
+                <button class="filter-btn" data-filter="banking">Banca</button>
+                <button class="filter-btn" data-filter="payments">Pagos</button>
+                <button class="filter-btn" data-filter="retail">Retail</button>
+                <button class="filter-btn" data-filter="telecom">Telecomunicaciones</button>
+                <button class="filter-btn" data-filter="insurance">Seguros</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Client Cases Grid -->
+    <section id="casos" class="py-16 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="clientsGrid">
+
+                <!-- Bancolombia -->
+                <a href="clientes/bancolombia/queryflux-stream.html" class="client-card rounded-2xl p-6 flex flex-col justify-between" data-industries="banking fintech">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                                <span class="text-2xl font-bold text-yellow-500">B</span>
+                            </div>
+                            <span class="industry-tag tag-banking">Banca</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Bancolombia</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed line-clamp-3">
+                            Implementación de Atlas Stream Processing para detección de fraude en tiempo real,
+                            procesando 900 eventos/seg con análisis pre-escritura y ventanas temporales.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span>Stream Processing</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Yape -->
+                <a href="clientes/yape/index.html" class="client-card rounded-2xl p-6 flex flex-col justify-between" data-industries="fintech payments">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl font-bold text-white">Y</span>
+                            </div>
+                            <span class="industry-tag tag-fintech">Fintech</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Yape</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed line-clamp-3">
+                            Arquitectura de pagos de alta disponibilidad con MongoDB Atlas,
+                            soportando millones de transacciones diarias para usuarios en Perú.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span>Pagos Digitales</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Seguros Bolivar -->
+                <a href="clientes/segurosbolivar/poc.html" class="client-card rounded-2xl p-6 flex flex-col justify-between" data-industries="insurance">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl font-bold text-white">S</span>
+                            </div>
+                            <span class="industry-tag tag-insurance">Seguros</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Seguros Bolívar</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed line-clamp-3">
+                            Modernización de sistemas de seguros con MongoDB, mejorando la
+                            velocidad de consultas y reduciendo costos operacionales.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span>Modernización</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- NaranjaX -->
+                <a href="clientes/naranjax/" class="client-card rounded-2xl p-6 flex flex-col justify-between" data-industries="fintech banking">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl font-bold text-white">N</span>
+                            </div>
+                            <span class="industry-tag tag-fintech">Fintech</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">NaranjaX</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed line-clamp-3">
+                            Plataforma de servicios financieros digitales con MongoDB Atlas,
+                            escalando a millones de usuarios en Argentina con alta disponibilidad.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span>Servicios Financieros</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Kushki -->
+                <a href="clientes/kushki/" class="client-card rounded-2xl p-6 flex flex-col justify-between" data-industries="payments fintech">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl font-bold text-white">K</span>
+                            </div>
+                            <span class="industry-tag tag-payments">Pagos</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Kushki</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed line-clamp-3">
+                            Gateway de pagos para Latinoamérica con MongoDB Atlas,
+                            procesando millones de transacciones con latencia ultra-baja.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span>Payment Gateway</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Cencosud -->
+                <a href="clientes/cencosud/" class="client-card rounded-2xl p-6 flex flex-col justify-between" data-industries="retail">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl font-bold text-white">C</span>
+                            </div>
+                            <span class="industry-tag tag-retail">Retail</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Cencosud</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed line-clamp-3">
+                            Transformación digital del retail con MongoDB, unificando datos de
+                            múltiples canales para experiencias omnicanal personalizadas.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span>Omnicanalidad</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- ETB -->
+                <a href="clientes/etb/" class="client-card rounded-2xl p-6 flex flex-col justify-between" data-industries="telecom">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl font-bold text-white">E</span>
+                            </div>
+                            <span class="industry-tag tag-telecom">Telecom</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">ETB Colombia</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed line-clamp-3">
+                            Modernización de infraestructura de telecomunicaciones con MongoDB,
+                            mejorando la gestión de millones de registros de clientes.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span>Telecomunicaciones</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Payway -->
+                <a href="clientes/payway/" class="client-card rounded-2xl p-6 flex flex-col justify-between" data-industries="payments fintech">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl font-bold text-white">P</span>
+                            </div>
+                            <span class="industry-tag tag-payments">Pagos</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Payway</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed line-clamp-3">
+                            Solución de pagos empresariales con MongoDB Atlas, ofreciendo
+                            flexibilidad y escalabilidad para comercios en toda la región.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span>Pagos B2B</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Banco de Chile -->
+                <a href="clientes/bancochile/" class="client-card rounded-2xl p-6 flex flex-col justify-between" data-industries="banking">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-blue-800 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl font-bold text-white">BC</span>
+                            </div>
+                            <span class="industry-tag tag-banking">Banca</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Banco de Chile</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed line-clamp-3">
+                            Innovación bancaria con MongoDB Atlas, acelerando el time-to-market
+                            de nuevos productos financieros digitales.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span>Banca Digital</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Coppel -->
+                <a href="clientes/coppel/" class="client-card rounded-2xl p-6 flex flex-col justify-between" data-industries="retail banking">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-yellow-600 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl font-bold text-white">C</span>
+                            </div>
+                            <span class="industry-tag tag-retail">Retail</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Coppel</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed line-clamp-3">
+                            Retail y servicios financieros integrados con MongoDB,
+                            gestionando inventarios y créditos en una sola plataforma.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span>Retail + Finanzas</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Porvenir -->
+                <a href="clientes/porvenir/" class="client-card rounded-2xl p-6 flex flex-col justify-between" data-industries="insurance banking">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl font-bold text-white">P</span>
+                            </div>
+                            <span class="industry-tag tag-insurance">Seguros</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Porvenir</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed line-clamp-3">
+                            Administración de fondos de pensiones con MongoDB Atlas,
+                            mejorando la experiencia de millones de afiliados.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span>Pensiones</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Protección -->
+                <a href="clientes/proteccion/" class="client-card rounded-2xl p-6 flex flex-col justify-between" data-industries="insurance">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-red-700 rounded-lg flex items-center justify-center">
+                                <span class="text-2xl font-bold text-white">P</span>
+                            </div>
+                            <span class="industry-tag tag-insurance">Seguros</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Protección</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed line-clamp-3">
+                            Sistema de pensiones y cesantías con MongoDB,
+                            procesando consultas complejas con alto rendimiento.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <div class="flex items-center justify-between text-xs text-gray-400">
+                            <span>Pensiones</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16">
+                <i data-lucide="search-x" class="w-16 h-16 text-gray-600 mx-auto mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-400 mb-2">No se encontraron casos</h3>
+                <p class="text-gray-500">Intenta con otro filtro de industria</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-20 px-4 border-t border-white/10">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-4xl font-bold text-mongo mb-2">12+</div>
+                    <div class="text-sm text-gray-400">Clientes Enterprise</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-mongo mb-2">6</div>
+                    <div class="text-sm text-gray-400">Países</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-mongo mb-2">5</div>
+                    <div class="text-sm text-gray-400">Industrias</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-mongo mb-2">100M+</div>
+                    <div class="text-sm text-gray-400">Usuarios Impactados</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-12 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-gray-500 text-sm">
+                © 2024 MongoDB, Inc. | Casos de Éxito LATAM
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const clientCards = document.querySelectorAll('.client-card');
+        const emptyState = document.getElementById('emptyState');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active state
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                const filter = button.dataset.filter;
+                let visibleCount = 0;
+
+                // Filter cards
+                clientCards.forEach(card => {
+                    const industries = card.dataset.industries;
+                    if (filter === 'all' || industries.includes(filter)) {
+                        card.style.display = 'flex';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Show/hide empty state
+                emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>
