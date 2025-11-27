@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Descubre cómo MongoDB Atlas se convierte en la plataforma de datos esencial para IA Generativa en Naranja X, consolidando datos operacionales y vectoriales en una sola plataforma.">
+    <meta name="keywords" content="MongoDB, Naranja X, IA Generativa, Vector Search, RAG, Fintech, AI Platform">
+    <title>MongoDB Atlas: Plataforma de IA Generativa para Naranja X</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --mongo-green: #00ED64;
+            --mongo-dark: #001E2B;
+            --mongo-green-dark: #13AA52;
+            --mongo-gray: #21313C;
+            --text-primary: #1C1C1C;
+            --text-secondary: #5C6673;
+            --white: #FFFFFF;
+            --bg-light: #F9FAFB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background: var(--white);
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 30, 43, 0.95);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--mongo-green);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: var(--mongo-dark);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--mongo-green);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--mongo-dark) 0%, #0A2533 50%, var(--mongo-gray) 100%);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.15) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 237, 100, 0.1);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            color: var(--mongo-green);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--mongo-green);
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 .highlight {
+            color: var(--mongo-green);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--mongo-green);
+            color: var(--mongo-dark);
+        }
+
+        .btn-primary:hover {
+            background: var(--mongo-green-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--mongo-green);
+        }
+
+        .hero-visual {
+            position: relative;
+            opacity: 0;
+            transform: translateX(30px);
+            animation: fadeInRight 1s ease 0.3s forwards;
+        }
+
+        @keyframes fadeInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .data-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .data-card:hover {
+            transform: translateX(10px);
+            border-color: var(--mongo-green);
+        }
+
+        .data-card h3 {
+            color: var(--mongo-green);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .data-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .section-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .section-header.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(0, 237, 100, 0.1);
+            color: var(--mongo-green);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .section-header p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Differentiator Section */
+        .differentiator {
+            background: var(--bg-light);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .comparison-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .comparison-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .comparison-card.without {
+            border-left: 4px solid #EF4444;
+        }
+
+        .comparison-card.with {
+            border-left: 4px solid var(--mongo-green);
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .comparison-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .without .comparison-icon {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .with .comparison-icon {
+            background: rgba(0, 237, 100, 0.1);
+        }
+
+        .comparison-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .comparison-card p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-list li::before {
+            content: '→';
+            color: var(--mongo-green);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Use Cases Section */
+        .use-cases {
+            background: var(--white);
+        }
+
+        .use-case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .use-case-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(30px);
+            border: 1px solid transparent;
+        }
+
+        .use-case-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .use-case-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 237, 100, 0.15);
+            border-color: var(--mongo-green);
+        }
+
+        .use-case-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--mongo-green) 0%, var(--mongo-green-dark) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+        }
+
+        .use-case-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .use-case-card .tag {
+            display: inline-block;
+            background: rgba(0, 237, 100, 0.1);
+            color: var(--mongo-green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .use-case-card p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .use-case-details {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .use-case-details h4 {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--mongo-green);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .use-case-details ul {
+            list-style: none;
+        }
+
+        .use-case-details li {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            padding-left: 1.25rem;
+            position: relative;
+        }
+
+        .use-case-details li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--mongo-green);
+            font-weight: 700;
+        }
+
+        /* References Section */
+        .references {
+            background: var(--mongo-dark);
+            color: var(--white);
+        }
+
+        .references .section-header h2,
+        .references .section-badge {
+            color: var(--white);
+        }
+
+        .references .section-header p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .reference-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .reference-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .reference-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reference-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--mongo-green);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .reference-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .reference-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--white);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: var(--mongo-dark);
+            font-size: 1.5rem;
+        }
+
+        .reference-card h3 {
+            font-size: 1.5rem;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+
+        .reference-card .location {
+            color: var(--mongo-green);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .reference-card p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+        }
+
+        .reference-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--mongo-green);
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: gap 0.3s ease;
+        }
+
+        .reference-link:hover {
+            gap: 0.75rem;
+        }
+
+        /* Why MongoDB Section */
+        .why-mongodb {
+            background: var(--bg-light);
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .benefit-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .benefit-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 237, 100, 0.15);
+        }
+
+        .benefit-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--mongo-green) 0%, var(--mongo-green-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+        }
+
+        .benefit-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .benefit-card p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--mongo-dark) 0%, var(--mongo-gray) 100%);
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.2) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .cta-content h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .cta-content p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+
+        .quote-box {
+            background: rgba(0, 237, 100, 0.1);
+            border-left: 4px solid var(--mongo-green);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 3rem auto;
+            max-width: 800px;
+            font-size: 1.25rem;
+            font-style: italic;
+            line-height: 1.8;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--mongo-dark);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--mongo-green);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .cta-content h2 {
+                font-size: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <div class="logo-icon">N</div>
+                <span>Naranja X × MongoDB</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#diferenciador">Diferenciador</a></li>
+                <li><a href="#casos-uso">Casos de Uso</a></li>
+                <li><a href="#referencias">Referencias</a></li>
+                <li><a href="#por-que">Por Qué MongoDB</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="dot"></span>
+                    <span>Developer Data Platform para IA Generativa</span>
+                </div>
+                <h1>
+                    Impulsa la <span class="highlight">IA Generativa</span><br>
+                    en tu Fintech
+                </h1>
+                <p>
+                    MongoDB Atlas consolida tus datos operacionales y vectoriales en una sola plataforma,
+                    eliminando la complejidad arquitectural y acelerando tu innovación con IA.
+                </p>
+                <div class="cta-buttons">
+                    <a href="#casos-uso" class="btn btn-primary">
+                        Explorar Casos de Uso
+                        <span>→</span>
+                    </a>
+                    <a href="#por-que" class="btn btn-secondary">
+                        Ver Beneficios
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="data-card">
+                    <h3>💳 Datos Transaccionales</h3>
+                    <p>Perfiles, saldos, movimientos en tiempo real</p>
+                </div>
+                <div class="data-card">
+                    <h3>🧠 Datos Vectoriales</h3>
+                    <p>Embeddings, búsquedas semánticas, RAG</p>
+                </div>
+                <div class="data-card">
+                    <h3>⚡ Una Sola Plataforma</h3>
+                    <p>Sin sincronización, sin latencia, sin complejidad</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Differentiator Section -->
+    <section id="diferenciador" class="differentiator">
+        <div class="section-container">
+            <div class="section-header fade-in">
+                <span class="section-badge">El Diferenciador</span>
+                <h2>Operational Data Layer for AI</h2>
+                <p>
+                    En la arquitectura moderna, los datos transaccionales y los datos vectoriales
+                    deben vivir juntos. La consolidación es la clave.
+                </p>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="comparison-card without fade-in">
+                    <div class="comparison-icon">❌</div>
+                    <h3>Sin MongoDB Atlas</h3>
+                    <p>
+                        Arquitectura fragmentada que genera fricción en cada paso del desarrollo
+                        y operación de aplicaciones con IA.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Datos en DB relacional/NoSQL separados de vectores en Pinecone/Weaviate</li>
+                        <li>Pipelines ETL complejos para sincronización continua</li>
+                        <li>Latencia de red entre sistemas aumenta tiempo de respuesta</li>
+                        <li>Posibles inconsistencias entre datos operacionales y vectoriales</li>
+                        <li>Mayor costo operacional y de infraestructura</li>
+                    </ul>
+                </div>
+
+                <div class="comparison-card with fade-in">
+                    <div class="comparison-icon">✓</div>
+                    <h3>Con MongoDB Atlas Vector Search</h3>
+                    <p>
+                        Plataforma unificada que simplifica la arquitectura y acelera
+                        el desarrollo de aplicaciones inteligentes.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Vectores como un campo más en tus documentos JSON nativos</li>
+                        <li>Búsquedas híbridas: combina filtros operativos con similitud vectorial</li>
+                        <li>Ejemplo: "Usuarios similares [Vector] que vivan en Córdoba y saldo > 0 [Filtro]"</li>
+                        <li>Cero latencia de sincronización, cero inconsistencias</li>
+                        <li>Una sola plataforma para gestionar, escalar y asegurar</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section id="casos-uso" class="use-cases">
+        <div class="section-container">
+            <div class="section-header fade-in">
+                <span class="section-badge">Casos de Uso</span>
+                <h2>IA Generativa para Fintech</h2>
+                <p>
+                    Casos de uso transformadores que Naranja X puede implementar
+                    con MongoDB Atlas como plataforma de datos para IA.
+                </p>
+            </div>
+
+            <div class="use-case-grid">
+                <div class="use-case-card fade-in">
+                    <div class="use-case-icon">💬</div>
+                    <h3>Soporte Hiper-Personalizado</h3>
+                    <span class="tag">RAG Avanzado</span>
+                    <p>
+                        Construye un asistente con contexto en tiempo real que conoce
+                        los datos privados de cada cliente y responde con precisión.
+                    </p>
+                    <div class="use-case-details">
+                        <h4>El Problema</h4>
+                        <ul>
+                            <li>Los LLMs alucinan sin contexto real</li>
+                            <li>No conocen datos privados de Naranja X</li>
+                        </ul>
+                        <h4>La Solución</h4>
+                        <ul>
+                            <li>RAG busca en MongoDB movimientos y reglas</li>
+                            <li>LLM responde: "Rechazada por exceder límite diario"</li>
+                            <li>Logs de transacciones ya están en MongoDB</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="use-case-card fade-in">
+                    <div class="use-case-icon">🤖</div>
+                    <h3>Agentes Financieros Autónomos</h3>
+                    <span class="tag">Agentic AI</span>
+                    <p>
+                        Agentes que no solo responden preguntas, sino que ejecutan
+                        acciones financieras por el usuario.
+                    </p>
+                    <div class="use-case-details">
+                        <h4>Escenario</h4>
+                        <ul>
+                            <li>"Transfiere $5000 a ahorro si tengo saldo"</li>
+                            <li>El agente verifica y ejecuta la acción</li>
+                        </ul>
+                        <h4>Rol de MongoDB</h4>
+                        <ul>
+                            <li>Memoria a largo plazo del agente</li>
+                            <li>Recupera historial de instrucciones</li>
+                            <li>Verifica estado actual de cuenta</li>
+                            <li>Integración nativa con LangChain/LlamaIndex</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="use-case-card fade-in">
+                    <div class="use-case-icon">🛡️</div>
+                    <h3>Detección de Fraude Semántico</h3>
+                    <span class="tag">Vector Similarity</span>
+                    <p>
+                        El fraude ya no es solo reglas fijas. Detecta comportamientos
+                        anómalos mediante análisis vectorial en tiempo real.
+                    </p>
+                    <div class="use-case-details">
+                        <h4>Cómo Funciona</h4>
+                        <ul>
+                            <li>Vectoriza comportamiento "normal" del usuario</li>
+                            <li>Comercios habituales, horarios, montos típicos</li>
+                        </ul>
+                        <h4>En Tiempo Real</h4>
+                        <ul>
+                            <li>Vectoriza nueva transacción</li>
+                            <li>Busca similitud vs historial en milisegundos</li>
+                            <li>Distancia vectorial grande = comportamiento sospechoso</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="use-case-card fade-in">
+                    <div class="use-case-icon">📚</div>
+                    <h3>Búsqueda Inteligente en Documentación</h3>
+                    <span class="tag">Compliance & Legal</span>
+                    <p>
+                        Equipos de legales y atención al cliente buscan en miles
+                        de PDFs de regulaciones instantáneamente.
+                    </p>
+                    <div class="use-case-details">
+                        <h4>Solución</h4>
+                        <ul>
+                            <li>"Chatear con tus documentos" internos</li>
+                            <li>Ingesta de todos los PDFs convertidos a vectores</li>
+                            <li>Guardados en MongoDB Atlas</li>
+                        </ul>
+                        <h4>Ejemplo</h4>
+                        <ul>
+                            <li>"¿Normativa para préstamos tasa cero?"</li>
+                            <li>Respuesta instantánea con cita exacta</li>
+                            <li>BCRA, contratos, regulaciones unificadas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- References Section -->
+    <section id="referencias" class="references">
+        <div class="section-container">
+            <div class="section-header fade-in">
+                <span class="section-badge">Casos Validados</span>
+                <h2>Referencias del Sector Financiero</h2>
+                <p>
+                    Instituciones financieras globales que están transformando
+                    sus operaciones con MongoDB y GenAI.
+                </p>
+            </div>
+
+            <div class="reference-grid">
+                <div class="reference-card fade-in">
+                    <div class="reference-header">
+                        <div class="reference-logo">WF</div>
+                        <div>
+                            <h3>Wells Fargo</h3>
+                            <span class="location">Estados Unidos</span>
+                        </div>
+                    </div>
+                    <p>
+                        Construyeron su "Operational Data Store" en MongoDB para unificar
+                        la visión del cliente y alimentar sus canales digitales, incluyendo
+                        su asistente virtual que ofrece respuestas transaccionales en tiempo real.
+                    </p>
+                    <a href="https://www.mongodb.com/solutions/customer-case-studies/wells-fargo" class="reference-link" target="_blank">
+                        Ver caso completo →
+                    </a>
+                </div>
+
+                <div class="reference-card fade-in">
+                    <div class="reference-header">
+                        <div class="reference-logo">BA</div>
+                        <div>
+                            <h3>Bendigo and Adelaide Bank</h3>
+                            <span class="location">Australia</span>
+                        </div>
+                    </div>
+                    <p>
+                        Utilizaron MongoDB Atlas y GenAI para modernizar sistemas core bancarios,
+                        usando IA para entender código legacy y migrarlo, reduciendo el tiempo
+                        de desarrollo en un 90%.
+                    </p>
+                    <a href="https://www.mongodb.com/company/blog/news/bendigo-adelaide-bank-reflects-on-their-successful-digital-transformation-mongodb" class="reference-link" target="_blank">
+                        Ver caso completo →
+                    </a>
+                </div>
+
+                <div class="reference-card fade-in">
+                    <div class="reference-header">
+                        <div class="reference-logo">LO</div>
+                        <div>
+                            <h3>Lombard Odier</h3>
+                            <span class="location">Suiza</span>
+                        </div>
+                    </div>
+                    <p>
+                        Banca privada suiza que utiliza MongoDB y GenAI para acelerar
+                        la modernización de sistemas legacy y automatizar la creación
+                        de documentación técnica empresarial.
+                    </p>
+                    <a href="https://www.mongodb.com/solutions/customer-case-studies/lombard-odier" class="reference-link" target="_blank">
+                        Ver caso completo →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why MongoDB Section -->
+    <section id="por-que" class="why-mongodb">
+        <div class="section-container">
+            <div class="section-header fade-in">
+                <span class="section-badge">Ventajas Técnicas</span>
+                <h2>Por Qué MongoDB para Naranja X</h2>
+                <p>
+                    Argumentos técnicos que importan a arquitectos y tomadores de decisiones.
+                </p>
+            </div>
+
+            <div class="benefits-grid">
+                <div class="benefit-card fade-in">
+                    <div class="benefit-number">1</div>
+                    <h3>Workload Isolation</h3>
+                    <p>
+                        Nodos dedicados exclusivamente a Vector Search. Si Data Science
+                        lanza consultas masivas de vectores, <strong>no afecta el rendimiento
+                        de la app transaccional</strong>. La app de Naranja X mantiene su velocidad.
+                    </p>
+                </div>
+
+                <div class="benefit-card fade-in">
+                    <div class="benefit-number">2</div>
+                    <h3>Esquema Flexible (JSON)</h3>
+                    <p>
+                        La IA evoluciona rápido. Hoy guardas vectores de 1536 dimensiones,
+                        mañana necesitas metadatos nuevos del modelo. Con JSON,
+                        <strong>no necesitas migraciones de esquema dolorosas</strong>.
+                    </p>
+                </div>
+
+                <div class="benefit-card fade-in">
+                    <div class="benefit-number">3</div>
+                    <h3>Seguridad Enterprise</h3>
+                    <p>
+                        Ya tienen certificaciones de seguridad (SOC2, HIPAA) y controles
+                        de acceso configurados en Atlas. <strong>No es necesario auditar
+                        una nueva base de datos vectorial</strong> externa.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="section-container">
+            <div class="cta-content">
+                <h2>Simplifica tu Stack de IA</h2>
+                <p>
+                    Construye aplicaciones de IA generativa sobre tus datos operativos
+                    existentes, sin añadir complejidad innecesaria.
+                </p>
+
+                <div class="quote-box">
+                    "MongoDB Atlas nos permite construir aplicaciones de IA generativa sobre
+                    nuestros datos operativos existentes, reduciendo la complejidad de la arquitectura,
+                    eliminando latencia de sincronización y manteniendo el nivel de seguridad
+                    bancaria que ya tenemos."
+                </div>
+
+                <div class="cta-buttons">
+                    <a href="https://www.mongodb.com/contact" class="btn btn-primary" target="_blank">
+                        Hablar con un Experto
+                        <span>→</span>
+                    </a>
+                    <a href="https://www.mongodb.com/products/platform/atlas-vector-search" class="btn btn-secondary" target="_blank">
+                        Explorar Atlas Vector Search
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://www.mongodb.com" target="_blank">MongoDB</a>
+                <a href="https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-overview/" target="_blank">Documentación</a>
+                <a href="https://www.mongodb.com/solutions/customer-case-studies" target="_blank">Casos de Éxito</a>
+                <a href="https://www.mongodb.com/contact" target="_blank">Contacto</a>
+            </div>
+            <p>&copy; 2024 MongoDB, Inc. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            lastScroll = currentScroll;
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all elements with fade-in class
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Observe cards
+        document.querySelectorAll('.comparison-card, .use-case-card, .reference-card, .benefit-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Observe section headers
+        document.querySelectorAll('.section-header').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add stagger effect to cards
+        document.querySelectorAll('.use-case-card').forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.1}s`;
+        });
+
+        document.querySelectorAll('.reference-card').forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.15}s`;
+        });
+
+        document.querySelectorAll('.benefit-card').forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.1}s`;
+        });
+    </script>
+</body>
+</html>
