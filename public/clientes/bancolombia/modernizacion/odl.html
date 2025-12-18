@@ -597,6 +597,35 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Priority icons hover effect */
+        .section [style*="transform: rotate(-5deg)"],
+        .section [style*="transform: rotate(5deg)"],
+        .section [style*="transform: rotate(-3deg)"],
+        .section [style*="transform: rotate(3deg)"] {
+            transition: all 0.4s ease;
+        }
+
+        .section [style*="transform: rotate(-5deg)"]:hover {
+            transform: rotate(0deg) scale(1.1) !important;
+        }
+
+        .section [style*="transform: rotate(5deg)"]:hover {
+            transform: rotate(0deg) scale(1.1) !important;
+        }
+
+        .section [style*="transform: rotate(-3deg)"]:hover {
+            transform: rotate(0deg) scale(1.1) !important;
+        }
+
+        .section [style*="transform: rotate(3deg)"]:hover {
+            transform: rotate(0deg) scale(1.1) !important;
+        }
     </style>
 </head>
 <body>
@@ -633,6 +662,569 @@
             </div>
         </div>
         <div class="scroll-indicator"></div>
+    </section>
+
+    <!-- KPIs Impact Section -->
+    <section class="section" style="background: linear-gradient(135deg, rgba(0,30,43,0.95) 0%, rgba(0,52,43,0.95) 100%); padding: 5rem 2rem;">
+        <h2 class="section-title animate-on-scroll" style="margin-bottom: 1rem;">Impacto General de la Modernización</h2>
+        <p class="section-subtitle animate-on-scroll" style="max-width: 1200px; margin: 0 auto 4rem; font-size: 1.2rem; line-height: 1.8; color: rgba(255,255,255,0.85);">
+            La modernización del core bancario y la plataforma de depósitos de Bancolombia es una oportunidad clave para mejorar 
+            indicadores estratégicos en áreas como <span class="highlight">captación de recursos</span>, 
+            <span class="highlight">eficiencia operativa</span>, <span class="highlight">resiliencia tecnológica</span>, 
+            <span class="highlight">satisfacción del cliente</span> y <span class="highlight">captura de nuevos segmentos de mercado</span>.
+        </p>
+
+        <div style="max-width: 1400px; margin: 0 auto;">
+            <!-- Main Value Proposition -->
+            <div class="customer-centric-visual animate-on-scroll" style="margin-bottom: 4rem; text-align: center;">
+                <div style="display: inline-block; background: var(--mongodb-green); color: var(--mongodb-dark); padding: 1rem 3rem; border-radius: 50px; font-size: 1.3rem; font-weight: 700; margin-bottom: 2rem; box-shadow: 0 10px 40px rgba(0,237,100,0.4);">
+                    🎯 Enfoque Customer-Centric
+                </div>
+                <p style="position: relative; z-index: 1; font-size: 1.25rem; line-height: 1.9; max-width: 1100px; margin: 0 auto;">
+                    Bancolombia puede evolucionar su modelo actual para entregar valor más <span class="highlight">personalizado</span>, 
+                    <span class="highlight">ágil</span> y <span class="highlight">adaptado</span> a las necesidades del consumidor, 
+                    mientras reduce riesgos operativos y garantiza continuidad del negocio a largo plazo frente a neobancos y fintechs 
+                    como <span class="highlight">Nubank</span> y <span class="highlight">Revolut</span>.
+                </p>
+            </div>
+
+            <!-- KPI Cards Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; margin-top: 3rem;">
+                
+                <!-- KPI 1: Captación -->
+                <div class="card animate-on-scroll" style="text-align: center; position: relative; overflow: hidden; border: 3px solid var(--mongodb-green);">
+                    <div style="position: absolute; top: 0; right: 0; background: var(--mongodb-green); color: var(--mongodb-dark); padding: 0.5rem 1.5rem; border-bottom-left-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                        CRECIMIENTO
+                    </div>
+                    <!-- Icon -->
+                    <div style="width: 100px; height: 100px; margin: 2rem auto 1.5rem; background: linear-gradient(135deg, var(--mongodb-green) 0%, #00FF6E 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,237,100,0.4); position: relative;">
+                        <div style="font-size: 3rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">💰</div>
+                        <div style="position: absolute; inset: -10px; border: 3px solid var(--mongodb-green); border-radius: 50%; opacity: 0.3; animation: pulse 2s ease-in-out infinite;"></div>
+                    </div>
+                    <h3 class="card-title" style="font-size: 1.8rem; margin-bottom: 1rem;">Captación de Recursos</h3>
+                    <p class="card-content" style="font-size: 1.05rem; line-height: 1.8;">
+                        Mejora en la <span class="highlight">adquisición de nuevos clientes</span> y productos de depósitos 
+                        (CDTs, Bonos) con experiencias digitales ágiles y personalizadas que compitan directamente 
+                        con neobancos.
+                    </p>
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(0,237,100,0.3);">
+                        <div style="color: var(--mongodb-green); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                            Impacto: Alto
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 2: Eficiencia -->
+                <div class="card animate-on-scroll" style="text-align: center; position: relative; overflow: hidden; border: 3px solid var(--mongodb-green);">
+                    <div style="position: absolute; top: 0; right: 0; background: var(--mongodb-green); color: var(--mongodb-dark); padding: 0.5rem 1.5rem; border-bottom-left-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                        OPTIMIZACIÓN
+                    </div>
+                    <!-- Icon -->
+                    <div style="width: 100px; height: 100px; margin: 2rem auto 1.5rem; background: linear-gradient(135deg, var(--mongodb-green) 0%, #00FF6E 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,237,100,0.4); position: relative;">
+                        <div style="font-size: 3rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">⚡</div>
+                        <div style="position: absolute; inset: -10px; border: 3px solid var(--mongodb-green); border-radius: 50%; opacity: 0.3; animation: pulse 2s ease-in-out infinite 0.5s;"></div>
+                    </div>
+                    <h3 class="card-title" style="font-size: 1.8rem; margin-bottom: 1rem;">Eficiencia Operativa</h3>
+                    <p class="card-content" style="font-size: 1.05rem; line-height: 1.8;">
+                        Reducción de <span class="highlight">costos operativos</span> al liberar al AS400 de consultas masivas, 
+                        optimizando recursos de mainframe y permitiendo escalado horizontal con MongoDB Atlas.
+                    </p>
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(0,237,100,0.3);">
+                        <div style="color: var(--mongodb-green); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                            Impacto: Alto
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 3: Resiliencia -->
+                <div class="card animate-on-scroll" style="text-align: center; position: relative; overflow: hidden; border: 3px solid var(--mongodb-green);">
+                    <div style="position: absolute; top: 0; right: 0; background: var(--mongodb-green); color: var(--mongodb-dark); padding: 0.5rem 1.5rem; border-bottom-left-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                        SEGURIDAD
+                    </div>
+                    <!-- Icon -->
+                    <div style="width: 100px; height: 100px; margin: 2rem auto 1.5rem; background: linear-gradient(135deg, var(--mongodb-green) 0%, #00FF6E 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,237,100,0.4); position: relative;">
+                        <div style="font-size: 3rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">🛡️</div>
+                        <div style="position: absolute; inset: -10px; border: 3px solid var(--mongodb-green); border-radius: 50%; opacity: 0.3; animation: pulse 2s ease-in-out infinite 1s;"></div>
+                    </div>
+                    <h3 class="card-title" style="font-size: 1.8rem; margin-bottom: 1rem;">Resiliencia Tecnológica</h3>
+                    <p class="card-content" style="font-size: 1.05rem; line-height: 1.8;">
+                        Arquitectura moderna con <span class="highlight">alta disponibilidad</span> (99.995%), 
+                        replicación multi-región automática y recuperación ante desastres con RPO &lt;1 min sin intervención manual.
+                    </p>
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(0,237,100,0.3);">
+                        <div style="color: var(--mongodb-green); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                            Impacto: Crítico
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 4: Satisfacción -->
+                <div class="card animate-on-scroll" style="text-align: center; position: relative; overflow: hidden; border: 3px solid var(--mongodb-green);">
+                    <div style="position: absolute; top: 0; right: 0; background: var(--mongodb-green); color: var(--mongodb-dark); padding: 0.5rem 1.5rem; border-bottom-left-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                        EXPERIENCIA
+                    </div>
+                    <!-- Icon -->
+                    <div style="width: 100px; height: 100px; margin: 2rem auto 1.5rem; background: linear-gradient(135deg, var(--mongodb-green) 0%, #00FF6E 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,237,100,0.4); position: relative;">
+                        <div style="font-size: 3rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">⭐</div>
+                        <div style="position: absolute; inset: -10px; border: 3px solid var(--mongodb-green); border-radius: 50%; opacity: 0.3; animation: pulse 2s ease-in-out infinite 1.5s;"></div>
+                    </div>
+                    <h3 class="card-title" style="font-size: 1.8rem; margin-bottom: 1rem;">Satisfacción del Cliente</h3>
+                    <p class="card-content" style="font-size: 1.05rem; line-height: 1.8;">
+                        Experiencia digital fluida con <span class="highlight">latencias &lt;10ms</span> en consultas, 
+                        tarifas personalizadas y acceso instantáneo a productos desde cualquier canal (Mobile, Web, API).
+                    </p>
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(0,237,100,0.3);">
+                        <div style="color: var(--mongodb-green); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                            Impacto: Alto
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 5: Nuevos Segmentos -->
+                <div class="card animate-on-scroll" style="text-align: center; position: relative; overflow: hidden; border: 3px solid var(--mongodb-green);">
+                    <div style="position: absolute; top: 0; right: 0; background: var(--mongodb-green); color: var(--mongodb-dark); padding: 0.5rem 1.5rem; border-bottom-left-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                        EXPANSIÓN
+                    </div>
+                    <!-- Icon -->
+                    <div style="width: 100px; height: 100px; margin: 2rem auto 1.5rem; background: linear-gradient(135deg, var(--mongodb-green) 0%, #00FF6E 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,237,100,0.4); position: relative;">
+                        <div style="font-size: 3rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">🎯</div>
+                        <div style="position: absolute; inset: -10px; border: 3px solid var(--mongodb-green); border-radius: 50%; opacity: 0.3; animation: pulse 2s ease-in-out infinite 2s;"></div>
+                    </div>
+                    <h3 class="card-title" style="font-size: 1.8rem; margin-bottom: 1rem;">Captura de Nuevos Segmentos</h3>
+                    <p class="card-content" style="font-size: 1.05rem; line-height: 1.8;">
+                        Capacidad de lanzar <span class="highlight">productos innovadores</span> rápidamente (CDTs digitales, 
+                        inversiones programáticas) para atraer millennials y Gen Z acostumbrados a experiencias fintech.
+                    </p>
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(0,237,100,0.3);">
+                        <div style="color: var(--mongodb-green); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                            Impacto: Estratégico
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 6: Agilidad -->
+                <div class="card animate-on-scroll" style="text-align: center; position: relative; overflow: hidden; border: 3px solid var(--mongodb-green);">
+                    <div style="position: absolute; top: 0; right: 0; background: var(--mongodb-green); color: var(--mongodb-dark); padding: 0.5rem 1.5rem; border-bottom-left-radius: 12px; font-weight: 700; font-size: 0.85rem;">
+                        VELOCIDAD
+                    </div>
+                    <!-- Icon -->
+                    <div style="width: 100px; height: 100px; margin: 2rem auto 1.5rem; background: linear-gradient(135deg, var(--mongodb-green) 0%, #00FF6E 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,237,100,0.4); position: relative;">
+                        <div style="font-size: 3rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">🚀</div>
+                        <div style="position: absolute; inset: -10px; border: 3px solid var(--mongodb-green); border-radius: 50%; opacity: 0.3; animation: pulse 2s ease-in-out infinite 2.5s;"></div>
+                    </div>
+                    <h3 class="card-title" style="font-size: 1.8rem; margin-bottom: 1rem;">Time-to-Market</h3>
+                    <p class="card-content" style="font-size: 1.05rem; line-height: 1.8;">
+                        Reducción dramática en el tiempo de lanzamiento de nuevos productos y features, pasando de 
+                        <span class="highlight">meses a semanas</span> gracias a la flexibilidad del modelo documental y APIs modernas.
+                    </p>
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(0,237,100,0.3);">
+                        <div style="color: var(--mongodb-green); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                            Impacto: Alto
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Competitive Defense -->
+            <div class="animate-on-scroll" style="margin-top: 4rem;">
+                <div style="background: linear-gradient(135deg, rgba(253,218,36,0.15) 0%, rgba(0,237,100,0.15) 100%); border: 3px solid var(--mongodb-green); padding: 3rem; border-radius: 20px; text-align: center;">
+                    <h3 style="color: var(--mongodb-green); font-size: 2rem; margin-bottom: 1.5rem; font-weight: 700;">
+                        🏆 Ventaja Competitiva Sostenible
+                    </h3>
+                    <p style="font-size: 1.2rem; line-height: 1.9; max-width: 1000px; margin: 0 auto;">
+                        Esta modernización posiciona a Bancolombia para <span class="highlight">defenderse y superar</span> 
+                        la amenaza de neobancos digitales que están redefiniendo las expectativas de los clientes con 
+                        ofertas ágiles y centradas en ellos. Al adoptar una arquitectura <span class="highlight">cloud-native</span> 
+                        y <span class="highlight">event-driven</span>, Bancolombia no solo alcanza la paridad con estos 
+                        competidores, sino que la <span class="highlight">supera</span> aprovechando su escala, 
+                        conocimiento del mercado local y confianza de marca establecida.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Priorities Section - Simplified -->
+    <section class="section section-alt">
+        <h2 class="section-title animate-on-scroll">Prioridades en la Modernización</h2>
+        <p class="section-subtitle animate-on-scroll">Impacto en el Negocio por Dominio</p>
+
+        <div style="max-width: 1400px; margin: 0 auto;">
+            
+            <!-- Prioridades Diagram 1 -->
+            <div class="architecture-container animate-on-scroll" style="margin-bottom: 3rem;">
+                <h2 class="architecture-title">📊 Prioridades de Modernización - Parte 1</h2>
+                <img src="prioridades1.svg" alt="Prioridades de Modernización Bancolombia - Depósitos y Pagos" class="architecture-image">
+                <p style="margin-top: 2rem; color: rgba(255,255,255,0.7); font-style: italic;">
+                    Análisis de impacto en KPIs para los dominios de Depósitos y Pagos
+                </p>
+            </div>
+
+            <!-- Prioridades Diagram 2 -->
+            <div class="architecture-container animate-on-scroll">
+                <h2 class="architecture-title">📊 Prioridades de Modernización - Parte 2</h2>
+                <img src="prioridades2.svg" alt="Prioridades de Modernización Bancolombia - On-boarding y Tesorería" class="architecture-image">
+                <p style="margin-top: 2rem; color: rgba(255,255,255,0.7); font-style: italic;">
+                    Análisis de impacto en KPIs para Customer On-boarding y Tesorería y Liquidación
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- KPIs Susceptibles de Mejora Section -->
+    <section class="section">
+        <h2 class="section-title animate-on-scroll">KPIs Susceptibles de Mejora</h2>
+        <p class="section-subtitle animate-on-scroll">Indicadores Clave Mejorados por la Modernización con MongoDB</p>
+
+        <div style="max-width: 1400px; margin: 0 auto;">
+
+            <!-- KPI 1: Tasa de Captación -->
+            <div class="animate-on-scroll" style="margin-bottom: 3rem;">
+                <div style="background: linear-gradient(135deg, rgba(0,30,43,0.95) 0%, rgba(0,52,43,0.9) 100%); border: 2px solid var(--mongodb-green); border-radius: 20px; padding: 3rem; position: relative; overflow: hidden;">
+                    
+                    <div style="position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(0,237,100,0.1) 0%, transparent 70%); border-radius: 50%;"></div>
+                    
+                    <div style="display: grid; grid-template-columns: 180px 1fr auto 1fr; gap: 2.5rem; align-items: center; position: relative; z-index: 1;">
+                        
+                        <!-- Icon -->
+                        <div style="text-align: center;">
+                            <div style="width: 140px; height: 140px; background: linear-gradient(135deg, var(--mongodb-green) 0%, #00FF6E 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 20px 60px rgba(0,237,100,0.5); position: relative; animation: float 3s ease-in-out infinite;">
+                                <svg width="70" height="70" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="10" y="35" width="80" height="45" rx="5" fill="#001E2B" stroke="#001E2B" stroke-width="2"/>
+                                    <rect x="15" y="40" width="70" height="35" rx="3" fill="rgba(0,30,43,0.5)"/>
+                                    <circle cx="50" cy="57.5" r="15" fill="#001E2B" stroke="#001E2B" stroke-width="2"/>
+                                    <text x="50" y="63" text-anchor="middle" fill="#00ED64" font-size="20" font-weight="bold" font-family="Arial">$</text>
+                                    <path d="M20 35 L30 25 L70 25 L80 35" fill="#001E2B" stroke="#001E2B" stroke-width="2"/>
+                                    <circle cx="25" cy="47" r="3" fill="#00ED64" opacity="0.6"/>
+                                    <circle cx="75" cy="47" r="3" fill="#00ED64" opacity="0.6"/>
+                                </svg>
+                            </div>
+                            <div style="color: var(--mongodb-green); font-weight: 700; font-size: 1.1rem;">Tasa de<br/>Captación</div>
+                        </div>
+
+                        <!-- Description -->
+                        <div style="background: rgba(0,0,0,0.4); padding: 2rem; border-radius: 16px; border-left: 4px solid var(--mongodb-green);">
+                            <p style="font-size: 1.05rem; line-height: 1.8; color: rgba(255,255,255,0.9); margin: 0;">
+                                La modernización de Depósitos, junto con herramientas de análisis de datos e integración de un ODL (Capa Operativa de Datos), 
+                                permitirá procesar más solicitudes de captación de recursos al mismo tiempo, optimizar la colocación de productos como CDTs y bonos, 
+                                y ofrecer procesos más ágiles
+                            </p>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div style="text-align: center;">
+                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 8px rgba(0,237,100,0.3));">
+                                <path d="M10 30 L45 30" stroke="url(#grad1)" stroke-width="4" stroke-linecap="round"/>
+                                <path d="M35 20 L50 30 L35 40" stroke="url(#grad1)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                <defs>
+                                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#00ED64;stop-opacity:0.6" />
+                                        <stop offset="100%" style="stop-color:#00ED64;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+
+                        <!-- Impact -->
+                        <div style="background: linear-gradient(135deg, rgba(0,237,100,0.25) 0%, rgba(0,104,74,0.2) 100%); padding: 2rem; border-radius: 16px; border: 2px solid var(--mongodb-green); box-shadow: 0 10px 30px rgba(0,237,100,0.2);">
+                            <h4 style="color: var(--mongodb-green); font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 1.4rem;">📈</span> Impacto de Negocio
+                            </h4>
+                            <p style="font-size: 1.05rem; line-height: 1.8; color: rgba(255,255,255,0.95); margin: 0;">
+                                <strong style="color: var(--mongodb-green);">Incremento</strong> en el volumen total de depósitos recibidos por clientes actuales y nuevos, 
+                                fortaleciendo la posición del banco frente a competidores
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI 2: Customer Lifetime Value -->
+            <div class="animate-on-scroll" style="margin-bottom: 3rem;">
+                <div style="background: linear-gradient(135deg, rgba(0,30,43,0.95) 0%, rgba(0,52,43,0.9) 100%); border: 2px solid var(--mongodb-green); border-radius: 20px; padding: 3rem; position: relative; overflow: hidden;">
+                    
+                    <div style="position: absolute; bottom: 0; left: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(0,237,100,0.1) 0%, transparent 70%); border-radius: 50%;"></div>
+                    
+                    <div style="display: grid; grid-template-columns: 180px 1fr auto 1fr; gap: 2.5rem; align-items: center; position: relative; z-index: 1;">
+                        
+                        <!-- Icon -->
+                        <div style="text-align: center;">
+                            <div style="width: 140px; height: 140px; background: linear-gradient(135deg, var(--mongodb-green) 0%, #00FF6E 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 20px 60px rgba(0,237,100,0.5); position: relative; animation: float 3s ease-in-out infinite 0.5s;">
+                                <svg width="70" height="70" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="35" cy="35" r="20" fill="none" stroke="#001E2B" stroke-width="3"/>
+                                    <circle cx="65" cy="35" r="20" fill="none" stroke="#001E2B" stroke-width="3"/>
+                                    <path d="M35 55 Q35 45 45 45 L55 45 Q65 45 65 55" fill="#001E2B"/>
+                                    <circle cx="35" cy="35" r="15" fill="#001E2B"/>
+                                    <circle cx="65" cy="35" r="15" fill="#001E2B"/>
+                                    <path d="M30 32 L40 32 M60 32 L70 32" stroke="#00ED64" stroke-width="2"/>
+                                    <path d="M35 38 Q35 42 38 42 Q41 42 41 38" stroke="#00ED64" stroke-width="2" fill="none"/>
+                                    <path d="M65 38 Q65 42 68 42 Q71 42 71 38" stroke="#00ED64" stroke-width="2" fill="none"/>
+                                    <path d="M25 25 L30 20 L35 25 M70 25 L75 20 L70 15" stroke="#00ED64" stroke-width="2" fill="none"/>
+                                    <circle cx="50" cy="70" r="10" fill="#00ED64" opacity="0.3"/>
+                                    <path d="M45 70 L48 73 L55 66" stroke="#001E2B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                </svg>
+                            </div>
+                            <div style="color: var(--mongodb-green); font-weight: 700; font-size: 1.1rem;">Customer<br/>Lifetime Value</div>
+                        </div>
+
+                        <!-- Description -->
+                        <div style="background: rgba(0,0,0,0.4); padding: 2rem; border-radius: 16px; border-left: 4px solid var(--mongodb-green);">
+                            <p style="font-size: 1.05rem; line-height: 1.8; color: rgba(255,255,255,0.9); margin: 0;">
+                                Un modelo enfocado en productos adaptados a las necesidades de clientes incrementará el uso cruzado de servicios financieros como cuentas de depósito, 
+                                ahorro, inversión y créditos. Además, una modernización que garantice procesos más rápidos y personalizados fortalecerá la fidelidad
+                            </p>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div style="text-align: center;">
+                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 8px rgba(0,237,100,0.3));">
+                                <path d="M10 30 L45 30" stroke="url(#grad2)" stroke-width="4" stroke-linecap="round"/>
+                                <path d="M35 20 L50 30 L35 40" stroke="url(#grad2)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                <defs>
+                                    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#00ED64;stop-opacity:0.6" />
+                                        <stop offset="100%" style="stop-color:#00ED64;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+
+                        <!-- Impact -->
+                        <div style="background: linear-gradient(135deg, rgba(0,237,100,0.25) 0%, rgba(0,104,74,0.2) 100%); padding: 2rem; border-radius: 16px; border: 2px solid var(--mongodb-green); box-shadow: 0 10px 30px rgba(0,237,100,0.2);">
+                            <h4 style="color: var(--mongodb-green); font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 1.4rem;">📈</span> Impacto de Negocio
+                            </h4>
+                            <p style="font-size: 1.05rem; line-height: 1.8; color: rgba(255,255,255,0.95); margin: 0;">
+                                <strong style="color: var(--mongodb-green);">Mayor valor</strong> por cliente a lo largo del tiempo, 
+                                aumentando la rentabilidad de la base de usuarios
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI 3 & 4: Two Column Layout -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(600px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+                
+                <!-- KPI 3: NPS -->
+                <div class="animate-on-scroll">
+                    <div style="background: linear-gradient(135deg, rgba(0,30,43,0.95) 0%, rgba(0,52,43,0.9) 100%); border: 2px solid var(--mongodb-green); border-radius: 20px; padding: 2.5rem; height: 100%; position: relative; overflow: hidden;">
+                        
+                        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0,237,100,0.15) 0%, transparent 70%); border-radius: 50%;"></div>
+                        
+                        <div style="position: relative; z-index: 1;">
+                            <div style="text-align: center; margin-bottom: 2rem;">
+                                <div style="width: 110px; height: 110px; background: linear-gradient(135deg, var(--mongodb-green) 0%, #00FF6E 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 15px 40px rgba(0,237,100,0.5); animation: float 3s ease-in-out infinite 1s;">
+                                    <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="50" cy="50" r="35" fill="none" stroke="#001E2B" stroke-width="4"/>
+                                        <path d="M50 15 L50 25 M85 50 L75 50 M50 85 L50 75 M15 50 L25 50" stroke="#001E2B" stroke-width="3" stroke-linecap="round"/>
+                                        <circle cx="50" cy="50" r="20" fill="#001E2B"/>
+                                        <path d="M40 45 L45 50 L60 35" stroke="#00ED64" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <circle cx="50" cy="50" r="28" stroke="#00ED64" stroke-width="2" fill="none" opacity="0.3"/>
+                                    </svg>
+                                </div>
+                                <h3 style="color: var(--mongodb-green); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Net Promoter Score (NPS)</h3>
+                            </div>
+
+                            <div style="background: rgba(0,0,0,0.3); padding: 1.8rem; border-radius: 12px; border-left: 4px solid var(--mongodb-green); margin-bottom: 1.5rem;">
+                                <p style="font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.9); margin: 0;">
+                                    La experiencia del cliente mejorará notablemente gracias a productos y servicios personalizados, tiempos reducidos en respuestas 
+                                    gracias a la integración del ODL, y plataformas más robustas que minimizan fricciones operativas
+                                </p>
+                            </div>
+
+                            <div style="background: linear-gradient(135deg, rgba(0,237,100,0.2) 0%, rgba(0,104,74,0.15) 100%); padding: 1.8rem; border-radius: 12px; border: 2px solid var(--mongodb-green);">
+                                <h4 style="color: var(--mongodb-green); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem;">
+                                    📈 Impacto de Negocio
+                                </h4>
+                                <p style="font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.95); margin: 0;">
+                                    Mayor satisfacción y recomendación del banco por parte de los clientes
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 4: Cost-to-Income Ratio -->
+                <div class="animate-on-scroll">
+                    <div style="background: linear-gradient(135deg, rgba(0,30,43,0.95) 0%, rgba(0,52,43,0.9) 100%); border: 2px solid var(--mongodb-green); border-radius: 20px; padding: 2.5rem; height: 100%; position: relative; overflow: hidden;">
+                        
+                        <div style="position: absolute; bottom: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0,237,100,0.15) 0%, transparent 70%); border-radius: 50%;"></div>
+                        
+                        <div style="position: relative; z-index: 1;">
+                            <div style="text-align: center; margin-bottom: 2rem;">
+                                <div style="width: 110px; height: 110px; background: linear-gradient(135deg, var(--mongodb-green) 0%, #00FF6E 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 15px 40px rgba(0,237,100,0.5); animation: float 3s ease-in-out infinite 1.5s;">
+                                    <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="20" y="20" width="60" height="60" rx="8" fill="#001E2B" stroke="#001E2B" stroke-width="3"/>
+                                        <path d="M50 35 L50 65" stroke="#00ED64" stroke-width="4" stroke-linecap="round"/>
+                                        <path d="M50 50 L65 50" stroke="#00ED64" stroke-width="4" stroke-linecap="round"/>
+                                        <path d="M40 45 L60 60 M60 45 L40 60" stroke="#001E2B" stroke-width="2" opacity="0.3"/>
+                                        <circle cx="50" cy="50" r="32" stroke="#00ED64" stroke-width="2" fill="none" opacity="0.2"/>
+                                    </svg>
+                                </div>
+                                <h3 style="color: var(--mongodb-green); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Cost-to-Income Ratio</h3>
+                            </div>
+
+                            <div style="background: rgba(0,0,0,0.3); padding: 1.8rem; border-radius: 12px; border-left: 4px solid var(--mongodb-green); margin-bottom: 1.5rem;">
+                                <p style="font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.9); margin: 0;">
+                                    El uso de tecnología moderna reducirá los costos operativos y de mantenimiento del core legado. Bancolombia gastará menos en operar 
+                                    procesos manuales y en gestionar sistemas menos escalables
+                                </p>
+                            </div>
+
+                            <div style="background: linear-gradient(135deg, rgba(0,237,100,0.2) 0%, rgba(0,104,74,0.15) 100%); padding: 1.8rem; border-radius: 12px; border: 2px solid var(--mongodb-green);">
+                                <h4 style="color: var(--mongodb-green); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem;">
+                                    📈 Impacto de Negocio
+                                </h4>
+                                <p style="font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.95); margin: 0;">
+                                    Optimización de los recursos financieros, disminuyendo costos operativos, y aumentando la eficiencia
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- KPI 5 & 6: Two Column Layout -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(600px, 1fr)); gap: 3rem; margin-bottom: 3rem;">
+                
+                <!-- KPI 5: Time-to-Market -->
+                <div class="animate-on-scroll">
+                    <div style="background: linear-gradient(135deg, rgba(0,30,43,0.95) 0%, rgba(0,52,43,0.9) 100%); border: 2px solid var(--mongodb-green); border-radius: 20px; padding: 2.5rem; height: 100%; position: relative; overflow: hidden;">
+                        
+                        <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0,237,100,0.15) 0%, transparent 70%); border-radius: 50%;"></div>
+                        
+                        <div style="position: relative; z-index: 1;">
+                            <div style="text-align: center; margin-bottom: 2rem;">
+                                <div style="width: 110px; height: 110px; background: linear-gradient(135deg, var(--mongodb-green) 0%, #00FF6E 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 15px 40px rgba(0,237,100,0.5); animation: float 3s ease-in-out infinite 2s;">
+                                    <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="50" cy="50" r="30" fill="none" stroke="#001E2B" stroke-width="4"/>
+                                        <path d="M50 30 L50 50 L65 50" stroke="#001E2B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <circle cx="50" cy="20" r="3" fill="#00ED64"/>
+                                        <circle cx="80" cy="50" r="3" fill="#00ED64"/>
+                                        <circle cx="50" cy="80" r="3" fill="#00ED64"/>
+                                        <circle cx="20" cy="50" r="3" fill="#00ED64"/>
+                                        <path d="M65 35 L75 25 M75 25 L70 25 M75 25 L75 30" stroke="#00ED64" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <circle cx="50" cy="50" r="37" stroke="#00ED64" stroke-width="2" fill="none" opacity="0.2"/>
+                                    </svg>
+                                </div>
+                                <h3 style="color: var(--mongodb-green); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Time-to-Market</h3>
+                            </div>
+
+                            <div style="background: rgba(0,0,0,0.3); padding: 1.8rem; border-radius: 12px; border-left: 4px solid var(--mongodb-green); margin-bottom: 1.5rem;">
+                                <p style="font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.9); margin: 0;">
+                                    La modernización permite responder rápidamente a cambios del mercado, lanzar nuevos productos financieros y adecuarse a presiones regulatorias o estratégicas 
+                                    con menores tiempos y mayor agilidad, superando modelos legacy o silos operativos
+                                </p>
+                            </div>
+
+                            <div style="background: linear-gradient(135deg, rgba(0,237,100,0.2) 0%, rgba(0,104,74,0.15) 100%); padding: 1.8rem; border-radius: 12px; border: 2px solid var(--mongodb-green);">
+                                <h4 style="color: var(--mongodb-green); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem;">
+                                    📈 Impacto de Negocio
+                                </h4>
+                                <p style="font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.95); margin: 0;">
+                                    Mayor capacidad para lanzar productos competitivos y personalizados en menor tiempo, manteniendo la relevancia frente a Fintechs y Neo-bancos
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI 6: Gestión del Riesgo Operativo -->
+                <div class="animate-on-scroll">
+                    <div style="background: linear-gradient(135deg, rgba(0,30,43,0.95) 0%, rgba(0,52,43,0.9) 100%); border: 2px solid var(--mongodb-green); border-radius: 20px; padding: 2.5rem; height: 100%; position: relative; overflow: hidden;">
+                        
+                        <div style="position: absolute; bottom: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(0,237,100,0.15) 0%, transparent 70%); border-radius: 50%;"></div>
+                        
+                        <div style="position: relative; z-index: 1;">
+                            <div style="text-align: center; margin-bottom: 2rem;">
+                                <div style="width: 110px; height: 110px; background: linear-gradient(135deg, var(--mongodb-green) 0%, #00FF6E 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 15px 40px rgba(0,237,100,0.5); animation: float 3s ease-in-out infinite 2.5s;">
+                                    <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="50" cy="50" r="30" fill="none" stroke="#001E2B" stroke-width="4"/>
+                                        <path d="M30 50 Q30 70 50 70 Q70 70 70 50 L70 30 Q70 20 50 20 Q30 20 30 30 Z" fill="#001E2B"/>
+                                        <path d="M40 45 L45 50 L60 35" stroke="#00ED64" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <circle cx="50" cy="50" r="37" stroke="#00ED64" stroke-width="2" fill="none" opacity="0.2"/>
+                                        <path d="M25 25 L30 30 M75 25 L70 30 M75 75 L70 70 M25 75 L30 70" stroke="#00ED64" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                                <h3 style="color: var(--mongodb-green); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Gestión del Riesgo Operativo</h3>
+                            </div>
+
+                            <div style="background: rgba(0,0,0,0.3); padding: 1.8rem; border-radius: 12px; border-left: 4px solid var(--mongodb-green); margin-bottom: 1.5rem;">
+                                <p style="font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.9); margin: 0;">
+                                    El desacoplamiento del core legacy mediante el ODL, reduce los riesgos de fallos tecnológicos, mejora la estabilidad y asegura resiliencia operativa ante contingencias. 
+                                    También se reduce la dependencia de recursos y contratos de soporte costosos y obsoletos
+                                </p>
+                            </div>
+
+                            <div style="background: linear-gradient(135deg, rgba(0,237,100,0.2) 0%, rgba(0,104,74,0.15) 100%); padding: 1.8rem; border-radius: 12px; border: 2px solid var(--mongodb-green);">
+                                <h4 style="color: var(--mongodb-green); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem;">
+                                    📈 Impacto de Negocio
+                                </h4>
+                                <p style="font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,0.95); margin: 0;">
+                                    Menor probabilidad de interrupciones operativas y más confianza en la estabilidad de la plataforma
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- KPI 7: Cumplimiento Regulatorio - Full Width -->
+            <div class="animate-on-scroll">
+                <div style="background: linear-gradient(135deg, rgba(0,30,43,0.95) 0%, rgba(0,52,43,0.9) 100%); border: 2px solid var(--mongodb-green); border-radius: 20px; padding: 3rem; position: relative; overflow: hidden;">
+                    
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; height: 400px; background: radial-gradient(circle, rgba(0,237,100,0.08) 0%, transparent 70%); border-radius: 50%;"></div>
+                    
+                    <div style="display: grid; grid-template-columns: 180px 1fr 1fr; gap: 3rem; align-items: center; position: relative; z-index: 1;">
+                        
+                        <!-- Icon -->
+                        <div style="text-align: center;">
+                            <div style="width: 140px; height: 140px; background: linear-gradient(135deg, var(--mongodb-green) 0%, #00FF6E 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 20px 60px rgba(0,237,100,0.5); position: relative; animation: float 3s ease-in-out infinite 3s;">
+                                <svg width="70" height="70" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="25" y="15" width="50" height="70" rx="3" fill="#001E2B" stroke="#001E2B" stroke-width="3"/>
+                                    <rect x="30" y="20" width="40" height="60" rx="2" fill="rgba(0,30,43,0.5)"/>
+                                    <path d="M35 30 L65 30 M35 40 L60 40 M35 50 L65 50 M35 60 L55 60" stroke="#00ED64" stroke-width="2" stroke-linecap="round"/>
+                                    <circle cx="38" cy="30" r="2" fill="#00ED64"/>
+                                    <circle cx="38" cy="40" r="2" fill="#00ED64"/>
+                                    <circle cx="38" cy="50" r="2" fill="#00ED64"/>
+                                    <circle cx="62" cy="70" r="8" fill="#00ED64"/>
+                                    <path d="M59 70 L61 72 L65 68" stroke="#001E2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M75 15 L75 25 L65 25 Z" fill="#00ED64" opacity="0.6"/>
+                                </svg>
+                            </div>
+                            <div style="color: var(--mongodb-green); font-weight: 700; font-size: 1.1rem;">Cumplimiento<br/>Regulatorio</div>
+                        </div>
+
+                        <!-- Description -->
+                        <div style="background: rgba(0,0,0,0.4); padding: 2rem; border-radius: 16px; border-left: 4px solid var(--mongodb-green);">
+                            <p style="font-size: 1.05rem; line-height: 1.8; color: rgba(255,255,255,0.9); margin: 0;">
+                                La modernización alineará la arquitectura tecnológica para cumplir con requerimientos regulatorios relacionados con seguridad y gestión de riesgos 
+                                con capacidades avanzadas de monitoreo, trazabilidad y adaptación a regulaciones futuras
+                            </p>
+                        </div>
+
+                        <!-- Impact -->
+                        <div style="background: linear-gradient(135deg, rgba(0,237,100,0.25) 0%, rgba(0,104,74,0.2) 100%); padding: 2rem; border-radius: 16px; border: 2px solid var(--mongodb-green); box-shadow: 0 10px 30px rgba(0,237,100,0.2);">
+                            <h4 style="color: var(--mongodb-green); font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 1.4rem;">📈</span> Impacto de Negocio
+                            </h4>
+                            <p style="font-size: 1.05rem; line-height: 1.8; color: rgba(255,255,255,0.95); margin: 0;">
+                                Reducción de riesgos legales y mayor eficiencia en la gestión de auditorías
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </section>
 
     <!-- Business Case Section -->

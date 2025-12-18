@@ -1,0 +1,430 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" style="font-family: 'Euclid Circular A', 'Segoe UI', system-ui, sans-serif; background: linear-gradient(135deg, #001E2B 0%, #00303F 50%, #001E2B 100%);">
+  
+  <defs>
+    <!-- MongoDB Green Gradient -->
+    <linearGradient id="mongoGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ED64"/>
+      <stop offset="100%" style="stop-color:#00684A"/>
+    </linearGradient>
+    
+    <!-- Glow Effect -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Strong Glow -->
+    <filter id="strongGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Pulse Animation for Icons -->
+    <filter id="pulse">
+      <feGaussianBlur stdDeviation="3">
+        <animate attributeName="stdDeviation" values="3;6;3" dur="2s" repeatCount="indefinite"/>
+      </feGaussianBlur>
+    </filter>
+    
+    <!-- Card Background Gradient -->
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00303F"/>
+      <stop offset="100%" style="stop-color:#001E2B"/>
+    </linearGradient>
+    
+    <!-- Arrow Gradient -->
+    <linearGradient id="arrowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00ED64"/>
+      <stop offset="50%" style="stop-color:#00ED64"/>
+      <stop offset="100%" style="stop-color:#00684A"/>
+    </linearGradient>
+    
+    <!-- Animated Dash Pattern -->
+    <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00ED64" stroke-width="0.5" opacity="0.1"/>
+    </pattern>
+    
+    <!-- MongoDB Leaf Shape -->
+    <symbol id="mongoLeaf" viewBox="0 0 50 100">
+      <path d="M25 0 C25 0 50 30 50 60 C50 85 40 100 25 100 C10 100 0 85 0 60 C0 30 25 0 25 0 Z" 
+            fill="url(#mongoGreen)"/>
+      <path d="M23 20 L23 85 L27 85 L27 20 Z" fill="#001E2B" opacity="0.3"/>
+    </symbol>
+    
+    <!-- Dollar Icon -->
+    <symbol id="dollarIcon" viewBox="0 0 60 60">
+      <circle cx="30" cy="30" r="28" fill="none" stroke="url(#mongoGreen)" stroke-width="3"/>
+      <text x="30" y="40" text-anchor="middle" fill="#00ED64" font-size="30" font-weight="bold">$</text>
+    </symbol>
+    
+    <!-- Connection dots pattern -->
+    <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#00ED64" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/>
+      </circle>
+    </pattern>
+  </defs>
+  
+  <!-- Background Grid Pattern -->
+  <rect width="100%" height="100%" fill="url(#gridPattern)" opacity="0.5"/>
+  
+  <!-- Animated Background Particles -->
+  <g opacity="0.4">
+    <circle cx="100" cy="100" r="3" fill="#00ED64">
+      <animate attributeName="cy" values="100;800;100" dur="20s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;0.8;0.4" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="300" cy="500" r="2" fill="#00ED64">
+      <animate attributeName="cy" values="500;100;500" dur="15s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="1100" cy="200" r="2.5" fill="#00ED64">
+      <animate attributeName="cy" values="200;700;200" dur="18s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="1300" cy="600" r="2" fill="#00ED64">
+      <animate attributeName="cy" values="600;100;600" dur="22s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Main Title -->
+  <g transform="translate(700, 70)">
+    <text x="0" y="0" text-anchor="middle" fill="#FFFFFF" font-size="36" font-weight="bold" letter-spacing="1">
+      Prioridades en la Modernización
+      <animate attributeName="opacity" values="0;1" dur="1s" fill="freeze"/>
+    </text>
+    <text x="0" y="40" text-anchor="middle" fill="#00ED64" font-size="24" font-weight="500" letter-spacing="2">
+      y su Impacto en el Negocio
+      <animate attributeName="opacity" values="0;1" dur="1s" begin="0.3s" fill="freeze"/>
+    </text>
+    <!-- Decorative line -->
+    <line x1="-200" y1="60" x2="200" y2="60" stroke="url(#mongoGreen)" stroke-width="2" opacity="0.5">
+      <animate attributeName="x1" values="-50;-200" dur="1s" fill="freeze"/>
+      <animate attributeName="x2" values="50;200" dur="1s" fill="freeze"/>
+    </line>
+  </g>
+  
+  <!-- ==================== SECTION 1: DEPÓSITOS ==================== -->
+  <g transform="translate(80, 180)">
+    
+    <!-- Section Number Badge -->
+    <g transform="translate(0, 0)">
+      <circle cx="25" cy="25" r="25" fill="url(#mongoGreen)" filter="url(#glow)">
+        <animate attributeName="r" values="23;27;23" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <text x="25" y="33" text-anchor="middle" fill="#001E2B" font-size="24" font-weight="bold">1</text>
+    </g>
+    
+    <!-- Section Title -->
+    <text x="70" y="35" fill="#FFFFFF" font-size="28" font-weight="bold">Depósitos</text>
+    
+    <!-- Main Icon Card -->
+    <g transform="translate(0, 60)">
+      <rect x="0" y="0" width="160" height="120" rx="15" fill="url(#cardBg)" stroke="#00ED64" stroke-width="2" opacity="0.9">
+        <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      
+      <!-- Animated Dollar Bill Icon -->
+      <g transform="translate(30, 25)">
+        <!-- Bill outline -->
+        <rect x="0" y="15" width="100" height="55" rx="8" fill="none" stroke="#00ED64" stroke-width="3">
+          <animate attributeName="stroke-dasharray" values="0,400;400,0" dur="2s" fill="freeze"/>
+        </rect>
+        <!-- Dollar sign -->
+        <text x="50" y="55" text-anchor="middle" fill="#00ED64" font-size="32" font-weight="bold" filter="url(#strongGlow)">
+          $
+          <animate attributeName="opacity" values="0.7;1;0.7" dur="1.5s" repeatCount="indefinite"/>
+        </text>
+        <!-- Corner dots -->
+        <circle cx="15" cy="28" r="4" fill="#00ED64" opacity="0.6">
+          <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="85" cy="28" r="4" fill="#00ED64" opacity="0.6">
+          <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+        </circle>
+        <circle cx="15" cy="58" r="4" fill="#00ED64" opacity="0.6">
+          <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite" begin="1s"/>
+        </circle>
+        <circle cx="85" cy="58" r="4" fill="#00ED64" opacity="0.6">
+          <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite" begin="1.5s"/>
+        </circle>
+      </g>
+    </g>
+    
+    <!-- RAZONES Card -->
+    <g transform="translate(0, 200)">
+      <text x="0" y="0" fill="#00ED64" font-size="18" font-weight="bold" letter-spacing="1">RAZONES</text>
+      
+      <g transform="translate(0, 20)">
+        <rect x="0" y="0" width="200" height="130" rx="12" fill="url(#cardBg)" stroke="#00684A" stroke-width="1" opacity="0.8"/>
+        
+        <!-- List items with animated bullets -->
+        <g transform="translate(20, 30)">
+          <circle cx="0" cy="0" r="5" fill="#00ED64">
+            <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <text x="15" y="5" fill="#FFFFFF" font-size="14">Competencia</text>
+        </g>
+        
+        <g transform="translate(20, 60)">
+          <circle cx="0" cy="0" r="5" fill="#00ED64">
+            <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite" begin="0.3s"/>
+          </circle>
+          <text x="15" y="5" fill="#FFFFFF" font-size="14">Experiencia del cliente</text>
+        </g>
+        
+        <g transform="translate(20, 90)">
+          <circle cx="0" cy="0" r="5" fill="#00ED64">
+            <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite" begin="0.6s"/>
+          </circle>
+          <text x="15" y="5" fill="#FFFFFF" font-size="14">Resolución de</text>
+          <text x="15" y="22" fill="#FFFFFF" font-size="14">ineficiencias</text>
+        </g>
+      </g>
+    </g>
+    
+    <!-- Animated Arrow -->
+    <g transform="translate(220, 260)">
+      <polygon points="0,20 50,0 50,15 100,15 100,25 50,25 50,40" fill="url(#arrowGrad)" filter="url(#glow)">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="1.5s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0,0;10,0;0,0" dur="1s" repeatCount="indefinite"/>
+      </polygon>
+    </g>
+    
+    <!-- IMPACTO EN KPIs Card -->
+    <g transform="translate(340, 200)">
+      <text x="0" y="0" fill="#00ED64" font-size="18" font-weight="bold" letter-spacing="1">IMPACTO EN KPIs</text>
+      
+      <g transform="translate(0, 20)">
+        <rect x="0" y="0" width="280" height="280" rx="12" fill="url(#cardBg)" stroke="#00684A" stroke-width="1" opacity="0.8"/>
+        
+        <!-- KPI Items -->
+        <g transform="translate(20, 30)">
+          <!-- Tasa de captación -->
+          <g>
+            <circle cx="8" cy="8" r="8" fill="url(#mongoGreen)" filter="url(#glow)"/>
+            <text x="25" y="12" fill="#00ED64" font-size="13" font-weight="bold">Tasa de captación de depósitos:</text>
+            <text x="25" y="30" fill="#B8C4CE" font-size="12">Incremento por procesos más</text>
+            <text x="25" y="45" fill="#B8C4CE" font-size="12">ágiles y personalizados</text>
+          </g>
+          
+          <!-- NPS -->
+          <g transform="translate(0, 65)">
+            <circle cx="8" cy="8" r="8" fill="url(#mongoGreen)" filter="url(#glow)"/>
+            <text x="25" y="12" fill="#00ED64" font-size="13" font-weight="bold">NPS:</text>
+            <text x="25" y="30" fill="#B8C4CE" font-size="12">Mejora por una experiencia</text>
+            <text x="25" y="45" fill="#B8C4CE" font-size="12">fluida en el manejo de depósitos</text>
+          </g>
+          
+          <!-- Gestión del riesgo -->
+          <g transform="translate(0, 130)">
+            <circle cx="8" cy="8" r="8" fill="url(#mongoGreen)" filter="url(#glow)"/>
+            <text x="25" y="12" fill="#00ED64" font-size="13" font-weight="bold">Gestión del riesgo operativo:</text>
+            <text x="25" y="30" fill="#B8C4CE" font-size="12">Desacoplamiento del core</text>
+            <text x="25" y="45" fill="#B8C4CE" font-size="12">legacy reduce vulnerabilidades</text>
+          </g>
+        </g>
+        
+        <!-- Decorative chart icon -->
+        <g transform="translate(200, 200)" opacity="0.3">
+          <rect x="0" y="30" width="12" height="30" fill="#00ED64">
+            <animate attributeName="height" values="30;50;30" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="y" values="30;10;30" dur="2s" repeatCount="indefinite"/>
+          </rect>
+          <rect x="18" y="20" width="12" height="40" fill="#00ED64">
+            <animate attributeName="height" values="40;25;40" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+            <animate attributeName="y" values="20;35;20" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+          </rect>
+          <rect x="36" y="10" width="12" height="50" fill="#00ED64">
+            <animate attributeName="height" values="50;35;50" dur="2s" repeatCount="indefinite" begin="1s"/>
+            <animate attributeName="y" values="10;25;10" dur="2s" repeatCount="indefinite" begin="1s"/>
+          </rect>
+        </g>
+      </g>
+    </g>
+  </g>
+  
+  <!-- ==================== SECTION 2: PAGOS ==================== -->
+  <g transform="translate(750, 180)">
+    
+    <!-- Section Number Badge -->
+    <g transform="translate(0, 0)">
+      <circle cx="25" cy="25" r="25" fill="url(#mongoGreen)" filter="url(#glow)">
+        <animate attributeName="r" values="23;27;23" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+      </circle>
+      <text x="25" y="33" text-anchor="middle" fill="#001E2B" font-size="24" font-weight="bold">2</text>
+    </g>
+    
+    <!-- Section Title -->
+    <text x="70" y="35" fill="#FFFFFF" font-size="28" font-weight="bold">Pagos</text>
+    
+    <!-- Main Icon Card -->
+    <g transform="translate(0, 60)">
+      <rect x="0" y="0" width="160" height="120" rx="15" fill="url(#cardBg)" stroke="#00ED64" stroke-width="2" opacity="0.9">
+        <animate attributeName="stroke-opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite" begin="0.5s"/>
+      </rect>
+      
+      <!-- Animated Payment Icon -->
+      <g transform="translate(30, 10)">
+        <!-- Central circle with dollar -->
+        <circle cx="50" cy="50" r="35" fill="none" stroke="#00ED64" stroke-width="3" filter="url(#glow)">
+          <animate attributeName="r" values="33;37;33" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <text x="50" y="60" text-anchor="middle" fill="#00ED64" font-size="32" font-weight="bold" filter="url(#strongGlow)">$</text>
+        
+        <!-- Orbiting squares -->
+        <g>
+          <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="10s" repeatCount="indefinite"/>
+          <rect x="42" y="-5" width="16" height="16" rx="3" fill="#00ED64"/>
+        </g>
+        <g>
+          <animateTransform attributeName="transform" type="rotate" from="90 50 50" to="450 50 50" dur="10s" repeatCount="indefinite"/>
+          <rect x="42" y="-5" width="16" height="16" rx="3" fill="#00ED64"/>
+        </g>
+        <g>
+          <animateTransform attributeName="transform" type="rotate" from="180 50 50" to="540 50 50" dur="10s" repeatCount="indefinite"/>
+          <rect x="42" y="-5" width="16" height="16" rx="3" fill="#00ED64"/>
+        </g>
+        <g>
+          <animateTransform attributeName="transform" type="rotate" from="270 50 50" to="630 50 50" dur="10s" repeatCount="indefinite"/>
+          <rect x="42" y="-5" width="16" height="16" rx="3" fill="#00ED64"/>
+        </g>
+      </g>
+    </g>
+    
+    <!-- RAZONES Card -->
+    <g transform="translate(0, 200)">
+      <text x="0" y="0" fill="#00ED64" font-size="18" font-weight="bold" letter-spacing="1">RAZONES</text>
+      
+      <g transform="translate(0, 20)">
+        <rect x="0" y="0" width="200" height="130" rx="12" fill="url(#cardBg)" stroke="#00684A" stroke-width="1" opacity="0.8"/>
+        
+        <!-- List items -->
+        <g transform="translate(20, 30)">
+          <circle cx="0" cy="0" r="5" fill="#00ED64">
+            <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <text x="15" y="5" fill="#FFFFFF" font-size="14">Impacto al negocio</text>
+        </g>
+        
+        <g transform="translate(20, 60)">
+          <circle cx="0" cy="0" r="5" fill="#00ED64">
+            <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite" begin="0.3s"/>
+          </circle>
+          <text x="15" y="5" fill="#FFFFFF" font-size="14">Factibilidad técnica</text>
+        </g>
+        
+        <g transform="translate(20, 90)">
+          <circle cx="0" cy="0" r="5" fill="#00ED64">
+            <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite" begin="0.6s"/>
+          </circle>
+          <text x="15" y="5" fill="#FFFFFF" font-size="14">Resolución de</text>
+          <text x="15" y="22" fill="#FFFFFF" font-size="14">ineficiencias</text>
+        </g>
+      </g>
+    </g>
+    
+    <!-- Animated Arrow -->
+    <g transform="translate(220, 260)">
+      <polygon points="0,20 50,0 50,15 100,15 100,25 50,25 50,40" fill="url(#arrowGrad)" filter="url(#glow)">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="1.5s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0,0;10,0;0,0" dur="1s" repeatCount="indefinite"/>
+      </polygon>
+    </g>
+    
+    <!-- IMPACTO EN KPIs Card -->
+    <g transform="translate(340, 200)">
+      <text x="0" y="0" fill="#00ED64" font-size="18" font-weight="bold" letter-spacing="1">IMPACTO EN KPIs</text>
+      
+      <g transform="translate(0, 20)">
+        <rect x="0" y="0" width="280" height="280" rx="12" fill="url(#cardBg)" stroke="#00684A" stroke-width="1" opacity="0.8"/>
+        
+        <!-- KPI Items -->
+        <g transform="translate(20, 30)">
+          <!-- Time-to-Market -->
+          <g>
+            <circle cx="8" cy="8" r="8" fill="url(#mongoGreen)" filter="url(#glow)"/>
+            <text x="25" y="12" fill="#00ED64" font-size="13" font-weight="bold">Time-to-Market:</text>
+            <text x="25" y="30" fill="#B8C4CE" font-size="12">Procesos más rápidos posicionan</text>
+            <text x="25" y="45" fill="#B8C4CE" font-size="12">al banco como líder en innovación</text>
+          </g>
+          
+          <!-- Cost-to-Income -->
+          <g transform="translate(0, 65)">
+            <circle cx="8" cy="8" r="8" fill="url(#mongoGreen)" filter="url(#glow)"/>
+            <text x="25" y="12" fill="#00ED64" font-size="13" font-weight="bold">Cost-to-Income Ratio:</text>
+            <text x="25" y="30" fill="#B8C4CE" font-size="12">Reducción de costos asociados</text>
+            <text x="25" y="45" fill="#B8C4CE" font-size="12">a pagos manuales y operativos</text>
+          </g>
+          
+          <!-- NPS -->
+          <g transform="translate(0, 130)">
+            <circle cx="8" cy="8" r="8" fill="url(#mongoGreen)" filter="url(#glow)"/>
+            <text x="25" y="12" fill="#00ED64" font-size="13" font-weight="bold">NPS:</text>
+            <text x="25" y="30" fill="#B8C4CE" font-size="12">Los pagos más ágiles y sin</text>
+            <text x="25" y="45" fill="#B8C4CE" font-size="12">fricciones mejoran la percepción</text>
+            <text x="25" y="60" fill="#B8C4CE" font-size="12">del cliente</text>
+          </g>
+        </g>
+        
+        <!-- Decorative speedometer icon -->
+        <g transform="translate(200, 200)" opacity="0.3">
+          <path d="M0,50 A50,50 0 0,1 100,50" fill="none" stroke="#00ED64" stroke-width="8" stroke-linecap="round"/>
+          <line x1="50" y1="50" x2="50" y2="20" stroke="#00ED64" stroke-width="4" stroke-linecap="round">
+            <animateTransform attributeName="transform" type="rotate" values="-60,50,50;60,50,50;-60,50,50" dur="3s" repeatCount="indefinite"/>
+          </line>
+        </g>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Center Connecting Element -->
+  <g transform="translate(700, 450)">
+    <!-- MongoDB Leaf -->
+    <g transform="translate(-30, -150)">
+      <use href="#mongoLeaf" width="60" height="100" filter="url(#strongGlow)">
+        <animateTransform attributeName="transform" type="scale" values="1;1.05;1" dur="3s" repeatCount="indefinite"/>
+      </use>
+    </g>
+  </g>
+  
+  <!-- Bottom decorative line -->
+  <g transform="translate(100, 820)">
+    <line x1="0" y1="0" x2="1200" y2="0" stroke="url(#mongoGreen)" stroke-width="2" opacity="0.3">
+      <animate attributeName="stroke-dasharray" values="0,1200;1200,0" dur="3s" fill="freeze"/>
+    </line>
+  </g>
+  
+  <!-- MongoDB branding footer -->
+  <g transform="translate(700, 860)">
+    <text x="0" y="0" text-anchor="middle" fill="#00ED64" font-size="14" font-weight="bold" letter-spacing="3" opacity="0.7">
+      POWERED BY MONGODB ATLAS
+    </text>
+  </g>
+  
+  <!-- Animated corner accents -->
+  <g opacity="0.5">
+    <!-- Top left -->
+    <path d="M0,50 L0,0 L50,0" fill="none" stroke="#00ED64" stroke-width="3">
+      <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1s" fill="freeze"/>
+    </path>
+    <!-- Top right -->
+    <path d="M1350,0 L1400,0 L1400,50" fill="none" stroke="#00ED64" stroke-width="3">
+      <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1s" fill="freeze" begin="0.2s"/>
+    </path>
+    <!-- Bottom left -->
+    <path d="M0,850 L0,900 L50,900" fill="none" stroke="#00ED64" stroke-width="3">
+      <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1s" fill="freeze" begin="0.4s"/>
+    </path>
+    <!-- Bottom right -->
+    <path d="M1350,900 L1400,900 L1400,850" fill="none" stroke="#00ED64" stroke-width="3">
+      <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1s" fill="freeze" begin="0.6s"/>
+    </path>
+  </g>
+  
+</svg>

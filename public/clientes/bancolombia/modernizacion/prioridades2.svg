@@ -1,0 +1,529 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 950" style="font-family: 'Euclid Circular A', 'Segoe UI', system-ui, sans-serif;">
+  
+  <defs>
+    <!-- MongoDB Gradients -->
+    <linearGradient id="mongoGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ED64"/>
+      <stop offset="100%" style="stop-color:#00684A"/>
+    </linearGradient>
+    
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0D1117"/>
+      <stop offset="50%" style="stop-color:#001E2B"/>
+      <stop offset="100%" style="stop-color:#0D1117"/>
+    </linearGradient>
+    
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#112733"/>
+      <stop offset="100%" style="stop-color:#0A1A23"/>
+    </linearGradient>
+    
+    <linearGradient id="glowLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00ED64;stop-opacity:0"/>
+      <stop offset="50%" style="stop-color:#00ED64;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#00ED64;stop-opacity:0"/>
+    </linearGradient>
+    
+    <radialGradient id="spotGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#00ED64;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#00ED64;stop-opacity:0"/>
+    </radialGradient>
+    
+    <!-- Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="20" flood-color="#00ED64" flood-opacity="0.15"/>
+    </filter>
+    
+    <!-- Hexagon Pattern -->
+    <pattern id="hexPattern" width="60" height="52" patternUnits="userSpaceOnUse">
+      <path d="M30,0 L60,15 L60,37 L30,52 L0,37 L0,15 Z" fill="none" stroke="#00ED64" stroke-width="0.5" opacity="0.08"/>
+    </pattern>
+    
+    <!-- Circuit Pattern -->
+    <pattern id="circuitPattern" width="100" height="100" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="2" fill="#00ED64" opacity="0.1"/>
+      <circle cx="90" cy="90" r="2" fill="#00ED64" opacity="0.1"/>
+      <path d="M10,10 L50,10 L50,50 M50,50 L90,50 L90,90" fill="none" stroke="#00ED64" stroke-width="0.5" opacity="0.05"/>
+    </pattern>
+    
+    <!-- Animated Dash -->
+    <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00ED64;stop-opacity:0">
+        <animate attributeName="offset" values="-1;1" dur="2s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="50%" style="stop-color:#00ED64;stop-opacity:1">
+        <animate attributeName="offset" values="-0.5;1.5" dur="2s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="100%" style="stop-color:#00ED64;stop-opacity:0">
+        <animate attributeName="offset" values="0;2" dur="2s" repeatCount="indefinite"/>
+      </stop>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="url(#bgGradient)"/>
+  <rect width="100%" height="100%" fill="url(#hexPattern)"/>
+  <rect width="100%" height="100%" fill="url(#circuitPattern)"/>
+  
+  <!-- Ambient Glow Spots -->
+  <ellipse cx="350" cy="400" rx="300" ry="200" fill="url(#spotGlow)" opacity="0.5">
+    <animate attributeName="opacity" values="0.3;0.6;0.3" dur="4s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="1050" cy="500" rx="300" ry="200" fill="url(#spotGlow)" opacity="0.5">
+    <animate attributeName="opacity" values="0.3;0.6;0.3" dur="4s" repeatCount="indefinite" begin="2s"/>
+  </ellipse>
+  
+  <!-- Floating Particles -->
+  <g class="particles">
+    <circle cx="150" cy="200" r="2" fill="#00ED64" opacity="0.6">
+      <animate attributeName="cy" values="200;700;200" dur="25s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.6;0.2;0.6" dur="25s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="800" r="1.5" fill="#00ED64" opacity="0.5">
+      <animate attributeName="cy" values="800;100;800" dur="20s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="1000" cy="150" r="2" fill="#00ED64" opacity="0.7">
+      <animate attributeName="cy" values="150;850;150" dur="22s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="1250" cy="500" r="1.5" fill="#00ED64" opacity="0.4">
+      <animate attributeName="cy" values="500;50;500" dur="18s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Main Title Section -->
+  <g transform="translate(700, 60)">
+    <!-- Decorative lines -->
+    <line x1="-400" y1="0" x2="-100" y2="0" stroke="url(#glowLine)" stroke-width="1" opacity="0.5">
+      <animate attributeName="opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite"/>
+    </line>
+    <line x1="100" y1="0" x2="400" y2="0" stroke="url(#glowLine)" stroke-width="1" opacity="0.5">
+      <animate attributeName="opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite"/>
+    </line>
+    
+    <text x="0" y="25" text-anchor="middle" fill="#FFFFFF" font-size="34" font-weight="bold" letter-spacing="2">
+      Prioridades en la Modernización
+    </text>
+    <text x="0" y="60" text-anchor="middle" fill="#00ED64" font-size="20" font-weight="400" letter-spacing="4" opacity="0.9">
+      Y SU IMPACTO EN EL NEGOCIO
+    </text>
+  </g>
+  
+  <!-- ==================== SECTION 3: CUSTOMER ON-BOARDING ==================== -->
+  <g transform="translate(50, 130)">
+    
+    <!-- Main Card Container -->
+    <g filter="url(#cardShadow)">
+      <rect x="0" y="0" width="620" height="700" rx="20" fill="url(#cardGradient)" stroke="#00684A" stroke-width="1" opacity="0.95"/>
+      
+      <!-- Card top accent line -->
+      <rect x="0" y="0" width="620" height="4" rx="2" fill="url(#mongoGreen)">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    
+    <!-- Section Header -->
+    <g transform="translate(30, 40)">
+      <!-- Number badge with hexagon -->
+      <g transform="translate(0, 0)">
+        <polygon points="30,0 55,15 55,45 30,60 5,45 5,15" fill="url(#mongoGreen)" filter="url(#glow)">
+          <animate attributeName="opacity" values="0.9;1;0.9" dur="2s" repeatCount="indefinite"/>
+        </polygon>
+        <text x="30" y="38" text-anchor="middle" fill="#001E2B" font-size="26" font-weight="bold">3</text>
+      </g>
+      
+      <text x="80" y="42" fill="#FFFFFF" font-size="26" font-weight="bold">Customer On-boarding</text>
+    </g>
+    
+    <!-- Hand/Touch Icon - Animated -->
+    <g transform="translate(250, 100)">
+      <g filter="url(#glow)">
+        <!-- Hand base -->
+        <path d="M60,80 C60,80 20,80 20,50 C20,35 35,35 35,50 L35,30 C35,20 50,20 50,30 L50,25 C50,15 65,15 65,25 L65,30 C65,20 80,20 80,30 L80,55 C80,55 95,45 105,55 C115,65 90,100 70,100 L60,100 Z" 
+              fill="none" stroke="#00ED64" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <animate attributeName="stroke-dasharray" values="0,500;500,0" dur="2s" fill="freeze"/>
+        </path>
+        
+        <!-- Finger pointer -->
+        <circle cx="35" cy="15" r="8" fill="#00ED64" opacity="0.8">
+          <animate attributeName="r" values="6;10;6" dur="1.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Click ripples -->
+        <circle cx="35" cy="15" r="15" fill="none" stroke="#00ED64" stroke-width="2" opacity="0">
+          <animate attributeName="r" values="8;30" dur="1.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.8;0" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="35" cy="15" r="15" fill="none" stroke="#00ED64" stroke-width="1" opacity="0">
+          <animate attributeName="r" values="8;40" dur="1.5s" repeatCount="indefinite" begin="0.3s"/>
+          <animate attributeName="opacity" values="0.5;0" dur="1.5s" repeatCount="indefinite" begin="0.3s"/>
+        </circle>
+      </g>
+    </g>
+    
+    <!-- RAZONES Section -->
+    <g transform="translate(30, 230)">
+      <g>
+        <rect x="0" y="0" width="250" height="180" rx="15" fill="#0A1A23" stroke="#00684A" stroke-width="1"/>
+        <rect x="0" y="0" width="250" height="40" rx="15" fill="url(#mongoGreen)" opacity="0.15"/>
+        <text x="20" y="28" fill="#00ED64" font-size="16" font-weight="bold" letter-spacing="2">RAZONES</text>
+      </g>
+      
+      <!-- Animated list items -->
+      <g transform="translate(25, 60)">
+        <g>
+          <rect x="0" y="0" width="8" height="8" rx="2" fill="#00ED64">
+            <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+          </rect>
+          <text x="20" y="8" fill="#FFFFFF" font-size="14">Experiencia del cliente</text>
+        </g>
+        
+        <g transform="translate(0, 35)">
+          <rect x="0" y="0" width="8" height="8" rx="2" fill="#00ED64">
+            <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.3s"/>
+          </rect>
+          <text x="20" y="8" fill="#FFFFFF" font-size="14">Impacto al negocio</text>
+        </g>
+        
+        <g transform="translate(0, 70)">
+          <rect x="0" y="0" width="8" height="8" rx="2" fill="#00ED64">
+            <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.6s"/>
+          </rect>
+          <text x="20" y="8" fill="#FFFFFF" font-size="14">Resolución de</text>
+          <text x="20" y="26" fill="#FFFFFF" font-size="14">ineficiencias</text>
+        </g>
+      </g>
+    </g>
+    
+    <!-- Animated Flow Arrow -->
+    <g transform="translate(300, 300)">
+      <!-- Arrow path -->
+      <path d="M0,20 L40,20" stroke="#00ED64" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+      <path d="M0,20 L40,20" stroke="url(#flowGradient)" stroke-width="3" stroke-linecap="round"/>
+      
+      <!-- Arrow head -->
+      <polygon points="40,10 60,20 40,30" fill="url(#mongoGreen)" filter="url(#glow)">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="1s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0,0;5,0;0,0" dur="1s" repeatCount="indefinite"/>
+      </polygon>
+      
+      <!-- Energy dots flowing -->
+      <circle r="3" fill="#00ED64">
+        <animate attributeName="cx" values="0;40" dur="1s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="1;0" dur="1s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    
+    <!-- IMPACTO EN KPIs Section -->
+    <g transform="translate(340, 230)">
+      <g>
+        <rect x="0" y="0" width="250" height="250" rx="15" fill="#0A1A23" stroke="#00684A" stroke-width="1"/>
+        <rect x="0" y="0" width="250" height="40" rx="15" fill="url(#mongoGreen)" opacity="0.15"/>
+        <text x="20" y="28" fill="#00ED64" font-size="16" font-weight="bold" letter-spacing="2">IMPACTO EN KPIs</text>
+      </g>
+      
+      <!-- KPI items with icons -->
+      <g transform="translate(20, 55)">
+        <!-- Tasa de adquisición -->
+        <g>
+          <circle cx="10" cy="10" r="10" fill="url(#mongoGreen)" opacity="0.3"/>
+          <circle cx="10" cy="10" r="6" fill="#00ED64"/>
+          <text x="30" y="8" fill="#00ED64" font-size="12" font-weight="bold">Tasa de adquisición:</text>
+          <text x="30" y="24" fill="#B8C4CE" font-size="11">Un onboarding digital y</text>
+          <text x="30" y="38" fill="#B8C4CE" font-size="11">personalizado atrae segmentos</text>
+          <text x="30" y="52" fill="#B8C4CE" font-size="11">nuevos del mercado</text>
+        </g>
+        
+        <!-- CLV -->
+        <g transform="translate(0, 80)">
+          <circle cx="10" cy="10" r="10" fill="url(#mongoGreen)" opacity="0.3"/>
+          <circle cx="10" cy="10" r="6" fill="#00ED64"/>
+          <text x="30" y="8" fill="#00ED64" font-size="12" font-weight="bold">CLV:</text>
+          <text x="30" y="24" fill="#B8C4CE" font-size="11">Las experiencias fluidas</text>
+          <text x="30" y="38" fill="#B8C4CE" font-size="11">incrementan la lealtad de</text>
+          <text x="30" y="52" fill="#B8C4CE" font-size="11">clientes valiosos</text>
+        </g>
+      </g>
+      
+      <!-- Decorative user growth chart -->
+      <g transform="translate(170, 180)" opacity="0.4">
+        <path d="M0,50 Q15,45 30,35 T60,10" fill="none" stroke="#00ED64" stroke-width="2">
+          <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="2s" fill="freeze"/>
+        </path>
+        <circle cx="60" cy="10" r="4" fill="#00ED64">
+          <animate attributeName="r" values="3;6;3" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+    </g>
+    
+    <!-- Bottom decorative element -->
+    <g transform="translate(310, 520)">
+      <!-- Connection nodes visualization -->
+      <g opacity="0.3">
+        <circle cx="0" cy="0" r="30" fill="none" stroke="#00ED64" stroke-width="1" stroke-dasharray="5,5">
+          <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="20s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="0" cy="0" r="50" fill="none" stroke="#00ED64" stroke-width="1" stroke-dasharray="8,8">
+          <animateTransform attributeName="transform" type="rotate" from="360 0 0" to="0 0 0" dur="25s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="0" cy="0" r="70" fill="none" stroke="#00ED64" stroke-width="1" stroke-dasharray="10,10">
+          <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="30s" repeatCount="indefinite"/>
+        </circle>
+        
+        <!-- Orbiting dots -->
+        <circle cx="30" cy="0" r="4" fill="#00ED64">
+          <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="10s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="50" cy="0" r="3" fill="#00ED64">
+          <animateTransform attributeName="transform" type="rotate" from="180 0 0" to="540 0 0" dur="15s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+    </g>
+  </g>
+  
+  <!-- ==================== SECTION 4: TESORERÍA Y LIQUIDACIÓN ==================== -->
+  <g transform="translate(730, 130)">
+    
+    <!-- Main Card Container -->
+    <g filter="url(#cardShadow)">
+      <rect x="0" y="0" width="620" height="700" rx="20" fill="url(#cardGradient)" stroke="#00684A" stroke-width="1" opacity="0.95"/>
+      
+      <!-- Card top accent line -->
+      <rect x="0" y="0" width="620" height="4" rx="2" fill="url(#mongoGreen)">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+      </rect>
+    </g>
+    
+    <!-- Section Header -->
+    <g transform="translate(30, 40)">
+      <!-- Number badge with hexagon -->
+      <g transform="translate(0, 0)">
+        <polygon points="30,0 55,15 55,45 30,60 5,45 5,15" fill="url(#mongoGreen)" filter="url(#glow)">
+          <animate attributeName="opacity" values="0.9;1;0.9" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+        </polygon>
+        <text x="30" y="38" text-anchor="middle" fill="#001E2B" font-size="26" font-weight="bold">4</text>
+      </g>
+      
+      <text x="80" y="42" fill="#FFFFFF" font-size="26" font-weight="bold">Tesorería y Liquidación</text>
+    </g>
+    
+    <!-- Document/Invoice Icon - Animated -->
+    <g transform="translate(250, 100)">
+      <g filter="url(#glow)">
+        <!-- Document base -->
+        <rect x="20" y="0" width="80" height="100" rx="5" fill="none" stroke="#00ED64" stroke-width="3">
+          <animate attributeName="stroke-dasharray" values="0,400;400,0" dur="2s" fill="freeze"/>
+        </rect>
+        
+        <!-- Document fold -->
+        <path d="M80,0 L100,20 L80,20 Z" fill="#00ED64" opacity="0.3">
+          <animate attributeName="opacity" values="0;0.3" dur="2s" fill="freeze"/>
+        </path>
+        
+        <!-- Dollar sign -->
+        <text x="60" y="50" text-anchor="middle" fill="#00ED64" font-size="28" font-weight="bold">$</text>
+        
+        <!-- Lines -->
+        <line x1="35" y1="65" x2="85" y2="65" stroke="#00ED64" stroke-width="2" opacity="0.5">
+          <animate attributeName="x2" values="35;85" dur="1s" fill="freeze" begin="1s"/>
+        </line>
+        <line x1="35" y1="80" x2="70" y2="80" stroke="#00ED64" stroke-width="2" opacity="0.5">
+          <animate attributeName="x2" values="35;70" dur="0.8s" fill="freeze" begin="1.2s"/>
+        </line>
+        
+        <!-- Floating coins effect -->
+        <g>
+          <circle cx="10" cy="50" r="8" fill="none" stroke="#00ED64" stroke-width="1.5" opacity="0">
+            <animate attributeName="cy" values="80;20" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0;0.8;0" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="110" cy="30" r="6" fill="none" stroke="#00ED64" stroke-width="1.5" opacity="0">
+            <animate attributeName="cy" values="90;10" dur="2.5s" repeatCount="indefinite" begin="0.5s"/>
+            <animate attributeName="opacity" values="0;0.6;0" dur="2.5s" repeatCount="indefinite" begin="0.5s"/>
+          </circle>
+        </g>
+      </g>
+    </g>
+    
+    <!-- RAZONES Section -->
+    <g transform="translate(30, 230)">
+      <g>
+        <rect x="0" y="0" width="250" height="180" rx="15" fill="#0A1A23" stroke="#00684A" stroke-width="1"/>
+        <rect x="0" y="0" width="250" height="40" rx="15" fill="url(#mongoGreen)" opacity="0.15"/>
+        <text x="20" y="28" fill="#00ED64" font-size="16" font-weight="bold" letter-spacing="2">RAZONES</text>
+      </g>
+      
+      <!-- List items -->
+      <g transform="translate(25, 60)">
+        <g>
+          <rect x="0" y="0" width="8" height="8" rx="2" fill="#00ED64">
+            <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+          </rect>
+          <text x="20" y="8" fill="#FFFFFF" font-size="14">Impacto al negocio</text>
+        </g>
+        
+        <g transform="translate(0, 35)">
+          <rect x="0" y="0" width="8" height="8" rx="2" fill="#00ED64">
+            <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.3s"/>
+          </rect>
+          <text x="20" y="8" fill="#FFFFFF" font-size="14">Presiones regulatorias</text>
+        </g>
+        
+        <g transform="translate(0, 70)">
+          <rect x="0" y="0" width="8" height="8" rx="2" fill="#00ED64">
+            <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.6s"/>
+          </rect>
+          <text x="20" y="8" fill="#FFFFFF" font-size="14">Factibilidad técnica</text>
+        </g>
+      </g>
+    </g>
+    
+    <!-- Animated Flow Arrow -->
+    <g transform="translate(300, 300)">
+      <path d="M0,20 L40,20" stroke="#00ED64" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+      <path d="M0,20 L40,20" stroke="url(#flowGradient)" stroke-width="3" stroke-linecap="round"/>
+      
+      <polygon points="40,10 60,20 40,30" fill="url(#mongoGreen)" filter="url(#glow)">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="1s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0,0;5,0;0,0" dur="1s" repeatCount="indefinite"/>
+      </polygon>
+      
+      <circle r="3" fill="#00ED64">
+        <animate attributeName="cx" values="0;40" dur="1s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="1;0" dur="1s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    
+    <!-- IMPACTO EN KPIs Section -->
+    <g transform="translate(340, 230)">
+      <g>
+        <rect x="0" y="0" width="250" height="280" rx="15" fill="#0A1A23" stroke="#00684A" stroke-width="1"/>
+        <rect x="0" y="0" width="250" height="40" rx="15" fill="url(#mongoGreen)" opacity="0.15"/>
+        <text x="20" y="28" fill="#00ED64" font-size="16" font-weight="bold" letter-spacing="2">IMPACTO EN KPIs</text>
+      </g>
+      
+      <!-- KPI items -->
+      <g transform="translate(20, 55)">
+        <!-- Gestión del riesgo -->
+        <g>
+          <circle cx="10" cy="10" r="10" fill="url(#mongoGreen)" opacity="0.3"/>
+          <circle cx="10" cy="10" r="6" fill="#00ED64"/>
+          <text x="30" y="8" fill="#00ED64" font-size="12" font-weight="bold">Gestión del riesgo operativo:</text>
+          <text x="30" y="24" fill="#B8C4CE" font-size="11">Mayor control y resiliencia</text>
+          <text x="30" y="38" fill="#B8C4CE" font-size="11">en procesos críticos</text>
+        </g>
+        
+        <!-- Cost-to-Income -->
+        <g transform="translate(0, 60)">
+          <circle cx="10" cy="10" r="10" fill="url(#mongoGreen)" opacity="0.3"/>
+          <circle cx="10" cy="10" r="6" fill="#00ED64"/>
+          <text x="30" y="8" fill="#00ED64" font-size="12" font-weight="bold">Cost-to-Income Ratio:</text>
+          <text x="30" y="24" fill="#B8C4CE" font-size="11">Optimización en costos</text>
+          <text x="30" y="38" fill="#B8C4CE" font-size="11">asociados a sistemas obsoletos</text>
+        </g>
+        
+        <!-- Cumplimiento regulatorio -->
+        <g transform="translate(0, 120)">
+          <circle cx="10" cy="10" r="10" fill="url(#mongoGreen)" opacity="0.3"/>
+          <circle cx="10" cy="10" r="6" fill="#00ED64"/>
+          <text x="30" y="8" fill="#00ED64" font-size="12" font-weight="bold">Cumplimiento regulatorio:</text>
+          <text x="30" y="24" fill="#B8C4CE" font-size="11">Mejor capacidad para</text>
+          <text x="30" y="38" fill="#B8C4CE" font-size="11">atender demandas normativas</text>
+        </g>
+      </g>
+      
+      <!-- Decorative shield/compliance icon -->
+      <g transform="translate(180, 220)" opacity="0.3">
+        <path d="M20,0 L40,8 L40,25 C40,40 20,50 20,50 C20,50 0,40 0,25 L0,8 Z" fill="none" stroke="#00ED64" stroke-width="2">
+          <animate attributeName="stroke-dasharray" values="0,150;150,0" dur="3s" repeatCount="indefinite"/>
+        </path>
+        <path d="M12,25 L18,32 L30,18" fill="none" stroke="#00ED64" stroke-width="2" stroke-linecap="round">
+          <animate attributeName="opacity" values="0;1;0" dur="3s" repeatCount="indefinite"/>
+        </path>
+      </g>
+    </g>
+    
+    <!-- Bottom decorative element - Data flow visualization -->
+    <g transform="translate(310, 540)">
+      <g opacity="0.25">
+        <!-- Database cylinders -->
+        <g transform="translate(-60, 0)">
+          <ellipse cx="20" cy="5" rx="20" ry="5" fill="none" stroke="#00ED64" stroke-width="1"/>
+          <rect x="0" y="5" width="40" height="30" fill="none" stroke="#00ED64" stroke-width="1"/>
+          <ellipse cx="20" cy="35" rx="20" ry="5" fill="none" stroke="#00ED64" stroke-width="1"/>
+        </g>
+        
+        <!-- Flow lines -->
+        <path d="M-15,20 C20,20 20,0 60,0" fill="none" stroke="#00ED64" stroke-width="1">
+          <animate attributeName="stroke-dashoffset" values="100;0" dur="2s" repeatCount="indefinite"/>
+        </path>
+        <path d="M-15,20 C20,20 20,40 60,40" fill="none" stroke="#00ED64" stroke-width="1">
+          <animate attributeName="stroke-dashoffset" values="100;0" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+        </path>
+        
+        <!-- Target nodes -->
+        <circle cx="60" cy="0" r="8" fill="#00ED64" opacity="0.5">
+          <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="60" cy="40" r="8" fill="#00ED64" opacity="0.5">
+          <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+        </circle>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Center divider with MongoDB leaf -->
+  <g transform="translate(700, 480)">
+    <line x1="0" y1="-200" x2="0" y2="200" stroke="#00684A" stroke-width="1" stroke-dasharray="10,10" opacity="0.3"/>
+    
+    <!-- MongoDB Leaf -->
+    <g transform="translate(-20, -40)">
+      <path d="M20 0 C20 0 40 20 40 45 C40 65 32 75 20 75 C8 75 0 65 0 45 C0 20 20 0 20 0 Z" 
+            fill="url(#mongoGreen)" filter="url(#softGlow)" opacity="0.8">
+        <animateTransform attributeName="transform" type="scale" values="1;1.05;1" dur="3s" repeatCount="indefinite" additive="sum"/>
+      </path>
+      <path d="M18 15 L18 65 L22 65 L22 15 Z" fill="#001E2B" opacity="0.3"/>
+    </g>
+  </g>
+  
+  <!-- Footer -->
+  <g transform="translate(700, 880)">
+    <line x1="-500" y1="0" x2="500" y2="0" stroke="url(#glowLine)" stroke-width="1" opacity="0.3"/>
+    <text x="0" y="30" text-anchor="middle" fill="#00ED64" font-size="12" font-weight="bold" letter-spacing="4" opacity="0.6">
+      POWERED BY MONGODB ATLAS
+    </text>
+  </g>
+  
+  <!-- Corner accents -->
+  <g stroke="#00ED64" stroke-width="2" fill="none" opacity="0.4">
+    <path d="M20,60 L20,20 L60,20">
+      <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1s" fill="freeze"/>
+    </path>
+    <path d="M1340,20 L1380,20 L1380,60">
+      <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1s" fill="freeze" begin="0.2s"/>
+    </path>
+    <path d="M20,890 L20,930 L60,930">
+      <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1s" fill="freeze" begin="0.4s"/>
+    </path>
+    <path d="M1380,890 L1380,930 L1340,930">
+      <animate attributeName="stroke-dasharray" values="0,100;100,0" dur="1s" fill="freeze" begin="0.6s"/>
+    </path>
+  </g>
+  
+</svg>
