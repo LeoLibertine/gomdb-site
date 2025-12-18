@@ -334,6 +334,10 @@
       "dest": "/clientes/bancolombia/flappy.html"
     },
     {
+      "src": "/clientes/bancolombia/modernizacion/odl(?:/.*)?$",
+      "dest": "/clientes/bancolombia/modernizacion/odl.html"
+    },
+    {
       "src": "/clientes/bancolombia/bintec2025/fraud_fighter_challenge(?:/.*)?$",
       "dest": "/clientes/bancolombia/bintec2025/fraud_fighter_challenge.html"
     },

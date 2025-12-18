@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modernización Core Bancario - Bancolombia + MongoDB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Euclid+Circular+A:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --mongodb-green: #00ED64;
+            --mongodb-dark: #001E2B;
+            --mongodb-forest: #00684A;
+            --mongodb-slate: #001E2B;
+            --mongodb-gray: #5C6C75;
+            --mongodb-light-gray: #F9FBFA;
+            --mongodb-white: #FFFFFF;
+            --bancolombia-yellow: #FDDA24;
+        }
+
+        body {
+            font-family: 'Euclid Circular A', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--mongodb-slate) 0%, #00342B 100%);
+            color: var(--mongodb-white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(0,237,100,0.1) 0%, transparent 70%);
+            animation: pulse 8s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo-divider {
+            font-size: 3rem;
+            color: var(--mongodb-green);
+            font-weight: 300;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--mongodb-white) 0%, var(--mongodb-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--mongodb-green);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.8);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            animation: fadeInUp 1s ease-out 0.7s both;
+        }
+
+        .metrics-bar {
+            display: flex;
+            gap: 3rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.9s both;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 1.5rem 2rem;
+            background: rgba(0,237,100,0.1);
+            border: 2px solid var(--mongodb-green);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .metric:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,237,100,0.3);
+            background: rgba(0,237,100,0.15);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--mongodb-green);
+            display: block;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-alt {
+            background: rgba(0,237,100,0.03);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: var(--mongodb-white);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--mongodb-green) 0%, transparent 100%);
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.3rem;
+            color: var(--mongodb-green);
+            margin-bottom: 4rem;
+            font-weight: 600;
+        }
+
+        .architecture-container {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid var(--mongodb-green);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 4rem 0;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .architecture-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 60px rgba(0,237,100,0.2);
+        }
+
+        .architecture-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--mongodb-green);
+            font-weight: 600;
+        }
+
+        .architecture-image {
+            width: 100%;
+            max-width: 1200px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(0,237,100,0.1) 0%, rgba(0,104,74,0.1) 100%);
+            border: 2px solid rgba(0,237,100,0.3);
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,237,100,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--mongodb-green);
+            box-shadow: 0 20px 60px rgba(0,237,100,0.3);
+        }
+
+        .card-number {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: var(--mongodb-green);
+            color: var(--mongodb-dark);
+            font-size: 2rem;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--mongodb-green);
+        }
+
+        .card-content {
+            color: rgba(255,255,255,0.85);
+            line-height: 1.8;
+        }
+
+        .phase-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .phase {
+            background: linear-gradient(135deg, rgba(0,104,74,0.2) 0%, rgba(0,237,100,0.1) 100%);
+            border-left: 5px solid var(--mongodb-green);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .phase:hover {
+            transform: translateX(10px);
+            box-shadow: -5px 5px 30px rgba(0,237,100,0.2);
+        }
+
+        .phase-number {
+            display: inline-block;
+            background: var(--mongodb-green);
+            color: var(--mongodb-dark);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .phase-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--mongodb-white);
+        }
+
+        .phase-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .phase-detail {
+            background: rgba(0,0,0,0.2);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--mongodb-green);
+        }
+
+        .phase-detail-title {
+            font-weight: 700;
+            color: var(--mongodb-green);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .phase-detail-content {
+            color: rgba(255,255,255,0.85);
+        }
+
+        .comparison-table {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 3rem 0;
+            border: 2px solid rgba(0,237,100,0.3);
+        }
+
+        .table-header {
+            background: var(--mongodb-green);
+            color: var(--mongodb-dark);
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            padding: 1.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0,237,100,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .table-row:hover {
+            background: rgba(0,237,100,0.1);
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .highlight {
+            color: var(--mongodb-green);
+            font-weight: 700;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--mongodb-green);
+            color: var(--mongodb-dark);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-secondary {
+            background: rgba(0,237,100,0.2);
+            color: var(--mongodb-green);
+            border: 1px solid var(--mongodb-green);
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 1rem 0;
+            padding-left: 2.5rem;
+            position: relative;
+            color: rgba(255,255,255,0.85);
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--mongodb-green);
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, rgba(0,237,100,0.1) 0%, rgba(0,104,74,0.1) 100%);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--mongodb-green);
+            color: var(--mongodb-dark);
+            padding: 1.5rem 4rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,237,100,0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0,237,100,0.5);
+            background: #00FF6E;
+        }
+
+        .code-block {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(0,237,100,0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--mongodb-green);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-20px); }
+            60% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .scroll-indicator::after {
+            content: '↓';
+            font-size: 2rem;
+            color: var(--mongodb-green);
+        }
+
+        footer {
+            background: var(--mongodb-slate);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header,
+            .table-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .logo-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .metrics-bar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        .leaf-icon {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            background: var(--mongodb-green);
+            mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M25 2C15 10 10 20 10 30c0 8 5 15 15 15s15-7 15-15c0-10-5-20-15-28z"/></svg>') center/contain no-repeat;
+            animation: leafFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes leafFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        .customer-centric-visual {
+            background: linear-gradient(135deg, rgba(0,104,74,0.3) 0%, rgba(0,237,100,0.2) 100%);
+            border: 3px solid var(--mongodb-green);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .customer-centric-visual::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,237,100,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="logo-container">
+                <div class="leaf-icon"></div>
+                <div class="logo-divider">×</div>
+                <h2 style="font-size: 2.5rem; color: var(--bancolombia-yellow); font-weight: 700;">Bancolombia</h2>
+            </div>
+            
+            <h1>Modernización de Core Bancario</h1>
+            <div class="subtitle">Arquitectura Customer-Centric con MongoDB Atlas</div>
+            <p class="hero-description">
+                Transformación del dominio de Depósitos (Captación) - el <span class="highlight">Centro de Gravedad</span> del Core Bancario - 
+                desde AS400/RPG hacia una arquitectura reactiva moderna basada en eventos, 
+                logrando latencias sub-2 segundos y 500 TPS con enfoque Customer-Centric.
+            </p>
+
+            <div class="metrics-bar">
+                <div class="metric">
+                    <span class="metric-value">&lt;2s</span>
+                    <span class="metric-label">Latencia</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">500</span>
+                    <span class="metric-label">TPS</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">100%</span>
+                    <span class="metric-label">Event-Driven</span>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator"></div>
+    </section>
+
+    <!-- Business Case Section -->
+    <section class="section section-alt">
+        <h2 class="section-title animate-on-scroll">Definición Estratégica</h2>
+        <p class="section-subtitle animate-on-scroll">¿Por qué modernizar Depósitos primero?</p>
+        
+        <div class="customer-centric-visual animate-on-scroll" style="margin-bottom: 3rem;">
+            <h3 style="font-size: 2rem; color: var(--mongodb-green); margin-bottom: 2rem; position: relative; z-index: 1;">
+                🎯 Dominio Target: Depósitos (Captación)
+            </h3>
+            <p style="position: relative; z-index: 1; font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
+                Según el análisis de portafolio, <span class="highlight">Depósitos</span> es el candidato único 
+                para esta iniciativa de modernización por razones estratégicas de negocio.
+            </p>
+        </div>
+
+        <div class="cards-grid">
+            <div class="card animate-on-scroll">
+                <div class="card-number">1</div>
+                <h3 class="card-title">Centro de Gravedad</h3>
+                <p class="card-content">
+                    Es el <span class="highlight">producto core</span> del que dependen aproximadamente 
+                    <span class="highlight">~6 aplicaciones satélite</span>. Modernizarlo desbloquea el 
+                    mayor valor sistémico y reduce la deuda técnica de toda la plataforma.
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <div class="card-number">2</div>
+                <h3 class="card-title">Defensa Competitiva</h3>
+                <p class="card-content">
+                    Clave para la estrategia de <span class="highlight">captación</span> (CDTs, Bonos) 
+                    y para defenderse de nuevos entrantes digitales como Revolut, Nubank y otros 
+                    neobanks que están atacando este segmento.
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <div class="card-number">3</div>
+                <h3 class="card-title">Impacto en Cliente</h3>
+                <p class="card-content">
+                    Permite la transición de un modelo <span class="highlight">"Product Centric"</span> 
+                    (tarifas fijas en tablas rígidas) a <span class="highlight">"Customer Centric"</span> 
+                    (tarifas personalizadas por cliente) - el principal driver de negocio actual.
+                </p>
+            </div>
+        </div>
+
+        <div class="animate-on-scroll" style="margin-top: 3rem;">
+            <div style="background: rgba(0,237,100,0.1); border: 2px solid var(--mongodb-green); padding: 2rem; border-radius: 12px;">
+                <h4 style="color: var(--mongodb-green); margin-bottom: 1rem; font-size: 1.3rem;">
+                    💡 Impacto Estratégico
+                </h4>
+                <p style="font-size: 1.1rem; line-height: 1.8;">
+                    La modernización de Depósitos no solo mejora la experiencia del cliente final, sino que 
+                    libera al AS400 de la carga transaccional, permitiendo que las aplicaciones satélite 
+                    (productos derivados, reportería, analytics) operen con datos frescos en tiempo real 
+                    sin afectar el rendimiento del Core.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vision Section -->
+    <section class="section">
+        <h2 class="section-title animate-on-scroll">Visión de Alto Nivel</h2>
+        <p class="section-subtitle animate-on-scroll">Arquitectura Reactiva Event-Driven</p>
+        
+        <div class="cards-grid">
+            <div class="card animate-on-scroll">
+                <div class="card-number">1</div>
+                <h3 class="card-title">Modelo EDA</h3>
+                <p class="card-content">
+                    Abandonamos el ETL tradicional para adoptar Event-Driven Architecture. 
+                    El ODL no es solo consulta, sino un <span class="highlight">consumidor activo</span> 
+                    de eventos de negocio en tiempo real.
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <div class="card-number">2</div>
+                <h3 class="card-title">CDC Streaming</h3>
+                <p class="card-content">
+                    Captura de cambios en tiempo real desde AS400/DB2 mediante Debezium, 
+                    transmitiendo eventos a través de Kafka hacia MongoDB Atlas con 
+                    <span class="highlight">latencia &lt;2s</span>.
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <div class="card-number">3</div>
+                <h3 class="card-title">Microservicios</h3>
+                <p class="card-content">
+                    Canales digitales (Mobile, Web Banking) consultan directamente MongoDB 
+                    con lecturas ultra-rápidas (&lt;10ms), liberando al Core de carga.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Diagram Section -->
+    <section class="section section-alt">
+        <div class="architecture-container animate-on-scroll">
+            <h2 class="architecture-title">🏗️ Diagrama de Arquitectura Lógica</h2>
+            <img src="odl.svg" alt="Arquitectura Event-Driven Bancolombia ODL" class="architecture-image">
+            <p style="margin-top: 2rem; color: rgba(255,255,255,0.7); font-style: italic;">
+                Flujo de datos desde Legacy AS400 hasta canales digitales modernos vía MongoDB Atlas
+            </p>
+        </div>
+    </section>
+
+    <!-- Atlas Stream Processing Architecture -->
+    <section class="section">
+        <h2 class="section-title animate-on-scroll">Arquitectura Avanzada</h2>
+        <p class="section-subtitle animate-on-scroll">Atlas Stream Processing: Transformación Inteligente en Vuelo</p>
+
+        <div class="customer-centric-visual animate-on-scroll" style="margin-bottom: 3rem;">
+            <h3 style="font-size: 2rem; color: var(--mongodb-green); margin-bottom: 1.5rem; position: relative; z-index: 1;">
+                🚀 Evolución: Del Sink Connector Básico al Stream Processing
+            </h3>
+            <p style="position: relative; z-index: 1; font-size: 1.15rem; line-height: 1.8;">
+                Para casos donde el dato del AS400 viene "sucio" o requiere <span class="highlight">transformaciones complejas</span>, 
+                Atlas Stream Processing (ASP) permite aplicar lógica de negocio, validación y enriquecimiento 
+                <span class="highlight">antes de persistir</span> en el ODL, sin necesidad de infraestructura adicional.
+            </p>
+        </div>
+
+        <!-- ASP Architecture Diagram -->
+        <div class="architecture-container animate-on-scroll">
+            <h2 class="architecture-title">🌊 Arquitectura con Atlas Stream Processing</h2>
+            <img src="odl2.svg" alt="Arquitectura con Atlas Stream Processing - Bancolombia" class="architecture-image">
+            <p style="margin-top: 2rem; color: rgba(255,255,255,0.7); font-style: italic;">
+                Stream Processing serverless para limpieza, validación y enriquecimiento de datos en tiempo real
+            </p>
+        </div>
+
+        <!-- ASP Benefits -->
+        <div class="cards-grid" style="margin-top: 4rem;">
+            <div class="card animate-on-scroll">
+                <h3 class="card-title">🎯 Validación en Vuelo</h3>
+                <p class="card-content">
+                    Aplicar reglas de negocio y <span class="highlight">validación de calidad de datos</span> 
+                    antes de persistir. Descartar registros corruptos o con saldos negativos del legado 
+                    sin impactar el ODL principal.
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <h3 class="card-title">⚡ Enriquecimiento Real-Time</h3>
+                <p class="card-content">
+                    Calcular campos computados como <span class="highlight">categorías de cliente</span> 
+                    (VIP, Gold, Estándar) basados en saldos, sin necesidad de actualizaciones posteriores. 
+                    El dato llega enriquecido al ODL.
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <h3 class="card-title">🔄 Transformación con MQL</h3>
+                <p class="card-content">
+                    Utiliza <span class="highlight">MongoDB Aggregation Pipelines</span> (MQL) para 
+                    transformaciones complejas, mucho más potente que las limitadas transformaciones 
+                    SMT de Kafka Connect.
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <h3 class="card-title">☁️ Serverless / Managed</h3>
+                <p class="card-content">
+                    No requiere infraestructura adicional ni Kafka Connect Cluster. 
+                    <span class="highlight">Completamente gestionado</span> en Atlas con escalado 
+                    automático según la carga.
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <h3 class="card-title">🛡️ Limpieza de Datos Legacy</h3>
+                <p class="card-content">
+                    Centraliza la <span class="highlight">limpieza de datos sucios</span> del AS400 
+                    en la capa de ingestión, evitando que la aplicación final tenga que lidiar con 
+                    inconsistencias del legado.
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <h3 class="card-title">📊 Monitoreo Integrado</h3>
+                <p class="card-content">
+                    Dashboard nativo en Atlas para monitorear el pipeline de streaming: 
+                    <span class="highlight">throughput, latencia, errores</span> y métricas 
+                    de transformación en tiempo real.
+                </p>
+            </div>
+        </div>
+
+        <!-- ASP vs Sink Connector Comparison -->
+        <div class="animate-on-scroll" style="margin-top: 4rem;">
+            <h3 style="font-size: 2rem; color: var(--mongodb-white); margin-bottom: 2rem; text-align: center;">
+                Comparativa: Sink Connector vs Atlas Stream Processing
+            </h3>
+            
+            <div class="comparison-table">
+                <div class="table-header">
+                    <div>Característica</div>
+                    <div>Kafka Sink Connector</div>
+                    <div>Atlas Stream Processing</div>
+                </div>
+                <div class="table-row">
+                    <div><strong>Rol Principal</strong></div>
+                    <div>Mover datos (ETL simple)</div>
+                    <div style="color: var(--mongodb-green); font-weight: 600;">Procesar y transformar flujos</div>
+                </div>
+                <div class="table-row">
+                    <div><strong>Lenguaje de Transformación</strong></div>
+                    <div>SMT (Java, Regex) - Limitado</div>
+                    <div style="color: var(--mongodb-green); font-weight: 600;">MongoDB Aggregation (MQL)</div>
+                </div>
+                <div class="table-row">
+                    <div><strong>Infraestructura</strong></div>
+                    <div>Requiere Kafka Connect Cluster</div>
+                    <div style="color: var(--mongodb-green); font-weight: 600;">Serverless / Gestionado en Atlas</div>
+                </div>
+                <div class="table-row">
+                    <div><strong>Validación de Datos</strong></div>
+                    <div>Poca. Si JSON mal formado → DLQ</div>
+                    <div style="color: var(--mongodb-green); font-weight: 600;">Alta. $validator o lógica condicional</div>
+                </div>
+                <div class="table-row">
+                    <div><strong>Enriquecimiento</strong></div>
+                    <div>Muy limitado</div>
+                    <div style="color: var(--mongodb-green); font-weight: 600;">Completo con $lookup, $addFields</div>
+                </div>
+                <div class="table-row">
+                    <div><strong>Caso de Uso Bancolombia</strong></div>
+                    <div><span class="badge badge-secondary">Fase 1</span> Replicación 1:1 estable</div>
+                    <div><span class="badge">Fase 2+</span> Datos "sucios" con limpieza compleja</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ASP Pipeline Example -->
+        <div class="animate-on-scroll" style="margin-top: 4rem;">
+            <div style="background: linear-gradient(135deg, rgba(0,104,74,0.3) 0%, rgba(0,237,100,0.2) 100%); border: 3px solid var(--mongodb-green); border-radius: 20px; padding: 3rem; position: relative; overflow: hidden;">
+                <h3 style="font-size: 2rem; color: var(--mongodb-white); margin-bottom: 2rem;">
+                    💻 Ejemplo: Pipeline ASP para Depósitos
+                </h3>
+                
+                <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; border-left: 5px solid var(--mongodb-green);">
+                    <h4 style="color: var(--mongodb-green); font-size: 1.3rem; margin-bottom: 1rem;">
+                        Caso de Uso Real
+                    </h4>
+                    <p style="font-size: 1.1rem; line-height: 1.8;">
+                        Este pipeline se ejecuta continuamente sobre el flujo de Kafka. Detecta si un cliente es VIP 
+                        basado en su saldo, descarta registros con datos corruptos del AS400, y enriquece el documento 
+                        antes de guardarlo en la colección final.
+                    </p>
+                </div>
+
+                <div class="code-block">
+<pre>sp.process({
+  $source: {
+    connectionName: "kafka-bancolombia-prod",
+    topic: "as400.depositos.cuentas"
+  }
+}, [
+  <span class="highlight">// 1. Desempaquetar mensaje Debezium</span>
+  { $replaceRoot: { newRoot: "$fullDocument.payload.after" } },
+
+  <span class="highlight">// 2. Validación de Calidad (Regla de Negocio)</span>
+  <span class="highlight">// Descartar registros con saldos negativos corruptos</span>
+  { $match: { 
+      saldo_disponible: { $gte: 0 },
+      numero_cuenta: { $exists: true, $ne: "" }
+  }},
+
+  <span class="highlight">// 3. Enriquecimiento en Tiempo Real</span>
+  { $addFields: {
+      <span class="highlight">// Calcular categoría de cliente automáticamente</span>
+      categoria_calculada: {
+        $switch: {
+          branches: [
+            { 
+              case: { $gte: ["$saldo_disponible", 50000000] },
+              then: "VIP_GOLD" 
+            },
+            { 
+              case: { $gte: ["$saldo_disponible", 10000000] },
+              then: "VIP_SILVER" 
+            }
+          ],
+          default: "ESTANDAR"
+        }
+      },
+      
+      <span class="highlight">// Timestamp de procesamiento</span>
+      fecha_proceso: "$$NOW",
+      
+      <span class="highlight">// Flag de origen para auditoría</span>
+      origen_datos: "AS400_CDC_ASP"
+  }},
+
+  <span class="highlight">// 4. Limpieza de Campos Legacy</span>
+  { $project: {
+      <span class="highlight">// Excluir campos técnicos del AS400</span>
+      _internal_flag: 0,
+      _legacy_timestamp: 0
+  }},
+
+  <span class="highlight">// 5. Destino con Upsert Idempotente</span>
+  { $merge: {
+      into: {
+        connectionName: "atlas-cluster-bancolombia",
+        db: "BancaPersonas",
+        coll: "Clientes"
+      },
+      on: "cliente_id",              <span class="highlight">// Upsert key</span>
+      whenMatched: "merge",           <span class="highlight">// Actualizar si existe</span>
+      whenNotMatched: "insert"        <span class="highlight">// Insertar si es nuevo</span>
+  }}
+])</pre>
+                </div>
+
+                <div style="margin-top: 2rem; background: rgba(0,237,100,0.15); padding: 1.5rem; border-radius: 12px; border: 2px solid var(--mongodb-green);">
+                    <h4 style="color: var(--mongodb-green); font-weight: 700; margin-bottom: 0.5rem;">
+                        💎 Ventaja Estratégica
+                    </h4>
+                    <p style="font-size: 1.1rem;">
+                        La lógica de limpieza y enriquecimiento está <span class="highlight">centralizada en la capa de ingestión</span>, 
+                        no dispersa en múltiples microservicios. Cualquier cambio en las reglas de categorización se hace 
+                        en un solo lugar y aplica automáticamente a todos los flujos.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- When to Use ASP -->
+        <div class="animate-on-scroll" style="margin-top: 4rem;">
+            <h3 style="font-size: 2rem; color: var(--mongodb-white); margin-bottom: 2rem; text-align: center;">
+                ¿Cuándo usar Atlas Stream Processing?
+            </h3>
+            
+            <div class="phase-container">
+                <div class="phase">
+                    <span class="phase-number">✅ Usar ASP si...</span>
+                    <ul class="feature-list" style="margin-top: 1rem;">
+                        <li>Los datos del AS400 vienen con <span class="highlight">calidad inconsistente</span> (campos nulos, formatos incorrectos)</li>
+                        <li>Necesitas <span class="highlight">validar reglas de negocio</span> antes de persistir</li>
+                        <li>Requieres <span class="highlight">enriquecimiento complejo</span> con cálculos o lookups</li>
+                        <li>Quieres <span class="highlight">centralizar transformaciones</span> en la capa de ingesta</li>
+                        <li>Prefieres una solución <span class="highlight">serverless sin infraestructura adicional</span></li>
+                    </ul>
+                </div>
+
+                <div class="phase">
+                    <span class="phase-number">⚠️ Usar Sink Connector si...</span>
+                    <ul class="feature-list" style="margin-top: 1rem;">
+                        <li>Los datos del AS400 son <span class="highlight">limpios y consistentes</span></li>
+                        <li>Solo necesitas <span class="highlight">replicación 1:1</span> sin transformaciones complejas</li>
+                        <li>Prefieres <span class="highlight">simplicidad</span> en Fase 1 (validación técnica)</li>
+                        <li>Ya tienes <span class="highlight">Kafka Connect</span> en tu stack tecnológico</li>
+                        <li>Las transformaciones simples SMT son <span class="highlight">suficientes</span> para tu caso de uso</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implementation Recommendation -->
+        <div class="animate-on-scroll" style="margin-top: 4rem;">
+            <div style="background: rgba(0,237,100,0.1); border: 2px solid var(--mongodb-green); padding: 2.5rem; border-radius: 16px;">
+                <h4 style="color: var(--mongodb-green); margin-bottom: 1.5rem; font-size: 1.5rem; text-align: center;">
+                    🎯 Recomendación para Bancolombia
+                </h4>
+                <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem; align-items: center;">
+                    <div style="background: rgba(0,0,0,0.3); padding: 2rem; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: var(--mongodb-white); margin-bottom: 1rem;">
+                            Fase 1 - PoC
+                        </div>
+                        <div style="color: var(--mongodb-green); font-size: 2rem; margin-bottom: 0.5rem;">
+                            Sink Connector
+                        </div>
+                        <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">
+                            Validación rápida y migración estable
+                        </div>
+                    </div>
+                    
+                    <div style="font-size: 2rem; color: var(--mongodb-green);">
+                        →
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 2rem; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: var(--mongodb-white); margin-bottom: 1rem;">
+                            Fase 2+
+                        </div>
+                        <div style="color: var(--mongodb-green); font-size: 2rem; margin-bottom: 0.5rem;">
+                            ASP
+                        </div>
+                        <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">
+                            Cuando identifiquemos datos sucios
+                        </div>
+                    </div>
+                </div>
+                <p style="margin-top: 2rem; font-size: 1.1rem; line-height: 1.8; text-align: center;">
+                    Comenzar simple con el Sink Connector para la PoC, y <span class="highlight">evolucionar a ASP</span> 
+                    cuando se identifiquen necesidades de transformación compleja durante las primeras iteraciones.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Customer Centric Section -->
+    <section class="section">
+        <h2 class="section-title animate-on-scroll">La Joya de la Corona</h2>
+        <p class="section-subtitle animate-on-scroll">Transformación del Modelo de Datos: Customer 360°</p>
+
+        <div class="customer-centric-visual animate-on-scroll">
+            <h3 style="font-size: 2rem; color: var(--mongodb-green); margin-bottom: 2rem; position: relative; z-index: 1;">
+                De Tablas Relacionales Fragmentadas → Documento Unificado
+            </h3>
+            
+            <div class="code-block">
+<pre>{
+  "_id": "cust_1098372",
+  "nombre_completo": "Juan Pérez",
+  "segmento": "VIP_PREFERENTE",
+  "perfil_riesgo": "BAJO",
+  
+  // <span class="highlight">CUSTOMER CENTRIC: Las reglas viajan con el cliente</span>
+  "reglas_personalizadas": {
+    "exencion_cuota_manejo": true,
+    "tasa_preferencial_cdt": 0.05,
+    "transferencias_gratis": "ILIMITADAS"
+  },
+
+  // <span class="highlight">PRODUCTOS (Embed Pattern para lectura rápida)</span>
+  "productos_captacion": [
+    {
+      "tipo": "CUENTA_AHORROS",
+      "numero_producto": "99000123",
+      "saldo_disponible": 4500000.00,
+      "estado": "ACTIVA"
+    },
+    {
+      "tipo": "CDT_DIGITAL",
+      "valor_inversion": 10000000.00,
+      "tasa_aplicada": 12.5,
+      "fecha_vencimiento": "2025-12-01"
+    }
+  ]
+}</pre>
+            </div>
+
+            <div style="position: relative; z-index: 1;">
+                <span class="badge">Ventaja Técnica</span>
+                <p style="margin-top: 1rem; font-size: 1.2rem; line-height: 1.8;">
+                    Consultar la posición global del cliente y sus tarifas personalizadas requiere 
+                    <span class="highlight">1 sola lectura a MongoDB (~2ms)</span>. 
+                    En el modelo relacional actual se requieren consultas a 4-5 tablas con múltiples JOINs.
+                </p>
+            </div>
+        </div>
+
+        <div class="cards-grid" style="margin-top: 4rem;">
+            <div class="card animate-on-scroll">
+                <h3 class="card-title">❌ Antes (Relacional)</h3>
+                <ul class="feature-list">
+                    <li>TABLA_CLIENTES</li>
+                    <li>TABLA_CUENTAS</li>
+                    <li>TABLA_PRODUCTOS_CDT</li>
+                    <li>TABLA_TARIFAS_BASE</li>
+                    <li>TABLA_EXCEPCIONES_TARIFAS</li>
+                </ul>
+                <p style="margin-top: 1rem; color: rgba(255,255,255,0.6);">
+                    JOINs costosos para calcular tarifas personalizadas
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <h3 class="card-title">✓ Después (Documental)</h3>
+                <ul class="feature-list">
+                    <li>Vista consolidada del cliente</li>
+                    <li>Reglas de negocio embebidas</li>
+                    <li>Productos anidados (Subset Pattern)</li>
+                    <li>1 lectura vs múltiples JOINs</li>
+                    <li>Latencia &lt;10ms garantizada</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Implementation Roadmap -->
+    <section class="section section-alt">
+        <h2 class="section-title animate-on-scroll">Estrategia de Ejecución</h2>
+        <p class="section-subtitle animate-on-scroll">PoC + Roadmap Gradual con Patrón Strangler Fig</p>
+
+        <div class="customer-centric-visual animate-on-scroll" style="margin-bottom: 3rem;">
+            <h3 style="font-size: 2rem; color: var(--mongodb-green); margin-bottom: 1.5rem; position: relative; z-index: 1;">
+                🔬 Enfoque de Validación
+            </h3>
+            <p style="position: relative; z-index: 1; font-size: 1.15rem; line-height: 1.8;">
+                Para mitigar el riesgo de tocar el <span class="highlight">"Centro de Gravedad"</span>, 
+                dividimos la ejecución en una <span class="highlight">PoC inmediata</span> (validación técnica de factibilidad) 
+                y un <span class="highlight">Roadmap de largo plazo</span> (modernización gradual y segura).
+            </p>
+        </div>
+
+        <!-- PoC Section -->
+        <div class="animate-on-scroll" style="margin-bottom: 4rem;">
+            <div style="background: linear-gradient(135deg, rgba(0,104,74,0.3) 0%, rgba(0,237,100,0.2) 100%); border: 3px solid var(--mongodb-green); border-radius: 20px; padding: 3rem; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 1rem; right: 1rem;">
+                    <span class="badge">Alcance: 4-6 Semanas</span>
+                </div>
+                
+                <h3 style="font-size: 2.2rem; color: var(--mongodb-white); margin-bottom: 2rem;">
+                    A. Prueba de Concepto (PoC)
+                </h3>
+                
+                <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; border-left: 5px solid var(--mongodb-green);">
+                    <h4 style="color: var(--mongodb-green); font-size: 1.3rem; margin-bottom: 1rem;">
+                        🎯 Objetivo Principal
+                    </h4>
+                    <p style="font-size: 1.15rem; line-height: 1.8;">
+                        Validar la capacidad técnica de replicar <span class="highlight">AS400 → MongoDB</span> 
+                        con latencia end-to-end <span class="highlight">&lt;2 segundos</span> en un ambiente controlado.
+                    </p>
+                </div>
+
+                <div class="cards-grid" style="margin-top: 2rem;">
+                    <div style="background: rgba(0,0,0,0.2); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--mongodb-green);">
+                        <h4 style="color: var(--mongodb-green); font-weight: 700; margin-bottom: 1rem; font-size: 1.2rem;">
+                            1️⃣ Ingesta
+                        </h4>
+                        <p style="line-height: 1.8;">
+                            Configurar conector CDC (IBM IDR o Debezium) sobre una 
+                            <span class="highlight">tabla "semilla"</span> del AS400 de Depósitos.
+                        </p>
+                    </div>
+
+                    <div style="background: rgba(0,0,0,0.2); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--mongodb-green);">
+                        <h4 style="color: var(--mongodb-green); font-weight: 700; margin-bottom: 1rem; font-size: 1.2rem;">
+                            2️⃣ Transformación
+                        </h4>
+                        <p style="line-height: 1.8;">
+                            Mapear el esquema relacional (tablas normalizadas) al modelo documental 
+                            <span class="highlight">"Customer 360"</span> en JSON.
+                        </p>
+                    </div>
+
+                    <div style="background: rgba(0,0,0,0.2); padding: 2rem; border-radius: 12px; border-left: 4px solid var(--mongodb-green);">
+                        <h4 style="color: var(--mongodb-green); font-weight: 700; margin-bottom: 1rem; font-size: 1.2rem;">
+                            3️⃣ Consumo
+                        </h4>
+                        <p style="line-height: 1.8;">
+                            Exponer una <span class="highlight">API REST simple</span> que lea del ODL 
+                            para demostrar la latencia de acceso real.
+                        </p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; background: rgba(0,237,100,0.15); padding: 1.5rem; border-radius: 12px; border: 2px solid var(--mongodb-green);">
+                    <h4 style="color: var(--mongodb-green); font-weight: 700; margin-bottom: 0.5rem;">
+                        📦 Entregable de PoC
+                    </h4>
+                    <p style="font-size: 1.1rem;">
+                        Demo funcional con métricas de <span class="highlight">latencia end-to-end</span>, 
+                        validación de integridad de datos, y reportería de throughput.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Roadmap Phases -->
+        <h3 style="font-size: 2rem; color: var(--mongodb-white); margin-bottom: 2rem; text-align: center;" class="animate-on-scroll">
+            B. Roadmap de Modernización
+        </h3>
+
+        <div class="phase-container">
+            <div class="phase animate-on-scroll">
+                <span class="phase-number">Fase 1</span>
+                <h3 class="phase-title">ODL Pasivo (Read-Only)</h3>
+                <p style="color: rgba(255,255,255,0.8); margin-bottom: 1.5rem; font-size: 1.1rem;">
+                    Replicación completa del dominio de Depósitos sin modificar flujos de escritura existentes.
+                </p>
+                <div class="phase-details">
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Acción</div>
+                        <div class="phase-detail-content">
+                            Configurar CDC (Debezium + Kafka) con replicación completa del dominio de Depósitos hacia MongoDB Atlas
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Objetivo</div>
+                        <div class="phase-detail-content">
+                            Replicar datos a MongoDB en Near Real-Time (&lt;2s) manteniendo AS400 como sistema maestro
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Uso</div>
+                        <div class="phase-detail-content">
+                            Canales digitales (Mobile App, Web Banking) leen exclusivamente de MongoDB. 
+                            Todas las escrituras continúan en AS400
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Beneficio Inmediato</div>
+                        <div class="phase-detail-content">
+                            <span class="highlight">Offload del Mainframe</span> - Reducción de carga en AS400, 
+                            mejorando rendimiento general y liberando recursos
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">KPI Crítico</div>
+                        <div class="phase-detail-content">
+                            Verificar latencia de replicación consistente &lt;2s y disponibilidad 99.9%
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Duración Estimada</div>
+                        <div class="phase-detail-content">
+                            2-3 meses (incluyendo pruebas de carga y certificación)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase animate-on-scroll">
+                <span class="phase-number">Fase 2</span>
+                <h3 class="phase-title">Lógica de Precios en MongoDB (Shadow Mode)</h3>
+                <p style="color: rgba(255,255,255,0.8); margin-bottom: 1.5rem; font-size: 1.1rem;">
+                    Implementación del motor de cálculo de tarifas personalizadas sin impactar al cliente.
+                </p>
+                <div class="phase-details">
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Acción</div>
+                        <div class="phase-detail-content">
+                            Implementar motor de reglas de precios en microservicios sobre MongoDB Atlas, 
+                            replicando la lógica RPG actual
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Objetivo</div>
+                        <div class="phase-detail-content">
+                            Calcular precios/tarifas en <span class="highlight">paralelo al AS400</span> 
+                            sin mostrarlos al cliente, solo para validar exactitud
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Metodología</div>
+                        <div class="phase-detail-content">
+                            Modo "Shadow" - Cada cálculo se hace en ambos sistemas y se comparan 
+                            resultados con dashboard de reconciliación
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Validación</div>
+                        <div class="phase-detail-content">
+                            Lograr <span class="highlight">99.9% de coincidencia</span> entre cálculos 
+                            MongoDB vs AS400 antes de pasar a Fase 3
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Beneficio</div>
+                        <div class="phase-detail-content">
+                            Migración de lógica de negocio crítica con riesgo cero para el cliente
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Duración Estimada</div>
+                        <div class="phase-detail-content">
+                            3-4 meses (incluyendo certificación de reglas de negocio)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase animate-on-scroll">
+                <span class="phase-number">Fase 3</span>
+                <h3 class="phase-title">Inversión de Control (MongoDB First)</h3>
+                <p style="color: rgba(255,255,255,0.8); margin-bottom: 1.5rem; font-size: 1.1rem;">
+                    MongoDB se convierte en el sistema de operación principal para nuevas transacciones.
+                </p>
+                <div class="phase-details">
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Acción</div>
+                        <div class="phase-detail-content">
+                            Nuevas contrataciones de CDTs y Cuentas de Ahorro se escriben 
+                            <span class="highlight">primero en MongoDB</span>, luego se propagan al AS400
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Sincronización Reversa</div>
+                        <div class="phase-detail-content">
+                            Conector "reverso" (MongoDB → AS400) para escribir transacciones en el Core 
+                            para contabilidad y cumplimiento regulatorio
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Estrategia de Rollout</div>
+                        <div class="phase-detail-content">
+                            Implementación gradual por segmento: empezar con clientes VIP, 
+                            luego masificar a toda la base
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Sistema Híbrido</div>
+                        <div class="phase-detail-content">
+                            Productos históricos permanecen en AS400. Solo nuevas operaciones 
+                            post-cutover van a MongoDB
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Logro Principal</div>
+                        <div class="phase-detail-content">
+                            <span class="highlight">AS400 = System of Record</span> (contable, regulatorio) | 
+                            <span class="highlight">MongoDB = Sistema de Operación</span> (transaccional, customer-facing)
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Duración Estimada</div>
+                        <div class="phase-detail-content">
+                            4-6 meses (rollout gradual con monitoreo intensivo)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="animate-on-scroll" style="margin-top: 3rem;">
+            <div style="background: rgba(0,237,100,0.1); border: 2px solid var(--mongodb-green); padding: 2rem; border-radius: 12px;">
+                <h4 style="color: var(--mongodb-green); margin-bottom: 1rem; font-size: 1.3rem;">
+                    🛡️ Patrón Strangler Fig Explicado
+                </h4>
+                <p style="font-size: 1.1rem; line-height: 1.8;">
+                    Similar a cómo una higuera estranguladora crece gradualmente alrededor de un árbol hospedero, 
+                    esta estrategia permite que MongoDB <span class="highlight">crezca orgánicamente</span> 
+                    alrededor del AS400, asumiendo funcionalidades de forma incremental hasta que el sistema 
+                    legacy pueda ser retirado sin riesgo sistémico. Este enfoque minimiza la interrupción 
+                    del negocio y permite rollback en cada fase si es necesario.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CDC Technology Selection -->
+    <section class="section">
+        <h2 class="section-title animate-on-scroll">Selección de Tecnología CDC</h2>
+        <p class="section-subtitle animate-on-scroll">Comparativa técnica para integración AS400/iSeries</p>
+
+        <div class="comparison-table animate-on-scroll">
+            <div class="table-header">
+                <div>Tecnología</div>
+                <div>Filosofía</div>
+                <div>Recomendación</div>
+            </div>
+            <div class="table-row">
+                <div>
+                    <strong style="color: var(--mongodb-green);">Debezium + Kafka</strong>
+                    <div style="font-size: 0.9rem; margin-top: 0.5rem; color: rgba(255,255,255,0.7);">
+                        Open Source, nativa de streaming
+                    </div>
+                </div>
+                <div>Arquitectura reactiva con flexibilidad total en transformaciones</div>
+                <div><span class="badge">Recomendado</span></div>
+            </div>
+            <div class="table-row">
+                <div>
+                    <strong style="color: var(--mongodb-green);">Qlik Replicate</strong>
+                    <div style="font-size: 0.9rem; margin-top: 0.5rem; color: rgba(255,255,255,0.7);">
+                        Comercial "caja negra"
+                    </div>
+                </div>
+                <div>Funciona out-of-the-box con interfaz Low Code</div>
+                <div><span class="badge badge-secondary">Plan B</span></div>
+            </div>
+            <div class="table-row">
+                <div>
+                    <strong style="color: var(--mongodb-green);">IBM IDR</strong>
+                    <div style="font-size: 0.9rem; margin-top: 0.5rem; color: rgba(255,255,255,0.7);">
+                        Herramienta nativa IBM
+                    </div>
+                </div>
+                <div>Solo si licencias ya pagadas y restricciones de infraestructura</div>
+                <div><span class="badge badge-secondary">Legado</span></div>
+            </div>
+        </div>
+
+        <div class="cards-grid" style="margin-top: 3rem;">
+            <div class="card animate-on-scroll">
+                <h3 class="card-title">✓ Ventajas Debezium</h3>
+                <ul class="feature-list">
+                    <li>Comunidad masiva y soporte enterprise (Confluent)</li>
+                    <li>Flexibilidad total en transformación de mensajes</li>
+                    <li>Arquitectura puramente reactiva</li>
+                    <li>Alineación con estrategia de modernización</li>
+                </ul>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <h3 class="card-title">✓ Ventajas Qlik</h3>
+                <ul class="feature-list">
+                    <li>Historial impecable con Mainframes/AS400</li>
+                    <li>Configuración rápida sin curva de aprendizaje</li>
+                    <li>Soporte empresarial garantizado</li>
+                    <li>Ideal si hay resistencia al cambio</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kafka to MongoDB Strategy -->
+    <section class="section section-alt">
+        <h2 class="section-title animate-on-scroll">Estrategia de Ingesta</h2>
+        <p class="section-subtitle animate-on-scroll">Kafka → MongoDB: Configuración Idempotente</p>
+
+        <div class="animate-on-scroll">
+            <div style="background: rgba(0,237,100,0.1); border-left: 5px solid var(--mongodb-green); padding: 2rem; border-radius: 12px; margin: 2rem 0;">
+                <h3 style="color: var(--mongodb-green); margin-bottom: 1rem; font-size: 1.5rem;">
+                    🎯 Objetivo Crítico: Escrituras Idempotentes
+                </h3>
+                <p style="font-size: 1.1rem; line-height: 1.8;">
+                    Si Kafka reenvía un mensaje por error de red, <span class="highlight">no debemos duplicar registros</span> en MongoDB.
+                    Estrategia: <span class="highlight">ReplaceOne con upsert=true</span> usando la PK del AS400 como _id o índice único.
+                </p>
+            </div>
+
+            <h3 style="font-size: 1.8rem; color: var(--mongodb-green); margin: 3rem 0 1.5rem;">
+                Configuración MongoDB Kafka Sink Connector
+            </h3>
+
+            <div class="code-block">
+<pre><span class="highlight"># Configuración Base</span>
+name=mongo-sink-depositos
+connector.class=com.mongodb.kafka.connect.MongoSinkConnector
+topics=as400.depositos.cuentas
+
+<span class="highlight"># Conexión MongoDB Atlas</span>
+connection.uri=mongodb+srv://&lt;usuario&gt;:&lt;password&gt;@cluster-bancolombia.mongodb.net/
+database=BancaPersonas
+collection=Clientes
+
+<span class="highlight"># Estrategia de Document ID (Clave anti-duplicados)</span>
+document.id.strategy=com.mongodb.kafka.connect.sink.processor.id.strategy.PartialValueStrategy
+document.id.strategy.partial.value.projection.list=cliente_id
+document.id.strategy.partial.value.projection.type=AllowList
+
+<span class="highlight"># Manejo de Operaciones (Upsert para consistencia)</span>
+writemodel.strategy=com.mongodb.kafka.connect.sink.writemodel.strategy.ReplaceOneBusinessKeyStrategy
+
+<span class="highlight"># Transformaciones SMT - Limpieza de datos</span>
+transforms=Unwrap
+transforms.Unwrap.type=io.debezium.transforms.ExtractNewRecordState
+transforms.Unwrap.drop.tombstones=false</pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Atlas Stream Processing -->
+    <section class="section">
+        <h2 class="section-title animate-on-scroll">Alternativa Avanzada</h2>
+        <p class="section-subtitle animate-on-scroll">MongoDB Atlas Stream Processing (ASP)</p>
+
+        <div class="cards-grid">
+            <div class="card animate-on-scroll">
+                <h3 class="card-title">Kafka Sink Connector</h3>
+                <p style="margin-bottom: 1rem;"><span class="badge badge-secondary">Fase 1</span></p>
+                <ul class="feature-list">
+                    <li>Migración 1:1 robusta y estable</li>
+                    <li>Transformaciones simples (SMT)</li>
+                    <li>Requiere Kafka Connect Cluster</li>
+                    <li>Ideal para inicio rápido</li>
+                </ul>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <h3 class="card-title">Atlas Stream Processing</h3>
+                <p style="margin-bottom: 1rem;"><span class="badge">Fase 2+</span></p>
+                <ul class="feature-list">
+                    <li>Transformaciones complejas con MQL</li>
+                    <li>Validación avanzada en vuelo</li>
+                    <li>Serverless / Gestionado en Atlas</li>
+                    <li>Ideal para datos "sucios" del legado</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="animate-on-scroll" style="margin-top: 3rem;">
+            <h3 style="font-size: 1.8rem; color: var(--mongodb-green); margin-bottom: 1.5rem;">
+                Ejemplo: Pipeline ASP con Limpieza en Vuelo
+            </h3>
+
+            <div class="code-block">
+<pre>sp.process({
+  $source: {
+    connectionName: "kafka-bancolombia-prod",
+    topic: "as400.depositos.cuentas"
+  }
+}, [
+  <span class="highlight">// 1. Desempaquetar mensaje Debezium</span>
+  { $replaceRoot: { newRoot: "$fullDocument.payload.after" } },
+
+  <span class="highlight">// 2. Validación de Calidad (Regla de Negocio)</span>
+  { $match: { saldo_disponible: { $gte: 0 } }},
+
+  <span class="highlight">// 3. Enriquecimiento en Tiempo Real (Computed Fields)</span>
+  { $addFields: {
+      categoria_calculada: {
+        $cond: {
+          if: { $gte: ["$saldo_disponible", 50000000] },
+          then: "VIP_GOLD",
+          else: "ESTANDAR"
+        }
+      },
+      fecha_proceso: "$$NOW"
+  }},
+
+  <span class="highlight">// 4. Destino con Upsert</span>
+  { $merge: {
+      into: {
+        connectionName: "atlas-cluster",
+        db: "BancaPersonas",
+        coll: "Clientes"
+      },
+      on: "cliente_id",
+      whenMatched: "merge",
+      whenNotMatched: "insert"
+  }}
+])</pre>
+            </div>
+
+            <div style="background: rgba(0,237,100,0.1); border: 2px solid var(--mongodb-green); padding: 2rem; border-radius: 12px; margin-top: 2rem;">
+                <h4 style="color: var(--mongodb-green); margin-bottom: 1rem; font-size: 1.3rem;">
+                    💎 Ventaja Estratégica de ASP
+                </h4>
+                <p style="font-size: 1.1rem; line-height: 1.8;">
+                    Permite mover la <span class="highlight">lógica de limpieza de datos del legado</span> 
+                    fuera del AS400 y fuera de la aplicación final, centralizándola en la 
+                    <span class="highlight">capa de ingestión moderna</span>.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Recommendations -->
+    <section class="section section-alt">
+        <h2 class="section-title animate-on-scroll">Recomendaciones Críticas</h2>
+        <p class="section-subtitle animate-on-scroll">Para el equipo de Ingeniería de Bancolombia</p>
+
+        <div class="cards-grid">
+            <div class="card animate-on-scroll">
+                <div class="card-number">1</div>
+                <h3 class="card-title">Validación CDC</h3>
+                <p class="card-content">
+                    Si IBM IDR no da el ancho de banda requerido, probar <span class="highlight">Confluent Platform</span> 
+                    con conector Debezium para DB2 for i. Es el estándar de oro en la industria para AS400.
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <div class="card-number">2</div>
+                <h3 class="card-title">Schema Design</h3>
+                <p class="card-content">
+                    <span class="highlight">No normalizar.</span> Usar <span class="highlight">Embed</span> para datos 
+                    consultados juntos (ej. Cuentas dentro de Cliente) y <span class="highlight">Reference</span> 
+                    solo para datos históricos fríos.
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <div class="card-number">3</div>
+                <h3 class="card-title">Manejo de Contingencia</h3>
+                <p class="card-content">
+                    El ODL de MongoDB debe ingestar datos de ambos cores (Bankvision y Valut) y presentar un 
+                    <span class="highlight">"Golden Record"</span> unificado usando agregaciones de fusión.
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <div class="card-number">4</div>
+                <h3 class="card-title">Atlas Search</h3>
+                <p class="card-content">
+                    Implementar búsqueda full-text para consultas avanzadas desde Web Banking sin impactar 
+                    el rendimiento del ODL principal. <span class="highlight">Índices automáticos.</span>
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <div class="card-number">5</div>
+                <h3 class="card-title">Monitoreo</h3>
+                <p class="card-content">
+                    Configurar <span class="highlight">Performance Advisor</span> y alertas en Atlas para detectar 
+                    queries lentas. Establecer SLOs de latencia por operación crítica.
+                </p>
+            </div>
+
+            <div class="card animate-on-scroll">
+                <div class="card-number">6</div>
+                <h3 class="card-title">Disaster Recovery</h3>
+                <p class="card-content">
+                    Aprovechar <span class="highlight">Cross-Region Replication</span> de Atlas para DR automático. 
+                    RPO &lt;1 min y RTO &lt;5 min sin intervención manual.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Next Steps Workshop -->
+    <section class="section">
+        <h2 class="section-title animate-on-scroll">Próximos Pasos</h2>
+        <p class="section-subtitle animate-on-scroll">Taller de Arquitectura para Desbloquear la PoC</p>
+
+        <div class="customer-centric-visual animate-on-scroll" style="margin-bottom: 3rem;">
+            <h3 style="font-size: 2rem; color: var(--mongodb-green); margin-bottom: 1.5rem; position: relative; z-index: 1;">
+                🎯 Objetivo del Taller
+            </h3>
+            <p style="position: relative; z-index: 1; font-size: 1.2rem; line-height: 1.8;">
+                Definir la <span class="highlight">matriz de integración AS400</span> y el 
+                <span class="highlight">modelo de datos JSON</span> para desbloquear el inicio inmediato de la PoC.
+            </p>
+        </div>
+
+        <div class="phase-container">
+            <div class="phase animate-on-scroll">
+                <span class="phase-number">Sesión 1</span>
+                <h3 class="phase-title">Levantamiento "As-Is" (Core Legacy)</h3>
+                <p style="color: rgba(255,255,255,0.8); margin-bottom: 1.5rem; font-size: 1.1rem;">
+                    Entendimiento profundo del estado actual del Core AS400 y sus dependencias.
+                </p>
+                <div class="phase-details">
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Revisión de Esquema DB2</div>
+                        <div class="phase-detail-content">
+                            Identificar tablas críticas del dominio Depósitos en DB2 (iSeries): 
+                            CLIENTES, CUENTAS, PRODUCTOS, TARIFAS, MOVIMIENTOS
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Análisis de Lógica RPG</div>
+                        <div class="phase-detail-content">
+                            Documentar la lógica actual de cálculo de tarifas personalizadas 
+                            y reglas de negocio embebidas en programas RPG
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Convivencia Valut Core</div>
+                        <div class="phase-detail-content">
+                            Analizar estrategia de contingencia y sincronización entre 
+                            Bankvision (principal) y Valut (backup)
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Volumetría y Carga</div>
+                        <div class="phase-detail-content">
+                            Cuantificar: número de clientes, cuentas activas, TPS promedio/pico, 
+                            patrones de acceso por hora/día
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase animate-on-scroll">
+                <span class="phase-number">Sesión 2</span>
+                <h3 class="phase-title">Diseño "To-Be" (MongoDB ODL)</h3>
+                <p style="color: rgba(255,255,255,0.8); margin-bottom: 1.5rem; font-size: 1.1rem;">
+                    Definición del modelo de datos objetivo optimizado para casos de uso digitales.
+                </p>
+                <div class="phase-details">
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Modelado "Customer 360"</div>
+                        <div class="phase-detail-content">
+                            Diseñar el esquema JSON consolidado que agrupa cliente + productos + 
+                            reglas personalizadas en un solo documento
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Patrones de Acceso</div>
+                        <div class="phase-detail-content">
+                            Identificar las <span class="highlight">queries más frecuentes</span>: 
+                            consulta de saldo, historial de movimientos, cálculo de tasas, etc.
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Indexing Strategy</div>
+                        <div class="phase-detail-content">
+                            Definir índices compuestos para optimizar latencia de lectura según 
+                            patrones identificados
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Data Lifecycle</div>
+                        <div class="phase-detail-content">
+                            Establecer políticas de archivado: datos calientes (últimos 90 días) 
+                            vs datos fríos (históricos) con Atlas Online Archive
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase animate-on-scroll">
+                <span class="phase-number">Sesión 3</span>
+                <h3 class="phase-title">Estrategia de Integración (CDC)</h3>
+                <p style="color: rgba(255,255,255,0.8); margin-bottom: 1.5rem; font-size: 1.1rem;">
+                    Selección final de tecnología CDC y arquitectura de eventos.
+                </p>
+                <div class="phase-details">
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Evaluación Final CDC</div>
+                        <div class="phase-detail-content">
+                            Decisión técnica: <span class="highlight">IBM IDR vs Kafka Connect vs Qlik</span> 
+                            basada en constraints de infraestructura y capacidades del equipo
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Topología de Kafka</div>
+                        <div class="phase-detail-content">
+                            Definir estructura de tópicos: as400.depositos.clientes, 
+                            as400.depositos.cuentas, as400.depositos.movimientos
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Transformaciones SMT</div>
+                        <div class="phase-detail-content">
+                            Identificar transformaciones necesarias en el pipeline: 
+                            limpieza de datos, enriquecimiento, filtrado
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Plan de Pruebas PoC</div>
+                        <div class="phase-detail-content">
+                            Definir casos de prueba end-to-end: latencia, throughput, 
+                            consistencia, recuperación ante fallos
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Ambientes</div>
+                        <div class="phase-detail-content">
+                            Establecer ambientes de desarrollo, QA y producción piloto 
+                            con configuraciones de Atlas apropiadas (M30+)
+                        </div>
+                    </div>
+                    <div class="phase-detail">
+                        <div class="phase-detail-title">Cronograma PoC</div>
+                        <div class="phase-detail-content">
+                            Acordar timeline detallado de 4-6 semanas con hitos semanales 
+                            y criterios de aceptación claros
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="animate-on-scroll" style="margin-top: 3rem;">
+            <div style="background: linear-gradient(135deg, rgba(0,237,100,0.2) 0%, rgba(0,104,74,0.2) 100%); border: 3px solid var(--mongodb-green); padding: 2.5rem; border-radius: 16px;">
+                <h4 style="color: var(--mongodb-green); margin-bottom: 1.5rem; font-size: 1.5rem; text-align: center;">
+                    📅 Preparación para el Taller
+                </h4>
+                <div class="cards-grid" style="margin-top: 2rem;">
+                    <div style="background: rgba(0,0,0,0.3); padding: 2rem; border-radius: 12px;">
+                        <h5 style="color: var(--mongodb-green); font-weight: 700; margin-bottom: 1rem;">
+                            Participantes Requeridos
+                        </h5>
+                        <ul class="feature-list">
+                            <li>Arquitecto de Core Bancario (AS400)</li>
+                            <li>DBA DB2 / iSeries</li>
+                            <li>Líder de Desarrollo RPG</li>
+                            <li>Arquitecto de Integración (Kafka/ESB)</li>
+                            <li>Product Owner - Depósitos</li>
+                            <li>MongoDB Solutions Architect</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.3); padding: 2rem; border-radius: 12px;">
+                        <h5 style="color: var(--mongodb-green); font-weight: 700; margin-bottom: 1rem;">
+                            Información a Preparar
+                        </h5>
+                        <ul class="feature-list">
+                            <li>ERD del dominio Depósitos (DB2)</li>
+                            <li>Volumetría de tablas principales</li>
+                            <li>Documentación de lógica RPG crítica</li>
+                            <li>Patrones de acceso actuales (top queries)</li>
+                            <li>Constraints de seguridad y compliance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="animate-on-scroll">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--mongodb-white);">
+                ¿Listo para el Taller de Arquitectura?
+            </h2>
+            <p style="font-size: 1.3rem; margin-bottom: 3rem; color: rgba(255,255,255,0.8); max-width: 900px; margin-left: auto; margin-right: auto;">
+                Coordinemos las 3 sesiones de diseño para definir la matriz de integración AS400 → MongoDB 
+                y desbloquear el inicio de la PoC en 4-6 semanas.
+            </p>
+            <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap;">
+                <a href="#" class="cta-button">Agendar Taller con Cristian</a>
+                <a href="#" class="cta-button" style="background: transparent; border: 3px solid var(--mongodb-green); color: var(--mongodb-green);">
+                    Descargar Propuesta (PDF)
+                </a>
+            </div>
+            
+            <div style="margin-top: 4rem; padding-top: 3rem; border-top: 2px solid rgba(0,237,100,0.3);">
+                <h3 style="color: var(--mongodb-green); font-size: 1.5rem; margin-bottom: 2rem;">
+                    Timeline Propuesto
+                </h3>
+                <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; max-width: 1000px; margin: 0 auto;">
+                    <div style="flex: 1; min-width: 200px; background: rgba(0,237,100,0.1); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--mongodb-green);">
+                        <div style="color: var(--mongodb-green); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            SEMANA 1-2
+                        </div>
+                        <div style="font-size: 1.1rem; font-weight: 600;">
+                            Taller de Arquitectura
+                        </div>
+                        <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-top: 0.5rem;">
+                            3 sesiones de diseño
+                        </div>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; background: rgba(0,237,100,0.1); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--mongodb-green);">
+                        <div style="color: var(--mongodb-green); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            SEMANA 3-6
+                        </div>
+                        <div style="font-size: 1.1rem; font-weight: 600;">
+                            Ejecución PoC
+                        </div>
+                        <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-top: 0.5rem;">
+                            Validación técnica
+                        </div>
+                    </div>
+                    <div style="flex: 1; min-width: 200px; background: rgba(0,237,100,0.1); padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--mongodb-green);">
+                        <div style="color: var(--mongodb-green); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            SEMANA 7+
+                        </div>
+                        <div style="font-size: 1.1rem; font-weight: 600;">
+                            Inicio Fase 1
+                        </div>
+                        <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-top: 0.5rem;">
+                            ODL Pasivo (Read-Only)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="leaf-icon" style="margin: 0 auto 2rem;"></div>
+            <p style="font-size: 1.1rem; margin-bottom: 1rem;">
+                <strong style="color: var(--mongodb-green);">MongoDB Solutions Architecture</strong>
+            </p>
+            <p style="margin-bottom: 0.5rem;">
+                Propuesta técnica para Bancolombia - Dominio de Depósitos (Captación)
+            </p>
+            <p style="font-size: 0.9rem; color: rgba(255,255,255,0.5);">
+                Arquitectura Customer-Centric | Event-Driven | Cloud Native
+            </p>
+            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="font-size: 0.85rem;">
+                    © 2025 MongoDB, Inc. | <span style="color: var(--mongodb-green);">Atlas Platform</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Animación de scroll reveal
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll para links internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Parallax effect para hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero-content');
+            if (hero && scrolled < window.innerHeight) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+                hero.style.opacity = 1 - (scrolled / window.innerHeight);
+            }
+        });
+    </script>
+</body>
+</html>

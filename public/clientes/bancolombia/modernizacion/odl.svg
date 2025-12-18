@@ -1,0 +1,544 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" width="1400" height="900">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0f1a"/>
+      <stop offset="50%" style="stop-color:#0d1526"/>
+      <stop offset="100%" style="stop-color:#081018"/>
+    </linearGradient>
+    
+    <linearGradient id="legacyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d3a4f"/>
+      <stop offset="100%" style="stop-color:#1a2332"/>
+    </linearGradient>
+    
+    <linearGradient id="integrationGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a5f"/>
+      <stop offset="100%" style="stop-color:#0f2540"/>
+    </linearGradient>
+    
+    <linearGradient id="mongoGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00684a"/>
+      <stop offset="100%" style="stop-color:#003d2d"/>
+    </linearGradient>
+    
+    <linearGradient id="channelsGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3d2f5c"/>
+      <stop offset="100%" style="stop-color:#251d3a"/>
+    </linearGradient>
+    
+    <linearGradient id="nodeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ed64;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#00684a;stop-opacity:0.1"/>
+    </linearGradient>
+    
+    <linearGradient id="kafkaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b35"/>
+      <stop offset="100%" style="stop-color:#d44411"/>
+    </linearGradient>
+    
+    <linearGradient id="as400Gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5c6bc0"/>
+      <stop offset="100%" style="stop-color:#3949ab"/>
+    </linearGradient>
+    
+    <linearGradient id="debeziumGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#26c6da"/>
+      <stop offset="100%" style="stop-color:#0097a7"/>
+    </linearGradient>
+    
+    <linearGradient id="mongoLeafGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ed64"/>
+      <stop offset="100%" style="stop-color:#00884a"/>
+    </linearGradient>
+    
+    <linearGradient id="appGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ab47bc"/>
+      <stop offset="100%" style="stop-color:#7b1fa2"/>
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+    
+    <filter id="innerShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feOffset dx="0" dy="2"/>
+      <feGaussianBlur stdDeviation="3" result="offset-blur"/>
+      <feComposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"/>
+      <feFlood flood-color="black" flood-opacity="0.2" result="color"/>
+      <feComposite operator="in" in="color" in2="inverse" result="shadow"/>
+      <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
+    </filter>
+    
+    <!-- Patterns -->
+    <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1a2a3a" stroke-width="0.5" opacity="0.3"/>
+    </pattern>
+    
+    <pattern id="dotsPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="1" fill="#00ed64" opacity="0.1"/>
+    </pattern>
+    
+    <!-- Markers for arrows -->
+    <marker id="arrowGreen" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 L4,6 Z" fill="#00ed64"/>
+    </marker>
+    
+    <marker id="arrowOrange" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 L4,6 Z" fill="#ff6b35"/>
+    </marker>
+    
+    <marker id="arrowCyan" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 L4,6 Z" fill="#26c6da"/>
+    </marker>
+    
+    <marker id="arrowPurple" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 L4,6 Z" fill="#ab47bc"/>
+    </marker>
+    
+    <!-- Clip paths -->
+    <clipPath id="roundedClip">
+      <rect x="0" y="0" width="100%" height="100%" rx="20" ry="20"/>
+    </clipPath>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="url(#bgGradient)"/>
+  <rect width="100%" height="100%" fill="url(#gridPattern)"/>
+  <rect width="100%" height="100%" fill="url(#dotsPattern)"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="100" cy="100" r="300" fill="#00ed64" opacity="0.02"/>
+  <circle cx="1300" cy="800" r="400" fill="#ab47bc" opacity="0.02"/>
+  <circle cx="700" cy="450" r="500" fill="#26c6da" opacity="0.01"/>
+  
+  <!-- Title -->
+  <text x="700" y="55" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="28" font-weight="600" fill="#ffffff" letter-spacing="2">
+    ARQUITECTURA CDC - OPERATIONAL DATA LAYER
+  </text>
+  <text x="700" y="80" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="#00ed64" letter-spacing="4" opacity="0.8">
+    MODERNIZACIÓN DE PLATAFORMA DE DATOS
+  </text>
+  
+  <!-- Section 1: Legacy Systems -->
+  <g transform="translate(40, 120)">
+    <!-- Container -->
+    <rect x="0" y="0" width="280" height="380" rx="16" ry="16" fill="url(#legacyGradient)" filter="url(#dropShadow)" opacity="0.95"/>
+    <rect x="0" y="0" width="280" height="380" rx="16" ry="16" fill="none" stroke="#4a5568" stroke-width="1" opacity="0.5"/>
+    
+    <!-- Header -->
+    <rect x="0" y="0" width="280" height="50" rx="16" ry="16" fill="#374151"/>
+    <rect x="0" y="35" width="280" height="15" fill="#374151"/>
+    <text x="140" y="32" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#9ca3af" letter-spacing="1">
+      LEGACY (ON-PREM / iSERIES)
+    </text>
+    
+    <!-- AS400 Node -->
+    <g transform="translate(140, 120)">
+      <ellipse cx="0" cy="0" rx="70" ry="45" fill="url(#as400Gradient)" filter="url(#softGlow)"/>
+      <ellipse cx="0" cy="-35" rx="70" ry="15" fill="#7986cb"/>
+      <rect x="-70" y="-35" width="140" height="35" fill="url(#as400Gradient)"/>
+      <ellipse cx="0" cy="0" rx="70" ry="15" fill="#3949ab"/>
+      
+      <!-- DB Icon -->
+      <rect x="-20" y="-20" width="40" height="8" rx="2" fill="#fff" opacity="0.3"/>
+      <rect x="-20" y="-8" width="40" height="8" rx="2" fill="#fff" opacity="0.3"/>
+      <rect x="-20" y="4" width="40" height="8" rx="2" fill="#fff" opacity="0.3"/>
+      
+      <text x="0" y="35" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="600" fill="#ffffff">
+        Core AS400
+      </text>
+      <text x="0" y="50" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" fill="#c5cae9">
+        (DB2)
+      </text>
+    </g>
+    
+    <!-- RPG Node -->
+    <g transform="translate(70, 240)">
+      <rect x="-50" y="-25" width="100" height="50" rx="8" fill="#4a5568" filter="url(#innerShadow)"/>
+      <rect x="-50" y="-25" width="100" height="50" rx="8" fill="none" stroke="#6b7280" stroke-width="1"/>
+      <text x="0" y="-5" text-anchor="middle" font-family="'Courier New', monospace" font-size="11" font-weight="600" fill="#fbbf24">
+        &lt;/&gt;
+      </text>
+      <text x="0" y="12" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" fill="#d1d5db">
+        Reglas RPG
+      </text>
+    </g>
+    
+    <!-- Valut Node -->
+    <g transform="translate(210, 240)">
+      <rect x="-50" y="-25" width="100" height="50" rx="8" fill="#4a5568" filter="url(#innerShadow)"/>
+      <rect x="-50" y="-25" width="100" height="50" rx="8" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="0" y="-5" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#fca5a5">
+        Valut Core
+      </text>
+      <text x="0" y="10" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="9" fill="#9ca3af">
+        (Contingencia)
+      </text>
+    </g>
+    
+    <!-- Status indicator -->
+    <circle cx="20" cy="350" r="6" fill="#ef4444">
+      <animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <text x="35" y="354" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" fill="#9ca3af">Legacy Active</text>
+  </g>
+  
+  <!-- Section 2: Integration Layer -->
+  <g transform="translate(380, 120)">
+    <!-- Container -->
+    <rect x="0" y="0" width="280" height="380" rx="16" ry="16" fill="url(#integrationGradient)" filter="url(#dropShadow)" opacity="0.95"/>
+    <rect x="0" y="0" width="280" height="380" rx="16" ry="16" fill="none" stroke="#0ea5e9" stroke-width="1" opacity="0.3"/>
+    
+    <!-- Header -->
+    <rect x="0" y="0" width="280" height="50" rx="16" ry="16" fill="#1e3a5f"/>
+    <rect x="0" y="35" width="280" height="15" fill="#1e3a5f"/>
+    <text x="140" y="32" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#7dd3fc" letter-spacing="1">
+      INTEGRATION LAYER (CDC)
+    </text>
+    
+    <!-- Debezium Node -->
+    <g transform="translate(140, 130)">
+      <rect x="-90" y="-40" width="180" height="80" rx="12" fill="url(#debeziumGradient)" filter="url(#softGlow)"/>
+      <rect x="-90" y="-40" width="180" height="80" rx="12" fill="none" stroke="#4dd0e1" stroke-width="1"/>
+      
+      <!-- CDC Icon -->
+      <g transform="translate(-55, -15)">
+        <circle cx="0" cy="0" r="12" fill="none" stroke="#fff" stroke-width="2"/>
+        <path d="M-6,0 L6,0 M0,-6 L0,6" stroke="#fff" stroke-width="2"/>
+      </g>
+      
+      <text x="20" y="-5" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="600" fill="#ffffff">
+        CDC Connector
+      </text>
+      <text x="20" y="12" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" fill="#b2ebf2">
+        IBM IDR / Debezium
+      </text>
+    </g>
+    
+    <!-- Kafka Node -->
+    <g transform="translate(140, 280)">
+      <!-- Hexagon shape for Kafka -->
+      <polygon points="0,-55 60,-27 60,27 0,55 -60,27 -60,-27" fill="url(#kafkaGradient)" filter="url(#softGlow)"/>
+      <polygon points="0,-55 60,-27 60,27 0,55 -60,27 -60,-27" fill="none" stroke="#ff8a50" stroke-width="2"/>
+      
+      <!-- Kafka logo representation -->
+      <circle cx="-15" cy="-10" r="8" fill="none" stroke="#fff" stroke-width="2"/>
+      <circle cx="15" cy="-10" r="8" fill="none" stroke="#fff" stroke-width="2"/>
+      <circle cx="0" cy="15" r="8" fill="none" stroke="#fff" stroke-width="2"/>
+      <line x1="-8" y1="-5" x2="8" y2="-5" stroke="#fff" stroke-width="2"/>
+      <line x1="-10" y1="0" x2="0" y2="10" stroke="#fff" stroke-width="2"/>
+      <line x1="10" y1="0" x2="0" y2="10" stroke="#fff" stroke-width="2"/>
+      
+      <text x="0" y="75" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="600" fill="#ffffff">
+        Apache Kafka
+      </text>
+      <text x="0" y="90" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" fill="#ffab91">
+        Event Bus
+      </text>
+    </g>
+    
+    <!-- Streaming indicator -->
+    <g transform="translate(140, 195)">
+      <line x1="0" y1="0" x2="0" y2="30" stroke="#26c6da" stroke-width="2" stroke-dasharray="4,4">
+        <animate attributeName="stroke-dashoffset" values="0;-16" dur="0.5s" repeatCount="indefinite"/>
+      </line>
+    </g>
+  </g>
+  
+  <!-- Section 3: MongoDB Atlas -->
+  <g transform="translate(720, 120)">
+    <!-- Container with MongoDB green accent -->
+    <rect x="0" y="0" width="320" height="380" rx="16" ry="16" fill="url(#mongoGradient)" filter="url(#dropShadow)" opacity="0.95"/>
+    <rect x="0" y="0" width="320" height="380" rx="16" ry="16" fill="none" stroke="#00ed64" stroke-width="2" opacity="0.5"/>
+    
+    <!-- Glow effect -->
+    <rect x="0" y="0" width="320" height="380" rx="16" ry="16" fill="none" stroke="#00ed64" stroke-width="1" filter="url(#glow)" opacity="0.3"/>
+    
+    <!-- Header -->
+    <rect x="0" y="0" width="320" height="50" rx="16" ry="16" fill="#00684a"/>
+    <rect x="0" y="35" width="320" height="15" fill="#00684a"/>
+    
+    <!-- MongoDB Leaf Icon -->
+    <g transform="translate(25, 25)">
+      <path d="M0,-12 C-3,-8 -5,-3 -5,2 C-5,8 -2,12 0,14 C2,12 5,8 5,2 C5,-3 3,-8 0,-12 Z" fill="url(#mongoLeafGradient)" transform="scale(0.8)"/>
+    </g>
+    
+    <text x="160" y="32" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#00ed64" letter-spacing="1">
+      MONGODB ATLAS
+    </text>
+    
+    <!-- ODL Node -->
+    <g transform="translate(160, 130)">
+      <ellipse cx="0" cy="0" rx="80" ry="50" fill="#00884a" filter="url(#softGlow)"/>
+      <ellipse cx="0" cy="-40" rx="80" ry="18" fill="#00ed64"/>
+      <rect x="-80" y="-40" width="160" height="40" fill="#00884a"/>
+      <ellipse cx="0" cy="0" rx="80" ry="18" fill="#006644"/>
+      
+      <!-- Document icon -->
+      <g transform="translate(0, -20)">
+        <rect x="-15" y="-10" width="30" height="20" rx="3" fill="none" stroke="#fff" stroke-width="1.5"/>
+        <line x1="-10" y1="-4" x2="10" y2="-4" stroke="#fff" stroke-width="1"/>
+        <line x1="-10" y1="0" x2="10" y2="0" stroke="#fff" stroke-width="1"/>
+        <line x1="-10" y1="4" x2="5" y2="4" stroke="#fff" stroke-width="1"/>
+      </g>
+      
+      <text x="0" y="35" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="600" fill="#ffffff">
+        MongoDB ODL
+      </text>
+      <text x="0" y="50" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" fill="#a7f3d0">
+        (Depósitos)
+      </text>
+    </g>
+    
+    <!-- Atlas Search Node -->
+    <g transform="translate(90, 270)">
+      <rect x="-60" y="-35" width="120" height="70" rx="10" fill="#004d36" filter="url(#innerShadow)"/>
+      <rect x="-60" y="-35" width="120" height="70" rx="10" fill="none" stroke="#00ed64" stroke-width="1"/>
+      
+      <!-- Search icon -->
+      <g transform="translate(0, -10)">
+        <circle cx="-5" cy="0" r="10" fill="none" stroke="#00ed64" stroke-width="2"/>
+        <line x1="3" y1="8" x2="12" y2="17" stroke="#00ed64" stroke-width="2"/>
+      </g>
+      
+      <text x="0" y="20" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#ffffff">
+        Atlas Search
+      </text>
+      <text x="0" y="33" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="9" fill="#86efac">
+        Full-Text
+      </text>
+    </g>
+    
+    <!-- Triggers Node -->
+    <g transform="translate(230, 270)">
+      <rect x="-60" y="-35" width="120" height="70" rx="10" fill="#004d36" filter="url(#innerShadow)"/>
+      <rect x="-60" y="-35" width="120" height="70" rx="10" fill="none" stroke="#fbbf24" stroke-width="1"/>
+      
+      <!-- Trigger icon (lightning) -->
+      <g transform="translate(0, -10)">
+        <path d="M-5,-12 L2,-2 L-2,-2 L5,12 L-2,2 L2,2 Z" fill="#fbbf24"/>
+      </g>
+      
+      <text x="0" y="20" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#ffffff">
+        Triggers
+      </text>
+      <text x="0" y="33" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="9" fill="#fef08a">
+        &amp; Functions
+      </text>
+    </g>
+    
+    <!-- Internal sync line -->
+    <path d="M160,185 L160,210 L90,210 L90,235" stroke="#00ed64" stroke-width="1.5" fill="none" stroke-dasharray="4,4" opacity="0.6">
+      <animate attributeName="stroke-dashoffset" values="0;-16" dur="1s" repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Performance badge -->
+    <g transform="translate(280, 355)">
+      <rect x="-35" y="-12" width="70" height="24" rx="12" fill="#00ed64"/>
+      <text x="0" y="4" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="700" fill="#003d2d">
+        &lt;10ms
+      </text>
+    </g>
+  </g>
+  
+  <!-- Section 4: Digital Channels -->
+  <g transform="translate(1100, 120)">
+    <!-- Container -->
+    <rect x="0" y="0" width="260" height="380" rx="16" ry="16" fill="url(#channelsGradient)" filter="url(#dropShadow)" opacity="0.95"/>
+    <rect x="0" y="0" width="260" height="380" rx="16" ry="16" fill="none" stroke="#a855f7" stroke-width="1" opacity="0.4"/>
+    
+    <!-- Header -->
+    <rect x="0" y="0" width="260" height="50" rx="16" ry="16" fill="#4c1d95"/>
+    <rect x="0" y="35" width="260" height="15" fill="#4c1d95"/>
+    <text x="130" y="32" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#c4b5fd" letter-spacing="1">
+      CANALES DIGITALES
+    </text>
+    
+    <!-- API Gateway Node -->
+    <g transform="translate(130, 120)">
+      <rect x="-70" y="-35" width="140" height="70" rx="10" fill="url(#appGradient)" filter="url(#softGlow)"/>
+      <rect x="-70" y="-35" width="140" height="70" rx="10" fill="none" stroke="#e879f9" stroke-width="1"/>
+      
+      <!-- Gateway icon -->
+      <g transform="translate(0, -8)">
+        <rect x="-20" y="-8" width="40" height="16" rx="3" fill="none" stroke="#fff" stroke-width="1.5"/>
+        <line x1="-30" y1="0" x2="-20" y2="0" stroke="#fff" stroke-width="1.5"/>
+        <line x1="20" y1="0" x2="30" y2="0" stroke="#fff" stroke-width="1.5"/>
+        <circle cx="-8" cy="0" r="3" fill="#fff"/>
+        <circle cx="8" cy="0" r="3" fill="#fff"/>
+      </g>
+      
+      <text x="0" y="20" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#ffffff">
+        API Gateway
+      </text>
+    </g>
+    
+    <!-- Mobile App Node -->
+    <g transform="translate(70, 240)">
+      <rect x="-45" y="-35" width="90" height="70" rx="10" fill="#581c87" filter="url(#innerShadow)"/>
+      <rect x="-45" y="-35" width="90" height="70" rx="10" fill="none" stroke="#a855f7" stroke-width="1"/>
+      
+      <!-- Phone icon -->
+      <g transform="translate(0, -8)">
+        <rect x="-10" y="-12" width="20" height="28" rx="3" fill="none" stroke="#fff" stroke-width="1.5"/>
+        <line x1="-4" y1="10" x2="4" y2="10" stroke="#fff" stroke-width="1.5"/>
+      </g>
+      
+      <text x="0" y="25" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="500" fill="#ffffff">
+        App Personas
+      </text>
+    </g>
+    
+    <!-- Web Banking Node -->
+    <g transform="translate(190, 240)">
+      <rect x="-50" y="-35" width="100" height="70" rx="10" fill="#581c87" filter="url(#innerShadow)"/>
+      <rect x="-50" y="-35" width="100" height="70" rx="10" fill="none" stroke="#a855f7" stroke-width="1"/>
+      
+      <!-- Browser icon -->
+      <g transform="translate(0, -8)">
+        <rect x="-14" y="-10" width="28" height="22" rx="2" fill="none" stroke="#fff" stroke-width="1.5"/>
+        <line x1="-14" y1="-4" x2="14" y2="-4" stroke="#fff" stroke-width="1"/>
+        <circle cx="-9" cy="-7" r="2" fill="#ef4444"/>
+        <circle cx="-4" cy="-7" r="2" fill="#fbbf24"/>
+        <circle cx="1" cy="-7" r="2" fill="#22c55e"/>
+      </g>
+      
+      <text x="0" y="25" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="500" fill="#ffffff">
+        Sucursal Virtual
+      </text>
+    </g>
+    
+    <!-- Protocol badge -->
+    <g transform="translate(130, 355)">
+      <rect x="-50" y="-12" width="100" height="24" rx="12" fill="#7c3aed"/>
+      <text x="0" y="4" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#ffffff">
+        REST / GraphQL
+      </text>
+    </g>
+  </g>
+  
+  <!-- Data Flow Arrows -->
+  
+  <!-- AS400 to Debezium -->
+  <g>
+    <path d="M320,240 C350,240 370,250 410,250" stroke="#5c6bc0" stroke-width="3" fill="none" marker-end="url(#arrowCyan)">
+      <animate attributeName="stroke-dasharray" values="0,1000;200,1000" dur="2s" repeatCount="indefinite"/>
+    </path>
+    <rect x="330" y="220" width="80" height="20" rx="4" fill="#1e293b"/>
+    <text x="370" y="233" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="8" fill="#94a3b8">
+      Row Log Change
+    </text>
+  </g>
+  
+  <!-- Valut to Debezium (dashed) -->
+  <path d="M290,355 C360,355 380,300 420,280" stroke="#ef4444" stroke-width="2" fill="none" stroke-dasharray="8,4" opacity="0.6" marker-end="url(#arrowCyan)"/>
+  
+  <!-- Debezium to Kafka -->
+  <g>
+    <path d="M520,260 L520,340" stroke="#26c6da" stroke-width="3" fill="none" marker-end="url(#arrowOrange)">
+      <animate attributeName="stroke-dasharray" values="0,200;80,200" dur="1s" repeatCount="indefinite"/>
+    </path>
+    <rect x="530" y="280" width="90" height="32" rx="4" fill="#0f2540"/>
+    <text x="575" y="293" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="8" fill="#7dd3fc">
+      Evento:
+    </text>
+    <text x="575" y="305" text-anchor="middle" font-family="'Courier New', monospace" font-size="8" fill="#00ed64">
+      DepositUpdated
+    </text>
+  </g>
+  
+  <!-- Kafka to MongoDB -->
+  <g>
+    <path d="M660,400 C680,400 700,350 720,320" stroke="#ff6b35" stroke-width="3" fill="none" marker-end="url(#arrowGreen)">
+      <animate attributeName="stroke-dasharray" values="0,200;100,200" dur="1.5s" repeatCount="indefinite"/>
+    </path>
+    <rect x="675" y="335" width="85" height="20" rx="4" fill="#1e293b"/>
+    <text x="718" y="348" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="8" fill="#ffab91">
+      Sink Connector
+    </text>
+  </g>
+  
+  <!-- MongoDB to API Gateway -->
+  <g>
+    <path d="M1040,250 L1100,250" stroke="#00ed64" stroke-width="3" fill="none" marker-end="url(#arrowPurple)"/>
+    <rect x="1050" y="230" width="50" height="18" rx="4" fill="#003d2d"/>
+    <text x="1075" y="242" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="8" fill="#00ed64">
+      Lectura
+    </text>
+  </g>
+  
+  <!-- API Gateway to Mobile -->
+  <path d="M1200,185 L1170,205" stroke="#ab47bc" stroke-width="2" fill="none"/>
+  
+  <!-- Web to Atlas Search -->
+  <g>
+    <path d="M1240,310 C1150,350 950,380 810,380 L810,340" stroke="#e879f9" stroke-width="2" fill="none" stroke-dasharray="6,3" marker-end="url(#arrowGreen)">
+      <animate attributeName="stroke-dashoffset" values="0;-18" dur="1s" repeatCount="indefinite"/>
+    </path>
+    <rect x="980" y="365" width="100" height="20" rx="4" fill="#251d3a"/>
+    <text x="1030" y="378" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif" font-size="8" fill="#e879f9">
+      Búsqueda Avanzada
+    </text>
+  </g>
+  
+  <!-- Legend -->
+  <g transform="translate(50, 820)">
+    <text x="0" y="0" font-family="'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#6b7280">FLUJO DE DATOS:</text>
+    
+    <line x1="130" y1="-4" x2="180" y2="-4" stroke="#5c6bc0" stroke-width="3"/>
+    <text x="190" y="0" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" fill="#9ca3af">CDC Events</text>
+    
+    <line x1="290" y1="-4" x2="340" y2="-4" stroke="#ff6b35" stroke-width="3"/>
+    <text x="350" y="0" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" fill="#9ca3af">Kafka Streaming</text>
+    
+    <line x1="480" y1="-4" x2="530" y2="-4" stroke="#00ed64" stroke-width="3"/>
+    <text x="540" y="0" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" fill="#9ca3af">MongoDB Sync</text>
+    
+    <line x1="670" y1="-4" x2="720" y2="-4" stroke="#ab47bc" stroke-width="3"/>
+    <text x="730" y="0" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" fill="#9ca3af">API Calls</text>
+    
+    <line x1="830" y1="-4" x2="880" y2="-4" stroke="#ef4444" stroke-width="2" stroke-dasharray="8,4"/>
+    <text x="890" y="0" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" fill="#9ca3af">Contingencia</text>
+  </g>
+  
+  <!-- Footer branding -->
+  <g transform="translate(1200, 860)">
+    <text x="0" y="0" text-anchor="end" font-family="'Segoe UI', system-ui, sans-serif" font-size="10" fill="#4b5563">
+      Powered by
+    </text>
+    <text x="80" y="0" text-anchor="end" font-family="'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="700" fill="#00ed64">
+      MongoDB Atlas
+    </text>
+  </g>
+  
+  <!-- Animated particles -->
+  <g opacity="0.6">
+    <circle r="3" fill="#00ed64">
+      <animateMotion dur="4s" repeatCount="indefinite" path="M320,240 C350,240 370,250 520,250 L520,400 C680,400 700,350 880,250"/>
+    </circle>
+    <circle r="2" fill="#ff6b35">
+      <animateMotion dur="4s" repeatCount="indefinite" begin="1s" path="M320,240 C350,240 370,250 520,250 L520,400 C680,400 700,350 880,250"/>
+    </circle>
+    <circle r="2.5" fill="#26c6da">
+      <animateMotion dur="4s" repeatCount="indefinite" begin="2s" path="M320,240 C350,240 370,250 520,250 L520,400 C680,400 700,350 880,250"/>
+    </circle>
+  </g>
+</svg>
