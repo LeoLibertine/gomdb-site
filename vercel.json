@@ -308,6 +308,10 @@
       "src": "/clientes/bpd/bpd-replica(?:/.*)?$",
       "dest": "/clientes/bpd/bpd-replica.html"
     },
+     {
+      "src": "/clientes/sidis/mongodb-k8s-guide(?:/.*)?$",
+      "dest": "/clientes/sidis/mongodb-k8s-guide.html"
+    },
     {
       "src": "/clientes/payway/kafka(?:/.*)?$",
       "dest": "/clientes/payway/kafka.html"
