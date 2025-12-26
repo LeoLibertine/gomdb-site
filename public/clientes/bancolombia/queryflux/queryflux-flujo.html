@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Journey: Motor Unificado de Fraude en Tiempo Real (MongoDB Atlas)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1b33;
+      --text:#e8eefc;
+      --muted:#b7c4e1;
+      --line:#2a3b66;
+      --accent:#7aa7ff;
+      --ok:#8bffc2;
+      --warn:#ffd27a;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; background:var(--bg); color:var(--text); }
+    header{ padding:26px 20px 10px; max-width:1200px; margin:0 auto; }
+    h1{ margin:0 0 8px; font-size:28px; letter-spacing:.2px; }
+    p{ margin:0; color:var(--muted); line-height:1.45; }
+    .wrap{ max-width:1200px; margin:0 auto; padding:18px 20px 38px; display:grid; grid-template-columns: 1.25fr .75fr; gap:18px; }
+    .card{ background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border:1px solid rgba(122,167,255,.18); border-radius:14px; padding:16px; }
+    .card h2{ margin:0 0 10px; font-size:18px; }
+    .pill{ display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px;
+      border:1px solid rgba(255,255,255,.14); color:var(--muted); }
+    .kpi{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    .kpi .pill{ border-color:rgba(139,255,194,.20); color:rgba(139,255,194,.92); }
+    .small{ font-size:12px; color:var(--muted); }
+    hr{ border:0; border-top:1px solid rgba(255,255,255,.08); margin:14px 0; }
+
+    .note{ border-left:3px solid var(--warn); padding:10px 12px; color:var(--muted);
+      background:rgba(255,210,122,.08); border-radius:10px; }
+
+    .right .card{ position:sticky; top:14px; }
+
+    .stepsGrid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    .stepCard{ border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12); }
+    .stepCard h3{ margin:0 0 6px; font-size:14px; }
+    .stepCard .meta{ display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
+    .tag{ font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.14); color:var(--muted); }
+    .tag.ok{ border-color:rgba(139,255,194,.22); color:rgba(139,255,194,.9); }
+    .tag.accent{ border-color:rgba(122,167,255,.26); color:rgba(122,167,255,.95); }
+    .tag.warn{ border-color:rgba(255,210,122,.22); color:rgba(255,210,122,.95); }
+    .stepCard ul{ margin:8px 0 0 18px; color:var(--muted); }
+
+    details{ border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:10px 12px; background:rgba(0,0,0,.10); }
+    details + details{ margin-top:10px; }
+    summary{ cursor:pointer; list-style:none; }
+    summary::-webkit-details-marker{ display:none; }
+    .sumRow{ display:flex; justify-content:space-between; gap:10px; align-items:center; }
+    .sumTitle{ font-size:14px; font-weight:700; }
+    .sumHint{ font-size:12px; color:var(--muted); }
+    .detailBlock{ margin-top:10px; display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .box{ border:1px solid rgba(255,255,255,.10); border-radius:10px; padding:10px; background:rgba(255,255,255,.03); }
+    .box h4{ margin:0 0 6px; font-size:12px; letter-spacing:.2px; color:rgba(232,238,252,.95); }
+    .box p{ margin:0; font-size:12px; color:var(--muted); }
+
+    @media (max-width: 980px){
+      .wrap{ grid-template-columns: 1fr; }
+      .right .card{ position:static; }
+      .stepsGrid{ grid-template-columns: 1fr; }
+      .detailBlock{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Motor Unificado de Fraude en Tiempo Real (MongoDB Atlas)</h1>
+  <p>Arquitectura y journey, pensado para explicar el camino: consolidar datos → enriquecer → vectorizar → buscar similitud → decidir → auditar → operar.</p>
+  <div class="kpi">
+    <span class="pill">SLO latencia: &lt; 500ms end-to-end</span>
+    <span class="pill">Escala: 400–800 TPS hoy (crecimiento)</span>
+    <span class="pill">Meta: menos fricción + menos falsos positivos</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="left">
+
+    <div class="card">
+      <h2>Flujo de decisión (simple y numerado)</h2>
+      <p class="small">Este diagrama muestra SOLO el pipeline en tiempo real, de izquierda a derecha. Abajo tienes el detalle paso a paso.</p>
+      <hr/>
+
+      <!-- Clear left-to-right flow -->
+      <svg viewBox="0 0 1200 330" width="100%" height="auto" role="img" aria-label="Flujo de decisión unificado">
+        <defs>
+          <style>
+            .box{ fill: rgba(255,255,255,.04); stroke: rgba(122,167,255,.32); stroke-width:2; rx:14; }
+            .box2{ fill: rgba(255,255,255,.03); stroke: rgba(139,255,194,.32); stroke-width:2; rx:14; }
+            .t{ fill: rgba(232,238,252,.95); font: 700 16px ui-sans-serif, system-ui; }
+            .s{ fill: rgba(183,196,225,.92); font: 400 12px ui-sans-serif, system-ui; }
+            .n{ fill: rgba(11,18,32,1); font: 800 12px ui-sans-serif, system-ui; }
+            .badge{ fill: rgba(122,167,255,.95); }
+            .a{ stroke: rgba(183,196,225,.65); stroke-width:2; marker-end:url(#arrow); }
+          </style>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(183,196,225,.85)"></path>
+          </marker>
+        </defs>
+
+        <!-- Step 1 -->
+        <rect class="box" x="30" y="70" width="190" height="190"/>
+        <circle class="badge" cx="55" cy="95" r="14"></circle>
+        <text class="n" x="51" y="99">1</text>
+        <text class="t" x="50" y="135">Evento</text>
+        <text class="s" x="50" y="158">Transacción +</text>
+        <text class="s" x="50" y="176">contexto mínimo</text>
+        <text class="s" x="50" y="204">ID cliente/cuenta,</text>
+        <text class="s" x="50" y="222">merchant, canal,</text>
+        <text class="s" x="50" y="240">dispositivo, monto</text>
+
+        <!-- Step 2 -->
+        <rect class="box2" x="250" y="70" width="210" height="190"/>
+        <circle class="badge" cx="275" cy="95" r="14"></circle>
+        <text class="n" x="271" y="99">2</text>
+        <text class="t" x="270" y="135">Ingesta</text>
+        <text class="s" x="270" y="158">Validación,</text>
+        <text class="s" x="270" y="176">normalización,</text>
+        <text class="s" x="270" y="194">dedupe</text>
+        <text class="s" x="270" y="222">Escritura cruda</text>
+        <text class="s" x="270" y="240">(inmutable)</text>
+
+        <!-- Step 3 -->
+        <rect class="box2" x="490" y="70" width="220" height="190"/>
+        <circle class="badge" cx="515" cy="95" r="14"></circle>
+        <text class="n" x="511" y="99">3</text>
+        <text class="t" x="510" y="135">Enriquecer</text>
+        <text class="s" x="510" y="158">Features rápidas</text>
+        <text class="s" x="510" y="176">+ actualizar</text>
+        <text class="s" x="510" y="194">customer_state</text>
+        <text class="s" x="510" y="222">Velocity,</text>
+        <text class="s" x="510" y="240">mismatch, score base</text>
+
+        <!-- Step 4 -->
+        <rect class="box2" x="740" y="70" width="200" height="190"/>
+        <circle class="badge" cx="765" cy="95" r="14"></circle>
+        <text class="n" x="761" y="99">4</text>
+        <text class="t" x="760" y="135">Vectorizar</text>
+        <text class="s" x="760" y="158">Embeddings</text>
+        <text class="s" x="760" y="176">de señales</text>
+        <text class="s" x="760" y="204">Online o</text>
+        <text class="s" x="760" y="222">near-real-time</text>
+
+        <!-- Step 5 -->
+        <rect class="box2" x="970" y="70" width="200" height="190"/>
+        <circle class="badge" cx="995" cy="95" r="14"></circle>
+        <text class="n" x="991" y="99">5</text>
+        <text class="t" x="990" y="135">Buscar + Decidir</text>
+        <text class="s" x="990" y="158">Vector Search</text>
+        <text class="s" x="990" y="176">+ reglas JSON</text>
+        <text class="s" x="990" y="204">Salida:</text>
+        <text class="s" x="990" y="222">approve / step-up / deny</text>
+
+        <!-- Arrows -->
+        <line class="a" x1="220" y1="165" x2="250" y2="165"/>
+        <line class="a" x1="460" y1="165" x2="490" y2="165"/>
+        <line class="a" x1="710" y1="165" x2="740" y2="165"/>
+        <line class="a" x1="940" y1="165" x2="970" y2="165"/>
+      </svg>
+
+      <div class="note" style="margin-top:12px;">
+        Punto crítico: <b>customer_state</b> es el “estado caliente” para decidir en milisegundos (contadores, últimos eventos, señales clave),
+        evitando joins y lecturas costosas en plena transacción.
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px;">
+      <h2>Flujo paso a paso (qué entra, qué sale, qué se guarda)</h2>
+      <p class="small">Esto es lo que le da claridad al cliente: cada paso tiene entradas/salidas y los artefactos que quedan en Atlas.</p>
+      <hr/>
+
+      <details open>
+        <summary>
+          <div class="sumRow">
+            <div class="sumTitle">Paso 1 — Evento transaccional</div>
+            <div class="sumHint">Entrada del banco hacia el motor</div>
+          </div>
+        </summary>
+        <div class="detailBlock">
+          <div class="box">
+            <h4>Qué entra</h4>
+            <p>Transacción + contexto mínimo: IDs (cliente/cuenta/instrumento), merchant, canal, dispositivo/sesión, monto, moneda, geografía, timestamp.</p>
+          </div>
+          <div class="box">
+            <h4>Qué sale</h4>
+            <p>Evento validado (schema) listo para ingerir. Si falta campo crítico → decisión por fallback (ej. “step-up”).</p>
+          </div>
+          <div class="box">
+            <h4>Qué se guarda en Atlas</h4>
+            <p><code>transactions_raw</code> (evento crudo, inmutable) para trazabilidad y replay.</p>
+          </div>
+          <div class="box">
+            <h4>Objetivo del paso</h4>
+            <p>Estabilidad y consistencia: que cada transacción “parezca la misma” para poder automatizar el resto.</p>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <div class="sumRow">
+            <div class="sumTitle">Paso 2 — Ingesta</div>
+            <div class="sumHint">Validación, normalización, deduplicación</div>
+          </div>
+        </summary>
+        <div class="detailBlock">
+          <div class="box">
+            <h4>Qué entra</h4>
+            <p>Evento del paso 1.</p>
+          </div>
+          <div class="box">
+            <h4>Qué sale</h4>
+            <p>Evento normalizado y listo para enriquecer (campos estandarizados, IDs resueltos, duplicados filtrados).</p>
+          </div>
+          <div class="box">
+            <h4>Qué se guarda en Atlas</h4>
+            <p><code>transactions_raw</code> (siempre). Opcional: <code>ingest_errors</code> para datos inválidos.</p>
+          </div>
+          <div class="box">
+            <h4>Decisiones rápidas</h4>
+            <p>Si el evento está incompleto o sospechoso por integridad, puede marcarse como “alto riesgo por calidad de datos”.</p>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <div class="sumRow">
+            <div class="sumTitle">Paso 3 — Enriquecimiento + customer_state</div>
+            <div class="sumHint">Features rápidas para decidir en milisegundos</div>
+          </div>
+        </summary>
+        <div class="detailBlock">
+          <div class="box">
+            <h4>Qué entra</h4>
+            <p>Evento normalizado + lectura rápida de <code>customer_state</code> (estado caliente) + listas/flags operativos.</p>
+          </div>
+          <div class="box">
+            <h4>Qué sale</h4>
+            <p>Evento enriquecido con features: velocity, geodist, device mismatch, historial corto, score base.</p>
+          </div>
+          <div class="box">
+            <h4>Qué se guarda en Atlas</h4>
+            <p><code>transactions_enriched</code> + actualización de <code>customer_state</code> (contadores, últimos eventos, señales clave).</p>
+          </div>
+          <div class="box">
+            <h4>Regla de oro</h4>
+            <p>Todo lo que requiera joins o queries pesadas NO vive aquí. Aquí solo vive lo que se consulta en milisegundos.</p>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <div class="sumRow">
+            <div class="sumTitle">Paso 4 — Vectorización (Embeddings)</div>
+            <div class="sumHint">Convertir contexto en vectores</div>
+          </div>
+        </summary>
+        <div class="detailBlock">
+          <div class="box">
+            <h4>Qué entra</h4>
+            <p>Texto/representación estructurada del evento enriquecido (y/o resumen del perfil/hábitos).</p>
+          </div>
+          <div class="box">
+            <h4>Qué sale</h4>
+            <p>Vector (embedding) + metadatos: versión del modelo, timestamp, claves de refresh.</p>
+          </div>
+          <div class="box">
+            <h4>Qué se guarda en Atlas</h4>
+            <p>Vector dentro de <code>transactions_enriched</code> o colección dedicada (según diseño). Guardar <code>embedding_version</code>.</p>
+          </div>
+          <div class="box">
+            <h4>Decisión de arquitectura</h4>
+            <p>Online vs near-real-time depende del presupuesto de latencia. Si no cabe, se hace near-real-time y el motor usa fallback temporal.</p>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <div class="sumRow">
+            <div class="sumTitle">Paso 5 — Vector Search + Motor de decisión</div>
+            <div class="sumHint">Similitud + reglas JSON + evidencia</div>
+          </div>
+        </summary>
+        <div class="detailBlock">
+          <div class="box">
+            <h4>Qué entra</h4>
+            <p>Embedding + features + <code>rules_config</code> (JSON versionado).</p>
+          </div>
+          <div class="box">
+            <h4>Qué sale</h4>
+            <p><b>decision</b> (approve/step-up/deny/alert) + <b>risk_score</b> + <b>reasons</b> explicables.</p>
+          </div>
+          <div class="box">
+            <h4>Qué se guarda en Atlas</h4>
+            <p><code>risk_evidence</code> con: vecinos topK (resumen), features clave, reglas disparadas, versión de config y modelo.</p>
+          </div>
+          <div class="box">
+            <h4>Por qué esto gana</h4>
+            <p>No es “IA mágica”: es un sistema que decide y explica, con trazabilidad para analistas y auditoría.</p>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <div class="sumRow">
+            <div class="sumTitle">Paso 6 — Operación (día 2)</div>
+            <div class="sumHint">Observabilidad + gobernanza + mejora continua</div>
+          </div>
+        </summary>
+        <div class="detailBlock">
+          <div class="box">
+            <h4>Qué se monitorea</h4>
+            <p>p95/p99 latencia, TPS, tasa de step-up, tasa de deny, drift de scores, top reglas activadas.</p>
+          </div>
+          <div class="box">
+            <h4>Gobernanza</h4>
+            <p><code>rules_config</code> versionado + proceso de aprobación + rollback rápido por versión.</p>
+          </div>
+          <div class="box">
+            <h4>Ciclo de mejora</h4>
+            <p>Analista revisa evidencias → ajusta pesos/umbrales → despliegue controlado → medir impacto.</p>
+          </div>
+          <div class="box">
+            <h4>Resultado</h4>
+            <p>Menos falsos positivos con control operativo (sin romper disponibilidad ni performance).</p>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="card" style="margin-top:18px;">
+      <h2>Arquitectura de datos en Atlas (qué colecciones existen y por qué)</h2>
+      <div class="stepsGrid">
+        <div class="stepCard">
+          <h3>Core operacional</h3>
+          <div class="meta">
+            <span class="tag accent">transacciones</span>
+            <span class="tag ok">tiempo real</span>
+          </div>
+          <ul>
+            <li><code>transactions_raw</code>: inmutable, trazabilidad</li>
+            <li><code>transactions_enriched</code>: features + (opcional) embedding</li>
+            <li><code>customer_state</code>: estado caliente para decisión</li>
+          </ul>
+        </div>
+        <div class="stepCard">
+          <h3>Contexto y relaciones</h3>
+          <div class="meta">
+            <span class="tag accent">entidades</span>
+            <span class="tag ok">correlación</span>
+          </div>
+          <ul>
+            <li><code>customer_profile</code>: perfil y agregados</li>
+            <li><code>entity_links</code>/<code>device_graph</code>: relaciones cliente-dispositivo-cuenta-merchant</li>
+          </ul>
+        </div>
+        <div class="stepCard">
+          <h3>Gobernanza y control</h3>
+          <div class="meta">
+            <span class="tag warn">auditoría</span>
+            <span class="tag accent">config</span>
+          </div>
+          <ul>
+            <li><code>rules_config</code>: reglas/umbrales/pesos (JSON) versionado</li>
+            <li><code>risk_evidence</code>: “por qué” de cada decisión</li>
+          </ul>
+        </div>
+        <div class="stepCard">
+          <h3>Operación</h3>
+          <div class="meta">
+            <span class="tag ok">observabilidad</span>
+            <span class="tag accent">SLO</span>
+          </div>
+          <ul>
+            <li>Métricas de latencia y volumen</li>
+            <li>Trazabilidad por transacción (evidence)</li>
+          </ul>
+        </div>
+      </div>
+      <hr/>
+      <p class="small">Si el cliente pregunta “por qué tantas colecciones”, la respuesta es: separación entre evento crudo, evento listo para decisión, estado caliente, y auditoría. Eso hace que el sistema sea rápido y gobernable.</p>
+    </div>
+
+  </section>
+
+  <aside class="right">
+    <div class="card">
+      <h2>Cómo lo explicamos en 2 minutos (guion)</h2>
+      <p class="small">Útil para abrir la conversación con el cliente sin clavarte en términos.</p>
+      <hr/>
+      <div class="stepCard">
+        <h3>Historia simple</h3>
+        <ul>
+          <li>Recibimos un evento transaccional.</li>
+          <li>Lo validamos y lo guardamos crudo (siempre).</li>
+          <li>Lo enriquecemos con señales rápidas y el estado caliente del cliente.</li>
+          <li>Lo convertimos a vector para entender similitud.</li>
+          <li>Buscamos patrones similares y tomamos una decisión con reglas configurables.</li>
+          <li>Guardamos evidencia para auditar y mejorar el modelo.</li>
+        </ul>
+      </div>
+
+      <hr/>
+      <div class="stepCard">
+        <h3>Checklist de aclaraciones</h3>
+        <ul>
+          <li>¿Qué cuenta dentro de los &lt;500ms?</li>
+          <li>¿Qué acción es “step-up” aceptable?</li>
+          <li>¿Requieren multi-región y RTO/RPO?</li>
+          <li>¿Quién aprueba cambios de <code>rules_config</code>?</li>
+        </ul>
+      </div>
+
+      <hr/>
+      <p class="small">Si quieres, te hago una segunda página “versión ejecutiva” (1 slide) y otra “versión técnica” (con deployment patterns).</p>
+    </div>
+  </aside>
+</div>
+</body>
+</html>
