@@ -1,0 +1,417 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#001E2B"/>
+      <stop offset="50%" style="stop-color:#112733"/>
+      <stop offset="100%" style="stop-color:#001E2B"/>
+    </linearGradient>
+    
+    <linearGradient id="mongoGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ED64"/>
+      <stop offset="100%" style="stop-color:#00684A"/>
+    </linearGradient>
+    
+    <linearGradient id="nodeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1C2D38"/>
+      <stop offset="100%" style="stop-color:#112733"/>
+    </linearGradient>
+    
+    <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ED64"/>
+      <stop offset="100%" style="stop-color:#00684A"/>
+    </linearGradient>
+    
+    <linearGradient id="secondaryGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3D4F58"/>
+      <stop offset="100%" style="stop-color:#1C2D38"/>
+    </linearGradient>
+    
+    <linearGradient id="gcpGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4285F4"/>
+      <stop offset="25%" style="stop-color:#EA4335"/>
+      <stop offset="50%" style="stop-color:#FBBC04"/>
+      <stop offset="75%" style="stop-color:#34A853"/>
+      <stop offset="100%" style="stop-color:#4285F4"/>
+    </linearGradient>
+    
+    <linearGradient id="backupGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0498EC"/>
+      <stop offset="100%" style="stop-color:#0369a1"/>
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    
+    <filter id="innerShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feOffset dx="0" dy="2"/>
+      <feGaussianBlur stdDeviation="3" result="offset-blur"/>
+      <feComposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse"/>
+      <feFlood flood-color="#000" flood-opacity="0.2" result="color"/>
+      <feComposite operator="in" in="color" in2="inverse" result="shadow"/>
+      <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
+    </filter>
+
+    <!-- Patterns -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00ED64" stroke-width="0.5" opacity="0.1"/>
+    </pattern>
+    
+    <!-- Arrow Marker -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#00ED64"/>
+    </marker>
+    
+    <marker id="arrowheadBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#0498EC"/>
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="800" fill="url(#bgGradient)"/>
+  <rect width="1200" height="800" fill="url(#grid)"/>
+  
+  <!-- Decorative Elements -->
+  <circle cx="100" cy="100" r="200" fill="#00ED64" opacity="0.03"/>
+  <circle cx="1100" cy="700" r="250" fill="#0498EC" opacity="0.03"/>
+  
+  <!-- Title Section -->
+  <g transform="translate(600, 42)">
+    <!-- MongoDB Leaf Logo -->
+    <g transform="translate(-235, -12)">
+      <path d="M12 1.5c-.5-.9-.8-1.4-.9-1.5-.1.1-.4.6-.9 1.5C5.5 11 2 18.5 2 25c0 6.2 4.2 11.4 9.9 13v6.1c0 .4.3.7.7.7s.7-.3.7-.7V38c5.7-1.6 9.9-6.8 9.9-13 0-6.5-3.5-14-8.2-23.5zm-1 34.3c-.4.1-.7-.2-.7-.6V16.8c0-.4.3-.7.7-.7s.7.3.7.7v18.4c0 .4-.3.7-.7.6z" 
+            fill="url(#mongoGreen)" transform="scale(1.1)"/>
+    </g>
+    <text x="-185" y="22" font-family="Georgia, serif" font-size="34" font-weight="bold" fill="#FFFFFF">MongoDB Atlas</text>
+    <text x="115" y="22" font-family="Georgia, serif" font-size="34" font-weight="bold" fill="#00ED64">Chile</text>
+  </g>
+  
+  <!-- Subtitle -->
+  <text x="600" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#889397">
+    Arquitectura de Alta Disponibilidad  ·  M60 General Purpose  ·  3 Nodos Replica Set
+  </text>
+  
+  <!-- GCP Region Container -->
+  <g transform="translate(80, 120)">
+    <!-- Main Region Box -->
+    <rect x="0" y="0" width="1040" height="520" rx="20" ry="20" 
+          fill="#112733" stroke="#3D4F58" stroke-width="2" filter="url(#shadow)"/>
+    
+    <!-- Region Header -->
+    <rect x="0" y="0" width="1040" height="60" rx="20" ry="20" fill="#1C2D38"/>
+    <rect x="0" y="30" width="1040" height="30" fill="#1C2D38"/>
+    <line x1="0" y1="60" x2="1040" y2="60" stroke="#3D4F58" stroke-width="1"/>
+    
+    <!-- GCP Logo and Region Info -->
+    <g transform="translate(30, 30)">
+      <!-- GCP Icon -->
+      <rect x="0" y="-12" width="24" height="24" rx="4" fill="#4285F4"/>
+      <text x="8" y="6" font-family="Arial" font-size="14" font-weight="bold" fill="white">G</text>
+      
+      <text x="35" y="6" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FFFFFF">Google Cloud Platform</text>
+      <text x="220" y="6" font-family="Arial, sans-serif" font-size="14" fill="#889397">Region:</text>
+      <text x="275" y="6" font-family="Source Code Pro, monospace" font-size="14" fill="#00ED64">us-central1</text>
+      <text x="380" y="6" font-family="Arial, sans-serif" font-size="14" fill="#889397">(Iowa, USA)</text>
+    </g>
+    
+    <!-- Chile Flag -->
+    <g transform="translate(950, 18)">
+      <rect x="0" y="0" width="60" height="36" rx="4" fill="#FFFFFF" stroke="#3D4F58"/>
+      <rect x="0" y="0" width="20" height="18" rx="4" fill="#0039A6"/>
+      <text x="7" y="14" font-size="12" fill="white">★</text>
+      <rect x="20" y="0" width="40" height="18" fill="#FFFFFF"/>
+      <rect x="0" y="18" width="60" height="18" rx="4" fill="#D52B1E"/>
+      <rect x="0" y="18" width="20" height="18" fill="#D52B1E"/>
+    </g>
+    
+    <!-- Availability Zones Container -->
+    <g transform="translate(30, 90)">
+      
+      <!-- Zone A - Primary -->
+      <g transform="translate(0, 0)">
+        <rect x="0" y="0" width="300" height="380" rx="16" ry="16" 
+              fill="#0a1a1f" stroke="#00ED64" stroke-width="2" opacity="0.8"/>
+        
+        <!-- Zone Header -->
+        <rect x="0" y="0" width="300" height="45" rx="16" ry="16" fill="#023430"/>
+        <rect x="0" y="25" width="300" height="20" fill="#023430"/>
+        <text x="150" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#00ED64">
+          ZONA A
+        </text>
+        
+        <!-- Primary Node -->
+        <g transform="translate(35, 70)">
+          <rect x="0" y="0" width="230" height="280" rx="12" ry="12" 
+                fill="url(#nodeGradient)" stroke="#00ED64" stroke-width="2" filter="url(#shadow)"/>
+          
+          <!-- Node Header -->
+          <rect x="0" y="0" width="230" height="50" rx="12" ry="12" fill="url(#primaryGradient)"/>
+          <rect x="0" y="25" width="230" height="25" fill="url(#primaryGradient)"/>
+          
+          <!-- Primary Badge -->
+          <text x="115" y="32" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#001E2B">
+            ⬤ PRIMARY
+          </text>
+          
+          <!-- MongoDB Icon -->
+          <g transform="translate(90, 65)">
+            <circle cx="25" cy="25" r="25" fill="#001E2B" stroke="#00ED64" stroke-width="2"/>
+            <path d="M25 10c-.3-.5-.5-.8-.5-.9-.1.1-.3.4-.5.9-2.5 5-4.5 9.5-4.5 13 0 3.5 2.4 6.4 5.5 7.3v3c0 .2.2.4.4.4s.4-.2.4-.4v-3c3.1-.9 5.5-3.8 5.5-7.3 0-3.5-2-8-5.3-13zm-.5 19.3c-.2 0-.4-.1-.4-.4V18c0-.2.2-.4.4-.4s.4.2.4.4v10.9c0 .2-.2.4-.4.4z" 
+                  fill="#00ED64" transform="translate(0, 2)"/>
+          </g>
+          
+          <!-- Specs -->
+          <g transform="translate(20, 130)">
+            <text x="0" y="0" font-family="Arial" font-size="11" fill="#889397">TIER</text>
+            <text x="0" y="18" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#FFFFFF">M60</text>
+            
+            <text x="0" y="45" font-family="Arial" font-size="11" fill="#889397">RAM</text>
+            <text x="0" y="63" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#00ED64">64 GB</text>
+            
+            <text x="0" y="90" font-family="Arial" font-size="11" fill="#889397">vCPUs</text>
+            <text x="0" y="108" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#FFFFFF">16</text>
+            
+            <text x="110" y="0" font-family="Arial" font-size="11" fill="#889397">STORAGE</text>
+            <text x="110" y="18" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#FFFFFF">500 GB</text>
+            
+            <text x="110" y="45" font-family="Arial" font-size="11" fill="#889397">IOPS</text>
+            <text x="110" y="63" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#00ED64">15,000</text>
+            
+            <text x="110" y="90" font-family="Arial" font-size="11" fill="#889397">ROLE</text>
+            <text x="110" y="108" font-family="Source Code Pro, monospace" font-size="12" font-weight="bold" fill="#00ED64">Read/Write</text>
+          </g>
+        </g>
+      </g>
+      
+      <!-- Zone B - Secondary 1 -->
+      <g transform="translate(340, 0)">
+        <rect x="0" y="0" width="300" height="380" rx="16" ry="16" 
+              fill="#0a1a1f" stroke="#3D4F58" stroke-width="2" opacity="0.8"/>
+        
+        <!-- Zone Header -->
+        <rect x="0" y="0" width="300" height="45" rx="16" ry="16" fill="#1C2D38"/>
+        <rect x="0" y="25" width="300" height="20" fill="#1C2D38"/>
+        <text x="150" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#C1C7C6">
+          ZONA B
+        </text>
+        
+        <!-- Secondary Node 1 -->
+        <g transform="translate(35, 70)">
+          <rect x="0" y="0" width="230" height="280" rx="12" ry="12" 
+                fill="url(#nodeGradient)" stroke="#3D4F58" stroke-width="2" filter="url(#shadow)"/>
+          
+          <!-- Node Header -->
+          <rect x="0" y="0" width="230" height="50" rx="12" ry="12" fill="url(#secondaryGradient)"/>
+          <rect x="0" y="25" width="230" height="25" fill="url(#secondaryGradient)"/>
+          
+          <!-- Secondary Badge -->
+          <text x="115" y="32" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#C1C7C6">
+            ◯ SECONDARY
+          </text>
+          
+          <!-- MongoDB Icon -->
+          <g transform="translate(90, 65)">
+            <circle cx="25" cy="25" r="25" fill="#001E2B" stroke="#3D4F58" stroke-width="2"/>
+            <path d="M25 10c-.3-.5-.5-.8-.5-.9-.1.1-.3.4-.5.9-2.5 5-4.5 9.5-4.5 13 0 3.5 2.4 6.4 5.5 7.3v3c0 .2.2.4.4.4s.4-.2.4-.4v-3c3.1-.9 5.5-3.8 5.5-7.3 0-3.5-2-8-5.3-13zm-.5 19.3c-.2 0-.4-.1-.4-.4V18c0-.2.2-.4.4-.4s.4.2.4.4v10.9c0 .2-.2.4-.4.4z" 
+                  fill="#889397" transform="translate(0, 2)"/>
+          </g>
+          
+          <!-- Specs -->
+          <g transform="translate(20, 130)">
+            <text x="0" y="0" font-family="Arial" font-size="11" fill="#889397">TIER</text>
+            <text x="0" y="18" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#FFFFFF">M60</text>
+            
+            <text x="0" y="45" font-family="Arial" font-size="11" fill="#889397">RAM</text>
+            <text x="0" y="63" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#C1C7C6">64 GB</text>
+            
+            <text x="0" y="90" font-family="Arial" font-size="11" fill="#889397">vCPUs</text>
+            <text x="0" y="108" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#FFFFFF">16</text>
+            
+            <text x="110" y="0" font-family="Arial" font-size="11" fill="#889397">STORAGE</text>
+            <text x="110" y="18" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#FFFFFF">500 GB</text>
+            
+            <text x="110" y="45" font-family="Arial" font-size="11" fill="#889397">IOPS</text>
+            <text x="110" y="63" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#C1C7C6">15,000</text>
+            
+            <text x="110" y="90" font-family="Arial" font-size="11" fill="#889397">ROLE</text>
+            <text x="110" y="108" font-family="Source Code Pro, monospace" font-size="12" font-weight="bold" fill="#C1C7C6">Read Only</text>
+          </g>
+        </g>
+      </g>
+      
+      <!-- Zone C - Secondary 2 -->
+      <g transform="translate(680, 0)">
+        <rect x="0" y="0" width="300" height="380" rx="16" ry="16" 
+              fill="#0a1a1f" stroke="#3D4F58" stroke-width="2" opacity="0.8"/>
+        
+        <!-- Zone Header -->
+        <rect x="0" y="0" width="300" height="45" rx="16" ry="16" fill="#1C2D38"/>
+        <rect x="0" y="25" width="300" height="20" fill="#1C2D38"/>
+        <text x="150" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#C1C7C6">
+          ZONA C
+        </text>
+        
+        <!-- Secondary Node 2 -->
+        <g transform="translate(35, 70)">
+          <rect x="0" y="0" width="230" height="280" rx="12" ry="12" 
+                fill="url(#nodeGradient)" stroke="#3D4F58" stroke-width="2" filter="url(#shadow)"/>
+          
+          <!-- Node Header -->
+          <rect x="0" y="0" width="230" height="50" rx="12" ry="12" fill="url(#secondaryGradient)"/>
+          <rect x="0" y="25" width="230" height="25" fill="url(#secondaryGradient)"/>
+          
+          <!-- Secondary Badge -->
+          <text x="115" y="32" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#C1C7C6">
+            ◯ SECONDARY
+          </text>
+          
+          <!-- MongoDB Icon -->
+          <g transform="translate(90, 65)">
+            <circle cx="25" cy="25" r="25" fill="#001E2B" stroke="#3D4F58" stroke-width="2"/>
+            <path d="M25 10c-.3-.5-.5-.8-.5-.9-.1.1-.3.4-.5.9-2.5 5-4.5 9.5-4.5 13 0 3.5 2.4 6.4 5.5 7.3v3c0 .2.2.4.4.4s.4-.2.4-.4v-3c3.1-.9 5.5-3.8 5.5-7.3 0-3.5-2-8-5.3-13zm-.5 19.3c-.2 0-.4-.1-.4-.4V18c0-.2.2-.4.4-.4s.4.2.4.4v10.9c0 .2-.2.4-.4.4z" 
+                  fill="#889397" transform="translate(0, 2)"/>
+          </g>
+          
+          <!-- Specs -->
+          <g transform="translate(20, 130)">
+            <text x="0" y="0" font-family="Arial" font-size="11" fill="#889397">TIER</text>
+            <text x="0" y="18" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#FFFFFF">M60</text>
+            
+            <text x="0" y="45" font-family="Arial" font-size="11" fill="#889397">RAM</text>
+            <text x="0" y="63" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#C1C7C6">64 GB</text>
+            
+            <text x="0" y="90" font-family="Arial" font-size="11" fill="#889397">vCPUs</text>
+            <text x="0" y="108" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#FFFFFF">16</text>
+            
+            <text x="110" y="0" font-family="Arial" font-size="11" fill="#889397">STORAGE</text>
+            <text x="110" y="18" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#FFFFFF">500 GB</text>
+            
+            <text x="110" y="45" font-family="Arial" font-size="11" fill="#889397">IOPS</text>
+            <text x="110" y="63" font-family="Source Code Pro, monospace" font-size="14" font-weight="bold" fill="#C1C7C6">15,000</text>
+            
+            <text x="110" y="90" font-family="Arial" font-size="11" fill="#889397">ROLE</text>
+            <text x="110" y="108" font-family="Source Code Pro, monospace" font-size="12" font-weight="bold" fill="#C1C7C6">Read Only</text>
+          </g>
+        </g>
+      </g>
+      
+    </g>
+    
+    <!-- Replication Arrows -->
+    <g transform="translate(30, 90)">
+      <!-- Primary to Secondary 1 -->
+      <path d="M 300 200 C 320 200, 320 200, 340 200" stroke="#00ED64" stroke-width="2" fill="none" 
+            stroke-dasharray="8,4" marker-end="url(#arrowhead)">
+        <animate attributeName="stroke-dashoffset" from="24" to="0" dur="1s" repeatCount="indefinite"/>
+      </path>
+      
+      <!-- Primary to Secondary 2 -->
+      <path d="M 300 200 C 400 150, 550 150, 680 200" stroke="#00ED64" stroke-width="2" fill="none" 
+            stroke-dasharray="8,4" marker-end="url(#arrowhead)">
+        <animate attributeName="stroke-dashoffset" from="24" to="0" dur="1.5s" repeatCount="indefinite"/>
+      </path>
+      
+      <!-- Replication Label -->
+      <g transform="translate(470, 130)">
+        <rect x="0" y="0" width="100" height="24" rx="12" fill="#023430" stroke="#00ED64" stroke-width="1"/>
+        <text x="50" y="16" text-anchor="middle" font-family="Arial" font-size="10" fill="#00ED64">REPLICATION</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Cloud Backup Section -->
+  <g transform="translate(80, 660)">
+    <rect x="0" y="0" width="1040" height="110" rx="16" ry="16" 
+          fill="#112733" stroke="#0498EC" stroke-width="2" filter="url(#shadow)"/>
+    
+    <!-- Backup Header -->
+    <rect x="0" y="0" width="1040" height="45" rx="16" ry="16" fill="#0c2a3d"/>
+    <rect x="0" y="25" width="1040" height="20" fill="#0c2a3d"/>
+    
+    <!-- Cloud Icon -->
+    <g transform="translate(30, 12)">
+      <path d="M20 17c0-2.76-2.24-5-5-5-.71 0-1.39.15-2 .42C12.13 9.87 9.79 8 7 8c-3.31 0-6 2.69-6 6 0 .34.04.67.09 1C.42 15.47 0 16.17 0 17c0 1.66 1.34 3 3 3h16c1.66 0 3-1.34 3-3 0-.62-.19-1.2-.52-1.68.34-.49.52-1.06.52-1.32z" 
+            fill="url(#backupGradient)" transform="scale(1.2)"/>
+    </g>
+    <text x="60" y="30" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#0498EC">
+      CLOUD BACKUP
+    </text>
+    <text x="185" y="30" font-family="Arial, sans-serif" font-size="12" fill="#889397">
+      Continuous Backup · Point-in-Time Recovery · Encrypted at Rest
+    </text>
+    
+    <!-- Backup Features -->
+    <g transform="translate(30, 60)">
+      <!-- Feature 1 -->
+      <g transform="translate(0, 0)">
+        <circle cx="8" cy="8" r="8" fill="#0498EC" opacity="0.2"/>
+        <text x="8" y="12" text-anchor="middle" font-size="10" fill="#0498EC">✓</text>
+        <text x="25" y="12" font-family="Arial" font-size="12" fill="#C1C7C6">Snapshots cada 6 horas</text>
+      </g>
+      
+      <!-- Feature 2 -->
+      <g transform="translate(200, 0)">
+        <circle cx="8" cy="8" r="8" fill="#0498EC" opacity="0.2"/>
+        <text x="8" y="12" text-anchor="middle" font-size="10" fill="#0498EC">✓</text>
+        <text x="25" y="12" font-family="Arial" font-size="12" fill="#C1C7C6">Retención 7 días</text>
+      </g>
+      
+      <!-- Feature 3 -->
+      <g transform="translate(370, 0)">
+        <circle cx="8" cy="8" r="8" fill="#0498EC" opacity="0.2"/>
+        <text x="8" y="12" text-anchor="middle" font-size="10" fill="#0498EC">✓</text>
+        <text x="25" y="12" font-family="Arial" font-size="12" fill="#C1C7C6">Restore en minutos</text>
+      </g>
+      
+      <!-- Feature 4 -->
+      <g transform="translate(540, 0)">
+        <circle cx="8" cy="8" r="8" fill="#0498EC" opacity="0.2"/>
+        <text x="8" y="12" text-anchor="middle" font-size="10" fill="#0498EC">✓</text>
+        <text x="25" y="12" font-family="Arial" font-size="12" fill="#C1C7C6">Encryption AES-256</text>
+      </g>
+      
+      <!-- Feature 5 -->
+      <g transform="translate(730, 0)">
+        <circle cx="8" cy="8" r="8" fill="#0498EC" opacity="0.2"/>
+        <text x="8" y="12" text-anchor="middle" font-size="10" fill="#0498EC">✓</text>
+        <text x="25" y="12" font-family="Arial" font-size="12" fill="#C1C7C6">Cross-Region Copy</text>
+      </g>
+    </g>
+    
+    <!-- Backup Arrow from Main Cluster -->
+    <path d="M 520 -20 L 520 0" stroke="#0498EC" stroke-width="2" stroke-dasharray="6,3" 
+          marker-end="url(#arrowheadBlue)">
+      <animate attributeName="stroke-dashoffset" from="18" to="0" dur="1s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  
+  <!-- Stats Bar -->
+  <g transform="translate(600, 790)">
+    <text x="-400" y="0" font-family="Arial" font-size="11" fill="#889397">
+      Total RAM: <tspan fill="#00ED64" font-weight="bold">192 GB</tspan>
+    </text>
+    <text x="-250" y="0" font-family="Arial" font-size="11" fill="#889397">
+      Total Storage: <tspan fill="#00ED64" font-weight="bold">1.5 TB</tspan>
+    </text>
+    <text x="-80" y="0" font-family="Arial" font-size="11" fill="#889397">
+      Total IOPS: <tspan fill="#00ED64" font-weight="bold">45,000</tspan>
+    </text>
+    <text x="80" y="0" font-family="Arial" font-size="11" fill="#889397">
+      Failover: <tspan fill="#00ED64" font-weight="bold">&lt;5 seg</tspan>
+    </text>
+    <text x="220" y="0" font-family="Arial" font-size="11" fill="#889397">
+      Latencia Objetivo: <tspan fill="#00ED64" font-weight="bold">&lt;10ms</tspan>
+    </text>
+  </g>
+  
+</svg>

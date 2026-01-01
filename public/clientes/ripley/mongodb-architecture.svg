@@ -1,0 +1,594 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#001E2B"/>
+      <stop offset="50%" style="stop-color:#0D2E3A"/>
+      <stop offset="100%" style="stop-color:#001E2B"/>
+    </linearGradient>
+    
+    <linearGradient id="mongoGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ED64"/>
+      <stop offset="100%" style="stop-color:#00684A"/>
+    </linearGradient>
+    
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1C2D38"/>
+      <stop offset="100%" style="stop-color:#112733"/>
+    </linearGradient>
+    
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0498EC"/>
+      <stop offset="100%" style="stop-color:#0369A1"/>
+    </linearGradient>
+    
+    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B5CF6"/>
+      <stop offset="100%" style="stop-color:#6D28D9"/>
+    </linearGradient>
+    
+    <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#F59E0B"/>
+      <stop offset="100%" style="stop-color:#D97706"/>
+    </linearGradient>
+    
+    <linearGradient id="pinkGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#EC4899"/>
+      <stop offset="100%" style="stop-color:#BE185D"/>
+    </linearGradient>
+
+    <linearGradient id="flowArrow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00ED64" stop-opacity="0.3"/>
+      <stop offset="50%" style="stop-color:#00ED64"/>
+      <stop offset="100%" style="stop-color:#00ED64" stop-opacity="0.3"/>
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+    
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Patterns -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00ED64" stroke-width="0.3" opacity="0.15"/>
+    </pattern>
+    
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#00ED64" opacity="0.1"/>
+    </pattern>
+
+    <!-- Arrow Markers -->
+    <marker id="arrowGreen" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#00ED64"/>
+    </marker>
+    
+    <marker id="arrowBlue" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#0498EC"/>
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1400" height="900" fill="url(#bgGradient)"/>
+  <rect width="1400" height="900" fill="url(#grid)"/>
+  
+  <!-- Decorative circles -->
+  <circle cx="100" cy="100" r="300" fill="#00ED64" opacity="0.02"/>
+  <circle cx="1300" cy="800" r="350" fill="#0498EC" opacity="0.02"/>
+  <circle cx="700" cy="450" r="400" fill="#8B5CF6" opacity="0.01"/>
+  
+  <!-- Title -->
+  <g transform="translate(700, 50)">
+    <g transform="translate(-280, 0)">
+      <path d="M12 1.5c-.5-.9-.8-1.4-.9-1.5-.1.1-.4.6-.9 1.5C5.5 11 2 18.5 2 25c0 6.2 4.2 11.4 9.9 13v6.1c0 .4.3.7.7.7s.7-.3.7-.7V38c5.7-1.6 9.9-6.8 9.9-13 0-6.5-3.5-14-8.2-23.5zm-1 34.3c-.4.1-.7-.2-.7-.6V16.8c0-.4.3-.7.7-.7s.7.3.7.7v18.4c0 .4-.3.7-.7.6z" 
+            fill="url(#mongoGreen)" transform="scale(1.2)"/>
+    </g>
+    <text x="-230" y="30" font-family="Georgia, serif" font-size="38" font-weight="bold" fill="#FFFFFF">MongoDB</text>
+    <text x="40" y="30" font-family="Georgia, serif" font-size="38" font-weight="bold" fill="#00ED64">Architecture</text>
+  </g>
+  <text x="700" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#889397">
+    Flujo de datos desde la aplicación hasta el almacenamiento persistente
+  </text>
+
+  <!-- ==================== LAYER 1: APPLICATION ==================== -->
+  <g transform="translate(50, 130)">
+    <!-- Layer Label -->
+    <text x="60" y="20" font-family="Arial" font-size="11" fill="#00ED64" font-weight="600" letter-spacing="2">CAPA DE APLICACIÓN</text>
+    
+    <!-- Application Box -->
+    <g transform="translate(0, 35)">
+      <rect x="0" y="0" width="240" height="160" rx="16" fill="url(#cardGradient)" stroke="#3D4F58" stroke-width="2" filter="url(#shadow)"/>
+      <rect x="0" y="0" width="240" height="45" rx="16" fill="#0D2E3A"/>
+      <rect x="0" y="25" width="240" height="20" fill="#0D2E3A"/>
+      
+      <!-- App Icon -->
+      <g transform="translate(20, 12)">
+        <rect x="0" y="0" width="24" height="24" rx="6" fill="url(#blueGradient)"/>
+        <rect x="5" y="6" width="14" height="2" rx="1" fill="#FFF"/>
+        <rect x="5" y="11" width="10" height="2" rx="1" fill="#FFF"/>
+        <rect x="5" y="16" width="12" height="2" rx="1" fill="#FFF"/>
+      </g>
+      <text x="55" y="30" font-family="Arial" font-size="14" font-weight="600" fill="#FFFFFF">Client Application</text>
+      
+      <!-- Code representation -->
+      <g transform="translate(20, 60)">
+        <text font-family="Source Code Pro, monospace" font-size="11" fill="#889397">
+          <tspan x="0" y="0" fill="#8B5CF6">const</tspan>
+          <tspan fill="#FFF"> doc = {</tspan>
+        </text>
+        <text font-family="Source Code Pro, monospace" font-size="11" fill="#889397">
+          <tspan x="10" y="18" fill="#00ED64">name</tspan>
+          <tspan fill="#FFF">:</tspan>
+          <tspan fill="#F59E0B"> "Producto"</tspan>
+          <tspan fill="#FFF">,</tspan>
+        </text>
+        <text font-family="Source Code Pro, monospace" font-size="11" fill="#889397">
+          <tspan x="10" y="36" fill="#00ED64">price</tspan>
+          <tspan fill="#FFF">:</tspan>
+          <tspan fill="#0498EC"> 29990</tspan>
+        </text>
+        <text font-family="Source Code Pro, monospace" font-size="11" fill="#FFF">
+          <tspan x="0" y="54">};</tspan>
+        </text>
+        <text font-family="Source Code Pro, monospace" font-size="11">
+          <tspan x="0" y="75" fill="#889397">db.products.</tspan>
+          <tspan fill="#EC4899">insertOne</tspan>
+          <tspan fill="#FFF">(doc)</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== DRIVERS ==================== -->
+  <g transform="translate(330, 130)">
+    <text x="75" y="20" font-family="Arial" font-size="11" fill="#00ED64" font-weight="600" letter-spacing="2">DRIVERS</text>
+    
+    <g transform="translate(0, 35)">
+      <rect x="0" y="0" width="200" height="160" rx="16" fill="url(#cardGradient)" stroke="#8B5CF6" stroke-width="2" filter="url(#shadow)"/>
+      <rect x="0" y="0" width="200" height="45" rx="16" fill="#1a1a2e"/>
+      <rect x="0" y="25" width="200" height="20" fill="#1a1a2e"/>
+      
+      <!-- Driver Icon -->
+      <g transform="translate(20, 12)">
+        <rect x="0" y="0" width="24" height="24" rx="6" fill="url(#purpleGradient)"/>
+        <path d="M6 8h12M6 12h12M6 16h8" stroke="#FFF" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <text x="55" y="30" font-family="Arial" font-size="14" font-weight="600" fill="#FFFFFF">MongoDB Drivers</text>
+      
+      <!-- Driver icons -->
+      <g transform="translate(20, 60)">
+        <g transform="translate(0, 0)">
+          <rect x="0" y="0" width="70" height="28" rx="6" fill="#3776AB" opacity="0.2" stroke="#3776AB"/>
+          <text x="35" y="18" text-anchor="middle" font-family="Arial" font-size="10" fill="#3776AB" font-weight="600">Python</text>
+        </g>
+        <g transform="translate(80, 0)">
+          <rect x="0" y="0" width="70" height="28" rx="6" fill="#F7DF1E" opacity="0.2" stroke="#F7DF1E"/>
+          <text x="35" y="18" text-anchor="middle" font-family="Arial" font-size="10" fill="#F7DF1E" font-weight="600">Node.js</text>
+        </g>
+        <g transform="translate(0, 38)">
+          <rect x="0" y="0" width="70" height="28" rx="6" fill="#007396" opacity="0.2" stroke="#007396"/>
+          <text x="35" y="18" text-anchor="middle" font-family="Arial" font-size="10" fill="#5BA7D4" font-weight="600">Java</text>
+        </g>
+        <g transform="translate(80, 38)">
+          <rect x="0" y="0" width="70" height="28" rx="6" fill="#68217A" opacity="0.2" stroke="#68217A"/>
+          <text x="35" y="18" text-anchor="middle" font-family="Arial" font-size="10" fill="#9B6FB5" font-weight="600">.NET</text>
+        </g>
+      </g>
+      
+      <!-- BSON label -->
+      <g transform="translate(55, 135)">
+        <rect x="0" y="0" width="90" height="20" rx="4" fill="#00ED64" opacity="0.15" stroke="#00ED64" stroke-width="1"/>
+        <text x="45" y="14" text-anchor="middle" font-family="Source Code Pro" font-size="10" fill="#00ED64" font-weight="600">→ BSON Format</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== MONGOD SERVER ==================== -->
+  <g transform="translate(570, 110)">
+    <text x="130" y="20" font-family="Arial" font-size="11" fill="#00ED64" font-weight="600" letter-spacing="2">MONGODB SERVER (mongod)</text>
+    
+    <g transform="translate(0, 35)">
+      <rect x="0" y="0" width="310" height="200" rx="20" fill="url(#cardGradient)" stroke="#00ED64" stroke-width="3" filter="url(#shadow)"/>
+      
+      <!-- Server header -->
+      <rect x="0" y="0" width="310" height="50" rx="20" fill="#023430"/>
+      <rect x="0" y="30" width="310" height="20" fill="#023430"/>
+      
+      <!-- MongoDB Logo -->
+      <g transform="translate(20, 13)">
+        <circle cx="12" cy="12" r="12" fill="#001E2B" stroke="#00ED64" stroke-width="2"/>
+        <path d="M12 5c-.2-.3-.3-.5-.3-.5s-.1.2-.3.5c-1.5 3-2.7 5.7-2.7 7.8 0 2.1 1.4 3.8 3.3 4.4v1.8c0 .1.1.2.2.2s.2-.1.2-.2v-1.8c1.9-.6 3.3-2.3 3.3-4.4 0-2.1-1.2-4.8-2.7-7.8zm-.3 11.5c-.1 0-.2-.1-.2-.2V10c0-.1.1-.2.2-.2s.2.1.2.2v6.3c0 .1-.1.2-.2.2z" 
+              fill="#00ED64"/>
+      </g>
+      <text x="50" y="32" font-family="Arial" font-size="16" font-weight="700" fill="#00ED64">mongod</text>
+      <text x="130" y="32" font-family="Arial" font-size="12" fill="#889397">Core Server Process</text>
+      
+      <!-- Query Parser -->
+      <g transform="translate(20, 65)">
+        <rect x="0" y="0" width="125" height="55" rx="10" fill="#0D2E3A" stroke="#3D4F58"/>
+        <text x="62" y="22" text-anchor="middle" font-family="Arial" font-size="11" fill="#0498EC" font-weight="600">Query Parser</text>
+        <text x="62" y="40" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">Analiza y valida</text>
+      </g>
+      
+      <!-- Query Optimizer -->
+      <g transform="translate(160, 65)">
+        <rect x="0" y="0" width="125" height="55" rx="10" fill="#0D2E3A" stroke="#3D4F58"/>
+        <text x="62" y="22" text-anchor="middle" font-family="Arial" font-size="11" fill="#F59E0B" font-weight="600">Query Planner</text>
+        <text x="62" y="40" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">Optimiza ejecución</text>
+      </g>
+      
+      <!-- Transaction Manager -->
+      <g transform="translate(20, 135)">
+        <rect x="0" y="0" width="265" height="50" rx="10" fill="#0D2E3A" stroke="#3D4F58"/>
+        <text x="132" y="22" text-anchor="middle" font-family="Arial" font-size="11" fill="#EC4899" font-weight="600">Transaction Manager</text>
+        <text x="132" y="38" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">ACID Multi-Document Transactions</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== STORAGE ENGINE ==================== -->
+  <g transform="translate(920, 110)">
+    <text x="115" y="20" font-family="Arial" font-size="11" fill="#00ED64" font-weight="600" letter-spacing="2">STORAGE ENGINE</text>
+    
+    <g transform="translate(0, 35)">
+      <rect x="0" y="0" width="280" height="200" rx="20" fill="url(#cardGradient)" stroke="#F59E0B" stroke-width="2" filter="url(#shadow)"/>
+      
+      <!-- WiredTiger header -->
+      <rect x="0" y="0" width="280" height="50" rx="20" fill="#2D2006"/>
+      <rect x="0" y="30" width="280" height="20" fill="#2D2006"/>
+      
+      <g transform="translate(20, 13)">
+        <circle cx="12" cy="12" r="12" fill="#1a1a1a" stroke="#F59E0B" stroke-width="2"/>
+        <text x="12" y="17" text-anchor="middle" font-family="Arial" font-size="12" fill="#F59E0B" font-weight="bold">W</text>
+      </g>
+      <text x="50" y="32" font-family="Arial" font-size="16" font-weight="700" fill="#F59E0B">WiredTiger</text>
+      <text x="160" y="32" font-family="Arial" font-size="12" fill="#889397">Default Engine</text>
+      
+      <!-- Cache -->
+      <g transform="translate(20, 65)">
+        <rect x="0" y="0" width="115" height="55" rx="10" fill="#0D2E3A" stroke="#00ED64" stroke-width="1.5"/>
+        <g transform="translate(10, 10)">
+          <rect x="0" y="0" width="8" height="8" rx="2" fill="#00ED64"/>
+          <rect x="12" y="0" width="8" height="8" rx="2" fill="#00ED64" opacity="0.7"/>
+          <rect x="24" y="0" width="8" height="8" rx="2" fill="#00ED64" opacity="0.4"/>
+        </g>
+        <text x="57" y="38" text-anchor="middle" font-family="Arial" font-size="11" fill="#00ED64" font-weight="600">Memory Cache</text>
+      </g>
+      
+      <!-- B-Tree -->
+      <g transform="translate(145, 65)">
+        <rect x="0" y="0" width="115" height="55" rx="10" fill="#0D2E3A" stroke="#8B5CF6" stroke-width="1.5"/>
+        <!-- Mini B-tree visualization -->
+        <g transform="translate(35, 8)">
+          <circle cx="22" cy="5" r="4" fill="#8B5CF6"/>
+          <circle cx="10" cy="20" r="4" fill="#8B5CF6" opacity="0.7"/>
+          <circle cx="34" cy="20" r="4" fill="#8B5CF6" opacity="0.7"/>
+          <line x1="22" y1="9" x2="12" y2="16" stroke="#8B5CF6" stroke-width="1.5"/>
+          <line x1="22" y1="9" x2="32" y2="16" stroke="#8B5CF6" stroke-width="1.5"/>
+        </g>
+        <text x="57" y="45" text-anchor="middle" font-family="Arial" font-size="11" fill="#8B5CF6" font-weight="600">B-Tree Index</text>
+      </g>
+      
+      <!-- Compression -->
+      <g transform="translate(20, 135)">
+        <rect x="0" y="0" width="240" height="50" rx="10" fill="#0D2E3A" stroke="#3D4F58"/>
+        <g transform="translate(15, 15)">
+          <rect x="0" y="0" width="30" height="20" rx="4" fill="#0498EC" opacity="0.3" stroke="#0498EC"/>
+          <text x="15" y="14" text-anchor="middle" font-size="8" fill="#0498EC">100%</text>
+          <text x="40" y="14" fill="#889397" font-size="12">→</text>
+          <rect x="55" y="0" width="20" height="20" rx="4" fill="#00ED64" opacity="0.3" stroke="#00ED64"/>
+          <text x="65" y="14" text-anchor="middle" font-size="8" fill="#00ED64">50%</text>
+        </g>
+        <text x="165" y="28" font-family="Arial" font-size="11" fill="#FFFFFF" font-weight="500">Snappy/Zstd Compression</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== DISK STORAGE ==================== -->
+  <g transform="translate(570, 360)">
+    <text x="310" y="20" text-anchor="middle" font-family="Arial" font-size="11" fill="#00ED64" font-weight="600" letter-spacing="2">ALMACENAMIENTO PERSISTENTE</text>
+    
+    <g transform="translate(0, 35)">
+      <rect x="0" y="0" width="620" height="170" rx="20" fill="url(#cardGradient)" stroke="#3D4F58" stroke-width="2" filter="url(#shadow)"/>
+      
+      <!-- Journal Section -->
+      <g transform="translate(20, 20)">
+        <rect x="0" y="0" width="180" height="130" rx="14" fill="#0D2E3A" stroke="#EC4899" stroke-width="2"/>
+        <rect x="0" y="0" width="180" height="35" rx="14" fill="#2D0A1F"/>
+        <rect x="0" y="20" width="180" height="15" fill="#2D0A1F"/>
+        
+        <g transform="translate(15, 8)">
+          <rect x="0" y="0" width="18" height="18" rx="4" fill="url(#pinkGradient)"/>
+          <path d="M5 9h8M9 5v8" stroke="#FFF" stroke-width="2" stroke-linecap="round"/>
+        </g>
+        <text x="42" y="22" font-family="Arial" font-size="12" font-weight="600" fill="#EC4899">Journal (WAL)</text>
+        
+        <g transform="translate(15, 50)">
+          <text font-family="Arial" font-size="10" fill="#889397">
+            <tspan x="0" y="0">Write-Ahead Log para</tspan>
+            <tspan x="0" y="15">durabilidad y crash</tspan>
+            <tspan x="0" y="30">recovery</tspan>
+          </text>
+          <g transform="translate(0, 50)">
+            <rect x="0" y="0" width="150" height="20" rx="4" fill="#EC4899" opacity="0.15"/>
+            <text x="75" y="14" text-anchor="middle" font-family="Source Code Pro" font-size="9" fill="#EC4899">Checkpoint cada 60s</text>
+          </g>
+        </g>
+      </g>
+      
+      <!-- Data Files Section -->
+      <g transform="translate(220, 20)">
+        <rect x="0" y="0" width="180" height="130" rx="14" fill="#0D2E3A" stroke="#0498EC" stroke-width="2"/>
+        <rect x="0" y="0" width="180" height="35" rx="14" fill="#0A1929"/>
+        <rect x="0" y="20" width="180" height="15" fill="#0A1929"/>
+        
+        <g transform="translate(15, 8)">
+          <rect x="0" y="0" width="18" height="18" rx="4" fill="url(#blueGradient)"/>
+          <rect x="4" y="4" width="10" height="3" rx="1" fill="#FFF"/>
+          <rect x="4" y="9" width="10" height="3" rx="1" fill="#FFF" opacity="0.7"/>
+        </g>
+        <text x="42" y="22" font-family="Arial" font-size="12" font-weight="600" fill="#0498EC">Data Files</text>
+        
+        <g transform="translate(15, 50)">
+          <text font-family="Arial" font-size="10" fill="#889397">
+            <tspan x="0" y="0">Documentos BSON</tspan>
+            <tspan x="0" y="15">almacenados con</tspan>
+            <tspan x="0" y="30">compresión</tspan>
+          </text>
+          <g transform="translate(0, 50)">
+            <rect x="0" y="0" width="60" height="20" rx="4" fill="#0498EC" opacity="0.15"/>
+            <text x="30" y="14" text-anchor="middle" font-family="Source Code Pro" font-size="9" fill="#0498EC">.wt</text>
+            <rect x="70" y="0" width="80" height="20" rx="4" fill="#0498EC" opacity="0.15"/>
+            <text x="110" y="14" text-anchor="middle" font-family="Source Code Pro" font-size="9" fill="#0498EC">collection-*</text>
+          </g>
+        </g>
+      </g>
+      
+      <!-- Index Files Section -->
+      <g transform="translate(420, 20)">
+        <rect x="0" y="0" width="180" height="130" rx="14" fill="#0D2E3A" stroke="#8B5CF6" stroke-width="2"/>
+        <rect x="0" y="0" width="180" height="35" rx="14" fill="#1A0A29"/>
+        <rect x="0" y="20" width="180" height="15" fill="#1A0A29"/>
+        
+        <g transform="translate(15, 8)">
+          <rect x="0" y="0" width="18" height="18" rx="4" fill="url(#purpleGradient)"/>
+          <path d="M4 14V4h10l-5 5 5 5" stroke="#FFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <text x="42" y="22" font-family="Arial" font-size="12" font-weight="600" fill="#8B5CF6">Index Files</text>
+        
+        <g transform="translate(15, 50)">
+          <text font-family="Arial" font-size="10" fill="#889397">
+            <tspan x="0" y="0">Índices B-Tree para</tspan>
+            <tspan x="0" y="15">acceso rápido sin</tspan>
+            <tspan x="0" y="30">collection scan</tspan>
+          </text>
+          <g transform="translate(0, 50)">
+            <rect x="0" y="0" width="50" height="20" rx="4" fill="#8B5CF6" opacity="0.15"/>
+            <text x="25" y="14" text-anchor="middle" font-family="Source Code Pro" font-size="9" fill="#8B5CF6">_id</text>
+            <rect x="55" y="0" width="50" height="20" rx="4" fill="#8B5CF6" opacity="0.15"/>
+            <text x="80" y="14" text-anchor="middle" font-family="Source Code Pro" font-size="9" fill="#8B5CF6">price</text>
+            <rect x="110" y="0" width="50" height="20" rx="4" fill="#8B5CF6" opacity="0.15"/>
+            <text x="135" y="14" text-anchor="middle" font-family="Source Code Pro" font-size="9" fill="#8B5CF6">name</text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== REPLICATION ==================== -->
+  <g transform="translate(50, 580)">
+    <text x="200" y="20" text-anchor="middle" font-family="Arial" font-size="11" fill="#00ED64" font-weight="600" letter-spacing="2">REPLICA SET (Alta Disponibilidad)</text>
+    
+    <g transform="translate(0, 35)">
+      <rect x="0" y="0" width="450" height="170" rx="20" fill="url(#cardGradient)" stroke="#00ED64" stroke-width="2" filter="url(#shadow)"/>
+      
+      <!-- Primary -->
+      <g transform="translate(30, 25)">
+        <rect x="0" y="0" width="110" height="120" rx="12" fill="#023430" stroke="#00ED64" stroke-width="2"/>
+        <circle cx="55" cy="35" r="22" fill="#001E2B" stroke="#00ED64" stroke-width="2"/>
+        <path d="M55 20c-.2-.3-.3-.5-.3-.5s-.1.2-.3.5c-1.2 2.4-2.2 4.6-2.2 6.3 0 1.7 1.1 3.1 2.7 3.5v1.5c0 .1.1.2.2.2s.2-.1.2-.2v-1.5c1.5-.5 2.7-1.9 2.7-3.5 0-1.7-1-3.9-2.7-6.3zm-.3 9.2c-.1 0-.2-.1-.2-.2V24c0-.1.1-.2.2-.2s.2.1.2.2v5c0 .1-.1.2-.2.2z" 
+              fill="#00ED64"/>
+        <text x="55" y="75" text-anchor="middle" font-family="Arial" font-size="12" font-weight="700" fill="#00ED64">PRIMARY</text>
+        <text x="55" y="92" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">Read/Write</text>
+        <g transform="translate(25, 100)">
+          <circle cx="8" cy="5" r="5" fill="#00ED64"/>
+          <text x="20" y="9" font-family="Arial" font-size="9" fill="#00ED64">Active</text>
+        </g>
+      </g>
+      
+      <!-- Secondary 1 -->
+      <g transform="translate(170, 25)">
+        <rect x="0" y="0" width="110" height="120" rx="12" fill="#1C2D38" stroke="#3D4F58" stroke-width="2"/>
+        <circle cx="55" cy="35" r="22" fill="#001E2B" stroke="#3D4F58" stroke-width="2"/>
+        <path d="M55 20c-.2-.3-.3-.5-.3-.5s-.1.2-.3.5c-1.2 2.4-2.2 4.6-2.2 6.3 0 1.7 1.1 3.1 2.7 3.5v1.5c0 .1.1.2.2.2s.2-.1.2-.2v-1.5c1.5-.5 2.7-1.9 2.7-3.5 0-1.7-1-3.9-2.7-6.3zm-.3 9.2c-.1 0-.2-.1-.2-.2V24c0-.1.1-.2.2-.2s.2.1.2.2v5c0 .1-.1.2-.2.2z" 
+              fill="#889397"/>
+        <text x="55" y="75" text-anchor="middle" font-family="Arial" font-size="11" font-weight="600" fill="#C1C7C6">SECONDARY</text>
+        <text x="55" y="92" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">Read Only</text>
+        <g transform="translate(20, 100)">
+          <circle cx="8" cy="5" r="5" fill="#F59E0B"/>
+          <text x="20" y="9" font-family="Arial" font-size="9" fill="#F59E0B">Standby</text>
+        </g>
+      </g>
+      
+      <!-- Secondary 2 -->
+      <g transform="translate(310, 25)">
+        <rect x="0" y="0" width="110" height="120" rx="12" fill="#1C2D38" stroke="#3D4F58" stroke-width="2"/>
+        <circle cx="55" cy="35" r="22" fill="#001E2B" stroke="#3D4F58" stroke-width="2"/>
+        <path d="M55 20c-.2-.3-.3-.5-.3-.5s-.1.2-.3.5c-1.2 2.4-2.2 4.6-2.2 6.3 0 1.7 1.1 3.1 2.7 3.5v1.5c0 .1.1.2.2.2s.2-.1.2-.2v-1.5c1.5-.5 2.7-1.9 2.7-3.5 0-1.7-1-3.9-2.7-6.3zm-.3 9.2c-.1 0-.2-.1-.2-.2V24c0-.1.1-.2.2-.2s.2.1.2.2v5c0 .1-.1.2-.2.2z" 
+              fill="#889397"/>
+        <text x="55" y="75" text-anchor="middle" font-family="Arial" font-size="11" font-weight="600" fill="#C1C7C6">SECONDARY</text>
+        <text x="55" y="92" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">Read Only</text>
+        <g transform="translate(20, 100)">
+          <circle cx="8" cy="5" r="5" fill="#F59E0B"/>
+          <text x="20" y="9" font-family="Arial" font-size="9" fill="#F59E0B">Standby</text>
+        </g>
+      </g>
+      
+      <!-- Replication arrows -->
+      <g transform="translate(140, 65)">
+        <path d="M0 0 L25 0" stroke="#00ED64" stroke-width="2" stroke-dasharray="4,2" marker-end="url(#arrowGreen)">
+          <animate attributeName="stroke-dashoffset" from="12" to="0" dur="0.8s" repeatCount="indefinite"/>
+        </path>
+      </g>
+      <g transform="translate(280, 65)">
+        <path d="M0 0 L25 0" stroke="#00ED64" stroke-width="2" stroke-dasharray="4,2" marker-end="url(#arrowGreen)">
+          <animate attributeName="stroke-dashoffset" from="12" to="0" dur="0.8s" repeatCount="indefinite"/>
+        </path>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== SHARDING ==================== -->
+  <g transform="translate(540, 580)">
+    <text x="330" y="20" text-anchor="middle" font-family="Arial" font-size="11" fill="#00ED64" font-weight="600" letter-spacing="2">SHARDING (Escalabilidad Horizontal)</text>
+    
+    <g transform="translate(0, 35)">
+      <rect x="0" y="0" width="710" height="170" rx="20" fill="url(#cardGradient)" stroke="#0498EC" stroke-width="2" filter="url(#shadow)"/>
+      
+      <!-- Mongos Router -->
+      <g transform="translate(20, 20)">
+        <rect x="0" y="0" width="130" height="130" rx="14" fill="#0A1929" stroke="#0498EC" stroke-width="2"/>
+        <g transform="translate(35, 20)">
+          <circle cx="30" cy="25" r="25" fill="#001E2B" stroke="#0498EC" stroke-width="2"/>
+          <path d="M20 20 L30 30 L40 20 M20 30 L30 40 L40 30" stroke="#0498EC" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <text x="65" y="85" text-anchor="middle" font-family="Arial" font-size="13" font-weight="700" fill="#0498EC">mongos</text>
+        <text x="65" y="102" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">Query Router</text>
+        <text x="65" y="118" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">Distribuye queries</text>
+      </g>
+      
+      <!-- Arrow to shards -->
+      <g transform="translate(155, 75)">
+        <path d="M0 0 L40 0" stroke="#0498EC" stroke-width="2" stroke-dasharray="4,2" marker-end="url(#arrowBlue)">
+          <animate attributeName="stroke-dashoffset" from="12" to="0" dur="0.6s" repeatCount="indefinite"/>
+        </path>
+      </g>
+      
+      <!-- Shard 1 -->
+      <g transform="translate(210, 20)">
+        <rect x="0" y="0" width="150" height="130" rx="14" fill="#0D2E3A" stroke="#3D4F58" stroke-width="1.5"/>
+        <rect x="0" y="0" width="150" height="32" rx="14" fill="#1C2D38"/>
+        <rect x="0" y="18" width="150" height="14" fill="#1C2D38"/>
+        <text x="75" y="22" text-anchor="middle" font-family="Arial" font-size="11" font-weight="600" fill="#FFFFFF">Shard 1</text>
+        
+        <g transform="translate(20, 45)">
+          <rect x="0" y="0" width="110" height="70" rx="8" fill="#001E2B" stroke="#00ED64" stroke-width="1"/>
+          <text x="55" y="18" text-anchor="middle" font-family="Source Code Pro" font-size="9" fill="#00ED64">A - M</text>
+          <text x="55" y="35" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">Categorías</text>
+          <text x="55" y="50" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">Electrónica</text>
+          <text x="55" y="62" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">Hogar</text>
+        </g>
+      </g>
+      
+      <!-- Shard 2 -->
+      <g transform="translate(380, 20)">
+        <rect x="0" y="0" width="150" height="130" rx="14" fill="#0D2E3A" stroke="#3D4F58" stroke-width="1.5"/>
+        <rect x="0" y="0" width="150" height="32" rx="14" fill="#1C2D38"/>
+        <rect x="0" y="18" width="150" height="14" fill="#1C2D38"/>
+        <text x="75" y="22" text-anchor="middle" font-family="Arial" font-size="11" font-weight="600" fill="#FFFFFF">Shard 2</text>
+        
+        <g transform="translate(20, 45)">
+          <rect x="0" y="0" width="110" height="70" rx="8" fill="#001E2B" stroke="#8B5CF6" stroke-width="1"/>
+          <text x="55" y="18" text-anchor="middle" font-family="Source Code Pro" font-size="9" fill="#8B5CF6">N - Z</text>
+          <text x="55" y="35" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">Categorías</text>
+          <text x="55" y="50" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">Ropa</text>
+          <text x="55" y="62" text-anchor="middle" font-family="Arial" font-size="9" fill="#889397">Zapatos</text>
+        </g>
+      </g>
+      
+      <!-- Config Servers -->
+      <g transform="translate(550, 20)">
+        <rect x="0" y="0" width="140" height="130" rx="14" fill="#0D2E3A" stroke="#F59E0B" stroke-width="1.5"/>
+        <rect x="0" y="0" width="140" height="32" rx="14" fill="#2D2006"/>
+        <rect x="0" y="18" width="140" height="14" fill="#2D2006"/>
+        <text x="70" y="22" text-anchor="middle" font-family="Arial" font-size="11" font-weight="600" fill="#F59E0B">Config Servers</text>
+        
+        <g transform="translate(20, 45)">
+          <text font-family="Arial" font-size="9" fill="#889397">
+            <tspan x="0" y="0">Almacena metadata:</tspan>
+            <tspan x="0" y="15">• Shard key ranges</tspan>
+            <tspan x="0" y="30">• Chunk locations</tspan>
+            <tspan x="0" y="45">• Cluster config</tspan>
+          </text>
+        </g>
+        
+        <g transform="translate(25, 105)">
+          <circle cx="8" cy="0" r="6" fill="#F59E0B" opacity="0.3" stroke="#F59E0B"/>
+          <circle cx="35" cy="0" r="6" fill="#F59E0B" opacity="0.3" stroke="#F59E0B"/>
+          <circle cx="62" cy="0" r="6" fill="#F59E0B" opacity="0.3" stroke="#F59E0B"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== FLOW ARROWS ==================== -->
+  <!-- App to Drivers -->
+  <g>
+    <path d="M290 230 L325 230" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowGreen)" filter="url(#glow)"/>
+  </g>
+  
+  <!-- Drivers to Server -->
+  <g>
+    <path d="M530 230 L565 230" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowGreen)" filter="url(#glow)"/>
+  </g>
+  
+  <!-- Server to Storage Engine -->
+  <g>
+    <path d="M880 230 L915 230" stroke="#00ED64" stroke-width="2" marker-end="url(#arrowGreen)" filter="url(#glow)"/>
+  </g>
+  
+  <!-- Storage to Disk -->
+  <g>
+    <path d="M1060 310 L1060 350 L880 350 L880 390" stroke="#F59E0B" stroke-width="2" marker-end="url(#arrowGreen)" filter="url(#glow)"/>
+  </g>
+
+  <!-- ==================== LEGEND ==================== -->
+  <g transform="translate(50, 800)">
+    <rect x="0" y="0" width="1300" height="70" rx="12" fill="#0D2E3A" stroke="#3D4F58"/>
+    
+    <text x="30" y="25" font-family="Arial" font-size="11" font-weight="600" fill="#889397">LEYENDA:</text>
+    
+    <g transform="translate(120, 12)">
+      <rect x="0" y="0" width="16" height="16" rx="4" fill="url(#mongoGreen)"/>
+      <text x="25" y="13" font-family="Arial" font-size="11" fill="#C1C7C6">Core Process</text>
+    </g>
+    
+    <g transform="translate(250, 12)">
+      <rect x="0" y="0" width="16" height="16" rx="4" fill="url(#blueGradient)"/>
+      <text x="25" y="13" font-family="Arial" font-size="11" fill="#C1C7C6">Query/Routing</text>
+    </g>
+    
+    <g transform="translate(390, 12)">
+      <rect x="0" y="0" width="16" height="16" rx="4" fill="url(#purpleGradient)"/>
+      <text x="25" y="13" font-family="Arial" font-size="11" fill="#C1C7C6">Indexing</text>
+    </g>
+    
+    <g transform="translate(510, 12)">
+      <rect x="0" y="0" width="16" height="16" rx="4" fill="url(#orangeGradient)"/>
+      <text x="25" y="13" font-family="Arial" font-size="11" fill="#C1C7C6">Storage/Config</text>
+    </g>
+    
+    <g transform="translate(660, 12)">
+      <rect x="0" y="0" width="16" height="16" rx="4" fill="url(#pinkGradient)"/>
+      <text x="25" y="13" font-family="Arial" font-size="11" fill="#C1C7C6">Durability</text>
+    </g>
+    
+    <g transform="translate(30, 45)">
+      <text font-family="Arial" font-size="10" fill="#889397">
+        <tspan>BSON = Binary JSON  |  WAL = Write-Ahead Log  |  ACID = Atomicity, Consistency, Isolation, Durability</tspan>
+      </text>
+    </g>
+    
+    <g transform="translate(850, 25)">
+      <text font-family="Arial" font-size="10" fill="#00ED64" font-weight="500">Failover automático &lt;5 segundos  •  Hasta 50 réplicas  •  Sharding flexible</text>
+    </g>
+  </g>
+
+</svg>

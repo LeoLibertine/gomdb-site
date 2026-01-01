@@ -295,7 +295,16 @@
       "src": "/clientes/ripley/ripley-sizing_1(?:/.*)?$",
       "dest": "/clientes/ripley/ripley-sizing_1.html"
     },
-       {
+    {
+      "src": "/clientes/ripley/ripley-sizing_2(?:/.*)?$",
+      "dest": "/clientes/ripley/ripley-sizing_2.html"
+    },
+    {
+      "src": "/clientes/ripley/mongodb-vs-couchbase(?:/.*)?$",
+      "dest": "/clientes/ripley/mongodb-vs-couchbase.html"
+    },
+
+    {
       "src": "/clientes/ripley/ripley-tfw-agenda_1(?:/.*)?$",
       "dest": "/clientes/ripley/ripley-tfw-agenda_1.html"
     },

@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB vs Couchbase | Comparativa Técnica - Ripley</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mongodb-green: #00ED64;
+            --mongodb-green-dark: #00684A;
+            --mongodb-green-deep: #023430;
+            --mongodb-black: #001E2B;
+            --gray-dark-4: #112733;
+            --gray-dark-3: #1C2D38;
+            --gray-dark-2: #3D4F58;
+            --gray-light-2: #E8EDEB;
+            --gray-light-1: #C1C7C6;
+            --gray-base: #889397;
+            --blue-light: #0498EC;
+            --couchbase-red: #EA2328;
+            --couchbase-red-dark: #B91C1C;
+            --warning: #FFB000;
+            --success: #00ED64;
+            --error: #EA2328;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: var(--mongodb-black);
+            color: var(--gray-light-2);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--gray-dark-4); }
+        ::-webkit-scrollbar-thumb { background: var(--mongodb-green-dark); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--mongodb-green); }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0, 30, 43, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 237, 100, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo svg { height: 36px; fill: var(--mongodb-green); }
+        .logo-text { font-size: 18px; font-weight: 600; color: var(--white); }
+
+        .nav-links { display: flex; gap: 28px; }
+        .nav-links a {
+            color: var(--gray-light-1);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .nav-links a:hover { color: var(--mongodb-green); }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: linear-gradient(135deg, var(--mongodb-black) 0%, var(--gray-dark-4) 50%, var(--mongodb-black) 100%);
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 30%, rgba(0, 237, 100, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 75% 70%, rgba(234, 35, 40, 0.05) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .versus-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: Georgia, serif;
+            font-size: 400px;
+            font-weight: bold;
+            color: rgba(255,255,255,0.02);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            padding: 0 20px;
+            max-width: 1100px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(0, 104, 74, 0.1) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: 50px;
+            font-size: 13px;
+            color: var(--mongodb-green);
+            margin-bottom: 32px;
+        }
+
+        .hero h1 {
+            font-family: Georgia, serif;
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        .hero h1 .vs {
+            color: var(--gray-base);
+            font-size: 0.6em;
+            margin: 0 16px;
+        }
+
+        .hero h1 .mongodb { color: var(--mongodb-green); }
+        .hero h1 .couchbase { color: var(--couchbase-red); }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--gray-light-1);
+            margin-bottom: 48px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Score Cards */
+        .score-cards {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-bottom: 48px;
+        }
+
+        .score-card {
+            text-align: center;
+            padding: 32px 48px;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score-card.mongodb {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.15) 0%, rgba(0, 104, 74, 0.1) 100%);
+            border: 2px solid var(--mongodb-green);
+        }
+
+        .score-card.couchbase {
+            background: linear-gradient(135deg, rgba(234, 35, 40, 0.1) 0%, rgba(185, 28, 28, 0.05) 100%);
+            border: 2px solid var(--couchbase-red);
+        }
+
+        .score-card .db-name {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .score-card.mongodb .db-name { color: var(--mongodb-green); }
+        .score-card.couchbase .db-name { color: var(--couchbase-red); }
+
+        .score-card .score {
+            font-family: Georgia, serif;
+            font-size: 72px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .score-card.mongodb .score { color: var(--mongodb-green); }
+        .score-card.couchbase .score { color: var(--couchbase-red); }
+
+        .score-card .label {
+            font-size: 12px;
+            color: var(--gray-base);
+            margin-top: 8px;
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(0, 237, 100, 0.1);
+            border-radius: 4px;
+            color: var(--mongodb-green);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: Georgia, serif;
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 17px;
+            color: var(--gray-light-1);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Quick Comparison Table */
+        .comparison-table {
+            background: var(--gray-dark-4);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--gray-dark-2);
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 1.5fr;
+            background: var(--mongodb-black);
+            border-bottom: 2px solid var(--gray-dark-2);
+        }
+
+        .table-header-cell {
+            padding: 24px 32px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .table-header-cell.feature { color: var(--gray-light-1); }
+        .table-header-cell.mongodb-col { 
+            color: var(--mongodb-green); 
+            background: rgba(0, 237, 100, 0.05);
+            text-align: center;
+        }
+        .table-header-cell.couchbase-col { 
+            color: var(--couchbase-red); 
+            background: rgba(234, 35, 40, 0.03);
+            text-align: center;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 1.5fr;
+            border-bottom: 1px solid var(--gray-dark-2);
+            transition: background 0.3s ease;
+        }
+
+        .table-row:last-child { border-bottom: none; }
+        .table-row:hover { background: rgba(0, 237, 100, 0.02); }
+
+        .table-cell {
+            padding: 20px 32px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .table-cell.feature {
+            font-weight: 500;
+            color: var(--white);
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .feature-content {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .feature-name {
+            font-weight: 600;
+            color: var(--white);
+            font-size: 14px;
+        }
+
+        .feature-desc {
+            font-size: 12px;
+            color: var(--gray-base);
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        .table-cell.mongodb-val {
+            justify-content: center;
+            text-align: center;
+            background: rgba(0, 237, 100, 0.02);
+        }
+
+        .table-cell.couchbase-val {
+            justify-content: center;
+            text-align: center;
+            background: rgba(234, 35, 40, 0.01);
+        }
+
+        .check { color: var(--mongodb-green); font-size: 20px; }
+        .cross { color: var(--couchbase-red); font-size: 20px; }
+        .partial { color: var(--warning); font-size: 18px; }
+
+        .cell-text { color: var(--gray-light-1); font-size: 13px; }
+        .cell-text.good { color: var(--mongodb-green); }
+        .cell-text.bad { color: var(--couchbase-red); }
+        .cell-text.warn { color: var(--warning); }
+
+        /* Detail Cards */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        @media (max-width: 1000px) {
+            .detail-grid { grid-template-columns: 1fr; }
+        }
+
+        .detail-card {
+            background: var(--gray-dark-4);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--gray-dark-2);
+            transition: all 0.4s ease;
+        }
+
+        .detail-card:hover {
+            border-color: var(--mongodb-green-dark);
+            transform: translateY(-4px);
+        }
+
+        .detail-header {
+            padding: 28px 32px;
+            background: linear-gradient(135deg, var(--mongodb-black) 0%, var(--gray-dark-4) 100%);
+            border-bottom: 2px solid var(--mongodb-green);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .detail-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .detail-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--mongodb-black);
+        }
+
+        .detail-title {
+            font-family: Georgia, serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .detail-body {
+            padding: 28px 32px;
+        }
+
+        .detail-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .db-column {
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .db-column.mongodb-col {
+            background: rgba(0, 237, 100, 0.05);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+        }
+
+        .db-column.couchbase-col {
+            background: rgba(234, 35, 40, 0.03);
+            border: 1px solid rgba(234, 35, 40, 0.15);
+        }
+
+        .db-column-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-dark-2);
+        }
+
+        .db-column-header .db-logo {
+            width: 24px;
+            height: 24px;
+        }
+
+        .db-column-header .db-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .mongodb-col .db-name { color: var(--mongodb-green); }
+        .couchbase-col .db-name { color: var(--couchbase-red); }
+
+        .db-column ul {
+            list-style: none;
+        }
+
+        .db-column li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--gray-light-1);
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .db-column li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .mongodb-col li::before { background: var(--mongodb-green); }
+        .couchbase-col li::before { background: var(--couchbase-red); }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        @media (max-width: 900px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .stat-card {
+            background: var(--gray-dark-4);
+            border-radius: 16px;
+            padding: 28px;
+            text-align: center;
+            border: 1px solid var(--gray-dark-2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--mongodb-green-dark);
+            transform: translateY(-4px);
+        }
+
+        .stat-value {
+            font-family: Georgia, serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--mongodb-green);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--gray-base);
+            margin-top: 8px;
+        }
+
+        .stat-comparison {
+            font-size: 12px;
+            color: var(--couchbase-red);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--gray-dark-2);
+        }
+
+        /* Verdict Section */
+        .verdict-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .verdict-grid { grid-template-columns: 1fr; }
+        }
+
+        .verdict-card {
+            background: var(--gray-dark-4);
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid var(--gray-dark-2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .verdict-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--mongodb-green), var(--mongodb-green-dark));
+        }
+
+        .verdict-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--mongodb-green-dark);
+        }
+
+        .verdict-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(0, 237, 100, 0.1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .verdict-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--mongodb-green);
+        }
+
+        .verdict-title {
+            font-family: Georgia, serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 12px;
+        }
+
+        .verdict-text {
+            font-size: 14px;
+            color: var(--gray-light-1);
+            line-height: 1.7;
+        }
+
+        .verdict-winner {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(0, 237, 100, 0.15);
+            border-radius: 6px;
+            color: var(--mongodb-green);
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+
+        /* Quotes */
+        .quote-section {
+            background: linear-gradient(135deg, var(--gray-dark-4) 0%, var(--gray-dark-3) 100%);
+            border-radius: 20px;
+            padding: 48px;
+            margin: 60px 0;
+            position: relative;
+            border: 1px solid var(--gray-dark-2);
+        }
+
+        .quote-mark {
+            font-family: Georgia, serif;
+            font-size: 120px;
+            color: var(--mongodb-green);
+            opacity: 0.2;
+            position: absolute;
+            top: 10px;
+            left: 30px;
+            line-height: 1;
+        }
+
+        .quote-text {
+            font-size: 20px;
+            color: var(--gray-light-2);
+            font-style: italic;
+            line-height: 1.8;
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        .quote-author {
+            margin-top: 24px;
+            font-size: 14px;
+            color: var(--mongodb-green);
+            font-weight: 600;
+        }
+
+        .quote-role {
+            font-size: 13px;
+            color: var(--gray-base);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--mongodb-black);
+            border-top: 1px solid var(--gray-dark-2);
+            padding: 60px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo svg { height: 32px; fill: var(--mongodb-green); }
+        .footer-text { color: var(--gray-base); font-size: 14px; }
+
+        /* Animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Customer Cases Section */
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .cases-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .cases-grid { grid-template-columns: 1fr; }
+        }
+
+        .case-card {
+            background: var(--gray-dark-4);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--gray-dark-2);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .case-card:hover {
+            border-color: var(--mongodb-green-dark);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 237, 100, 0.1);
+        }
+
+        .case-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 20px 24px;
+            background: var(--mongodb-black);
+            border-bottom: 1px solid var(--gray-dark-2);
+        }
+
+        .case-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .case-initial {
+            font-family: Georgia, serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--mongodb-black);
+        }
+
+        .case-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .case-company {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 2px;
+        }
+
+        .case-industry {
+            font-size: 12px;
+            color: var(--gray-base);
+        }
+
+        .case-body {
+            padding: 20px 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .case-description {
+            font-size: 13px;
+            color: var(--gray-light-1);
+            line-height: 1.6;
+            flex: 1;
+            margin-bottom: 16px;
+        }
+
+        .case-description strong {
+            color: var(--mongodb-green);
+        }
+
+        .case-verdict {
+            background: rgba(0, 237, 100, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            border-left: 3px solid var(--mongodb-green);
+        }
+
+        .verdict-label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-base);
+            margin-bottom: 4px;
+        }
+
+        .verdict-value {
+            font-size: 12px;
+            color: var(--mongodb-green);
+            font-weight: 500;
+        }
+
+        .case-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            background: var(--mongodb-black);
+            color: var(--mongodb-green);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            border-top: 1px solid var(--gray-dark-2);
+            transition: all 0.3s ease;
+        }
+
+        .case-link:hover {
+            background: var(--mongodb-green);
+            color: var(--mongodb-black);
+        }
+
+        .case-link svg {
+            transition: transform 0.3s ease;
+        }
+
+        .case-link:hover svg {
+            transform: translate(2px, -2px);
+        }
+
+        /* Big Wins Banner */
+        .big-wins-banner {
+            margin-top: 48px;
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(0, 104, 74, 0.05) 100%);
+            border: 2px solid var(--mongodb-green);
+            border-radius: 20px;
+            padding: 32px 40px;
+        }
+
+        .wins-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .wins-header svg {
+            stroke: var(--mongodb-green);
+        }
+
+        .wins-header h3 {
+            font-family: Georgia, serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .wins-logos {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .win-logo {
+            background: var(--mongodb-black);
+            border: 1px solid var(--gray-dark-2);
+            border-radius: 12px;
+            padding: 16px 28px;
+            transition: all 0.3s ease;
+        }
+
+        .win-logo:hover {
+            border-color: var(--mongodb-green);
+            transform: translateY(-2px);
+        }
+
+        .win-company {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-light-1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            section { padding: 60px 24px; }
+            .nav { padding: 16px 24px; }
+            .nav-links { display: none; }
+            .score-cards { flex-direction: column; gap: 24px; }
+            .table-header, .table-row { grid-template-columns: 1fr; }
+            .table-header-cell, .table-cell { padding: 16px 20px; }
+            .detail-comparison { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="logo">
+            <svg viewBox="0 0 15 32" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.62 1.05c-.31-.55-.52-.89-.57-1.01-.05.12-.26.46-.57 1.01C3.7 7.54.5 12.98.5 17.6c0 4.35 2.95 7.99 6.94 9.1v4.26c0 .27.22.5.5.5s.5-.22.5-.5v-4.26c3.99-1.11 6.94-4.75 6.94-9.1 0-4.62-3.2-10.06-6.76-16.55zM7.94 25.16c-.28.05-.5-.17-.5-.44V11.79c0-.27.22-.5.5-.5s.5.22.5.5v12.93c0 .27-.22.49-.5.44z"/>
+            </svg>
+            <span class="logo-text">MongoDB Atlas</span>
+        </div>
+        <div class="nav-links">
+            <a href="#resumen">Resumen</a>
+            <a href="#comparativa">Comparativa</a>
+            <a href="#arquitectura">Arquitectura</a>
+            <a href="#conclusion">Conclusión</a>
+            <a href="#casos">Casos de Éxito</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="versus-bg">VS</div>
+        <div class="hero-content">
+            <div class="badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Análisis Técnico Comparativo
+            </div>
+            
+            <h1>
+                <span class="mongodb">MongoDB</span>
+                <span class="vs">vs</span>
+                <span class="couchbase">Couchbase</span>
+            </h1>
+            
+            <p class="hero-subtitle">
+                Evaluación detallada para el proyecto de migración del Catálogo Ripley. 
+                Comparamos capacidades técnicas, arquitectura, rendimiento y ecosistema.
+            </p>
+
+            <div class="score-cards">
+                <div class="score-card mongodb">
+                    <div class="db-name">MongoDB</div>
+                    <div class="score">32</div>
+                    <div class="label">Ventajas Clave</div>
+                </div>
+                <div class="score-card couchbase">
+                    <div class="db-name">Couchbase</div>
+                    <div class="score">4</div>
+                    <div class="label">Ventajas Clave</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Stats -->
+    <section id="resumen">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Resumen Ejecutivo</span>
+            <h2 class="section-title">MongoDB en Números</h2>
+            <p class="section-subtitle">Ventajas cuantificables sobre Couchbase para el caso de uso de Ripley</p>
+        </div>
+
+        <div class="stats-grid animate-on-scroll">
+            <div class="stat-card">
+                <div class="stat-value">&lt;5s</div>
+                <div class="stat-label">Tiempo de Failover</div>
+                <div class="stat-comparison">Couchbase: 120+ segundos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">50</div>
+                <div class="stat-label">Réplicas Máximas</div>
+                <div class="stat-comparison">Couchbase: Solo 2 réplicas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">12+</div>
+                <div class="stat-label">Drivers Oficiales</div>
+                <div class="stat-comparison">Couchbase: ~10 drivers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">1</div>
+                <div class="stat-label">Lenguaje de Query</div>
+                <div class="stat-comparison">Couchbase: 4 lenguajes incompatibles</div>
+            </div>
+        </div>
+
+        <!-- Quote -->
+        <div class="quote-section animate-on-scroll">
+            <div class="quote-mark">"</div>
+            <p class="quote-text">
+                Amadeus usa MongoDB como la navaja suiza de tecnología NoSQL. Es ideal cuando muchos documentos deben procesarse para realizar queries complejos. También usamos Couchbase, pero solo como key-value store y capa de caché para grandes volúmenes cuando la búsqueda es solo por unas pocas dimensiones.
+            </p>
+            <div class="quote-author">CTO de Amadeus</div>
+            <div class="quote-role">Cliente referencia de Couchbase que también usa MongoDB</div>
+        </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section id="comparativa">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Comparativa Rápida</span>
+            <h2 class="section-title">Feature por Feature</h2>
+            <p class="section-subtitle">Comparación directa de las capacidades más relevantes para el catálogo de productos</p>
+        </div>
+
+        <div class="comparison-table animate-on-scroll">
+            <div class="table-header">
+                <div class="table-header-cell feature">Funcionalidad</div>
+                <div class="table-header-cell mongodb-col">MongoDB</div>
+                <div class="table-header-cell couchbase-col">Couchbase</div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Transacciones ACID Multi-Documento</span>
+                        <span class="feature-desc">Permite actualizar múltiples documentos de forma atómica. Crítico para operaciones como actualizar inventario + precio + promoción en una sola transacción sin riesgo de inconsistencias.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">Completo</span></div>
+                <div class="table-cell couchbase-val"><span class="partial">⚠</span> <span class="cell-text warn">Muy limitado</span></div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Consistencia entre Datos e Índices</span>
+                        <span class="feature-desc">Garantiza que al buscar por marca, categoría o precio, los resultados reflejen el estado actual de los datos. Sin esto, un cliente podría ver productos con precios desactualizados.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">Por defecto</span></div>
+                <div class="table-cell couchbase-val"><span class="cross">✗</span> <span class="cell-text bad">Eventual</span></div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Failover Automático</span>
+                        <span class="feature-desc">Tiempo que tarda el sistema en recuperarse si un servidor falla. En CyberDay, 2 minutos de caída pueden significar millones en ventas perdidas.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">&lt;5 segundos</span></div>
+                <div class="table-cell couchbase-val"><span class="partial">⚠</span> <span class="cell-text warn">120+ seg (deshabilitado por defecto)</span></div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Soporte Multi-Cloud / Multi-Región</span>
+                        <span class="feature-desc">Capacidad de tener un solo cluster distribuido entre AWS, GCP y Azure, o entre múltiples regiones. Ideal para disaster recovery y baja latencia global.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">Nativo</span></div>
+                <div class="table-cell couchbase-val"><span class="cross">✗</span> <span class="cell-text bad">No soportado</span></div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Tipos de Datos Avanzados (Fechas, Decimales)</span>
+                        <span class="feature-desc">Soporte nativo para fechas, timestamps y números decimales precisos. Esencial para precios (evita errores de redondeo) y fechas de promociones.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">Nativos</span></div>
+                <div class="table-cell couchbase-val"><span class="cross">✗</span> <span class="cell-text bad">No soportados</span></div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Time Series Collections Nativas</span>
+                        <span class="feature-desc">Colecciones optimizadas para datos temporales como historial de precios, métricas de rendimiento o logs de eventos. Compresión automática y queries optimizados.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">Desde 5.0</span></div>
+                <div class="table-cell couchbase-val"><span class="partial">⚠</span> <span class="cell-text warn">Desde 7.2 (Sep 2023)</span></div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Schema Governance</span>
+                        <span class="feature-desc">Validación de esquema JSON que previene datos malformados. Garantiza que todos los productos tengan los campos requeridos (SKU, precio, stock) en el formato correcto.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">Validación JSON Schema</span></div>
+                <div class="table-cell couchbase-val"><span class="cross">✗</span> <span class="cell-text bad">No disponible</span></div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Selección de Shard Key</span>
+                        <span class="feature-desc">Elegir cómo se distribuyen los datos en el cluster. Permite agrupar productos por categoría o región para queries más rápidos. Con hash de ID, todos los queries van a todos los nodos.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">Cualquier campo, compound keys</span></div>
+                <div class="table-cell couchbase-val"><span class="cross">✗</span> <span class="cell-text bad">Solo document ID (hash)</span></div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Búsqueda Full-Text (Lucene)</span>
+                        <span class="feature-desc">Motor de búsqueda integrado para búsquedas tipo "zapatillas running nike rojas". Soporta sinónimos, relevancia, fuzzy matching y autocompletado.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">Atlas Search integrado</span></div>
+                <div class="table-cell couchbase-val"><span class="cross">✗</span> <span class="cell-text bad">No Lucene</span></div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Backup Continuo con PITR</span>
+                        <span class="feature-desc">Point-in-Time Recovery permite restaurar la base de datos a cualquier segundo específico. Si algo sale mal a las 3:45:32pm, puedes volver a las 3:45:31pm.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">Cloud Backup nativo</span></div>
+                <div class="table-cell couchbase-val"><span class="cross">✗</span> <span class="cell-text bad">Backup primitivo</span></div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Retryable Reads/Writes</span>
+                        <span class="feature-desc">El driver reintenta automáticamente operaciones fallidas por problemas de red. Evita que la aplicación tenga que manejar errores transitorios manualmente.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">Automático en driver</span></div>
+                <div class="table-cell couchbase-val"><span class="cross">✗</span> <span class="cell-text bad">Manual en aplicación</span></div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Journaling para Durabilidad</span>
+                        <span class="feature-desc">Write-ahead logging que garantiza que los datos no se pierdan incluso si el servidor se apaga abruptamente. Sin journaling, un corte de luz puede corromper datos.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">Por defecto</span></div>
+                <div class="table-cell couchbase-val"><span class="cross">✗</span> <span class="cell-text bad">No disponible</span></div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Queryable Encryption</span>
+                        <span class="feature-desc">Permite buscar y filtrar datos encriptados sin desencriptarlos en el servidor. Ideal para datos sensibles de clientes que requieren cumplimiento regulatorio.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">Nativo</span></div>
+                <div class="table-cell couchbase-val"><span class="cross">✗</span> <span class="cell-text bad">No disponible</span></div>
+            </div>
+
+            <div class="table-row">
+                <div class="table-cell feature">
+                    <div class="feature-content">
+                        <span class="feature-name">Ecosistema de Partners</span>
+                        <span class="feature-desc">Integraciones pre-construidas con herramientas de BI, ETL, monitoreo, y más. Un ecosistema grande significa menos desarrollo custom y más soluciones probadas.</span>
+                    </div>
+                </div>
+                <div class="table-cell mongodb-val"><span class="check">✓</span> <span class="cell-text good">1,000+</span></div>
+                <div class="table-cell couchbase-val"><span class="partial">⚠</span> <span class="cell-text warn">~100</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Deep Dive -->
+    <section id="arquitectura">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Arquitectura</span>
+            <h2 class="section-title">Diferencias Arquitectónicas Clave</h2>
+            <p class="section-subtitle">Por qué la arquitectura de MongoDB es superior para el catálogo de productos</p>
+        </div>
+
+        <div class="detail-grid animate-on-scroll">
+            <!-- Query Languages -->
+            <div class="detail-card">
+                <div class="detail-header">
+                    <div class="detail-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+                        </svg>
+                    </div>
+                    <h3 class="detail-title">Lenguajes de Query</h3>
+                </div>
+                <div class="detail-body">
+                    <div class="detail-comparison">
+                        <div class="db-column mongodb-col">
+                            <div class="db-column-header">
+                                <span class="db-name">MongoDB</span>
+                            </div>
+                            <ul>
+                                <li>Un solo API de query unificado (MQL)</li>
+                                <li>Mismo lenguaje para todas las operaciones</li>
+                                <li>Drivers idiomáticos en 12+ lenguajes</li>
+                                <li>Stable API para futuras versiones</li>
+                                <li>Compatible con herramientas BI via Atlas SQL</li>
+                            </ul>
+                        </div>
+                        <div class="db-column couchbase-col">
+                            <div class="db-column-header">
+                                <span class="db-name">Couchbase</span>
+                            </div>
+                            <ul>
+                                <li>4 lenguajes incompatibles que aprender</li>
+                                <li>Key-Value SDK para baja latencia</li>
+                                <li>N1QL para queries con índices</li>
+                                <li>SQL++ para Analytics (diferente de N1QL)</li>
+                                <li>MapReduce para vistas y geoespacial</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indexing -->
+            <div class="detail-card">
+                <div class="detail-header">
+                    <div class="detail-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
+                        </svg>
+                    </div>
+                    <h3 class="detail-title">Índices Secundarios</h3>
+                </div>
+                <div class="detail-body">
+                    <div class="detail-comparison">
+                        <div class="db-column mongodb-col">
+                            <div class="db-column-header">
+                                <span class="db-name">MongoDB</span>
+                            </div>
+                            <ul>
+                                <li>Índices atómicamente consistentes con datos</li>
+                                <li>Creación/modificación sin downtime</li>
+                                <li>Compresión automática de índices</li>
+                                <li>Performance Advisor con click-to-create</li>
+                                <li>Wildcard, compound, geospatial, text...</li>
+                            </ul>
+                        </div>
+                        <div class="db-column couchbase-col">
+                            <div class="db-column-header">
+                                <span class="db-name">Couchbase</span>
+                            </div>
+                            <ul>
+                                <li>Índices eventualmente consistentes</li>
+                                <li>Pueden retornar datos obsoletos o borrados</li>
+                                <li>Requiere request_plus (añade latencia)</li>
+                                <li>Memory-Optimized requiere reinicio del cluster</li>
+                                <li>No se pueden mezclar tipos de índice</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Failover -->
+            <div class="detail-card">
+                <div class="detail-header">
+                    <div class="detail-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                        </svg>
+                    </div>
+                    <h3 class="detail-title">Alta Disponibilidad</h3>
+                </div>
+                <div class="detail-body">
+                    <div class="detail-comparison">
+                        <div class="db-column mongodb-col">
+                            <div class="db-column-header">
+                                <span class="db-name">MongoDB</span>
+                            </div>
+                            <ul>
+                                <li>Failover automático &lt;5 segundos</li>
+                                <li>Replica sets auto-healing</li>
+                                <li>Hasta 50 miembros por replica set</li>
+                                <li>Hedged Reads para menor latencia</li>
+                                <li>Retryable Reads/Writes automáticos</li>
+                            </ul>
+                        </div>
+                        <div class="db-column couchbase-col">
+                            <div class="db-column-header">
+                                <span class="db-name">Couchbase</span>
+                            </div>
+                            <ul>
+                                <li>Failover deshabilitado por defecto</li>
+                                <li>120+ segundos de timeout predeterminado</li>
+                                <li>Máximo 2 réplicas</li>
+                                <li>Solo 1 evento de failover automático</li>
+                                <li>Rebalanceo manual post-failover</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sharding -->
+            <div class="detail-card">
+                <div class="detail-header">
+                    <div class="detail-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7m0 0a3 3 0 01-3 3m0 3h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008zm-3 6h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008z" />
+                        </svg>
+                    </div>
+                    <h3 class="detail-title">Sharding & Escalabilidad</h3>
+                </div>
+                <div class="detail-body">
+                    <div class="detail-comparison">
+                        <div class="db-column mongodb-col">
+                            <div class="db-column-header">
+                                <span class="db-name">MongoDB</span>
+                            </div>
+                            <ul>
+                                <li>Shard key: cualquier campo o compound</li>
+                                <li>Políticas: Range, Hash, Zone Sharding</li>
+                                <li>Live resharding sin downtime</li>
+                                <li>Shard Key Advisor en 7.0+</li>
+                                <li>Queries dirigidas a shards específicos</li>
+                            </ul>
+                        </div>
+                        <div class="db-column couchbase-col">
+                            <div class="db-column-header">
+                                <span class="db-name">Couchbase</span>
+                            </div>
+                            <ul>
+                                <li>Shard key: solo document ID</li>
+                                <li>Solo hash-based sharding</li>
+                                <li>Documentos distribuidos aleatoriamente</li>
+                                <li>Queries broadcast a todos los nodos</li>
+                                <li>Limitado a 6 buckets recomendados</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Verdict Section -->
+    <section id="conclusion">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Conclusión</span>
+            <h2 class="section-title">¿Por qué MongoDB para Ripley?</h2>
+            <p class="section-subtitle">Razones clave por las que MongoDB es la mejor opción para el catálogo de productos</p>
+        </div>
+
+        <div class="verdict-grid animate-on-scroll">
+            <div class="verdict-card">
+                <div class="verdict-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                    </svg>
+                </div>
+                <h3 class="verdict-title">Rendimiento Garantizado</h3>
+                <p class="verdict-text">
+                    Con índices consistentes, failover en menos de 5 segundos y retryable operations, 
+                    MongoDB garantiza los SLAs de latencia &lt;10ms que Ripley necesita para CyberDay.
+                </p>
+                <div class="verdict-winner">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    MongoDB Gana
+                </div>
+            </div>
+
+            <div class="verdict-card">
+                <div class="verdict-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+                    </svg>
+                </div>
+                <h3 class="verdict-title">Simplicidad de Desarrollo</h3>
+                <p class="verdict-text">
+                    Un solo lenguaje de query (MQL) vs 4 lenguajes incompatibles en Couchbase. 
+                    Drivers idiomáticos y documentación superior reducen el tiempo de desarrollo.
+                </p>
+                <div class="verdict-winner">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    MongoDB Gana
+                </div>
+            </div>
+
+            <div class="verdict-card">
+                <div class="verdict-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                    </svg>
+                </div>
+                <h3 class="verdict-title">Operaciones Simplificadas</h3>
+                <p class="verdict-text">
+                    Atlas ofrece backup continuo con PITR, auto-scaling, Performance Advisor, 
+                    y upgrades sin downtime. Couchbase requiere intervención manual constante.
+                </p>
+                <div class="verdict-winner">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    MongoDB Gana
+                </div>
+            </div>
+        </div>
+
+        <!-- Final Quote -->
+        <div class="quote-section animate-on-scroll" style="margin-top: 60px;">
+            <div class="quote-mark">"</div>
+            <p class="quote-text">
+                Después de evaluar ambos productos, Ticketek seleccionó MongoDB porque fue el único que 
+                pudo cumplir con las cargas de rendimiento esperadas out-of-the-box. MongoDB ahora corre 
+                como el sistema de registro principal de Ticketek.
+            </p>
+            <div class="quote-author">Ticketek</div>
+            <div class="quote-role">Plataforma líder de ticketing que evaluó MongoDB vs Couchbase</div>
+        </div>
+    </section>
+
+    <!-- Customer Success Stories -->
+    <section id="casos">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Casos de Éxito</span>
+            <h2 class="section-title">Clientes que Eligieron MongoDB</h2>
+            <p class="section-subtitle">Empresas que evaluaron ambas soluciones y seleccionaron MongoDB sobre Couchbase</p>
+        </div>
+
+        <div class="cases-grid animate-on-scroll">
+            <!-- Amadeus -->
+            <div class="case-card">
+                <div class="case-header">
+                    <div class="case-logo">
+                        <span class="case-initial">A</span>
+                    </div>
+                    <div class="case-info">
+                        <h3 class="case-company">Amadeus</h3>
+                        <span class="case-industry">Tecnología de Viajes</span>
+                    </div>
+                </div>
+                <div class="case-body">
+                    <p class="case-description">
+                        Usa MongoDB como "la navaja suiza de NoSQL" para queries complejos que procesan muchos documentos. 
+                        Couchbase quedó relegado solo como key-value store y capa de caché para búsquedas simples.
+                    </p>
+                    <div class="case-verdict">
+                        <span class="verdict-label">Veredicto:</span>
+                        <span class="verdict-value">MongoDB para workloads complejos, Couchbase solo para caché</span>
+                    </div>
+                </div>
+                <a href="https://www.mongodb.com/blog/post/amadeus-case-study" target="_blank" class="case-link">
+                    <span>Ver caso de estudio</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Flobiz -->
+            <div class="case-card">
+                <div class="case-header">
+                    <div class="case-logo">
+                        <span class="case-initial">F</span>
+                    </div>
+                    <div class="case-info">
+                        <h3 class="case-company">Flobiz</h3>
+                        <span class="case-industry">Fintech</span>
+                    </div>
+                </div>
+                <div class="case-body">
+                    <p class="case-description">
+                        Eligió MongoDB sobre Couchbase para myBillBook. Utilizaron Atlas Device Sync y SDKs para 
+                        construir una aplicación móvil robusta. La integración de todos los servicios en una capa 
+                        de datos unificada fue la mayor ventaja.
+                    </p>
+                    <div class="case-verdict">
+                        <span class="verdict-label">Ventaja clave:</span>
+                        <span class="verdict-value">Integración unificada con Atlas Device Sync</span>
+                    </div>
+                </div>
+                <a href="https://www.mongodb.com/customers/flobiz" target="_blank" class="case-link">
+                    <span>Ver caso de estudio</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Qumram / UBS -->
+            <div class="case-card">
+                <div class="case-header">
+                    <div class="case-logo">
+                        <span class="case-initial">Q</span>
+                    </div>
+                    <div class="case-info">
+                        <h3 class="case-company">Qumram (UBS)</h3>
+                        <span class="case-industry">Fintech / Compliance</span>
+                    </div>
+                </div>
+                <div class="case-body">
+                    <p class="case-description">
+                        Seleccionó MongoDB sobre Couchbase para soluciones de compliance financiero y detección de fraude 
+                        usadas por instituciones globales como UBS. Razones: modelado flexible, analytics nativo, 
+                        escalabilidad y mayor madurez del producto.
+                    </p>
+                    <div class="case-verdict">
+                        <span class="verdict-label">Ventaja clave:</span>
+                        <span class="verdict-value">Mayor madurez y analytics nativos</span>
+                    </div>
+                </div>
+                <a href="https://www.mongodb.com/customers/qumram" target="_blank" class="case-link">
+                    <span>Ver caso de estudio</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- SEGA -->
+            <div class="case-card">
+                <div class="case-header">
+                    <div class="case-logo">
+                        <span class="case-initial">S</span>
+                    </div>
+                    <div class="case-info">
+                        <h3 class="case-company">SEGA Hardlight</h3>
+                        <span class="case-industry">Gaming</span>
+                    </div>
+                </div>
+                <div class="case-body">
+                    <p class="case-description">
+                        Seleccionó MongoDB sobre Couchbase debido a menor complejidad de administración y soporte 
+                        enterprise más maduro. La simplicidad operacional fue determinante para el equipo de desarrollo.
+                    </p>
+                    <div class="case-verdict">
+                        <span class="verdict-label">Ventaja clave:</span>
+                        <span class="verdict-value">Menor complejidad operacional</span>
+                    </div>
+                </div>
+                <a href="https://www.mongodb.com/customers/sega" target="_blank" class="case-link">
+                    <span>Ver caso de estudio</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Predii -->
+            <div class="case-card">
+                <div class="case-header">
+                    <div class="case-logo">
+                        <span class="case-initial">P</span>
+                    </div>
+                    <div class="case-info">
+                        <h3 class="case-company">Predii</h3>
+                        <span class="case-industry">IoT / AI Analytics</span>
+                    </div>
+                </div>
+                <div class="case-body">
+                    <p class="case-description">
+                        <strong>Migró de Couchbase a MongoDB</strong> para su plataforma IoT y AI. Buscaban funcionalidad 
+                        más rica (search, faceting), mejor comunidad y soporte de drivers. Lograron <strong>reducir 
+                        almacenamiento 5x</strong> gracias a la compresión de WiredTiger.
+                    </p>
+                    <div class="case-verdict">
+                        <span class="verdict-label">Resultado:</span>
+                        <span class="verdict-value">5x menos storage + desarrollo más rápido</span>
+                    </div>
+                </div>
+                <a href="https://www.mongodb.com/customers/predii" target="_blank" class="case-link">
+                    <span>Ver caso de estudio</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Leveler -->
+            <div class="case-card">
+                <div class="case-header">
+                    <div class="case-logo">
+                        <span class="case-initial">L</span>
+                    </div>
+                    <div class="case-info">
+                        <h3 class="case-company">Leveler.com</h3>
+                        <span class="case-industry">SaaS Platform</span>
+                    </div>
+                </div>
+                <div class="case-body">
+                    <p class="case-description">
+                        <strong>Migró de Couchbase a MongoDB</strong> y logró resultados impresionantes: 
+                        <strong>30x mejor rendimiento</strong> con <strong>3x menos overhead de desarrollo</strong>. 
+                        La mejora fue dramática e inmediata.
+                    </p>
+                    <div class="case-verdict">
+                        <span class="verdict-label">Resultado:</span>
+                        <span class="verdict-value">30x más rendimiento, 3x menos desarrollo</span>
+                    </div>
+                </div>
+                <a href="https://www.mongodb.com/customers" target="_blank" class="case-link">
+                    <span>Ver caso de estudio</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Ticketek -->
+            <div class="case-card">
+                <div class="case-header">
+                    <div class="case-logo">
+                        <span class="case-initial">T</span>
+                    </div>
+                    <div class="case-info">
+                        <h3 class="case-company">Ticketek</h3>
+                        <span class="case-industry">Ticketing Platform</span>
+                    </div>
+                </div>
+                <div class="case-body">
+                    <p class="case-description">
+                        Evaluó bases de datos relacionales, Couchbase y MongoDB. <strong>Solo MongoDB pudo cumplir 
+                        con las cargas de rendimiento esperadas out-of-the-box</strong>. Ahora corre como su sistema 
+                        de registro principal.
+                    </p>
+                    <div class="case-verdict">
+                        <span class="verdict-label">Ventaja clave:</span>
+                        <span class="verdict-value">Único que cumplió rendimiento esperado</span>
+                    </div>
+                </div>
+                <a href="https://www.mongodb.com/customers/ticketek" target="_blank" class="case-link">
+                    <span>Ver caso de estudio</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Sporting Solutions -->
+            <div class="case-card">
+                <div class="case-header">
+                    <div class="case-logo">
+                        <span class="case-initial">SS</span>
+                    </div>
+                    <div class="case-info">
+                        <h3 class="case-company">Sporting Solutions</h3>
+                        <span class="case-industry">Gaming / Betting</span>
+                    </div>
+                </div>
+                <div class="case-body">
+                    <p class="case-description">
+                        Compañía líder en tecnología de apuestas in-play. Seleccionó MongoDB sobre Couchbase por 
+                        <strong>mayor productividad de desarrolladores</strong>, mejor tooling operacional y el 
+                        tamaño del ecosistema.
+                    </p>
+                    <div class="case-verdict">
+                        <span class="verdict-label">Ventaja clave:</span>
+                        <span class="verdict-value">Productividad y ecosistema superior</span>
+                    </div>
+                </div>
+                <a href="https://www.mongodb.com/customers/sporting-solutions" target="_blank" class="case-link">
+                    <span>Ver caso de estudio</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- Big Wins Banner -->
+        <div class="big-wins-banner animate-on-scroll">
+            <div class="wins-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0" />
+                </svg>
+                <h3>Deals $100K+ Ganados vs Couchbase (FY23 Q1)</h3>
+            </div>
+            <div class="wins-logos">
+                <div class="win-logo">
+                    <span class="win-company">Apple Inc</span>
+                </div>
+                <div class="win-logo">
+                    <span class="win-company">Rakuten Group</span>
+                </div>
+                <div class="win-logo">
+                    <span class="win-company">Amadeus Data Processing</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">
+            <svg viewBox="0 0 15 32" xmlns="http://www.w3.org/2000/svg" height="32">
+                <path d="M8.62 1.05c-.31-.55-.52-.89-.57-1.01-.05.12-.26.46-.57 1.01C3.7 7.54.5 12.98.5 17.6c0 4.35 2.95 7.99 6.94 9.1v4.26c0 .27.22.5.5.5s.5-.22.5-.5v-4.26c3.99-1.11 6.94-4.75 6.94-9.1 0-4.62-3.2-10.06-6.76-16.55zM7.94 25.16c-.28.05-.5-.17-.5-.44V11.79c0-.27.22-.5.5-.5s.5.22.5.5v12.93c0 .27-.22.49-.5.44z" fill="#00ED64"/>
+            </svg>
+        </div>
+        <p class="footer-text">Comparativa Técnica preparada para Equipo de Arquitectura Ripley</p>
+        <p class="footer-text">Elaborado por: Equipo de Arquitectura MongoDB</p>
+        <p class="footer-text" style="color: var(--gray-dark-2); margin-top: 16px; font-size: 12px;">Diciembre 2025</p>
+    </footer>
+
+    <script>
+        // Animate on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Nav background on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('.nav');
+            nav.style.background = window.scrollY > 100 
+                ? 'rgba(0, 30, 43, 0.98)' 
+                : 'rgba(0, 30, 43, 0.95)';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Atlas | Sizing Catálogo Ripley</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* MongoDB LeafyGreen Colors */
+            --mongodb-green: #00ED64;
+            --mongodb-green-dark: #00684A;
+            --mongodb-green-deep: #023430;
+            --mongodb-black: #001E2B;
+            --gray-dark-4: #112733;
+            --gray-dark-3: #1C2D38;
+            --gray-dark-2: #3D4F58;
+            --gray-light-2: #E8EDEB;
+            --gray-light-1: #C1C7C6;
+            --gray-light-3: #F9FBFA;
+            --gray-base: #889397;
+            --blue-light: #0498EC;
+            --warning: #FFB000;
+            --error: #E84949;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: var(--mongodb-black);
+            color: var(--gray-light-2);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--gray-dark-4);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--mongodb-green-dark);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--mongodb-green);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: linear-gradient(135deg, var(--mongodb-black) 0%, var(--gray-dark-4) 50%, var(--mongodb-black) 100%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 237, 100, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(4, 152, 236, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(0, 104, 74, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* Animated Grid Background */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(0, 237, 100, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 237, 100, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--mongodb-green);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0, 30, 43, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 237, 100, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo svg {
+            height: 40px;
+            fill: var(--mongodb-green);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: var(--gray-light-1);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--mongodb-green);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--mongodb-green);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            padding: 0 20px;
+            max-width: 1000px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(0, 237, 100, 0.1);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: 50px;
+            font-size: 13px;
+            color: var(--mongodb-green);
+            margin-bottom: 32px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--mongodb-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero h1 {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: clamp(48px, 8vw, 80px);
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--gray-light-1);
+            margin-bottom: 48px;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--mongodb-green);
+            font-family: Georgia, 'Times New Roman', serif;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray-base);
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-base);
+            font-size: 12px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        .scroll-indicator svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--mongodb-green);
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(0, 237, 100, 0.1);
+            border-radius: 4px;
+            color: var(--mongodb-green);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 44px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--gray-light-1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Metrics Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, var(--gray-dark-4) 0%, var(--gray-dark-3) 100%);
+            border: 1px solid var(--gray-dark-2);
+            border-radius: 12px;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--mongodb-green);
+            transform: scaleY(0);
+            transition: transform 0.4s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--mongodb-green-dark);
+            box-shadow: 0 20px 40px rgba(0, 237, 100, 0.1);
+        }
+
+        .metric-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 237, 100, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .metric-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--mongodb-green);
+        }
+
+        .metric-title {
+            font-size: 14px;
+            color: var(--gray-base);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--white);
+            font-family: Georgia, 'Times New Roman', serif;
+        }
+
+        .metric-unit {
+            font-size: 18px;
+            color: var(--mongodb-green);
+            margin-left: 4px;
+        }
+
+        .metric-desc {
+            font-size: 14px;
+            color: var(--gray-light-1);
+            margin-top: 12px;
+        }
+
+        /* Region Table */
+        .region-table-container {
+            background: var(--gray-dark-4);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--gray-dark-2);
+        }
+
+        .region-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray-dark-2);
+        }
+
+        .region-tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            color: var(--gray-light-1);
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .region-tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--mongodb-green);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .region-tab.active {
+            color: var(--mongodb-green);
+            background: rgba(0, 237, 100, 0.05);
+        }
+
+        .region-tab.active::after {
+            transform: scaleX(1);
+        }
+
+        .region-tab:hover {
+            color: var(--mongodb-green);
+        }
+
+        .region-content {
+            padding: 32px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 16px 20px;
+            background: var(--mongodb-black);
+            color: var(--gray-light-2);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--gray-dark-2);
+            font-size: 15px;
+        }
+
+        .data-table tr:hover td {
+            background: rgba(0, 237, 100, 0.03);
+        }
+
+        .data-table .value-highlight {
+            color: var(--mongodb-green);
+            font-weight: 600;
+            font-family: 'Source Code Pro', monospace;
+        }
+
+        .total-row td {
+            background: rgba(0, 237, 100, 0.08) !important;
+            font-weight: 600;
+            color: var(--mongodb-green);
+        }
+
+        /* Cluster Specs */
+        .cluster-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        @media (max-width: 900px) {
+            .cluster-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .cluster-card {
+            background: linear-gradient(135deg, var(--gray-dark-4) 0%, var(--gray-dark-3) 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--gray-dark-2);
+            transition: all 0.4s ease;
+        }
+
+        .cluster-card:hover {
+            border-color: var(--mongodb-green-dark);
+            transform: scale(1.02);
+        }
+
+        .cluster-header {
+            padding: 32px;
+            background: linear-gradient(135deg, var(--mongodb-black) 0%, var(--gray-dark-4) 100%);
+            border-bottom: 1px solid var(--gray-dark-2);
+            position: relative;
+        }
+
+        .cluster-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--mongodb-green), var(--mongodb-green-dark));
+        }
+
+        .cluster-region {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--mongodb-green);
+            margin-bottom: 8px;
+        }
+
+        .cluster-tier {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .cluster-tier-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(0, 237, 100, 0.15);
+            border-radius: 6px;
+            color: var(--mongodb-green);
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .cluster-body {
+            padding: 32px;
+        }
+
+        .spec-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--gray-dark-2);
+        }
+
+        .spec-row:last-child {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--gray-light-1);
+            font-size: 15px;
+        }
+
+        .spec-label svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--gray-base);
+        }
+
+        .spec-value {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        /* Adjustment Banner */
+        .adjustment-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(0, 104, 74, 0.05) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 48px;
+        }
+
+        .adjustment-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .adjustment-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--mongodb-black);
+        }
+
+        .adjustment-content h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .adjustment-content p {
+            font-size: 15px;
+            color: var(--gray-light-1);
+            line-height: 1.7;
+        }
+
+        .adjustment-content strong {
+            color: var(--mongodb-green);
+        }
+
+        /* Cluster Comparison */
+        .cluster-comparison {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 20px 32px;
+            background: var(--mongodb-black);
+            border-top: 1px solid var(--gray-dark-2);
+        }
+
+        .comparison-item {
+            text-align: center;
+        }
+
+        .comparison-item.negative .comparison-value {
+            color: var(--error);
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        .comparison-item.positive .comparison-value {
+            color: var(--mongodb-green);
+        }
+
+        .comparison-label {
+            display: block;
+            font-size: 11px;
+            color: var(--gray-base);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .comparison-value {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .comparison-arrow {
+            font-size: 20px;
+            color: var(--mongodb-green);
+        }
+
+        .spec-highlight {
+            color: var(--mongodb-green) !important;
+        }
+
+        .spec-success {
+            color: var(--mongodb-green) !important;
+            background: rgba(0, 237, 100, 0.1);
+            padding: 4px 12px;
+            border-radius: 6px;
+        }
+
+        /* Architecture Section */
+        #arquitectura {
+            padding: 100px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .architecture-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        @media (max-width: 1100px) {
+            .architecture-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .architecture-card {
+            background: var(--gray-dark-4);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--gray-dark-2);
+            transition: all 0.4s ease;
+        }
+
+        .architecture-card:hover {
+            border-color: var(--mongodb-green-dark);
+            box-shadow: 0 20px 60px rgba(0, 237, 100, 0.1);
+        }
+
+        .architecture-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: var(--mongodb-black);
+            border-bottom: 2px solid var(--mongodb-green);
+        }
+
+        .architecture-region {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .architecture-badge {
+            font-size: 12px;
+            color: var(--gray-base);
+            background: var(--gray-dark-4);
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .architecture-diagram {
+            padding: 24px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--gray-dark-3) 0%, var(--gray-dark-4) 100%);
+        }
+
+        .architecture-diagram img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        .diagram-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            color: var(--gray-base);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .diagram-placeholder svg {
+            width: 64px;
+            height: 64px;
+            opacity: 0.5;
+        }
+
+        .diagram-placeholder span {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            background: var(--mongodb-black);
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px dashed var(--gray-dark-2);
+        }
+
+        .architecture-footer {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px 24px;
+            background: var(--mongodb-black);
+            border-top: 1px solid var(--gray-dark-2);
+        }
+
+        .arch-spec {
+            text-align: center;
+        }
+
+        .arch-spec-label {
+            display: block;
+            font-size: 11px;
+            color: var(--gray-base);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .arch-spec-value {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--mongodb-green);
+        }
+
+        /* Why Section */
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        @media (max-width: 900px) {
+            .why-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .why-card {
+            background: var(--gray-dark-4);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid var(--gray-dark-2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .why-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(0, 237, 100, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .why-card:hover {
+            border-color: var(--mongodb-green-dark);
+            transform: translateY(-4px);
+        }
+
+        .why-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .why-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--mongodb-black);
+        }
+
+        .why-title {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 16px;
+        }
+
+        .why-text {
+            color: var(--gray-light-1);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .why-highlight {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 237, 100, 0.1);
+            border-radius: 8px;
+            color: var(--mongodb-green);
+            font-weight: 600;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        /* Comparison Table */
+        .comparison-container {
+            background: var(--gray-dark-4);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--gray-dark-2);
+        }
+
+        .comparison-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 2fr;
+            background: var(--mongodb-black);
+        }
+
+        .comparison-header-cell {
+            padding: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .comparison-header-cell.redis {
+            background: rgba(220, 53, 69, 0.1);
+            color: #ff6b6b;
+        }
+
+        .comparison-header-cell.mongodb {
+            background: rgba(0, 237, 100, 0.1);
+            color: var(--mongodb-green);
+        }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 2fr;
+            border-bottom: 1px solid var(--gray-dark-2);
+        }
+
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-cell {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .comparison-cell.feature {
+            justify-content: flex-start;
+            font-weight: 500;
+            color: var(--gray-light-2);
+        }
+
+        .comparison-cell.redis-val {
+            background: rgba(220, 53, 69, 0.03);
+            color: var(--gray-light-1);
+        }
+
+        .comparison-cell.mongodb-val {
+            background: rgba(0, 237, 100, 0.03);
+            color: var(--gray-light-2);
+        }
+
+        .comparison-cell.benefit {
+            justify-content: flex-start;
+            color: var(--mongodb-green);
+            font-size: 13px;
+        }
+
+        /* Next Steps */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        @media (max-width: 900px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .step-card {
+            display: flex;
+            gap: 24px;
+            padding: 32px;
+            background: var(--gray-dark-4);
+            border-radius: 16px;
+            border: 1px solid var(--gray-dark-2);
+            transition: all 0.4s ease;
+        }
+
+        .step-card:hover {
+            border-color: var(--mongodb-green-dark);
+            transform: translateX(8px);
+        }
+
+        .step-number {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--mongodb-green) 0%, var(--mongodb-green-dark) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--mongodb-black);
+            flex-shrink: 0;
+        }
+
+        .step-content h3 {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 12px;
+        }
+
+        .step-content p {
+            color: var(--gray-light-1);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--mongodb-black);
+            border-top: 1px solid var(--gray-dark-2);
+            padding: 60px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .footer-logo svg {
+            height: 32px;
+            fill: var(--mongodb-green);
+        }
+
+        .footer-text {
+            color: var(--gray-base);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .footer-date {
+            color: var(--gray-dark-2);
+            font-size: 12px;
+        }
+
+        /* Animations on scroll */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            section {
+                padding: 60px 24px;
+            }
+            
+            .nav {
+                padding: 16px 24px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 32px;
+            }
+            
+            .section-title {
+                font-size: 32px;
+            }
+            
+            .comparison-header,
+            .comparison-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-header-cell,
+            .comparison-cell {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="logo">
+            <svg viewBox="0 0 15 32" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.62 1.05c-.31-.55-.52-.89-.57-1.01-.05.12-.26.46-.57 1.01C3.7 7.54.5 12.98.5 17.6c0 4.35 2.95 7.99 6.94 9.1v4.26c0 .27.22.5.5.5s.5-.22.5-.5v-4.26c3.99-1.11 6.94-4.75 6.94-9.1 0-4.62-3.2-10.06-6.76-16.55zM7.94 25.16c-.28.05-.5-.17-.5-.44V11.79c0-.27.22-.5.5-.5s.5.22.5.5v12.93c0 .27-.22.49-.5.44z"/>
+            </svg>
+            <span class="logo-text">MongoDB Atlas</span>
+        </div>
+        <div class="nav-links">
+            <a href="#metricas">Métricas</a>
+            <a href="#sizing">Sizing</a>
+            <a href="#arquitectura">Arquitectura</a>
+            <a href="#justificacion">Justificación</a>
+            <a href="#comparativa">Comparativa</a>
+            <a href="#pasos">Próximos Pasos</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="grid-bg"></div>
+        <div class="particles">
+            <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+            <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+            <div class="particle" style="left: 35%; animation-delay: 4s;"></div>
+            <div class="particle" style="left: 50%; animation-delay: 1s;"></div>
+            <div class="particle" style="left: 65%; animation-delay: 3s;"></div>
+            <div class="particle" style="left: 80%; animation-delay: 5s;"></div>
+            <div class="particle" style="left: 90%; animation-delay: 2.5s;"></div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="badge">
+                <span class="badge-dot"></span>
+                Propuesta de Arquitectura
+            </div>
+            <h1>Migración <span class="highlight">Catálogo Ripley</span></h1>
+            <p class="hero-subtitle">Dimensionamiento y arquitectura para migrar de Redis a MongoDB Atlas con latencias menores a 10ms</p>
+            
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-value">176GB</div>
+                    <div class="stat-label">Datos en Chile</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">1,710</div>
+                    <div class="stat-label">OPS Pico</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">&lt;10ms</div>
+                    <div class="stat-label">Latencia Objetivo</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+            Scroll para explorar
+        </div>
+    </section>
+
+    <!-- Métricas Section -->
+    <section id="metricas">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Volumetría</span>
+            <h2 class="section-title">Métricas Base de Ripley</h2>
+            <p class="section-subtitle">Datos extraídos del análisis del ambiente actual en Redis</p>
+        </div>
+
+        <div class="metrics-grid animate-on-scroll">
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
+                <div class="metric-title">Total Documentos</div>
+                <div class="metric-value">~9<span class="metric-unit">M</span></div>
+                <div class="metric-desc">Productos en el catálogo de Chile</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <div class="metric-title">Tamaño Documento</div>
+                <div class="metric-value">80<span class="metric-unit">KB</span></div>
+                <div class="metric-desc">Promedio JSON sin compresión</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div class="metric-title">Pico de Carga</div>
+                <div class="metric-value">1,710<span class="metric-unit">TPS</span></div>
+                <div class="metric-desc">Transacciones/segundo en CyberDay</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="metric-title">Latencia Objetivo</div>
+                <div class="metric-value">10<span class="metric-unit">ms</span></div>
+                <div class="metric-desc">Requisito crítico de respuesta</div>
+            </div>
+        </div>
+
+        <!-- Region Tables -->
+        <div class="region-table-container animate-on-scroll">
+            <div class="region-tabs">
+                <button class="region-tab active" onclick="switchRegion('chile')">🇨🇱 Chile</button>
+                <button class="region-tab" onclick="switchRegion('peru')">🇵🇪 Perú</button>
+            </div>
+            
+            <div class="region-content" id="chile-content">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Memoria Usada (Redis)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>api-catalog-cache</td>
+                            <td class="value-highlight">520 MB</td>
+                        </tr>
+                        <tr>
+                            <td>content-product-pdp</td>
+                            <td class="value-highlight">76 GB</td>
+                        </tr>
+                        <tr>
+                            <td>content-product-storage</td>
+                            <td class="value-highlight">98 GB</td>
+                        </tr>
+                        <tr>
+                            <td>personalization</td>
+                            <td class="value-highlight">2.18 GB</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>Total Región</td>
+                            <td>~176.7 GB</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="region-content" id="peru-content" style="display: none;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Memoria Usada (Redis)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>api-catalog-cache</td>
+                            <td class="value-highlight">470 MB</td>
+                        </tr>
+                        <tr>
+                            <td>content-product-pdp</td>
+                            <td class="value-highlight">37 GB</td>
+                        </tr>
+                        <tr>
+                            <td>content-product-storage</td>
+                            <td class="value-highlight">48 GB</td>
+                        </tr>
+                        <tr>
+                            <td>personalization</td>
+                            <td class="value-highlight">2.41 GB</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>Total Región</td>
+                            <td>~87.8 GB</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sizing Section -->
+    <section id="sizing">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Recomendación</span>
+            <h2 class="section-title">Sizing de Hardware</h2>
+            <p class="section-subtitle">Arquitectura optimizada en GCP para cumplir SLA de 10ms con costos eficientes</p>
+        </div>
+
+        <div class="cluster-grid animate-on-scroll">
+            <!-- Chile Cluster -->
+            <div class="cluster-card">
+                <div class="cluster-header">
+                    <div class="cluster-region">🇨🇱 Cluster Productivo Chile</div>
+                    <div class="cluster-tier">M60 General Purpose</div>
+                    <div class="cluster-tier-badge">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33" />
+                        </svg>
+                        Costo Optimizado
+                    </div>
+                </div>
+                <div class="cluster-body">
+                    <div class="spec-row">
+                        <span class="spec-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                            </svg>
+                            RAM por Nodo
+                        </span>
+                        <span class="spec-value">64 GB</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            vCPUs por Nodo
+                        </span>
+                        <span class="spec-value">16 vCPUs</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+                            </svg>
+                            Almacenamiento SSD
+                        </span>
+                        <span class="spec-value spec-highlight">500 GB</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            IOPS Garantizados
+                        </span>
+                        <span class="spec-value">~15,000</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2" />
+                            </svg>
+                            Nodos (Replica Set)
+                        </span>
+                        <span class="spec-value">3 Nodos</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                            </svg>
+                            RAM Ratio
+                        </span>
+                        <span class="spec-value spec-success">~70% Dataset</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Peru Cluster -->
+            <div class="cluster-card">
+                <div class="cluster-header">
+                    <div class="cluster-region">🇵🇪 Cluster Productivo Perú</div>
+                    <div class="cluster-tier">M50 General Purpose</div>
+                    <div class="cluster-tier-badge">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33" />
+                        </svg>
+                        Costo Optimizado
+                    </div>
+                </div>
+                <div class="cluster-body">
+                    <div class="spec-row">
+                        <span class="spec-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                            </svg>
+                            RAM por Nodo
+                        </span>
+                        <span class="spec-value">32 GB</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            vCPUs por Nodo
+                        </span>
+                        <span class="spec-value">8 vCPUs</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+                            </svg>
+                            Almacenamiento SSD
+                        </span>
+                        <span class="spec-value spec-highlight">250 GB</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            IOPS Garantizados
+                        </span>
+                        <span class="spec-value">~7,500</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2" />
+                            </svg>
+                            Nodos (Replica Set)
+                        </span>
+                        <span class="spec-value">3 Nodos</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                            </svg>
+                            Datos Comprimidos
+                        </span>
+                        <span class="spec-value spec-success">~45 GB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="arquitectura">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Diagramas</span>
+            <h2 class="section-title">Arquitectura de Referencia</h2>
+            <p class="section-subtitle">Topología de despliegue Multi-Zona en GCP para cada región</p>
+        </div>
+
+        <div class="architecture-grid animate-on-scroll">
+            <!-- Chile Architecture -->
+            <div class="architecture-card">
+                <div class="architecture-header">
+                    <span class="architecture-region">🇨🇱 Arquitectura Chile</span>
+                    <span class="architecture-badge">M60 · 3 Nodos · us-central1</span>
+                </div>
+                <div class="architecture-diagram">
+                    <img src="arquitectura.svg" alt="Arquitectura MongoDB Atlas Chile" onerror="this.parentElement.innerHTML='<div class=\'diagram-placeholder\'><svg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke-width=\'1\' stroke=\'currentColor\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z\' /></svg><span>arquitectura.svg</span></div>'">
+                </div>
+                <div class="architecture-footer">
+                    <div class="arch-spec">
+                        <span class="arch-spec-label">Zonas</span>
+                        <span class="arch-spec-value">A, B, C</span>
+                    </div>
+                    <div class="arch-spec">
+                        <span class="arch-spec-label">Failover</span>
+                        <span class="arch-spec-value">&lt;5 seg</span>
+                    </div>
+                    <div class="arch-spec">
+                        <span class="arch-spec-label">IOPS</span>
+                        <span class="arch-spec-value">15,000</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Peru Architecture -->
+            <div class="architecture-card">
+                <div class="architecture-header">
+                    <span class="architecture-region">🇵🇪 Arquitectura Perú</span>
+                    <span class="architecture-badge">M50 · 3 Nodos · us-central1</span>
+                </div>
+                <div class="architecture-diagram">
+                    <img src="arquitectura1.svg" alt="Arquitectura MongoDB Atlas Perú" onerror="this.parentElement.innerHTML='<div class=\'diagram-placeholder\'><svg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke-width=\'1\' stroke=\'currentColor\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z\' /></svg><span>arquitectura1.svg</span></div>'">
+                </div>
+                <div class="architecture-footer">
+                    <div class="arch-spec">
+                        <span class="arch-spec-label">Zonas</span>
+                        <span class="arch-spec-value">A, B, C</span>
+                    </div>
+                    <div class="arch-spec">
+                        <span class="arch-spec-label">Failover</span>
+                        <span class="arch-spec-value">&lt;5 seg</span>
+                    </div>
+                    <div class="arch-spec">
+                        <span class="arch-spec-label">IOPS</span>
+                        <span class="arch-spec-value">7,500</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Justificación Section -->
+    <section id="justificacion">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">El "Por Qué"</span>
+            <h2 class="section-title">Análisis de Working Set y Latencia</h2>
+            <p class="section-subtitle">Cómo garantizamos los 10ms con la configuración optimizada</p>
+        </div>
+
+        <div class="why-grid animate-on-scroll">
+            <div class="why-card">
+                <div class="why-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                    </svg>
+                </div>
+                <h3 class="why-title">Margen de IOPS (Safety Headroom)</h3>
+                <p class="why-text">
+                    <strong>Capacidad:</strong> 15,000 IOPS garantizados con 500GB.<br><br>
+                    <strong>Demanda:</strong> 1,710 IOPS en pico (CyberDay).<br><br>
+                    <strong>Conclusión:</strong> El disco nunca será cuello de botella. Sin "fila de espera" (Queuing), la latencia de lectura se mantiene en el mínimo físico del SSD (1-3ms).
+                </p>
+                <div class="why-highlight">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Cubiertos 9x veces sobre la demanda
+                </div>
+            </div>
+
+            <div class="why-card">
+                <div class="why-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                    </svg>
+                </div>
+                <h3 class="why-title">Efecto de Compresión WiredTiger</h3>
+                <p class="why-text">
+                    <strong>En Redis:</strong> El JSON pesa 80 KB y ocupa 80 KB en RAM.<br><br>
+                    <strong>En MongoDB:</strong> Ese JSON se comprime a ~30-40 KB en disco (Zstd/Snappy).<br><br>
+                    <strong>Resultado:</strong> Requerimos mucho menos I/O de disco para leer la misma cantidad de información. 176GB → ~90GB comprimidos.
+                </p>
+                <div class="why-highlight">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    ~50% menos I/O requerido
+                </div>
+            </div>
+
+            <div class="why-card">
+                <div class="why-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                    </svg>
+                </div>
+                <h3 class="why-title">Índices 100% en Memoria</h3>
+                <p class="why-text">
+                    Con 64 GB de RAM (Chile), garantizamos que <strong>TODOS los índices</strong> vivan permanentemente en memoria RAM:<br><br>
+                    • Product ID<br>
+                    • Categoría<br>
+                    • Marca<br>
+                    • Precio<br><br>
+                    Si la consulta se resuelve por índice (Covered Query), la latencia será de <strong>sub-milisegundos</strong>, idéntico a Redis.
+                </p>
+                <div class="why-highlight">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    ~70% del Dataset en RAM
+                </div>
+            </div>
+
+            <div class="why-card">
+                <div class="why-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+                    </svg>
+                </div>
+                <h3 class="why-title">Gestión de Picos (CyberDay)</h3>
+                <p class="why-text">
+                    Las 16 vCPUs del M60 están sobradas para las 1,710 OPS promedio.<br><br>
+                    <strong>Auto-Scaling:</strong> Habilitaremos escalado automático hacia M80 solo si la CPU supera el 70% de uso.<br><br>
+                    Esto garantiza estabilidad durante eventos masivos sin pagar el costo de un M80 todo el año.
+                </p>
+                <div class="why-highlight">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Zero-Downtime Scaling
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparativa Section -->
+    <section id="comparativa">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Migración</span>
+            <h2 class="section-title">Redis vs MongoDB Atlas</h2>
+            <p class="section-subtitle">Comparativa lado a lado de las tecnologías</p>
+        </div>
+
+        <div class="comparison-container animate-on-scroll">
+            <div class="comparison-header">
+                <div class="comparison-header-cell">Característica</div>
+                <div class="comparison-header-cell redis">Redis (Actual)</div>
+                <div class="comparison-header-cell mongodb">MongoDB Atlas</div>
+                <div class="comparison-header-cell">Beneficio</div>
+            </div>
+            <div class="comparison-row">
+                <div class="comparison-cell feature">Manejo de Datos</div>
+                <div class="comparison-cell redis-val">100% en RAM (Costoso)</div>
+                <div class="comparison-cell mongodb-val">Híbrido RAM + NVMe SSD</div>
+                <div class="comparison-cell benefit">✓ Reducción de costos (no pagas RAM por datos fríos)</div>
+            </div>
+            <div class="comparison-row">
+                <div class="comparison-cell feature">Consultas</div>
+                <div class="comparison-cell redis-val">Solo por Llave (Key-Value)</div>
+                <div class="comparison-cell mongodb-val">Por cualquier campo</div>
+                <div class="comparison-cell benefit">✓ Flexibilidad para el negocio (Marca, Precio, Stock)</div>
+            </div>
+            <div class="comparison-row">
+                <div class="comparison-cell feature">Persistencia</div>
+                <div class="comparison-cell redis-val">Snapshot periódico / AOF</div>
+                <div class="comparison-cell mongodb-val">Confirmación en tiempo real</div>
+                <div class="comparison-cell benefit">✓ Mayor seguridad del dato transaccional (Journaling)</div>
+            </div>
+            <div class="comparison-row">
+                <div class="comparison-cell feature">Alta Disponibilidad</div>
+                <div class="comparison-cell redis-val">Manual / Sentinel</div>
+                <div class="comparison-cell mongodb-val">Automática (Replica Set)</div>
+                <div class="comparison-cell benefit">✓ Menor carga operativa para el equipo</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Próximos Pasos Section -->
+    <section id="pasos">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">Roadmap</span>
+            <h2 class="section-title">Próximos Pasos</h2>
+            <p class="section-subtitle">Acciones recomendadas para avanzar con la migración</p>
+        </div>
+
+        <div class="steps-container animate-on-scroll">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Revisión de Costos</h3>
+                    <p>Validar este sizing con el equipo comercial de MongoDB para obtener la estimación mensual precisa según los precios actuales y posibles descuentos por volumen.</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Technical Field Workshop (TFW)</h3>
+                    <p>Levantar un cluster M60 (se puede pagar por horas) y cargar una muestra representativa de datos para validar que los tiempos de respuesta se mantienen bajo los 10ms con consultas reales del catálogo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">
+            <svg viewBox="0 0 15 32" xmlns="http://www.w3.org/2000/svg" height="32">
+                <path d="M8.62 1.05c-.31-.55-.52-.89-.57-1.01-.05.12-.26.46-.57 1.01C3.7 7.54.5 12.98.5 17.6c0 4.35 2.95 7.99 6.94 9.1v4.26c0 .27.22.5.5.5s.5-.22.5-.5v-4.26c3.99-1.11 6.94-4.75 6.94-9.1 0-4.62-3.2-10.06-6.76-16.55zM7.94 25.16c-.28.05-.5-.17-.5-.44V11.79c0-.27.22-.5.5-.5s.5.22.5.5v12.93c0 .27-.22.49-.5.44z" fill="#00ED64"/>
+            </svg>
+        </div>
+        <p class="footer-text">Propuesta preparada para Equipo de Arquitectura Ripley (Claudio / Pablo)</p>
+        <p class="footer-text">Elaborado por: Equipo de Arquitectura MongoDB</p>
+        <p class="footer-date">25 de Diciembre, 2025</p>
+    </footer>
+
+    <script>
+        // Region Tab Switching
+        function switchRegion(region) {
+            document.querySelectorAll('.region-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.region-content').forEach(content => content.style.display = 'none');
+            
+            event.target.classList.add('active');
+            document.getElementById(region + '-content').style.display = 'block';
+        }
+
+        // Animate on Scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Counter animation for stats
+        function animateValue(element, start, end, duration, suffix = '') {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value.toLocaleString() + suffix;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Trigger counter animation when hero is visible
+        const heroObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const stats = document.querySelectorAll('.stat-value');
+                    // These are already showing the final values, no animation needed for static display
+                    heroObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        heroObserver.observe(document.querySelector('.hero'));
+
+        // Nav background on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('.nav');
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(0, 30, 43, 0.98)';
+            } else {
+                nav.style.background = 'rgba(0, 30, 43, 0.9)';
+            }
+        });
+    </script>
+</body>
+</html>
