@@ -167,12 +167,16 @@
       "dest": "/clientes/bancolombia/matrix.html"
     },
     {
-      "src": "/clientes/bancolombia/queryflux-sizing(?:/.*)?$",
-      "dest": "/clientes/bancolombia/queryflux-sizing.html"
+      "src": "/clientes/bancolombia/queryflux/queryflux-sizing(?:/.*)?$",
+      "dest": "/clientes/bancolombia/queryflux/queryflux-sizing.html"
     },
     {
-      "src": "/clientes/bancolombia/queryflux-price(?:/.*)?$",
-      "dest": "/clientes/bancolombia/queryflux-price.html"
+      "src": "/clientes/bancolombia/queryflux/queryflux-price(?:/.*)?$",
+      "dest": "/clientes/bancolombia/queryflux/queryflux-price.html"
+    },
+    {
+      "src": "/clientes/bancolombia/queryflux/arquitectura(?:/.*)?$",
+      "dest": "/clientes/bancolombia/queryflux/arquitectura.html"
     },
     {
       "src": "/clientes/bancolombia/matrizopciones(?:/.*)?$",

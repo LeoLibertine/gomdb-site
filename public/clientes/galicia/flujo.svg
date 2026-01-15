@@ -1,0 +1,507 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 950" style="font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#001E2B"/>
+      <stop offset="100%" style="stop-color:#112733"/>
+    </linearGradient>
+    
+    <filter id="glowGreen" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#00ED64"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#0498EC"/>
+    </marker>
+    <marker id="arrowPurple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#7B61FF"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#FFB000"/>
+    </marker>
+
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#1C2D38" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1800" height="950" fill="url(#bgGradient)"/>
+  <rect width="1800" height="950" fill="url(#grid)" opacity="0.3"/>
+
+  <!-- Title -->
+  <text x="900" y="38" text-anchor="middle" fill="#FFFFFF" font-size="26" font-weight="700">Arquitectura ODL — Smart Router Pattern</text>
+  <text x="900" y="62" text-anchor="middle" fill="#889397" font-size="14">Banco Galicia • DaaS Modernization • Journey to Cloud</text>
+
+  <!-- ==================== ZONE DIVIDERS ==================== -->
+  <!-- On-Prem Zone -->
+  <rect x="25" y="85" width="850" height="760" rx="20" fill="none" stroke="#3D4F58" stroke-width="2" stroke-dasharray="10,5"/>
+  <rect x="25" y="85" width="850" height="36" rx="20" fill="#1C2D38"/>
+  <text x="450" y="110" text-anchor="middle" fill="#889397" font-size="12" font-weight="600" letter-spacing="3">🏢 ON-PREMISES</text>
+  
+  <!-- Cloud Zone -->
+  <rect x="900" y="85" width="875" height="760" rx="20" fill="none" stroke="#00ED64" stroke-width="2" stroke-dasharray="10,5" opacity="0.5"/>
+  <rect x="900" y="85" width="875" height="36" rx="20" fill="#023430" opacity="0.5"/>
+  <text x="1337" y="110" text-anchor="middle" fill="#00ED64" font-size="12" font-weight="600" letter-spacing="3">☁️ AWS CLOUD</text>
+
+  <!-- ==================== ZONE 1: CANALES (Wider) ==================== -->
+  <g id="zone-channels">
+    <rect x="45" y="140" width="180" height="420" rx="16" fill="#1C2D38" stroke="#0498EC" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="45" y="140" width="180" height="36" rx="16" fill="#0498EC" opacity="0.15"/>
+    <text x="135" y="165" text-anchor="middle" fill="#0498EC" font-size="11" font-weight="600" letter-spacing="1">CANALES DIGITALES</text>
+    
+    <!-- Mobile App -->
+    <g transform="translate(70, 195)">
+      <rect x="0" y="0" width="80" height="120" rx="12" fill="#112733" stroke="#0498EC" stroke-width="1.5"/>
+      <rect x="8" y="15" width="64" height="80" rx="4" fill="#1C2D38"/>
+      <rect x="14" y="22" width="52" height="12" rx="2" fill="#3D4F58"/>
+      <rect x="14" y="40" width="52" height="28" rx="4" fill="#0498EC" opacity="0.2"/>
+      <text x="40" y="58" text-anchor="middle" fill="#0498EC" font-size="9" font-weight="600">SALDO</text>
+      <rect x="14" y="74" width="22" height="18" rx="3" fill="#00ED64" opacity="0.2"/>
+      <rect x="42" y="74" width="22" height="18" rx="3" fill="#7B61FF" opacity="0.2"/>
+      <circle cx="40" cy="107" r="6" fill="none" stroke="#3D4F58" stroke-width="1.5"/>
+      <text x="40" y="138" text-anchor="middle" fill="#E8EDEB" font-size="10" font-weight="500">App Galicia</text>
+    </g>
+    
+    <!-- Home Banking -->
+    <g transform="translate(60, 355)">
+      <rect x="0" y="0" width="100" height="60" rx="8" fill="#112733" stroke="#0498EC" stroke-width="1.5"/>
+      <rect x="8" y="8" width="84" height="36" rx="4" fill="#1C2D38"/>
+      <rect x="14" y="14" width="40" height="4" rx="1" fill="#3D4F58"/>
+      <rect x="14" y="22" width="60" height="4" rx="1" fill="#3D4F58"/>
+      <rect x="14" y="30" width="50" height="4" rx="1" fill="#3D4F58"/>
+      <text x="50" y="78" text-anchor="middle" fill="#E8EDEB" font-size="10" font-weight="500">Home Banking</text>
+    </g>
+    
+    <!-- Aplicativos -->
+    <g transform="translate(60, 450)">
+      <rect x="0" y="0" width="100" height="55" rx="8" fill="#112733" stroke="#7B61FF" stroke-width="1.5"/>
+      <rect x="12" y="10" width="32" height="28" rx="5" fill="#7B61FF" opacity="0.2"/>
+      <rect x="52" y="10" width="32" height="28" rx="5" fill="#7B61FF" opacity="0.2"/>
+      <text x="28" y="30" text-anchor="middle" fill="#7B61FF" font-size="12">⚙️</text>
+      <text x="68" y="30" text-anchor="middle" fill="#7B61FF" font-size="12">📊</text>
+      <text x="50" y="72" text-anchor="middle" fill="#E8EDEB" font-size="10" font-weight="500">Aplicativos</text>
+      <text x="50" y="86" text-anchor="middle" fill="#889397" font-size="8">(PAS internos)</text>
+    </g>
+
+    <!-- Metrics Badge -->
+    <g transform="translate(75, 530)">
+      <rect x="0" y="0" width="70" height="50" rx="8" fill="#00ED64" opacity="0.1" stroke="#00ED64" stroke-width="1"/>
+      <text x="35" y="22" text-anchor="middle" fill="#00ED64" font-size="20" font-weight="700">7M</text>
+      <text x="35" y="38" text-anchor="middle" fill="#889397" font-size="8">requests/día</text>
+    </g>
+  </g>
+
+  <!-- ==================== ZONE 2: APIM (Bigger) ==================== -->
+  <g id="zone-apim">
+    <rect x="250" y="180" width="140" height="340" rx="14" fill="#112733" stroke="#FFB000" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="250" y="180" width="140" height="34" rx="14" fill="#FFB000" opacity="0.15"/>
+    <text x="320" y="203" text-anchor="middle" fill="#FFB000" font-size="10" font-weight="600">API MANAGER</text>
+    <text x="320" y="216" text-anchor="middle" fill="#889397" font-size="8">(3scale)</text>
+    
+    <!-- APIM Features -->
+    <g transform="translate(262, 235)">
+      <rect x="0" y="0" width="116" height="36" rx="6" fill="#1C2D38"/>
+      <text x="58" y="14" text-anchor="middle" fill="#FFB000" font-size="9" font-weight="500">🔐 Auth</text>
+      <text x="58" y="28" text-anchor="middle" fill="#889397" font-size="8">Canal + Token</text>
+    </g>
+    
+    <g transform="translate(262, 280)">
+      <rect x="0" y="0" width="116" height="36" rx="6" fill="#1C2D38"/>
+      <text x="58" y="14" text-anchor="middle" fill="#FFB000" font-size="9" font-weight="500">📋 Rate Limit</text>
+      <text x="58" y="28" text-anchor="middle" fill="#889397" font-size="8">Throttling</text>
+    </g>
+    
+    <g transform="translate(262, 325)">
+      <rect x="0" y="0" width="116" height="36" rx="6" fill="#1C2D38"/>
+      <text x="58" y="14" text-anchor="middle" fill="#FFB000" font-size="9" font-weight="500">📊 Logging</text>
+      <text x="58" y="28" text-anchor="middle" fill="#889397" font-size="8">App Dynamics</text>
+    </g>
+
+    <g transform="translate(262, 370)">
+      <rect x="0" y="0" width="116" height="36" rx="6" fill="#1C2D38"/>
+      <text x="58" y="14" text-anchor="middle" fill="#FFB000" font-size="9" font-weight="500">🔀 Routing</text>
+      <text x="58" y="28" text-anchor="middle" fill="#889397" font-size="8">POM / PAS</text>
+    </g>
+
+    <!-- SLA Box -->
+    <g transform="translate(258, 420)">
+      <rect x="0" y="0" width="124" height="85" rx="8" fill="#1C2D38" stroke="#3D4F58" stroke-width="1"/>
+      <text x="62" y="16" text-anchor="middle" fill="#889397" font-size="8" font-weight="600">SLAs USUARIOS</text>
+      <rect x="8" y="24" width="108" height="18" rx="3" fill="#00ED64" opacity="0.15"/>
+      <text x="62" y="36" text-anchor="middle" fill="#00ED64" font-size="8">Táctico &lt;1s ⚡</text>
+      <rect x="8" y="46" width="108" height="18" rx="3" fill="#0498EC" opacity="0.15"/>
+      <text x="62" y="58" text-anchor="middle" fill="#0498EC" font-size="8">Táctico PD &lt;2s</text>
+      <rect x="8" y="68" width="108" height="14" rx="3" fill="#7B61FF" opacity="0.15"/>
+      <text x="62" y="78" text-anchor="middle" fill="#7B61FF" font-size="7">Asíncrono &lt;30s</text>
+    </g>
+  </g>
+
+  <!-- ==================== ZONE 3: OPENSHIFT (Main Box) ==================== -->
+  <g id="zone-openshift">
+    <rect x="415" y="140" width="445" height="540" rx="16" fill="#1C2D38" stroke="#E84949" stroke-width="2" filter="url(#shadow)"/>
+    <rect x="415" y="140" width="445" height="38" rx="16" fill="#E84949" opacity="0.12"/>
+    
+    <!-- OpenShift Header -->
+    <circle cx="445" cy="159" r="10" fill="#E84949" opacity="0.3"/>
+    <text x="445" y="163" text-anchor="middle" fill="#E84949" font-size="11">⎈</text>
+    <text x="540" y="165" text-anchor="middle" fill="#E84949" font-size="12" font-weight="700">OPENSHIFT 4</text>
+    <text x="700" y="165" text-anchor="middle" fill="#889397" font-size="10">On-Premises</text>
+    
+    <!-- Smart Router Box -->
+    <g transform="translate(435, 195)" filter="url(#shadow)">
+      <rect x="0" y="0" width="405" height="280" rx="12" fill="#112733" stroke="#00ED64" stroke-width="2"/>
+      <rect x="0" y="0" width="405" height="42" rx="12" fill="#00ED64" opacity="0.1"/>
+      
+      <!-- Router Header -->
+      <g transform="translate(15, 10)">
+        <circle cx="12" cy="12" r="10" fill="#00ED64" opacity="0.3"/>
+        <text x="12" y="16" text-anchor="middle" fill="#00ED64" font-size="11">⚡</text>
+        <text x="35" y="16" fill="#00ED64" font-size="13" font-weight="700">Smart Router Services</text>
+        <text x="260" y="16" fill="#889397" font-size="9">(Reemplaza ~251 Pods)</text>
+      </g>
+      
+      <!-- Router Components Grid -->
+      <g transform="translate(15, 55)">
+        <rect x="0" y="0" width="180" height="48" rx="8" fill="#1C2D38" stroke="#3D4F58" stroke-width="1"/>
+        <circle cx="22" cy="24" r="12" fill="#0498EC" opacity="0.2"/>
+        <text x="22" y="28" text-anchor="middle" fill="#0498EC" font-size="11">🚪</text>
+        <text x="55" y="18" fill="#E8EDEB" font-size="10" font-weight="500">API Gateway</text>
+        <text x="55" y="34" fill="#889397" font-size="8">Entrada unificada</text>
+      </g>
+      
+      <g transform="translate(210, 55)">
+        <rect x="0" y="0" width="180" height="48" rx="8" fill="#1C2D38" stroke="#3D4F58" stroke-width="1"/>
+        <circle cx="22" cy="24" r="12" fill="#7B61FF" opacity="0.2"/>
+        <text x="22" y="28" text-anchor="middle" fill="#7B61FF" font-size="11">🧠</text>
+        <text x="55" y="18" fill="#E8EDEB" font-size="10" font-weight="500">Rules Engine</text>
+        <text x="55" y="34" fill="#889397" font-size="8">Ruteo dinámico</text>
+      </g>
+      
+      <g transform="translate(15, 112)">
+        <rect x="0" y="0" width="180" height="48" rx="8" fill="#1C2D38" stroke="#3D4F58" stroke-width="1"/>
+        <circle cx="22" cy="24" r="12" fill="#FFB000" opacity="0.2"/>
+        <text x="22" y="28" text-anchor="middle" fill="#FFB000" font-size="11">🔌</text>
+        <text x="55" y="18" fill="#E8EDEB" font-size="10" font-weight="500">Circuit Breaker</text>
+        <text x="55" y="34" fill="#889397" font-size="8">Failover automático</text>
+      </g>
+      
+      <g transform="translate(210, 112)">
+        <rect x="0" y="0" width="180" height="48" rx="8" fill="#1C2D38" stroke="#3D4F58" stroke-width="1"/>
+        <circle cx="22" cy="24" r="12" fill="#00ED64" opacity="0.2"/>
+        <text x="22" y="28" text-anchor="middle" fill="#00ED64" font-size="11">⏱️</text>
+        <text x="55" y="18" fill="#E8EDEB" font-size="10" font-weight="500">SLA Monitor</text>
+        <text x="55" y="34" fill="#889397" font-size="8">&lt;1s / &lt;2s / &lt;30s</text>
+      </g>
+
+      <!-- Decision Box -->
+      <g transform="translate(15, 175)">
+        <rect x="0" y="0" width="375" height="60" rx="8" fill="#023430" opacity="0.4" stroke="#00ED64" stroke-width="1"/>
+        <text x="187" y="18" text-anchor="middle" fill="#00ED64" font-size="10" font-weight="600">DECISIÓN DE RUTA</text>
+        
+        <g transform="translate(12, 28)">
+          <rect x="0" y="0" width="110" height="24" rx="4" fill="#00ED64" opacity="0.2"/>
+          <text x="55" y="16" text-anchor="middle" fill="#00ED64" font-size="9" font-weight="600">HOT → MongoDB</text>
+        </g>
+        
+        <g transform="translate(132, 28)">
+          <rect x="0" y="0" width="110" height="24" rx="4" fill="#7B61FF" opacity="0.2"/>
+          <text x="55" y="16" text-anchor="middle" fill="#7B61FF" font-size="9" font-weight="600">COLD → Legacy</text>
+        </g>
+        
+        <g transform="translate(252, 28)">
+          <rect x="0" y="0" width="110" height="24" rx="4" fill="#FFB000" opacity="0.2"/>
+          <text x="55" y="16" text-anchor="middle" fill="#FFB000" font-size="9" font-weight="600">CONFIG → Mongo</text>
+        </g>
+      </g>
+      
+      <!-- Tags -->
+      <g transform="translate(15, 248)">
+        <rect x="0" y="0" width="85" height="22" rx="4" fill="#00ED64" opacity="0.15"/>
+        <text x="42" y="15" text-anchor="middle" fill="#00ED64" font-size="8" font-weight="600">HOT-RELOAD</text>
+      </g>
+      <g transform="translate(110, 248)">
+        <rect x="0" y="0" width="75" height="22" rx="4" fill="#0498EC" opacity="0.15"/>
+        <text x="37" y="15" text-anchor="middle" fill="#0498EC" font-size="8" font-weight="600">STATELESS</text>
+      </g>
+      <g transform="translate(195, 248)">
+        <rect x="0" y="0" width="70" height="22" rx="4" fill="#7B61FF" opacity="0.15"/>
+        <text x="35" y="15" text-anchor="middle" fill="#7B61FF" font-size="8" font-weight="600">3-5 PODS</text>
+      </g>
+    </g>
+
+    <!-- GDM Portal -->
+    <g transform="translate(435, 495)">
+      <rect x="0" y="0" width="195" height="75" rx="10" fill="#112733" stroke="#3D4F58" stroke-width="1"/>
+      <text x="97" y="20" text-anchor="middle" fill="#889397" font-size="9" font-weight="600">PORTAL GDM</text>
+      <text x="97" y="36" text-anchor="middle" fill="#E8EDEB" font-size="9">Generador de Microservicios</text>
+      <rect x="15" y="48" width="165" height="18" rx="4" fill="#3D4F58" opacity="0.5"/>
+      <text x="97" y="60" text-anchor="middle" fill="#889397" font-size="7">Catálogo • Monitor • Réplicas</text>
+    </g>
+
+    <!-- Legacy SPs -->
+    <g transform="translate(645, 495)">
+      <rect x="0" y="0" width="195" height="75" rx="10" fill="#112733" stroke="#F57C00" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="97" y="20" text-anchor="middle" fill="#F57C00" font-size="9" font-weight="600">⚠️ LEGACY SPs</text>
+      <text x="97" y="36" text-anchor="middle" fill="#889397" font-size="9">Stored Procedures en Teradata</text>
+      <text x="97" y="54" text-anchor="middle" fill="#F57C00" font-size="8">(A migrar progresivamente)</text>
+    </g>
+
+    <!-- Consolidation Note -->
+    <g transform="translate(435, 585)">
+      <rect x="0" y="0" width="405" height="40" rx="8" fill="#00ED64" opacity="0.08" stroke="#00ED64" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="202" y="17" text-anchor="middle" fill="#00ED64" font-size="10" font-weight="500">✓ Consolidación: 251 Microservicios → 3-5 Pods Smart Router</text>
+      <text x="202" y="32" text-anchor="middle" fill="#889397" font-size="8">Reducción de recursos OpenShift y complejidad operativa</text>
+    </g>
+  </g>
+
+  <!-- ==================== ZONE 4: MONGODB ATLAS ==================== -->
+  <g id="zone-mongodb">
+    <rect x="925" y="140" width="520" height="360" rx="16" fill="#1C2D38" stroke="#00ED64" stroke-width="2" filter="url(#shadow)"/>
+    <rect x="925" y="140" width="520" height="38" rx="16" fill="#00ED64" opacity="0.12"/>
+    
+    <!-- MongoDB Header -->
+    <g transform="translate(950, 148)">
+      <path d="M10,1.5 L10.8,3.1 C10.9,3.4 11.1,3.6 11.3,3.7 C12.1,4.1 14.5,5.5 14.5,9.5 C14.5,13.8 11,17 10.6,17.4 C10.5,17.5 10.5,17.6 10.5,17.7 V21.5 H9.5 V17.7 C9.5,17.6 9.5,17.5 9.4,17.4 C9,17 5.5,13.8 5.5,9.5 C5.5,5.5 7.9,4.1 8.7,3.7 C8.9,3.6 9.1,3.4 9.2,3.1 L10,1.5 V5.5 L9.7,7.5 L10,5.5 V1.5 Z" fill="#00ED64" transform="scale(1)"/>
+    </g>
+    <text x="1000" y="165" fill="#00ED64" font-size="13" font-weight="700">MONGODB ATLAS</text>
+    <text x="1220" y="165" fill="#889397" font-size="10">Multi-AZ • AWS São Paulo</text>
+    
+    <!-- Config Store -->
+    <g transform="translate(950, 200)" filter="url(#shadow)">
+      <rect x="0" y="0" width="230" height="160" rx="12" fill="#112733" stroke="#00ED64" stroke-width="1.5"/>
+      
+      <!-- Cylinder -->
+      <ellipse cx="115" cy="45" rx="70" ry="15" fill="#00684A"/>
+      <rect x="45" y="45" width="140" height="60" fill="#00684A"/>
+      <ellipse cx="115" cy="105" rx="70" ry="15" fill="#023430"/>
+      <ellipse cx="115" cy="45" rx="70" ry="15" fill="#00ED64" opacity="0.25"/>
+      
+      <!-- Config icon -->
+      <g transform="translate(90, 58)">
+        <rect x="0" y="0" width="50" height="32" rx="4" fill="none" stroke="#00ED64" stroke-width="2"/>
+        <line x1="0" y1="10" x2="50" y2="10" stroke="#00ED64" stroke-width="1.5"/>
+        <circle cx="10" cy="5" r="3" fill="#00ED64"/>
+        <circle cx="22" cy="5" r="3" fill="#00ED64"/>
+        <line x1="10" y1="18" x2="40" y2="18" stroke="#00ED64" stroke-width="1" opacity="0.5"/>
+        <line x1="10" y1="25" x2="30" y2="25" stroke="#00ED64" stroke-width="1" opacity="0.5"/>
+      </g>
+      
+      <text x="115" y="135" text-anchor="middle" fill="#00ED64" font-size="12" font-weight="600">Config Store</text>
+      <text x="115" y="152" text-anchor="middle" fill="#889397" font-size="9">Reglas • SLAs • Feature Flags</text>
+    </g>
+    
+    <!-- Hot Data Store -->
+    <g transform="translate(1195, 200)" filter="url(#shadow)">
+      <rect x="0" y="0" width="230" height="160" rx="12" fill="#112733" stroke="#00ED64" stroke-width="1.5"/>
+      
+      <!-- Cylinder -->
+      <ellipse cx="115" cy="45" rx="70" ry="15" fill="#00684A"/>
+      <rect x="45" y="45" width="140" height="60" fill="#00684A"/>
+      <ellipse cx="115" cy="105" rx="70" ry="15" fill="#023430"/>
+      <ellipse cx="115" cy="45" rx="70" ry="15" fill="#00ED64" opacity="0.25"/>
+      
+      <!-- Lightning icon -->
+      <g transform="translate(90, 55)">
+        <path d="M25,0 L10,22 L22,22 L16,44 L32,17 L20,17 Z" fill="#00ED64" opacity="0.8"/>
+      </g>
+      
+      <text x="115" y="135" text-anchor="middle" fill="#00ED64" font-size="12" font-weight="600">Hot Data Store</text>
+      <text x="115" y="152" text-anchor="middle" fill="#889397" font-size="9">Saldos • QR • Perfiles</text>
+    </g>
+    
+    <!-- Performance Metrics -->
+    <g transform="translate(950, 380)">
+      <rect x="0" y="0" width="475" height="65" rx="10" fill="#112733" stroke="#3D4F58" stroke-width="1"/>
+      <g transform="translate(30, 15)">
+        <text x="0" y="0" fill="#889397" font-size="8">LATENCIA</text>
+        <text x="0" y="22" fill="#00ED64" font-size="22" font-weight="700">&lt;2ms</text>
+        <text x="0" y="38" fill="#889397" font-size="8">P99</text>
+      </g>
+      <g transform="translate(180, 15)">
+        <text x="0" y="0" fill="#889397" font-size="8">DISPONIBILIDAD</text>
+        <text x="0" y="22" fill="#00ED64" font-size="22" font-weight="700">99.995%</text>
+        <text x="0" y="38" fill="#889397" font-size="8">Multi-AZ</text>
+      </g>
+      <g transform="translate(360, 15)">
+        <text x="0" y="0" fill="#889397" font-size="8">RPO/RTO</text>
+        <text x="0" y="22" fill="#00ED64" font-size="22" font-weight="700">~0</text>
+        <text x="0" y="38" fill="#889397" font-size="8">Segundos</text>
+      </g>
+    </g>
+    
+    <!-- Replaces Data1/Data2 -->
+    <g transform="translate(950, 460)">
+      <rect x="0" y="0" width="475" height="35" rx="8" fill="#00ED64" opacity="0.08" stroke="#00ED64" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="237" y="15" text-anchor="middle" fill="#00ED64" font-size="10" font-weight="500">✓ Reemplaza arquitectura Data1/Data2 de Teradata</text>
+      <text x="237" y="28" text-anchor="middle" fill="#889397" font-size="8">Failover automático sin switcheo manual de réplicas</text>
+    </g>
+  </g>
+
+  <!-- ==================== ZONE 5: SYSTEM OF RECORD ==================== -->
+  <g id="zone-legacy">
+    <rect x="925" y="520" width="520" height="305" rx="16" fill="#1C2D38" stroke="#7B61FF" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="925" y="520" width="520" height="36" rx="16" fill="#7B61FF" opacity="0.12"/>
+    <text x="1185" y="544" text-anchor="middle" fill="#7B61FF" font-size="12" font-weight="600">SYSTEM OF RECORD</text>
+    <text x="1185" y="560" text-anchor="middle" fill="#889397" font-size="9">Source of Truth • Data Warehouse</text>
+    
+    <!-- Teradata -->
+    <g transform="translate(950, 580)" filter="url(#shadow)">
+      <rect x="0" y="0" width="230" height="115" rx="12" fill="#112733" stroke="#F57C00" stroke-width="1.5"/>
+      
+      <!-- Cylinder -->
+      <ellipse cx="115" cy="35" rx="65" ry="14" fill="#C65D00"/>
+      <rect x="50" y="35" width="130" height="45" fill="#C65D00"/>
+      <ellipse cx="115" cy="80" rx="65" ry="14" fill="#8B4000"/>
+      <ellipse cx="115" cy="35" rx="65" ry="14" fill="#F57C00" opacity="0.35"/>
+      
+      <text x="115" y="102" text-anchor="middle" fill="#F57C00" font-size="11" font-weight="600">Teradata</text>
+      <text x="115" y="116" text-anchor="middle" fill="#889397" font-size="8">Legacy SPs • Query Services</text>
+    </g>
+    
+    <!-- Redshift -->
+    <g transform="translate(1195, 580)" filter="url(#shadow)">
+      <rect x="0" y="0" width="230" height="115" rx="12" fill="#112733" stroke="#E84949" stroke-width="1.5"/>
+      
+      <!-- Cylinder -->
+      <ellipse cx="115" cy="35" rx="65" ry="14" fill="#B33939"/>
+      <rect x="50" y="35" width="130" height="45" fill="#B33939"/>
+      <ellipse cx="115" cy="80" rx="65" ry="14" fill="#7A2828"/>
+      <ellipse cx="115" cy="35" rx="65" ry="14" fill="#E84949" opacity="0.35"/>
+      
+      <text x="115" y="102" text-anchor="middle" fill="#E84949" font-size="11" font-weight="600">AWS Redshift</text>
+      <text x="115" y="116" text-anchor="middle" fill="#889397" font-size="8">OLAP • Analytics</text>
+    </g>
+    
+    <!-- Badges -->
+    <g transform="translate(990, 710)">
+      <rect x="0" y="0" width="170" height="28" rx="6" fill="#7B61FF" opacity="0.1" stroke="#7B61FF" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="85" y="18" text-anchor="middle" fill="#7B61FF" font-size="9" font-weight="500">📋 Source of Truth (BCRA)</text>
+    </g>
+    <g transform="translate(1180, 710)">
+      <rect x="0" y="0" width="170" height="28" rx="6" fill="#E84949" opacity="0.1"/>
+      <text x="85" y="18" text-anchor="middle" fill="#E84949" font-size="8">Target: DW completo en Redshift</text>
+    </g>
+
+    <!-- SYNC Box -->
+    <g transform="translate(1470, 500)">
+      <rect x="0" y="0" width="90" height="100" rx="12" fill="#112733" stroke="#FFB000" stroke-width="2"/>
+      <text x="45" y="25" text-anchor="middle" fill="#FFB000" font-size="11" font-weight="700">SYNC</text>
+      <text x="45" y="48" text-anchor="middle" fill="#FFB000" font-size="18">🔄</text>
+      <text x="45" y="68" text-anchor="middle" fill="#889397" font-size="9">CDC</text>
+      <text x="45" y="84" text-anchor="middle" fill="#889397" font-size="8">Batch</text>
+    </g>
+    
+    <!-- Always On Badge -->
+    <g transform="translate(1470, 620)">
+      <rect x="0" y="0" width="90" height="80" rx="12" fill="#00ED64" opacity="0.1" stroke="#00ED64" stroke-width="1"/>
+      <circle cx="45" cy="30" r="12" fill="#00ED64" opacity="0.5"/>
+      <circle cx="45" cy="30" r="6" fill="#112733"/>
+      <text x="45" y="55" text-anchor="middle" fill="#00ED64" font-size="9" font-weight="600">ALWAYS</text>
+      <text x="45" y="68" text-anchor="middle" fill="#00ED64" font-size="9" font-weight="600">ON</text>
+    </g>
+  </g>
+
+  <!-- ==================== FLOW ARROWS ==================== -->
+  
+  <!-- Arrow 1: Canales to APIM -->
+  <path d="M225,350 L250,350" stroke="#0498EC" stroke-width="3" fill="none" marker-end="url(#arrowBlue)"/>
+  <rect x="200" y="320" width="32" height="26" rx="5" fill="#001E2B" stroke="#0498EC" stroke-width="1"/>
+  <text x="216" y="333" text-anchor="middle" fill="#0498EC" font-size="10" font-weight="700">1</text>
+  <text x="216" y="343" text-anchor="middle" fill="#889397" font-size="6">Request</text>
+  
+  <!-- Arrow 2: APIM to Smart Router -->
+  <path d="M390,350 L435,350" stroke="#FFB000" stroke-width="2.5" fill="none" marker-end="url(#arrowOrange)"/>
+
+  <!-- Arrow 3: Smart Router to Config Store -->
+  <path d="M840,280 Q885,280 925,280" stroke="#00ED64" stroke-width="3" fill="none" marker-end="url(#arrowGreen)" filter="url(#glowGreen)"/>
+  <rect x="865" y="255" width="45" height="28" rx="5" fill="#001E2B" stroke="#00ED64" stroke-width="1"/>
+  <text x="887" y="269" text-anchor="middle" fill="#00ED64" font-size="10" font-weight="700">2</text>
+  <text x="887" y="280" text-anchor="middle" fill="#889397" font-size="6">Config</text>
+  
+  <!-- Arrow 3a: Smart Router to Hot Data -->
+  <path d="M840,340 Q920,340 1000,310 Q1100,270 1195,280" stroke="#00ED64" stroke-width="3.5" fill="none" marker-end="url(#arrowGreen)" filter="url(#glowGreen)"/>
+  <rect x="980" y="295" width="65" height="32" rx="6" fill="#001E2B" stroke="#00ED64" stroke-width="1.5"/>
+  <text x="1012" y="311" text-anchor="middle" fill="#00ED64" font-size="11" font-weight="700">3a</text>
+  <text x="1012" y="323" text-anchor="middle" fill="#00ED64" font-size="7">Hot Path</text>
+  
+  <!-- Arrow 3b: Smart Router to Legacy -->
+  <path d="M840,420 Q890,500 950,580 L1050,640" stroke="#7B61FF" stroke-width="2.5" fill="none" stroke-dasharray="8,4" marker-end="url(#arrowPurple)"/>
+  <rect x="885" y="530" width="65" height="32" rx="6" fill="#001E2B" stroke="#7B61FF" stroke-width="1.5"/>
+  <text x="917" y="546" text-anchor="middle" fill="#7B61FF" font-size="11" font-weight="700">3b</text>
+  <text x="917" y="558" text-anchor="middle" fill="#7B61FF" font-size="7">Cold Path</text>
+  
+  <!-- Arrow 4: Sync CDC -->
+  <path d="M1310,580 L1310,530 Q1310,500 1350,500 L1470,520" stroke="#FFB000" stroke-width="2.5" fill="none" stroke-dasharray="6,3" marker-end="url(#arrowOrange)"/>
+  <path d="M1470,600 Q1400,560 1350,500" stroke="#FFB000" stroke-width="2" fill="none" stroke-dasharray="6,3"/>
+
+  <!-- ==================== LEGEND ==================== -->
+  <g id="legend" transform="translate(45, 870)">
+    <rect x="0" y="0" width="320" height="70" rx="10" fill="#112733" stroke="#3D4F58" stroke-width="1"/>
+    <text x="160" y="18" text-anchor="middle" fill="#889397" font-size="10" font-weight="600">LEYENDA DE FLUJOS</text>
+    
+    <g transform="translate(15, 30)">
+      <line x1="0" y1="8" x2="40" y2="8" stroke="#0498EC" stroke-width="3"/>
+      <text x="50" y="12" fill="#E8EDEB" font-size="9">Request (Canales → APIM)</text>
+    </g>
+    <g transform="translate(15, 50)">
+      <line x1="0" y1="8" x2="40" y2="8" stroke="#00ED64" stroke-width="3"/>
+      <text x="50" y="12" fill="#E8EDEB" font-size="9">Hot Path (&lt;2ms) → MongoDB</text>
+    </g>
+    <g transform="translate(175, 30)">
+      <line x1="0" y1="8" x2="40" y2="8" stroke="#7B61FF" stroke-width="2.5" stroke-dasharray="5,3"/>
+      <text x="50" y="12" fill="#E8EDEB" font-size="9">Cold Path → Legacy</text>
+    </g>
+    <g transform="translate(175, 50)">
+      <line x1="0" y1="8" x2="40" y2="8" stroke="#FFB000" stroke-width="2.5" stroke-dasharray="5,3"/>
+      <text x="50" y="12" fill="#E8EDEB" font-size="9">Sync CDC/Batch</text>
+    </g>
+  </g>
+
+  <!-- Key Metrics Box -->
+  <g id="metrics-box" transform="translate(385, 870)">
+    <rect x="0" y="0" width="240" height="70" rx="10" fill="#112733" stroke="#00ED64" stroke-width="1"/>
+    <text x="120" y="18" text-anchor="middle" fill="#00ED64" font-size="10" font-weight="600">MÉTRICAS CLAVE</text>
+    
+    <g transform="translate(15, 30)">
+      <text x="0" y="12" fill="#889397" font-size="9">Invocaciones/día:</text>
+      <text x="100" y="12" fill="#00ED64" font-size="9" font-weight="600">7M</text>
+    </g>
+    <g transform="translate(15, 48)">
+      <text x="0" y="12" fill="#889397" font-size="9">Hot Path:</text>
+      <text x="100" y="12" fill="#00ED64" font-size="9" font-weight="600">~90%</text>
+    </g>
+    <g transform="translate(130, 30)">
+      <text x="0" y="12" fill="#889397" font-size="9">Cold Path:</text>
+      <text x="70" y="12" fill="#7B61FF" font-size="9" font-weight="600">~10%</text>
+    </g>
+    <g transform="translate(130, 48)">
+      <text x="0" y="12" fill="#889397" font-size="9">Pods:</text>
+      <text x="70" y="12" fill="#E84949" font-size="9" font-weight="600">251→5</text>
+    </g>
+  </g>
+
+  <!-- Connection Note -->
+  <g id="connection-note" transform="translate(645, 870)">
+    <rect x="0" y="0" width="210" height="70" rx="10" fill="#112733" stroke="#FFB000" stroke-width="1"/>
+    <text x="105" y="18" text-anchor="middle" fill="#FFB000" font-size="10" font-weight="600">⚠️ CONECTIVIDAD</text>
+    <text x="105" y="36" text-anchor="middle" fill="#E8EDEB" font-size="9">OpenShift On-Prem ↔ Atlas AWS</text>
+    <rect x="20" y="48" width="170" height="18" rx="4" fill="#FFB000" opacity="0.15"/>
+    <text x="105" y="60" text-anchor="middle" fill="#FFB000" font-size="8">Validar: VPN / Direct Connect</text>
+  </g>
+
+  <!-- MongoDB Watermark -->
+  <g transform="translate(1680, 910)" opacity="0.7">
+    <path d="M10,1.5 L10.8,3.1 C10.9,3.4 11.1,3.6 11.3,3.7 C12.1,4.1 14.5,5.5 14.5,9.5 C14.5,13.8 11,17 10.6,17.4 C10.5,17.5 10.5,17.6 10.5,17.7 V21.5 H9.5 V17.7 C9.5,17.6 9.5,17.5 9.4,17.4 C9,17 5.5,13.8 5.5,9.5 C5.5,5.5 7.9,4.1 8.7,3.7 C8.9,3.6 9.1,3.4 9.2,3.1 L10,1.5 V5.5 L9.7,7.5 L10,5.5 V1.5 Z" fill="#00ED64" transform="scale(1.8)"/>
+    <text x="45" y="18" fill="#889397" font-size="10">MongoDB Advisory</text>
+    <text x="45" y="34" fill="#3D4F58" font-size="9">Banco Galicia • Enero 2025</text>
+  </g>
+
+</svg>

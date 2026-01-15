@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QueryFlux | Análisis de Gap - Bancolombia × MongoDB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mongo-green: #00ED64;
+            --mongo-forest: #00684A;
+            --mongo-dark: #001E2B;
+            --mongo-slate: #1C2D38;
+            --mongo-gray: #889397;
+            --banco-yellow: #FDDA24;
+            --success: #00ED64;
+            --warning: #FDDA24;
+            --danger: #FF6B6B;
+            --info: #64B5F6;
+            --font-primary: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: var(--font-primary);
+            background: var(--mongo-dark);
+            color: #fff;
+            line-height: 1.6;
+        }
+        
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 30, 43, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 237, 100, 0.1);
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .nav-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .nav-title span { color: var(--mongo-green); }
+        
+        .nav-badge {
+            padding: 6px 14px;
+            background: rgba(253, 218, 36, 0.1);
+            border: 1px solid rgba(253, 218, 36, 0.3);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--banco-yellow);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--mongo-gray);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover { color: #fff; }
+        
+        /* Hero */
+        .hero {
+            padding: 120px 40px 60px;
+            background: linear-gradient(135deg, #001E2B 0%, #023430 50%, #00684A 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60%;
+            height: 100%;
+            background: radial-gradient(ellipse at 70% 50%, rgba(0,237,100,0.1) 0%, transparent 60%);
+        }
+        
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 237, 100, 0.1);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: 100px;
+            margin-bottom: 20px;
+        }
+        
+        .hero-badge span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--mongo-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+        
+        .hero h1 .highlight {
+            color: var(--mongo-green);
+        }
+        
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--mongo-gray);
+            max-width: 700px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+        
+        /* Section Styles */
+        .section {
+            margin-bottom: 80px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 237, 100, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .section-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--mongo-green);
+            fill: none;
+            stroke-width: 2;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        /* Executive Summary Card */
+        .exec-summary {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.1) 0%, rgba(0, 104, 74, 0.1) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .exec-summary h2 {
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .exec-summary h2 span {
+            font-size: 1.5rem;
+        }
+        
+        .exec-summary .lead {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .exec-summary .lead strong {
+            color: var(--mongo-green);
+        }
+        
+        .exec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .exec-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .exec-item h4 {
+            color: var(--mongo-green);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .exec-item p {
+            color: var(--mongo-gray);
+            font-size: 0.95rem;
+        }
+        
+        /* Key Message Box */
+        .key-message {
+            background: linear-gradient(135deg, var(--mongo-forest) 0%, var(--mongo-dark) 100%);
+            border: 2px solid var(--mongo-green);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .key-message p {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #fff;
+            line-height: 1.6;
+        }
+        
+        .key-message p strong {
+            color: var(--mongo-green);
+        }
+        
+        /* Transaction Card */
+        .tx-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .tx-header {
+            padding: 20px 24px;
+            background: rgba(255, 107, 107, 0.1);
+            border-bottom: 1px solid rgba(255, 107, 107, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .tx-header h3 {
+            font-size: 1.1rem;
+            color: #FF6B6B;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tx-header h3 svg {
+            width: 20px;
+            height: 20px;
+            stroke: #FF6B6B;
+        }
+        
+        .tx-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tx-meta-item {
+            text-align: right;
+        }
+        
+        .tx-meta-item .label {
+            font-size: 0.7rem;
+            color: var(--mongo-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .tx-meta-item .value {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #fff;
+        }
+        
+        .tx-body {
+            padding: 24px;
+        }
+        
+        /* Problem Highlight */
+        .problem-box {
+            background: rgba(255, 107, 107, 0.08);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .problem-box h4 {
+            color: #FF6B6B;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .problem-box code {
+            display: block;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #FF6B6B;
+            margin-bottom: 12px;
+            overflow-x: auto;
+        }
+        
+        .problem-box p {
+            color: var(--mongo-gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Current State Cards */
+        .state-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 900px) {
+            .state-grid { grid-template-columns: 1fr; }
+        }
+        
+        .state-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .state-card.good {
+            border: 1px solid rgba(0, 237, 100, 0.3);
+        }
+        
+        .state-card.bad {
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+        
+        .state-card-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .state-card.good .state-card-header {
+            background: rgba(0, 237, 100, 0.1);
+        }
+        
+        .state-card.bad .state-card-header {
+            background: rgba(255, 107, 107, 0.1);
+        }
+        
+        .state-card-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .state-card.good .state-card-header h3 { color: var(--mongo-green); }
+        .state-card.bad .state-card-header h3 { color: #FF6B6B; }
+        
+        .state-card-body {
+            padding: 20px;
+        }
+        
+        .state-card-body ul {
+            list-style: none;
+        }
+        
+        .state-card-body li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+            color: var(--mongo-gray);
+        }
+        
+        .state-card-body li:last-child {
+            border-bottom: none;
+        }
+        
+        .state-card-body li svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .state-card.good li svg { stroke: var(--mongo-green); }
+        .state-card.bad li svg { stroke: #FF6B6B; }
+        
+        /* Data Grid */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        
+        .data-category {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .data-category-header {
+            padding: 14px 18px;
+            background: rgba(0, 237, 100, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--mongo-green);
+        }
+        
+        .data-category-body {
+            padding: 14px 18px;
+        }
+        
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 12px;
+        }
+        
+        .data-item:last-child {
+            border-bottom: none;
+        }
+        
+        .data-key {
+            font-size: 0.8rem;
+            color: var(--mongo-gray);
+            flex-shrink: 0;
+        }
+        
+        .data-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: #fff;
+            text-align: right;
+            word-break: break-all;
+        }
+        
+        .data-value.success { color: var(--success); }
+        .data-value.warning { color: var(--warning); }
+        .data-value.danger { color: var(--danger); }
+        .data-value.null { color: #555; font-style: italic; }
+        
+        /* Proposal Cards */
+        .proposal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+        
+        .proposal-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+        
+        .proposal-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 237, 100, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.1);
+        }
+        
+        .proposal-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--mongo-green);
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--mongo-dark);
+            margin-bottom: 16px;
+        }
+        
+        .proposal-card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+        
+        .proposal-card p {
+            color: var(--mongo-gray);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+        
+        .proposal-benefit {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: rgba(0, 237, 100, 0.1);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--mongo-green);
+        }
+        
+        .proposal-benefit svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--mongo-green);
+            fill: none;
+            stroke-width: 2;
+        }
+        
+        /* Flow Steps */
+        .flow-container {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+        }
+        
+        .flow-steps {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            position: relative;
+        }
+        
+        @media (max-width: 1200px) {
+            .flow-steps {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .flow-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .flow-step {
+            text-align: center;
+            padding: 16px 8px;
+            background: rgba(0, 237, 100, 0.05);
+            border: 1px solid rgba(0, 237, 100, 0.15);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .flow-step:hover {
+            background: rgba(0, 237, 100, 0.1);
+            border-color: rgba(0, 237, 100, 0.3);
+        }
+        
+        .flow-step-number {
+            width: 28px;
+            height: 28px;
+            background: var(--mongo-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--mongo-dark);
+            margin: 0 auto 10px;
+        }
+        
+        .flow-step-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        
+        .flow-step-desc {
+            font-size: 0.65rem;
+            color: var(--mongo-gray);
+        }
+        
+        /* Collection Cards */
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .collection-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .collection-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 237, 100, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 237, 100, 0.1);
+        }
+        
+        .collection-header {
+            padding: 18px 20px;
+            background: rgba(0, 237, 100, 0.08);
+            border-bottom: 1px solid rgba(0, 237, 100, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        
+        .collection-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--mongo-green);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .collection-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--mongo-dark);
+            fill: none;
+            stroke-width: 2;
+        }
+        
+        .collection-name {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--mongo-green);
+            font-weight: 600;
+        }
+        
+        .collection-body {
+            padding: 20px;
+        }
+        
+        .collection-desc {
+            color: var(--mongo-gray);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .collection-desc strong {
+            color: #fff;
+        }
+        
+        .field-list {
+            list-style: none;
+        }
+        
+        .field-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 6px 0;
+            font-size: 0.85rem;
+        }
+        
+        .field-list .field-name {
+            font-family: var(--font-mono);
+            color: var(--mongo-green);
+            flex-shrink: 0;
+            min-width: 160px;
+        }
+        
+        .field-list .field-desc {
+            color: var(--mongo-gray);
+        }
+        
+        /* Benefits Grid */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .benefit-card {
+            background: linear-gradient(135deg, rgba(0, 237, 100, 0.08) 0%, rgba(0, 104, 74, 0.05) 100%);
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 237, 100, 0.4);
+        }
+        
+        .benefit-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--mongo-green);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+        
+        .benefit-icon svg {
+            width: 30px;
+            height: 30px;
+            stroke: var(--mongo-dark);
+            fill: none;
+            stroke-width: 2;
+        }
+        
+        .benefit-card h4 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        
+        .benefit-card p {
+            font-size: 0.85rem;
+            color: var(--mongo-gray);
+        }
+        
+        /* JSON Preview */
+        .json-preview {
+            background: #0a1a1f;
+            border: 1px solid rgba(0, 237, 100, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .json-header {
+            padding: 12px 18px;
+            background: rgba(0, 237, 100, 0.08);
+            border-bottom: 1px solid rgba(0, 237, 100, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .json-header h4 {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--mongo-green);
+        }
+        
+        .json-body {
+            padding: 18px;
+            overflow-x: auto;
+        }
+        
+        .json-body pre {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: #c5d1d8;
+            line-height: 1.6;
+            margin: 0;
+        }
+        
+        .json-body .key { color: #64B5F6; }
+        .json-body .string { color: #81C784; }
+        .json-body .number { color: #FFB74D; }
+        .json-body .boolean { color: #CE93D8; }
+        .json-body .null { color: #EF5350; }
+        .json-body .comment { color: #889397; }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--mongo-green), var(--mongo-forest));
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            top: 24px;
+            width: 12px;
+            height: 12px;
+            background: var(--mongo-green);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(0, 237, 100, 0.2);
+        }
+        
+        .timeline-item.missing::before {
+            background: #FF6B6B;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2);
+        }
+        
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 18px;
+        }
+        
+        .timeline-item.missing .timeline-content {
+            border-color: rgba(255, 107, 107, 0.3);
+            background: rgba(255, 107, 107, 0.05);
+        }
+        
+        .timeline-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .timeline-item.missing .timeline-title {
+            color: #FF6B6B;
+        }
+        
+        .timeline-desc {
+            color: var(--mongo-gray);
+            font-size: 0.9rem;
+        }
+        
+        .timeline-desc code {
+            background: rgba(0, 237, 100, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--mongo-green);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            margin-bottom: 4px;
+        }
+        
+        .stat-value.success { color: var(--success); }
+        .stat-value.warning { color: var(--warning); }
+        .stat-value.danger { color: var(--danger); }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--mongo-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #0a1a1f;
+            padding: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+        }
+        
+        .footer p {
+            color: var(--mongo-gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 20px; }
+            .nav-links { display: none; }
+            .hero { padding: 100px 20px 40px; }
+            .main-content { padding: 40px 20px; }
+            .exec-summary { padding: 24px; }
+            .collection-grid { grid-template-columns: 1fr; }
+            .data-grid { grid-template-columns: 1fr; }
+            .field-list .field-name { min-width: 120px; }
+            .proposal-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="nav-title">Query<span>Flux</span></span>
+            <span class="nav-badge">Gap Analysis</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#resumen">Resumen</a></li>
+            <li><a href="#transaccion">Transaccion</a></li>
+            <li><a href="#propuesta">Propuesta</a></li>
+            <li><a href="#colecciones">Colecciones</a></li>
+            <li><a href="#beneficios">Beneficios</a></li>
+        </ul>
+        <span class="nav-badge" style="background: rgba(0,237,100,0.1); border-color: rgba(0,237,100,0.3); color: var(--mongo-green);">Bancolombia</span>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span>Analisis de Transaccion Real</span>
+            </div>
+            <h1>Del Estado <span class="highlight">Actual</span> a<br>QueryFlux</h1>
+            <p>Analisis detallado de una transaccion real del motor de fraude, identificando oportunidades de mejora y las nuevas capacidades necesarias para detectar mejor, mas rapido y con menos friccion.</p>
+        </div>
+    </section>
+
+    <main class="main-content">
+        
+        <!-- Executive Summary -->
+        <section class="exec-summary" id="resumen">
+            <h2><span>&#128161;</span> Resumen Ejecutivo</h2>
+            <p class="lead">
+                Este documento explica como <strong>mejorar la deteccion de fraude en tiempo real</strong>, sin cambiar el motor que ya tienen, pero dandole <strong>mas memoria, mas contexto y mas inteligencia</strong>, para que bloquee menos operaciones buenas y detecte mejor las malas, todo en menos de 500 ms.
+            </p>
+            
+            <div class="exec-grid">
+                <div class="exec-item">
+                    <h4>&#127919; Objetivo</h4>
+                    <p>Reducir falsos positivos manteniendo o mejorando la deteccion de fraude real.</p>
+                </div>
+                <div class="exec-item">
+                    <h4>&#128218; Enfoque</h4>
+                    <p>Usar MongoDB Atlas como "cerebro de contexto" que recuerde mejor al cliente.</p>
+                </div>
+                <div class="exec-item">
+                    <h4>&#9989; Impacto</h4>
+                    <p>No reemplaza nada existente, solo hace el motor actual mas inteligente.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="key-message">
+            <p>"No estamos cambiando su motor de fraude; le estamos dando <strong>memoria, contexto y capacidad de aprender</strong> para que decida mejor, mas rapido y con menos friccion para el cliente."</p>
+        </div>
+
+        <!-- Current State -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <h2 class="section-title">Situacion Actual: Que ya hacen bien y donde duele</h2>
+            </div>
+            
+            <div class="state-grid">
+                <div class="state-card good">
+                    <div class="state-card-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00ED64" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        <h3>Lo que ya esta bien</h3>
+                    </div>
+                    <div class="state-card-body">
+                        <ul>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Ya reciben todas las transacciones completas
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Ya tienen enriquecimiento (datos del cliente, dispositivo, etc.)
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Ya tienen un motor que da scores y recomendaciones
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                Ya miden tiempos de respuesta (latencia por componente)
+                            </li>
+                        </ul>
+                        <p style="margin-top: 16px; padding: 12px; background: rgba(0,237,100,0.1); border-radius: 8px; font-size: 0.85rem; color: var(--mongo-green);">
+                            &#128073; Esta es una base muy buena, no se empieza de cero.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="state-card bad">
+                    <div class="state-card-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                        <h3>Donde esta el problema</h3>
+                    </div>
+                    <div class="state-card-body">
+                        <ul>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                A veces falla la memoria rapida (Redis)
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                Cuando eso pasa, el motor no tiene historial del cliente
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                Entonces decide "a ciegas" sin contexto
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                Eso genera falsos positivos (bloqueos innecesarios)
+                            </li>
+                        </ul>
+                        <p style="margin-top: 16px; padding: 12px; background: rgba(255,107,107,0.1); border-radius: 8px; font-size: 0.85rem; color: #FF6B6B;">
+                            &#128073; Exactamente lo que paso en esta transaccion.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transaction Analysis -->
+        <section class="section" id="transaccion">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <h2 class="section-title">Transaccion Real Analizada</h2>
+            </div>
+            
+            <div class="tx-card">
+                <div class="tx-header">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        Decision con Datos Incompletos
+                    </h3>
+                    <div class="tx-meta">
+                        <div class="tx-meta-item">
+                            <div class="label">Transaction ID</div>
+                            <div class="value">b16d57b2-adc5-4d4b-a119-1b011e6bd3bb</div>
+                        </div>
+                        <div class="tx-meta-item">
+                            <div class="label">Fecha</div>
+                            <div class="value">2025-11-13 14:03:16</div>
+                        </div>
+                        <div class="tx-meta-item">
+                            <div class="label">Canal</div>
+                            <div class="value">APP</div>
+                        </div>
+                        <div class="tx-meta-item">
+                            <div class="label">Operacion</div>
+                            <div class="value">CREAR ENROLAMIENTO TRANSFIYA</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tx-body">
+                    <div class="problem-box">
+                        <h4>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            Problema Detectado
+                        </h4>
+                        <code>"failedSources": ["redis"]</code>
+                        <code>"riskEngineResponse": "tested_no_client_data"</code>
+                        <p>La transaccion fue evaluada <strong>sin contexto del cliente</strong> porque Redis fallo. El motor tomo una decision basandose unicamente en reglas estaticas, sin acceso al historial de comportamiento del cliente. Esto es exactamente el escenario que QueryFlux resuelve.</p>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value success">0</div>
+                            <div class="stat-label">Risk Score</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value warning">LOW</div>
+                            <div class="stat-label">Risk Level</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value success">Approve</div>
+                            <div class="stat-label">Policy Action</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value danger">369ms</div>
+                            <div class="stat-label">Latencia Total</div>
+                        </div>
+                    </div>
+                    
+                    <h4 style="margin: 24px 0 16px; font-size: 1rem;">Datos presentes en la transaccion:</h4>
+                    <div class="data-grid">
+                        <div class="data-category">
+                            <div class="data-category-header">Identificacion del Cliente</div>
+                            <div class="data-category-body">
+                                <div class="data-item">
+                                    <span class="data-key">identification_number</span>
+                                    <span class="data-value">000001047561211</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-key">product_number</span>
+                                    <span class="data-value">40670134286</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-key">product_type</span>
+                                    <span class="data-value">S (Savings)</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="data-category">
+                            <div class="data-category-header">Geolocalizacion</div>
+                            <div class="data-category-body">
+                                <div class="data-item">
+                                    <span class="data-key">geolocation_ip</span>
+                                    <span class="data-value warning">102.241.232.25</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-key">indicativoPaisIpOrigen</span>
+                                    <span class="data-value danger">788 (TUNEZ)</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-key">userCountry</span>
+                                    <span class="data-value success">CO (Colombia)</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="data-category">
+                            <div class="data-category-header">Contexto del Cliente</div>
+                            <div class="data-category-body">
+                                <div class="data-item">
+                                    <span class="data-key">accountBalance</span>
+                                    <span class="data-value success">$3,500,000 COP</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-key">accountOpenDate</span>
+                                    <span class="data-value">2023-05-23</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-key">numOfFailedAuth</span>
+                                    <span class="data-value warning">1</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="data-category">
+                            <div class="data-category-header">Senales de Riesgo Detectadas</div>
+                            <div class="data-category-body">
+                                <div class="data-item">
+                                    <span class="data-key">newUser</span>
+                                    <span class="data-value warning">true</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-key">rareScreenSize</span>
+                                    <span class="data-value warning">true</span>
+                                </div>
+                                <div class="data-item">
+                                    <span class="data-key">newPayeeBankCountry</span>
+                                    <span class="data-value warning">true</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-box" style="margin-top: 24px; background: rgba(253, 218, 36, 0.08); border-color: rgba(253, 218, 36, 0.3);">
+                        <h4 style="color: var(--banco-yellow);">
+                            &#128161; Insight Clave
+                        </h4>
+                        <p style="font-size: 1rem; color: #fff;">
+                            La IP <strong>102.241.232.25</strong> es de <strong>Tunez</strong> (codigo 788), pero el cliente es de <strong>Colombia</strong>. Esta anomalia geografica <strong>no fue detectada</strong> porque el motor no tenia acceso al historial de ubicaciones del cliente. Con QueryFlux, esto habria sido una senal de riesgo inmediata.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Proposal -->
+        <section class="section" id="propuesta">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                </div>
+                <h2 class="section-title">Propuesta de Evolucion (sin romper lo existente)</h2>
+            </div>
+            
+            <div class="proposal-grid">
+                <div class="proposal-card">
+                    <div class="proposal-number">1</div>
+                    <h3>Memoria Confiable del Cliente</h3>
+                    <p>Crear un "resumen vivo" del cliente en MongoDB (<code>customer_state</code>): que ha hecho recientemente, cuantas transacciones lleva, desde que dispositivos suele operar. No se pierde cuando algo falla.</p>
+                    <div class="proposal-benefit">
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        El motor deja de decidir sin contexto
+                    </div>
+                </div>
+                
+                <div class="proposal-card">
+                    <div class="proposal-number">2</div>
+                    <h3>Separar Datos Pesados vs Rapidos</h3>
+                    <p>Hoy todo esta en un documento grande (perfecto para auditoria). Propuesta: un registro completo para auditoria + un registro ligero optimizado solo para decidir rapido.</p>
+                    <div class="proposal-benefit">
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Mas velocidad, menos carga, mejor escala
+                    </div>
+                </div>
+                
+                <div class="proposal-card">
+                    <div class="proposal-number">3</div>
+                    <h3>Comparar por Similitud</h3>
+                    <p>En lugar de solo reglas ("si pasa X, bloquear"), ahora tambien: "esta transaccion se parece a otras fraudulentas?" Esto se logra con Vector Search.</p>
+                    <div class="proposal-benefit">
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Baja mucho los falsos positivos
+                    </div>
+                </div>
+                
+                <div class="proposal-card">
+                    <div class="proposal-number">4</div>
+                    <h3>Mantener Reglas Actuales</h3>
+                    <p>Muy importante: no se quitan las reglas, se enriquecen con contexto y similitud. Las reglas siguen mandando, pero ahora con mas informacion.</p>
+                    <div class="proposal-benefit">
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Cero disrupcion al motor actual
+                    </div>
+                </div>
+                
+                <div class="proposal-card">
+                    <div class="proposal-number">5</div>
+                    <h3>Todo Queda Explicado y Auditado</h3>
+                    <p>Cada decision guarda: por que se aprobo o bloqueo, que reglas se activaron, que tan parecida fue a otros casos. Ideal para regulador y mejora continua.</p>
+                    <div class="proposal-benefit">
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        Cumplimiento y trazabilidad total
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Flow -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <h2 class="section-title">Flujo Logico: El Camino de una Transaccion</h2>
+            </div>
+            
+            <div class="flow-container">
+                <div class="flow-steps">
+                    <div class="flow-step">
+                        <div class="flow-step-number">1</div>
+                        <div class="flow-step-title">Llega Tx</div>
+                        <div class="flow-step-desc">Evento del canal</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">2</div>
+                        <div class="flow-step-title">Validacion</div>
+                        <div class="flow-step-desc">Formato OK</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">3</div>
+                        <div class="flow-step-title">Estado Cliente</div>
+                        <div class="flow-step-desc">customer_state</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">4</div>
+                        <div class="flow-step-title">Senales</div>
+                        <div class="flow-step-desc">Velocidad, device</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">5</div>
+                        <div class="flow-step-title">Embedding</div>
+                        <div class="flow-step-desc">Representacion AI</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">6</div>
+                        <div class="flow-step-title">Similitud</div>
+                        <div class="flow-step-desc">Vector Search</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">7</div>
+                        <div class="flow-step-title">Combinacion</div>
+                        <div class="flow-step-desc">Reglas + AI</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">8</div>
+                        <div class="flow-step-title">Decision</div>
+                        <div class="flow-step-desc">Approve/Step-up/Deny</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">9</div>
+                        <div class="flow-step-title">Evidencia</div>
+                        <div class="flow-step-desc">Auditoria</div>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 20px; color: var(--mongo-green); font-size: 0.9rem;">
+                    &#128073; Todo esto pasa en tiempo real, en menos de 500ms
+                </p>
+            </div>
+        </section>
+
+        <!-- Collections -->
+        <section class="section" id="colecciones">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </div>
+                <h2 class="section-title">Estructura de Datos (en lenguaje humano)</h2>
+            </div>
+            
+            <p style="color: var(--mongo-gray); margin-bottom: 24px; font-size: 1rem;">
+                No son tablas raras, son conceptos claros. Cada cosa tiene su lugar, nada se mezcla.
+            </p>
+            
+            <div class="collection-grid">
+                <div class="collection-card">
+                    <div class="collection-header">
+                        <div class="collection-icon">
+                            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <span class="collection-name">transactions_raw</span>
+                    </div>
+                    <div class="collection-body">
+                        <p class="collection-desc"><strong>Lo que paso.</strong> Evento completo para auditoria y compliance. Inmutable despues de la escritura.</p>
+                        <ul class="field-list">
+                            <li><span class="field-name">channelRequest</span><span class="field-desc">Datos originales del canal</span></li>
+                            <li><span class="field-name">riskEngineRequest</span><span class="field-desc">Datos enviados al motor</span></li>
+                            <li><span class="field-name">riskEngineEvaluation</span><span class="field-desc">Respuesta completa del motor</span></li>
+                            <li><span class="field-name">spans</span><span class="field-desc">Tiempos de cada componente</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="collection-card">
+                    <div class="collection-header">
+                        <div class="collection-icon">
+                            <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                        </div>
+                        <span class="collection-name">transactions_enriched</span>
+                    </div>
+                    <div class="collection-body">
+                        <p class="collection-desc"><strong>Lo que se usa para decidir rapido.</strong> Evento optimizado con embeddings y contexto del cliente precalculado.</p>
+                        <ul class="field-list">
+                            <li><span class="field-name">customer_context</span><span class="field-desc">Snapshot del customer_state</span></li>
+                            <li><span class="field-name">embedding[]</span><span class="field-desc">Vector del evento (1024 dims)</span></li>
+                            <li><span class="field-name">similarity_results[]</span><span class="field-desc">Similitudes encontradas</span></li>
+                            <li><span class="field-name">risk_signals</span><span class="field-desc">Senales calculadas</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="collection-card">
+                    <div class="collection-header">
+                        <div class="collection-icon">
+                            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </div>
+                        <span class="collection-name">customer_state</span>
+                    </div>
+                    <div class="collection-body">
+                        <p class="collection-desc"><strong>Memoria viva del cliente.</strong> Estado caliente con contadores, dispositivos conocidos y senales de riesgo.</p>
+                        <ul class="field-list">
+                            <li><span class="field-name">velocity_1m/5m/1h/24h</span><span class="field-desc">Contadores de transacciones</span></li>
+                            <li><span class="field-name">known_devices[]</span><span class="field-desc">Dispositivos frecuentes</span></li>
+                            <li><span class="field-name">known_ips[]</span><span class="field-desc">IPs frecuentes</span></li>
+                            <li><span class="field-name">last_location</span><span class="field-desc">Ultima ubicacion conocida</span></li>
+                            <li><span class="field-name">risk_signals</span><span class="field-desc">Senales acumuladas</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="collection-card">
+                    <div class="collection-header">
+                        <div class="collection-icon">
+                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <span class="collection-name">customer_profile</span>
+                    </div>
+                    <div class="collection-body">
+                        <p class="collection-desc"><strong>Datos consolidados del cliente.</strong> Informacion historica y patrones de comportamiento.</p>
+                        <ul class="field-list">
+                            <li><span class="field-name">account_age_days</span><span class="field-desc">Antiguedad de la cuenta</span></li>
+                            <li><span class="field-name">avg_tx_amount</span><span class="field-desc">Monto promedio de transacciones</span></li>
+                            <li><span class="field-name">preferred_channel</span><span class="field-desc">Canal mas usado</span></li>
+                            <li><span class="field-name">typical_hours</span><span class="field-desc">Horarios habituales</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="collection-card">
+                    <div class="collection-header">
+                        <div class="collection-icon">
+                            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        </div>
+                        <span class="collection-name">entity_links</span>
+                    </div>
+                    <div class="collection-body">
+                        <p class="collection-desc"><strong>Relaciones entre entidades.</strong> Grafo cliente-dispositivo-cuenta para detectar fraude de redes.</p>
+                        <ul class="field-list">
+                            <li><span class="field-name">entity_type</span><span class="field-desc">device/ip/account/merchant</span></li>
+                            <li><span class="field-name">linked_customers[]</span><span class="field-desc">Clientes asociados</span></li>
+                            <li><span class="field-name">fraud_score</span><span class="field-desc">Riesgo de la entidad</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="collection-card">
+                    <div class="collection-header">
+                        <div class="collection-icon">
+                            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <span class="collection-name">risk_evidence</span>
+                    </div>
+                    <div class="collection-body">
+                        <p class="collection-desc"><strong>Por que se tomo cada decision.</strong> Evidencia completa para auditoria y mejora continua.</p>
+                        <ul class="field-list">
+                            <li><span class="field-name">rules_triggered[]</span><span class="field-desc">Reglas que se activaron</span></li>
+                            <li><span class="field-name">similarity_matches[]</span><span class="field-desc">Patrones similares</span></li>
+                            <li><span class="field-name">score_breakdown</span><span class="field-desc">Desglose del score</span></li>
+                            <li><span class="field-name">explanation</span><span class="field-desc">Explicacion en texto</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Example Document -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </div>
+                <h2 class="section-title">Ejemplo: customer_state para esta Transaccion</h2>
+            </div>
+            
+            <p style="color: var(--mongo-gray); margin-bottom: 20px;">
+                Asi se veria el documento <code style="background: rgba(0,237,100,0.1); padding: 2px 8px; border-radius: 4px; color: var(--mongo-green);">customer_state</code> del cliente de esta transaccion, con la informacion que habria permitido detectar la anomalia:
+            </p>
+            
+            <div class="json-preview">
+                <div class="json-header">
+                    <h4>db.customer_state.findOne({ customer_id: "8137b529..." })</h4>
+                </div>
+                <div class="json-body">
+<pre>{
+  <span class="key">"_id"</span>: ObjectId(<span class="string">"..."</span>),
+  <span class="key">"customer_id"</span>: <span class="string">"8137b529359fc2135250e793f56916840c1f30ce..."</span>,
+  <span class="key">"document_number"</span>: <span class="string">"000001047561211"</span>,
+  
+  <span class="key">"velocity"</span>: {
+    <span class="key">"tx_count_1m"</span>: <span class="number">0</span>,
+    <span class="key">"tx_count_5m"</span>: <span class="number">1</span>,
+    <span class="key">"tx_count_1h"</span>: <span class="number">3</span>,
+    <span class="key">"tx_count_24h"</span>: <span class="number">7</span>,
+    <span class="key">"amount_sum_24h"</span>: <span class="number">1250000</span>
+  },
+  
+  <span class="key">"known_devices"</span>: [
+    {
+      <span class="key">"device_id"</span>: <span class="string">"6bf3488f-b8a7-4f05-8e3b-bbb63b4275da"</span>,
+      <span class="key">"first_seen"</span>: <span class="string">"2023-09-15"</span>,
+      <span class="key">"tx_count"</span>: <span class="number">145</span>,
+      <span class="key">"is_primary"</span>: <span class="boolean">true</span>
+    }
+  ],
+  
+  <span class="key">"known_ips"</span>: [
+    { <span class="key">"ip"</span>: <span class="string">"181.52.xxx.xxx"</span>, <span class="key">"country"</span>: <span class="string">"CO"</span>, <span class="key">"tx_count"</span>: <span class="number">140</span> },
+    { <span class="key">"ip"</span>: <span class="string">"190.25.xxx.xxx"</span>, <span class="key">"country"</span>: <span class="string">"CO"</span>, <span class="key">"tx_count"</span>: <span class="number">5</span> }
+  ],
+  
+  <span class="key">"last_location"</span>: {
+    <span class="key">"country"</span>: <span class="string">"CO"</span>,
+    <span class="key">"city"</span>: <span class="string">"Medellin"</span>,
+    <span class="key">"timestamp"</span>: <span class="string">"2025-11-12T..."</span>
+  },
+  
+  <span class="key">"risk_signals"</span>: {
+    <span class="key">"geo_anomaly"</span>: <span class="boolean">true</span>,  <span class="comment">// IP 102.241.232.25 es de TUNEZ!</span>
+    <span class="key">"new_ip_country"</span>: <span class="boolean">true</span>,  <span class="comment">// Nunca habia operado desde ese pais</span>
+    <span class="key">"failed_auth_recent"</span>: <span class="boolean">true</span>
+  },
+  
+  <span class="key">"last_updated"</span>: <span class="string">"2025-11-13T19:03:16.000Z"</span>
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- What Would Change -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                </div>
+                <h2 class="section-title">Que Habria Cambiado con QueryFlux?</h2>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 class="timeline-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00ED64" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            Sin dependencia de Redis
+                        </h4>
+                        <p class="timeline-desc">Con <code>customer_state</code> en MongoDB, el fallo de Redis no habria afectado la decision. El contexto del cliente siempre estaria disponible.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 class="timeline-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00ED64" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            Deteccion de anomalia geografica
+                        </h4>
+                        <p class="timeline-desc">La IP <code>102.241.232.25</code> es de <strong>Tunez</strong>, pero el cliente siempre opera desde <strong>Colombia</strong>. Con QueryFlux, <code>geo_anomaly: true</code> habria sido una senal de riesgo inmediata.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 class="timeline-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00ED64" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            Busqueda de patrones similares
+                        </h4>
+                        <p class="timeline-desc">Vector Search habria comparado este evento contra fraudes conocidos de "enrolamiento Transfiya desde IP extranjera", detectando similitud con ataques previos de ATO.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 class="timeline-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00ED64" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            Decision contextualizada
+                        </h4>
+                        <p class="timeline-desc">En lugar de <code>tested_no_client_data</code>, el motor habria tenido acceso a: historial del dispositivo (145 transacciones), comportamiento tipico (siempre desde Colombia), y patrones de fraude similares.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item missing">
+                    <div class="timeline-content">
+                        <h4 class="timeline-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            Probable decision diferente
+                        </h4>
+                        <p class="timeline-desc">Con todas las senales combinadas (IP extranjera + nuevo enrolamiento + fallo de auth reciente + rareScreenSize), la decision probablemente habria sido <strong style="color: var(--banco-yellow);">STEP-UP</strong> (verificacion adicional) en lugar de APPROVE directo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Benefits -->
+        <section class="section" id="beneficios">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <h2 class="section-title">Beneficios para el Negocio</h2>
+            </div>
+            
+            <p style="color: var(--mongo-gray); margin-bottom: 24px; font-size: 1rem;">
+                En lenguaje de comite ejecutivo:
+            </p>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                    </div>
+                    <h4>Menos Falsos Positivos</h4>
+                    <p>Gracias a contexto y similitud, menos bloqueos innecesarios a clientes legitimos.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <h4>Menos Dependencia de Memorias Fragiles</h4>
+                    <p>MongoDB como fuente persistente elimina decisiones "a ciegas" cuando Redis falla.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <h4>Decisiones Explicables</h4>
+                    <p>Cada decision queda documentada con su evidencia. Ideal para regulador y auditoria.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <h4>Escalabilidad</h4>
+                    <p>Sin problema cuando sube el volumen de transacciones. MongoDB escala horizontalmente.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    </div>
+                    <h4>Base para IA Avanzada</h4>
+                    <p>Infraestructura lista para incorporar modelos de ML sin redisenos costosos.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Message -->
+        <div class="key-message" style="margin-top: 60px;">
+            <p style="font-size: 1.1rem; margin-bottom: 16px; opacity: 0.8;">Si solo te quedas con una idea, que sea esta:</p>
+            <p>"No estamos cambiando su motor de fraude; le estamos dando <strong>memoria, contexto y capacidad de aprender</strong> para que decida mejor, mas rapido y con menos friccion para el cliente."</p>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>QueryFlux | Bancolombia | Documento Confidencial | MongoDB Solutions Architecture LATAM</p>
+    </footer>
+
+    <script>
+        // Simple scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.section, .collection-card, .timeline-item, .proposal-card, .benefit-card, .exec-summary').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
