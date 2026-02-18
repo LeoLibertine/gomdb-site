@@ -263,26 +263,26 @@ export const OrgChartFidelVargas = () => {
               </div>
               <div className="persona-info">
                 <h4>{highlightText('Laura Milena Zapata')}</h4>
-                <p className="persona-role">Canales Digitales</p>
+                <p className="persona-role">Soluciones Digitales Personas</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
             </div>
             <div className="use-case-container compact">
               <div className="use-case-badge high-priority">ALTA PRIORIDAD</div>
               <h5 className="use-case-title">
-                <TechIcon size={18} /> App Session Store para 18M+ usuarios
+                <TechIcon size={18} /> Experiencia Mobile-First (Personas)
               </h5>
               <p className="use-case-desc">
-                Session store distribuido para la App Bancolombia con 18M+ usuarios activos. Manejo de sesiones de alta concurrencia con TTL indexes para expiración automática y Read/Write Concern para consistencia.
+                Manejo de sesion, perfil de usuario y notificaciones push personalizadas para la App Bancolombia Personas. Session store con TTL indexes para 18M+ usuarios activos y latencia sub-5ms.
               </p>
               <div className="tech-features compact">
                 <div className="tech-feature">
                   <strong>TTL Indexes:</strong>
-                  <span>Expiración automática de sesiones inactivas</span>
+                  <span>Expiracion automatica de sesiones inactivas</span>
                 </div>
                 <div className="tech-feature">
-                  <strong>In-Memory Cache:</strong>
-                  <span>Latencia sub-5ms para validación de sesión</span>
+                  <strong>Change Streams:</strong>
+                  <span>Push notifications personalizadas en tiempo real</span>
                 </div>
               </div>
             </div>
@@ -292,30 +292,30 @@ export const OrgChartFidelVargas = () => {
           <div className={`persona-card manager-card ${!matchesSearch('Lily Johana Alvarez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
-                <SearchIcon size={36} />
+                <TechIcon size={36} />
               </div>
               <div className="persona-info">
                 <h4>{highlightText('Lily Johana Alvarez')}</h4>
-                <p className="persona-role">Canales Digitales</p>
+                <p className="persona-role">Soluciones Digitales Personas</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
             </div>
             <div className="use-case-container compact">
-              <div className="use-case-badge high-priority">ALTA PRIORIDAD - ESTRATÉGICO</div>
+              <div className="use-case-badge high-priority">ALTA PRIORIDAD</div>
               <h5 className="use-case-title">
-                <SearchIcon size={18} /> Motor de Personalización en Tiempo Real
+                <TechIcon size={18} /> Experiencia Mobile-First (Personas)
               </h5>
               <p className="use-case-desc">
-                Personalización de ofertas y contenido en la App basada en comportamiento del usuario. Aggregation pipelines para scoring de propensión y Atlas Search para matching de productos.
+                Implementacion de journeys de cliente en la app de personas: onboarding, consulta de productos, movimientos y ofertas personalizadas con esquema flexible por tipo de producto.
               </p>
               <div className="tech-features compact">
                 <div className="tech-feature">
-                  <strong>Aggregation Pipeline:</strong>
-                  <span>Scoring de propensión en tiempo real por segmento</span>
+                  <strong>Esquema Flexible:</strong>
+                  <span>Diferentes journeys y productos en un solo modelo</span>
                 </div>
                 <div className="tech-feature">
-                  <strong>Change Streams:</strong>
-                  <span>Reaccionar a eventos de usuario para personalización instantánea</span>
+                  <strong>Atlas Search:</strong>
+                  <span>Busqueda de productos y movimientos dentro de la app</span>
                 </div>
               </div>
             </div>
@@ -325,30 +325,30 @@ export const OrgChartFidelVargas = () => {
           <div className={`persona-card manager-card ${!matchesSearch('Jorge Ivan Gonzalez Velez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
-                <IntegrationIcon size={36} />
+                <StrategyIcon size={36} />
               </div>
               <div className="persona-info">
                 <h4>{highlightText('Jorge Ivan Gonzalez Velez')}</h4>
-                <p className="persona-role">Canales Digitales</p>
+                <p className="persona-role">Soluciones Digitales Empresariales</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
             </div>
             <div className="use-case-container compact">
-              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <div className="use-case-badge high-priority">ALTA PRIORIDAD - ESTRATÉGICO</div>
               <h5 className="use-case-title">
-                <IntegrationIcon size={18} /> Hub de Notificaciones Omnicanal
+                <StrategyIcon size={18} /> Dashboards de Cliente Corporativo (Empresas)
               </h5>
               <p className="use-case-desc">
-                Centro de notificaciones unificado (push, SMS, email, in-app) con enrutamiento inteligente por canal preferido del cliente y deduplicación de mensajes.
+                Plataforma para que clientes empresariales vean su flujo de caja, pagos y transacciones en dashboards en tiempo real. Aggregation pipelines para consolidacion financiera y Atlas Charts para visualizacion.
               </p>
               <div className="tech-features compact">
                 <div className="tech-feature">
-                  <strong>Change Streams:</strong>
-                  <span>Trigger de notificaciones en tiempo real</span>
+                  <strong>Aggregation Pipeline:</strong>
+                  <span>Consolidacion de flujo de caja y posicion financiera</span>
                 </div>
                 <div className="tech-feature">
-                  <strong>TTL Indexes:</strong>
-                  <span>Limpieza automática de notificaciones leídas</span>
+                  <strong>Atlas Charts:</strong>
+                  <span>Dashboards embebidos de transacciones y pagos</span>
                 </div>
               </div>
             </div>
@@ -358,30 +358,30 @@ export const OrgChartFidelVargas = () => {
           <div className={`persona-card manager-card ${!matchesSearch('Yeniffer Carolina Arango') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
-                <DocumentIcon size={36} />
+                <StrategyIcon size={36} />
               </div>
               <div className="persona-info">
                 <h4>{highlightText('Yeniffer Carolina Arango')}</h4>
-                <p className="persona-role">Canales Digitales</p>
+                <p className="persona-role">Soluciones Digitales Empresariales</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
             </div>
             <div className="use-case-container compact">
               <div className="use-case-badge high-priority">ALTA PRIORIDAD</div>
               <h5 className="use-case-title">
-                <DocumentIcon size={18} /> KYC Digital Onboarding
+                <StrategyIcon size={18} /> Dashboards de Cliente Corporativo (Empresas)
               </h5>
               <p className="use-case-desc">
-                Flujo de onboarding digital con verificación de identidad, OCR de documentos y validación biométrica. GridFS para documentos y esquema flexible para diferentes tipos de verificación.
+                Portal empresarial con reportes de tesoreria, conciliacion de pagos y gestion de nomina. Time Series para historicos de transacciones y ACID transactions para operaciones batch.
               </p>
               <div className="tech-features compact">
                 <div className="tech-feature">
-                  <strong>GridFS:</strong>
-                  <span>Almacenamiento de documentos de identidad y selfies</span>
+                  <strong>Time Series:</strong>
+                  <span>Historico de transacciones corporativas para reportes</span>
                 </div>
                 <div className="tech-feature">
                   <strong>ACID Transactions:</strong>
-                  <span>Consistencia en el flujo de aprobación</span>
+                  <span>Consistencia en pagos batch y nomina</span>
                 </div>
               </div>
             </div>
@@ -391,30 +391,30 @@ export const OrgChartFidelVargas = () => {
           <div className={`persona-card manager-card ${!matchesSearch('Lina Marcela Monsalve') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
-                <StrategyIcon size={36} />
+                <SearchIcon size={36} />
               </div>
               <div className="persona-info">
                 <h4>{highlightText('Lina Marcela Monsalve')}</h4>
-                <p className="persona-role">Canales Digitales</p>
+                <p className="persona-role">Soluciones Digitales Pymes</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
             </div>
             <div className="use-case-container compact">
-              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <div className="use-case-badge high-priority">ALTA PRIORIDAD</div>
               <h5 className="use-case-title">
-                <StrategyIcon size={18} /> Feature Flags & Configuración Dinámica
+                <SearchIcon size={18} /> Personalizacion de Servicios (Pymes)
               </h5>
               <p className="use-case-desc">
-                Sistema de feature flags para despliegue progresivo de funcionalidades en canales digitales. Configuración por segmento, versión de app y porcentaje de rollout.
+                Ofrecer productos, servicios y alertas relevantes para Pymes basados en su comportamiento transaccional al instante. Aggregation pipelines para segmentacion y Change Streams para alertas.
               </p>
               <div className="tech-features compact">
                 <div className="tech-feature">
-                  <strong>Change Streams:</strong>
-                  <span>Hot-reload de configuraciones sin redeploy</span>
+                  <strong>Aggregation Pipeline:</strong>
+                  <span>Segmentacion de Pymes por patron transaccional</span>
                 </div>
                 <div className="tech-feature">
-                  <strong>Esquema Flexible:</strong>
-                  <span>Diferentes tipos de flags y targeting rules</span>
+                  <strong>Change Streams:</strong>
+                  <span>Alertas y ofertas en tiempo real por comportamiento</span>
                 </div>
               </div>
             </div>
@@ -424,30 +424,30 @@ export const OrgChartFidelVargas = () => {
           <div className={`persona-card manager-card ${!matchesSearch('David Alejandro Osorio Restrepo') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
-                <TechIcon size={36} />
+                <SearchIcon size={36} />
               </div>
               <div className="persona-info">
                 <h4>{highlightText('David Alejandro Osorio Restrepo')}</h4>
-                <p className="persona-role">Canales Digitales</p>
+                <p className="persona-role">Soluciones Digitales Pymes</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
             </div>
             <div className="use-case-container compact">
-              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <div className="use-case-badge high-priority">ALTA PRIORIDAD</div>
               <h5 className="use-case-title">
-                <TechIcon size={18} /> API Response Caching Layer
+                <SearchIcon size={18} /> Personalizacion de Servicios (Pymes)
               </h5>
               <p className="use-case-desc">
-                Capa de caching para APIs de alta frecuencia (saldos, movimientos, productos) reduciendo carga en core bancario y mejorando tiempos de respuesta en canales digitales.
+                Motor de recomendaciones para Pymes: creditos pre-aprobados, seguros y herramientas de gestion basados en facturacion electronica y flujo de caja. Atlas Search para matching de productos.
               </p>
               <div className="tech-features compact">
                 <div className="tech-feature">
-                  <strong>TTL Indexes:</strong>
-                  <span>Cache con expiración configurable por tipo de dato</span>
+                  <strong>Atlas Search:</strong>
+                  <span>Matching inteligente de productos financieros para Pymes</span>
                 </div>
                 <div className="tech-feature">
-                  <strong>Read Preference:</strong>
-                  <span>Lecturas desde secundarios para escalar horizontalmente</span>
+                  <strong>Esquema Flexible:</strong>
+                  <span>Diferentes perfiles de Pyme en un solo modelo</span>
                 </div>
               </div>
             </div>
@@ -457,30 +457,30 @@ export const OrgChartFidelVargas = () => {
           <div className={`persona-card manager-card ${!matchesSearch('Diego Alexander Giraldo Ramirez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
-                <AIIcon size={36} />
+                <TechIcon size={36} />
               </div>
               <div className="persona-info">
                 <h4>{highlightText('Diego Alexander Giraldo Ramirez')}</h4>
-                <p className="persona-role">Canales Digitales</p>
+                <p className="persona-role">Soluciones Digitales Personas</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
             </div>
             <div className="use-case-container compact">
-              <div className="use-case-badge high-priority">ALTA PRIORIDAD - IA</div>
+              <div className="use-case-badge high-priority">ALTA PRIORIDAD</div>
               <h5 className="use-case-title">
-                <AIIcon size={18} /> Chatbot RAG con Atlas Vector Search
+                <TechIcon size={18} /> Experiencia Mobile-First (Personas)
               </h5>
               <p className="use-case-desc">
-                Asistente virtual bancario con RAG (Retrieval-Augmented Generation) usando Atlas Vector Search para responder preguntas sobre productos, tasas y procedimientos con contexto actualizado.
+                Journeys diferenciados del cliente persona: transferencias instantaneas, pagos QR, solicitud de credito y gestion de tarjetas. Enfocado en diferentes flujos del usuario dentro de la App.
               </p>
               <div className="tech-features compact">
                 <div className="tech-feature">
-                  <strong>Atlas Vector Search:</strong>
-                  <span>Embeddings de FAQs, productos y procedimientos bancarios</span>
+                  <strong>ACID Transactions:</strong>
+                  <span>Consistencia en transferencias y pagos instantaneos</span>
                 </div>
                 <div className="tech-feature">
-                  <strong>Atlas Search:</strong>
-                  <span>Hybrid search combinando semántico y keyword</span>
+                  <strong>Change Streams:</strong>
+                  <span>Confirmacion en tiempo real de operaciones</span>
                 </div>
               </div>
             </div>
@@ -490,30 +490,30 @@ export const OrgChartFidelVargas = () => {
           <div className={`persona-card manager-card ${!matchesSearch('Jhon Fredy Pineda') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
-                <ArchitectureIcon size={36} />
+                <SearchIcon size={36} />
               </div>
               <div className="persona-info">
                 <h4>{highlightText('Jhon Fredy Pineda')}</h4>
-                <p className="persona-role">Canales Digitales</p>
+                <p className="persona-role">Soluciones Digitales Pymes</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
             </div>
             <div className="use-case-container compact">
-              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <div className="use-case-badge high-priority">ALTA PRIORIDAD</div>
               <h5 className="use-case-title">
-                <ArchitectureIcon size={18} /> Transaction Feed en Tiempo Real
+                <SearchIcon size={18} /> Personalizacion de Servicios (Pymes)
               </h5>
               <p className="use-case-desc">
-                Feed de transacciones en tiempo real para la App con categorización automática, búsqueda y filtrado avanzado de movimientos bancarios.
+                Catalogos de servicios financieros para Pymes con scoring de elegibilidad en tiempo real. Pymes es un foco clave: pre-aprobaciones, alertas de oportunidades y educacion financiera personalizada.
               </p>
               <div className="tech-features compact">
                 <div className="tech-feature">
-                  <strong>Time Series:</strong>
-                  <span>Almacenamiento optimizado de historial transaccional</span>
+                  <strong>Aggregation Pipeline:</strong>
+                  <span>Scoring de elegibilidad y pre-aprobacion automatica</span>
                 </div>
                 <div className="tech-feature">
-                  <strong>Atlas Search:</strong>
-                  <span>Búsqueda full-text en descripciones de movimientos</span>
+                  <strong>TTL Indexes:</strong>
+                  <span>Ofertas con vigencia automatica</span>
                 </div>
               </div>
             </div>
@@ -1328,7 +1328,7 @@ export const OrgChartFidelVargas = () => {
             <h3>🔥 HIGH PRIORITY - Impacto Inmediato</h3>
             <ul>
               <li><strong>Payment Hub</strong> (Lina Maria Vergara + todos sus managers) - Core business transaccional</li>
-              <li><strong>App Session Store</strong> (Laura Milena Zapata) - Performance para 18M+ usuarios</li>
+              <li><strong>Experiencia Mobile-First</strong> (Laura Zapata, Lily Alvarez, Diego Giraldo) - App Personas 18M+ usuarios</li>
               <li><strong>Omnichannel Sessions</strong> (Luis Gabriel Correa) - Customer experience crítico</li>
               <li><strong>Investment Portfolio</strong> (Felipe Restrepo team) - Nuevo revenue stream</li>
             </ul>
@@ -1338,8 +1338,8 @@ export const OrgChartFidelVargas = () => {
             <h3>⚡ MEDIUM PRIORITY - Impacto 3-6 meses</h3>
             <ul>
               <li><strong>Factoring Platform</strong> (Jorge Valderrama) - Supply chain finance</li>
-              <li><strong>Chatbot RAG</strong> (Diego Alexander Giraldo) - IA con Atlas Vector Search</li>
-              <li><strong>KYC Onboarding</strong> (Yeniffer Carolina Arango) - Digital transformation</li>
+              <li><strong>Dashboards Corporativos</strong> (Jorge Gonzalez, Yeniffer Arango) - Empresas en tiempo real</li>
+              <li><strong>Personalizacion Pymes</strong> (Lina Monsalve, David Osorio, Jhon Pineda) - Cross-sell inteligente</li>
             </ul>
           </div>
 
