@@ -200,7 +200,7 @@ export const OrgChartFidelVargas = () => {
             </div>
             <div className="persona-info">
               <h3>{highlightText('Luis Gabriel Correa Gutiérrez')}</h3>
-              <p className="persona-role">Líder Entorno Canales y Clientes</p>
+              <p className="persona-role">Líder Centro de Excelencia Canales Digitales</p>
             </div>
           </div>
 
@@ -255,265 +255,265 @@ export const OrgChartFidelVargas = () => {
         {/* Managers bajo Luis Gabriel Correa */}
         <ManagersSection directorName="Luis Gabriel Correa" searchTerm={searchTerm}>
 
-          {/* Laura Lily Villa Cardona */}
-          <div className={`persona-card manager-card ${!matchesSearch('Laura Lily Villa Cardona') ? 'search-hidden' : ''}`}>
+          {/* Laura Milena Zapata */}
+          <div className={`persona-card manager-card ${!matchesSearch('Laura Milena Zapata') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <TechIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>{highlightText('Laura Lily Villa Cardona')}</h4>
-                <p className="persona-role">Habilitador Distri Multicanal</p>
-                <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
-              </div>
-            </div>
-            <div className="use-case-container compact">
-              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
-              <h5 className="use-case-title">
-                <TechIcon size={18} /> Channel Configuration Management (Feature Flags)
-              </h5>
-              <p className="use-case-desc">
-                Configuración dinámica de features, menús y banners por canal, versión y segmento.
-              </p>
-              <div className="tech-features compact">
-                <div className="tech-feature">
-                  <strong>Change Streams:</strong>
-                  <span>Hot-reload de configuraciones en tiempo real</span>
-                </div>
-                <div className="tech-feature">
-                  <strong>Targeting Queries:</strong>
-                  <span>Features por segmento y versión de app</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Maria Jose Torres Pertuz */}
-          <div className={`persona-card manager-card ${!matchesSearch('Maria Jose Torres Pertuz') ? 'search-hidden' : ''}`}>
-            <div className="persona-header">
-              <div className="persona-avatar manager-avatar">
-                <DocumentIcon size={36} />
-              </div>
-              <div className="persona-info">
-                <h4>{highlightText('Maria Jose Torres Pertuz')}</h4>
-                <p className="persona-role">Distrib A Distancia (Video Banking)</p>
-                <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
-              </div>
-            </div>
-            <div className="use-case-container compact">
-              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
-              <h5 className="use-case-title">
-                <DocumentIcon size={18} /> Video Banking Session Management
-              </h5>
-              <p className="use-case-desc">
-                Gestión de sesiones de video banking con transcripts, documentos y grabaciones.
-              </p>
-              <div className="tech-features compact">
-                <div className="tech-feature">
-                  <strong>GridFS:</strong>
-                  <span>Almacenamiento y streaming de grabaciones</span>
-                </div>
-                <div className="tech-feature">
-                  <strong>Atlas Search:</strong>
-                  <span>Búsqueda full-text en transcripts para compliance</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Santiago Zuluaga */}
-          <div className={`persona-card manager-card ${!matchesSearch('Santiago Zuluaga Zuluaga') ? 'search-hidden' : ''}`}>
-            <div className="persona-header">
-              <div className="persona-avatar manager-avatar">
-                <SearchIcon size={36} />
-              </div>
-              <div className="persona-info">
-                <h4>{highlightText('Santiago Zuluaga Zuluaga')}</h4>
-                <p className="persona-role">Conocimiento Cliente TI</p>
-                <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
-              </div>
-            </div>
-            <div className="use-case-container compact">
-              <div className="use-case-badge high-priority">ALTA PRIORIDAD - ESTRATÉGICO</div>
-              <h5 className="use-case-title">
-                <SearchIcon size={18} /> Customer Data Platform (CDP) & Real-time Segmentation
-              </h5>
-              <p className="use-case-desc">
-                Plataforma centralizada de datos de cliente con segmentación dinámica en tiempo real.
-              </p>
-              <div className="tech-features compact">
-                <div className="tech-feature">
-                  <strong>Aggregation Pipeline:</strong>
-                  <span>Segmentación on-the-fly con reglas complejas</span>
-                </div>
-                <div className="tech-feature">
-                  <strong>Atlas Search:</strong>
-                  <span>Descubrimiento fuzzy de clientes</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Cindy Johana Castaño */}
-          <div className={`persona-card manager-card ${!matchesSearch('Cindy Johana Castaño') ? 'search-hidden' : ''}`}>
-            <div className="persona-header">
-              <div className="persona-avatar manager-avatar">
-                <DocumentIcon size={36} />
-              </div>
-              <div className="persona-info">
-                <h4>{highlightText('Cindy Johana Castaño')}</h4>
-                <p className="persona-role">Ciclo de Crédito</p>
-                <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
-              </div>
-            </div>
-            <div className="use-case-container compact">
-              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
-              <h5 className="use-case-title">
-                <DocumentIcon size={18} /> Credit Lifecycle Management
-              </h5>
-              <p className="use-case-desc">
-                Gestión end-to-end del ciclo de crédito desde originación hasta servicing.
-              </p>
-              <div className="tech-features compact">
-                <div className="tech-feature">
-                  <strong>ACID Transactions:</strong>
-                  <span>Consistencia en originación y pagos</span>
-                </div>
-                <div className="tech-feature">
-                  <strong>GridFS:</strong>
-                  <span>Documentos de soporte del crédito</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* David Aguirre */}
-          <div className={`persona-card manager-card ${!matchesSearch('David Aguirre') ? 'search-hidden' : ''}`}>
-            <div className="persona-header">
-              <div className="persona-avatar manager-avatar">
-                <TechIcon size={36} />
-              </div>
-              <div className="persona-info">
-                <h4>{highlightText('David Aguirre')}</h4>
-                <p className="persona-role">Galaxia Modern Canales TI</p>
-                <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
-              </div>
-            </div>
-            <div className="use-case-container compact">
-              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
-              <h5 className="use-case-title">
-                <TechIcon size={18} /> Progressive Web App (PWA) Backend
-              </h5>
-              <p className="use-case-desc">
-                Backend optimizado para PWAs con capacidad de push notifications.
-              </p>
-              <div className="tech-features compact">
-                <div className="tech-feature">
-                  <strong>Change Streams:</strong>
-                  <span>Base para push via WebSockets</span>
-                </div>
-                <div className="tech-feature">
-                  <strong>Payloads Comprimidos:</strong>
-                  <span>Reducción de consumo de datos móviles</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Jose Jaime Tllano Vega */}
-          <div className={`persona-card manager-card ${!matchesSearch('Jose Jaime Tllano Vega') ? 'search-hidden' : ''}`}>
-            <div className="persona-header">
-              <div className="persona-avatar manager-avatar">
-                <IntegrationIcon size={36} />
-              </div>
-              <div className="persona-info">
-                <h4>{highlightText('Jose Jaime Tllano Vega')}</h4>
-                <p className="persona-role">Distribución Física TI</p>
-                <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
-              </div>
-            </div>
-            <div className="use-case-container compact">
-              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
-              <h5 className="use-case-title">
-                <IntegrationIcon size={18} /> Branch & ATM Network Management
-              </h5>
-              <p className="use-case-desc">
-                Gestión de red física de sucursales y ATMs con monitoreo IoT.
-              </p>
-              <div className="tech-features compact">
-                <div className="tech-feature">
-                  <strong>Geospatial Queries:</strong>
-                  <span>ATMs cercanos con servicios disponibles</span>
-                </div>
-                <div className="tech-feature">
-                  <strong>Time Series:</strong>
-                  <span>Telemetría de miles de ATMs</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Millerlley Gonzalez Garcia */}
-          <div className={`persona-card manager-card ${!matchesSearch('Millerlley Gonzalez Garcia') ? 'search-hidden' : ''}`}>
-            <div className="persona-header">
-              <div className="persona-avatar manager-avatar">
-                <TechIcon size={36} />
-              </div>
-              <div className="persona-info">
-                <h4>{highlightText('Millerlley Gonzalez Garcia')}</h4>
-                <p className="persona-role">Distribución Digital</p>
+                <h4>{highlightText('Laura Milena Zapata')}</h4>
+                <p className="persona-role">Canales Digitales</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
             </div>
             <div className="use-case-container compact">
               <div className="use-case-badge high-priority">ALTA PRIORIDAD</div>
               <h5 className="use-case-title">
-                <TechIcon size={18} /> Digital Banking Platform (Web/Mobile Backend)
+                <TechIcon size={18} /> App Session Store para 18M+ usuarios
               </h5>
               <p className="use-case-desc">
-                Backend unificado de alto performance para banca digital con millones de usuarios.
+                Session store distribuido para la App Bancolombia con 18M+ usuarios activos. Manejo de sesiones de alta concurrencia con TTL indexes para expiración automática y Read/Write Concern para consistencia.
               </p>
               <div className="tech-features compact">
                 <div className="tech-feature">
-                  <strong>Queries Optimizadas:</strong>
-                  <span>p95 &lt;50ms para experiencia de usuario</span>
+                  <strong>TTL Indexes:</strong>
+                  <span>Expiración automática de sesiones inactivas</span>
                 </div>
                 <div className="tech-feature">
-                  <strong>Atlas Search:</strong>
-                  <span>Búsqueda dentro de la app</span>
+                  <strong>In-Memory Cache:</strong>
+                  <span>Latencia sub-5ms para validación de sesión</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Lina Maria Herrera Castaño */}
-          <div className={`persona-card manager-card ${!matchesSearch('Lina Maria Herrera Castaño') ? 'search-hidden' : ''}`}>
+          {/* Lily Johana Alvarez */}
+          <div className={`persona-card manager-card ${!matchesSearch('Lily Johana Alvarez') ? 'search-hidden' : ''}`}>
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <SearchIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>{highlightText('Lily Johana Alvarez')}</h4>
+                <p className="persona-role">Canales Digitales</p>
+                <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <div className="use-case-badge high-priority">ALTA PRIORIDAD - ESTRATÉGICO</div>
+              <h5 className="use-case-title">
+                <SearchIcon size={18} /> Motor de Personalización en Tiempo Real
+              </h5>
+              <p className="use-case-desc">
+                Personalización de ofertas y contenido en la App basada en comportamiento del usuario. Aggregation pipelines para scoring de propensión y Atlas Search para matching de productos.
+              </p>
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Aggregation Pipeline:</strong>
+                  <span>Scoring de propensión en tiempo real por segmento</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Change Streams:</strong>
+                  <span>Reaccionar a eventos de usuario para personalización instantánea</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Jorge Ivan Gonzalez Velez */}
+          <div className={`persona-card manager-card ${!matchesSearch('Jorge Ivan Gonzalez Velez') ? 'search-hidden' : ''}`}>
             <div className="persona-header">
               <div className="persona-avatar manager-avatar">
                 <IntegrationIcon size={36} />
               </div>
               <div className="persona-info">
-                <h4>{highlightText('Lina Maria Herrera Castaño')}</h4>
-                <p className="persona-role">Distribución Digital SNAS TI</p>
+                <h4>{highlightText('Jorge Ivan Gonzalez Velez')}</h4>
+                <p className="persona-role">Canales Digitales</p>
                 <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
               </div>
             </div>
             <div className="use-case-container compact">
               <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
               <h5 className="use-case-title">
-                <IntegrationIcon size={18} /> Self-Service Kiosk Platform
+                <IntegrationIcon size={18} /> Hub de Notificaciones Omnicanal
               </h5>
               <p className="use-case-desc">
-                Plataforma para kiosks con soporte offline usando patrón store-and-forward.
+                Centro de notificaciones unificado (push, SMS, email, in-app) con enrutamiento inteligente por canal preferido del cliente y deduplicación de mensajes.
               </p>
               <div className="tech-features compact">
                 <div className="tech-feature">
-                  <strong>Store-and-Forward:</strong>
-                  <span>Operación offline garantizada</span>
+                  <strong>Change Streams:</strong>
+                  <span>Trigger de notificaciones en tiempo real</span>
                 </div>
                 <div className="tech-feature">
-                  <strong>Sync Asíncrona:</strong>
-                  <span>Sincronización al recuperar conectividad</span>
+                  <strong>TTL Indexes:</strong>
+                  <span>Limpieza automática de notificaciones leídas</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Yeniffer Carolina Arango */}
+          <div className={`persona-card manager-card ${!matchesSearch('Yeniffer Carolina Arango') ? 'search-hidden' : ''}`}>
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <DocumentIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>{highlightText('Yeniffer Carolina Arango')}</h4>
+                <p className="persona-role">Canales Digitales</p>
+                <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <div className="use-case-badge high-priority">ALTA PRIORIDAD</div>
+              <h5 className="use-case-title">
+                <DocumentIcon size={18} /> KYC Digital Onboarding
+              </h5>
+              <p className="use-case-desc">
+                Flujo de onboarding digital con verificación de identidad, OCR de documentos y validación biométrica. GridFS para documentos y esquema flexible para diferentes tipos de verificación.
+              </p>
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>GridFS:</strong>
+                  <span>Almacenamiento de documentos de identidad y selfies</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>ACID Transactions:</strong>
+                  <span>Consistencia en el flujo de aprobación</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Lina Marcela Monsalve */}
+          <div className={`persona-card manager-card ${!matchesSearch('Lina Marcela Monsalve') ? 'search-hidden' : ''}`}>
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <StrategyIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>{highlightText('Lina Marcela Monsalve')}</h4>
+                <p className="persona-role">Canales Digitales</p>
+                <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <h5 className="use-case-title">
+                <StrategyIcon size={18} /> Feature Flags & Configuración Dinámica
+              </h5>
+              <p className="use-case-desc">
+                Sistema de feature flags para despliegue progresivo de funcionalidades en canales digitales. Configuración por segmento, versión de app y porcentaje de rollout.
+              </p>
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Change Streams:</strong>
+                  <span>Hot-reload de configuraciones sin redeploy</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Esquema Flexible:</strong>
+                  <span>Diferentes tipos de flags y targeting rules</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* David Alejandro Osorio Restrepo */}
+          <div className={`persona-card manager-card ${!matchesSearch('David Alejandro Osorio Restrepo') ? 'search-hidden' : ''}`}>
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <TechIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>{highlightText('David Alejandro Osorio Restrepo')}</h4>
+                <p className="persona-role">Canales Digitales</p>
+                <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <h5 className="use-case-title">
+                <TechIcon size={18} /> API Response Caching Layer
+              </h5>
+              <p className="use-case-desc">
+                Capa de caching para APIs de alta frecuencia (saldos, movimientos, productos) reduciendo carga en core bancario y mejorando tiempos de respuesta en canales digitales.
+              </p>
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>TTL Indexes:</strong>
+                  <span>Cache con expiración configurable por tipo de dato</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Read Preference:</strong>
+                  <span>Lecturas desde secundarios para escalar horizontalmente</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Diego Alexander Giraldo Ramirez */}
+          <div className={`persona-card manager-card ${!matchesSearch('Diego Alexander Giraldo Ramirez') ? 'search-hidden' : ''}`}>
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <AIIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>{highlightText('Diego Alexander Giraldo Ramirez')}</h4>
+                <p className="persona-role">Canales Digitales</p>
+                <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <div className="use-case-badge high-priority">ALTA PRIORIDAD - IA</div>
+              <h5 className="use-case-title">
+                <AIIcon size={18} /> Chatbot RAG con Atlas Vector Search
+              </h5>
+              <p className="use-case-desc">
+                Asistente virtual bancario con RAG (Retrieval-Augmented Generation) usando Atlas Vector Search para responder preguntas sobre productos, tasas y procedimientos con contexto actualizado.
+              </p>
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Atlas Vector Search:</strong>
+                  <span>Embeddings de FAQs, productos y procedimientos bancarios</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Atlas Search:</strong>
+                  <span>Hybrid search combinando semántico y keyword</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Jhon Fredy Pineda */}
+          <div className={`persona-card manager-card ${!matchesSearch('Jhon Fredy Pineda') ? 'search-hidden' : ''}`}>
+            <div className="persona-header">
+              <div className="persona-avatar manager-avatar">
+                <ArchitectureIcon size={36} />
+              </div>
+              <div className="persona-info">
+                <h4>{highlightText('Jhon Fredy Pineda')}</h4>
+                <p className="persona-role">Canales Digitales</p>
+                <p className="reports-to">Reporta a: Luis Gabriel Correa</p>
+              </div>
+            </div>
+            <div className="use-case-container compact">
+              <div className="use-case-badge medium-priority">MEDIA PRIORIDAD</div>
+              <h5 className="use-case-title">
+                <ArchitectureIcon size={18} /> Transaction Feed en Tiempo Real
+              </h5>
+              <p className="use-case-desc">
+                Feed de transacciones en tiempo real para la App con categorización automática, búsqueda y filtrado avanzado de movimientos bancarios.
+              </p>
+              <div className="tech-features compact">
+                <div className="tech-feature">
+                  <strong>Time Series:</strong>
+                  <span>Almacenamiento optimizado de historial transaccional</span>
+                </div>
+                <div className="tech-feature">
+                  <strong>Atlas Search:</strong>
+                  <span>Búsqueda full-text en descripciones de movimientos</span>
                 </div>
               </div>
             </div>
@@ -1328,7 +1328,7 @@ export const OrgChartFidelVargas = () => {
             <h3>🔥 HIGH PRIORITY - Impacto Inmediato</h3>
             <ul>
               <li><strong>Payment Hub</strong> (Lina Maria Vergara + todos sus managers) - Core business transaccional</li>
-              <li><strong>Customer 360 / CDP</strong> (Santiago Zuluaga) - Habilitador estratégico para cross-sell</li>
+              <li><strong>App Session Store</strong> (Laura Milena Zapata) - Performance para 18M+ usuarios</li>
               <li><strong>Omnichannel Sessions</strong> (Luis Gabriel Correa) - Customer experience crítico</li>
               <li><strong>Investment Portfolio</strong> (Felipe Restrepo team) - Nuevo revenue stream</li>
             </ul>
@@ -1338,8 +1338,8 @@ export const OrgChartFidelVargas = () => {
             <h3>⚡ MEDIUM PRIORITY - Impacto 3-6 meses</h3>
             <ul>
               <li><strong>Factoring Platform</strong> (Jorge Valderrama) - Supply chain finance</li>
-              <li><strong>Channel Configuration</strong> (Laura Villa) - Operational efficiency</li>
-              <li><strong>Video Banking</strong> (Maria Jose Torres) - Digital transformation</li>
+              <li><strong>Chatbot RAG</strong> (Diego Alexander Giraldo) - IA con Atlas Vector Search</li>
+              <li><strong>KYC Onboarding</strong> (Yeniffer Carolina Arango) - Digital transformation</li>
             </ul>
           </div>
 
@@ -1371,8 +1371,8 @@ export const OrgChartFidelVargas = () => {
             </div>
             <div className="webinar-card">
               <h4>2. Omnichannel Customer Experience</h4>
-              <p><strong>Target:</strong> Luis Gabriel Correa + sus managers</p>
-              <p><strong>Tema:</strong> Gestionando sesiones y journeys en tiempo real</p>
+              <p><strong>Target:</strong> Luis Gabriel Correa + Laura Zapata, Lily Alvarez, Diego Giraldo</p>
+              <p><strong>Tema:</strong> Session store, personalización y chatbots RAG con Atlas</p>
             </div>
           </div>
 
@@ -1399,7 +1399,7 @@ export const OrgChartFidelVargas = () => {
             </div>
             <div className="webinar-card">
               <h4>6. Channel Management & Configuration</h4>
-              <p><strong>Target:</strong> Laura Villa, David Aguirre, Millerlley Gonzalez</p>
+              <p><strong>Target:</strong> Lina Marcela Monsalve, David Alejandro Osorio, Jhon Fredy Pineda</p>
               <p><strong>Tema:</strong> Feature Flags y configuración dinámica</p>
             </div>
           </div>
@@ -1432,7 +1432,7 @@ export const OrgChartFidelVargas = () => {
             <h4>1️⃣ Fase de Discovery</h4>
             <ul>
               <li>Workshop técnico con Payment Hub team</li>
-              <li>Deep-dive en arquitectura de canales omnichannel</li>
+              <li>Deep-dive en arquitectura de canales digitales con Luis Gabriel Correa</li>
               <li>Revisión de requisitos de compliance</li>
             </ul>
           </div>
