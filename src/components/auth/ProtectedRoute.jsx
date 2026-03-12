@@ -1,59 +1,36 @@
-import React, { useEffect } from 'react'
-import PropTypes from 'prop-types'
-import { useAuth } from '../../hooks/useAuth'
-import { AccessModal } from './AccessModal'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuthUser } from '../../hooks/useAuthUser';
 
 /**
- * ProtectedRoute - Wrapper para rutas que requieren código de acceso
+ * ProtectedRoute - Wrapper para rutas privadas
  *
- * Protege contenido de cliente requiriendo un código de acceso válido.
- * Soporta códigos específicos por cliente y código maestro de MongoDB.
+ * Protege contenido requiriendo una sesión activa.
  *
- * @param {string} client - Nombre del cliente (debe coincidir con key en ACCESS_CODES)
  * @param {ReactNode} children - Contenido a proteger
- *
- * @example
- * <ProtectedRoute client="bancolombia">
- *   <BancolombiaDashboard />
- * </ProtectedRoute>
  */
-export const ProtectedRoute = ({ client, children }) => {
-  const { hasAccess, validateCode, checkAccess } = useAuth(client)
+export const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuthUser();
+  const location = useLocation();
 
-  // Check access on mount
-  useEffect(() => {
-    checkAccess()
-  }, [])
-
-  const handleSubmit = (code) => {
-    const isValid = validateCode(code)
-    return isValid
-  }
-
-  const handleCancel = () => {
-    // Redirect to home if user cancels
-    window.location.href = '/'
-  }
-
-  // Capitalize first letter for display
-  const displayClient = client.charAt(0).toUpperCase() + client.slice(1)
-
-  // Show modal if no access
-  if (!hasAccess) {
+  if (isLoading) {
     return (
-      <AccessModal
-        client={displayClient}
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-      />
-    )
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: 'var(--color-bg-primary)' }}>
+        <div className="spinner"></div>
+      </div>
+    );
   }
 
-  // Render protected content
-  return <>{children}</>
-}
+  if (!isAuthenticated) {
+    // Redirigir al login guardando la ruta intentada
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // Render protegido
+  return <>{children}</>;
+};
 
 ProtectedRoute.propTypes = {
-  client: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired
-}
+};

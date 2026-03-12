@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import GoMDBLanding from './components/gomdblanding';
 import ClientesDirectory from './pages/clientes/ClientesDirectory';
@@ -16,116 +15,144 @@ import DRPFailback from './pages/clientes/bpd/DRPFailback';
 import { SizingSuraPersonaUnica } from './pages/clientes/sura/SizingSuraPersonaUnica';
 import { DesignReviewPersonaUnica } from './pages/clientes/sura/DesignReviewPersonaUnica';
 import NotFound from './components/NotFound';
-import { ProtectedRoute } from './components/auth';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import GlobalNavbar from './components/shared/GlobalNavbar';
+import Login from './pages/Login/Login';
+
+// Extraemos layout styles compartidos
 import './styles/gomdb-global.css';
+
+// Usaremos las secciones exportables para la homepage menu
+import { Layers, Cpu, Code2 } from 'lucide-react';
+
+const homeSections = [
+  { id: 'arquitectura', title: 'Arquitectura', color: '#00ED64', icon: Layers },
+  { id: 'sizing', title: 'Sizing', color: '#5644D4', icon: Cpu },
+  { id: 'demos', title: 'Demos', color: '#00A8E1', icon: Code2 },
+];
 
 function App() {
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<GoMDBLanding />} />
-      <Route path="/demo" element={<DocumentoDemo />} />
-      <Route path="/clientes/demo/documento" element={<DocumentoDemo />} />
-      <Route path="/cosmica" element={<Cosmica />} />
+    <>
+      {/* El Navbar vive fuera de las rutas para mostrarse siempre */}
+      <GlobalNavbar sections={homeSections} />
 
-      {/* Clientes Directory - Protected (MongoDB internal only) */}
-      <Route
-        path="/clientes"
-        element={
-          <ProtectedRoute client="mongodb">
-            <ClientesDirectory />
-          </ProtectedRoute>
-        }
-      />
+      <main style={{ paddingTop: '72px', minHeight: '100vh', background: 'var(--color-bg-primary)' }}>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<GoMDBLanding />} />
+          <Route path="/demo" element={<DocumentoDemo />} />
+          <Route path="/clientes/demo/documento" element={<DocumentoDemo />} />
+          <Route path="/cosmica" element={<Cosmica />} />
+          <Route path="/login" element={<Login />} />
 
-      {/* Client Content Pages - Protected internally by client ID */}
-      <Route path="/clientes/:clientId" element={<ClientContent />} />
+          {/* Clientes Directory - Protected */}
+          <Route
+            path="/clientes"
+            element={
+              <ProtectedRoute>
+                <ClientesDirectory />
+              </ProtectedRoute>
+            }
+          />
 
-      {/* Protected Client Document Routes */}
-      <Route
-        path="/clientes/cencosud/document-mongo"
-        element={
-          <ProtectedRoute client="cencosud">
-            <DocumentMongo />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/clientes/bancolombia/document-mongo"
-        element={
-          <ProtectedRoute client="bancolombia">
-            <BancolombiaDocument />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/clientes/bancolombia/orgchart-alvaro-carmona"
-        element={
-          <ProtectedRoute client="bancolombia">
-            <OrgChartAlvaroCarmona />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/clientes/bancolombia/orgchart-fidel-vargas"
-        element={
-          <ProtectedRoute client="bancolombia">
-            <OrgChartFidelVargas />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/clientes/bancolombia/orgchart-fidel-vargas-negocios"
-        element={
-          <ProtectedRoute client="bancolombia">
-            <OrgChartFidelVargasNegocios />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/clientes/bpd/arquitectura-drp"
-        element={
-          <ProtectedRoute client="bpd">
-            <ArquitecturaDRP />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/clientes/bpd/drp-hibrido"
-        element={
-          <ProtectedRoute client="bpd">
-            <DRPHibrido />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/clientes/bpd/drp-failback"
-        element={
-          <ProtectedRoute client="bpd">
-            <DRPFailback />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/clientes/sura/sizing-persona-unica"
-        element={
-          <ProtectedRoute client="sura">
-            <SizingSuraPersonaUnica />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/clientes/sura/design-review-persona-unica"
-        element={
-          <ProtectedRoute client="sura">
-            <DesignReviewPersonaUnica />
-          </ProtectedRoute>
-        }
-      />
+          {/* Client Content Pages - Protected */}
+          <Route 
+            path="/clientes/:clientId" 
+            element={
+              <ProtectedRoute>
+                <ClientContent />
+              </ProtectedRoute>
+            } 
+          />
 
-      {/* 404 */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+          {/* Protected Client Document Routes */}
+          <Route
+            path="/clientes/cencosud/document-mongo"
+            element={
+              <ProtectedRoute>
+                <DocumentMongo />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clientes/bancolombia/document-mongo"
+            element={
+              <ProtectedRoute>
+                <BancolombiaDocument />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clientes/bancolombia/orgchart-alvaro-carmona"
+            element={
+              <ProtectedRoute>
+                <OrgChartAlvaroCarmona />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clientes/bancolombia/orgchart-fidel-vargas"
+            element={
+              <ProtectedRoute>
+                <OrgChartFidelVargas />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clientes/bancolombia/orgchart-fidel-vargas-negocios"
+            element={
+              <ProtectedRoute>
+                <OrgChartFidelVargasNegocios />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clientes/bpd/arquitectura-drp"
+            element={
+              <ProtectedRoute>
+                <ArquitecturaDRP />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clientes/bpd/drp-hibrido"
+            element={
+              <ProtectedRoute>
+                <DRPHibrido />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clientes/bpd/drp-failback"
+            element={
+              <ProtectedRoute>
+                <DRPFailback />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clientes/sura/sizing-persona-unica"
+            element={
+              <ProtectedRoute>
+                <SizingSuraPersonaUnica />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/clientes/sura/design-review-persona-unica"
+            element={
+              <ProtectedRoute>
+                <DesignReviewPersonaUnica />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+    </>
   );
 }
 

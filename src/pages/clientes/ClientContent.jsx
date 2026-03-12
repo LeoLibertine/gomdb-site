@@ -1,8 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { getClientById } from '../../data/clientsData'
-import { useAuth } from '../../hooks/useAuth'
-import { AccessModal } from '../../components/auth/AccessModal'
 import {
   BankIcon,
   FintechIcon,
@@ -22,18 +20,6 @@ import {
 } from '../../components/icons'
 import './ClientContent.css'
 
-/**
- * ClientContent - Página de contenido específico de un cliente
- *
- * Muestra:
- * - Información del cliente con icono SVG
- * - Lista categorizada de documentos disponibles
- * - Links a cada documento (JSX o HTML)
- * - Iconos por categoría de contenido
- * - Protección con código de acceso
- */
-
-// Helper para obtener el icono del cliente
 const getClientIcon = (iconType) => {
   const icons = {
     bank: BankIcon,
@@ -46,7 +32,6 @@ const getClientIcon = (iconType) => {
   return icons[iconType] || BankIcon
 }
 
-// Helper para obtener el icono por categoría de documento
 const getCategoryIcon = (category) => {
   const categoryIcons = {
     'Comparativas': CompareIcon,
@@ -77,38 +62,21 @@ const ClientContent = () => {
   const { clientId } = useParams()
   const client = getClientById(clientId)
 
-  // IMPORTANTE: Todos los hooks deben llamarse ANTES de cualquier early return
-  // para mantener el orden consistente de hooks en cada render
-  const { hasAccess, validateCode, checkAccess } = useAuth(clientId)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Check access on mount
-  useEffect(() => {
-    if (client) {
-      checkAccess()
-    }
-  }, [clientId, client, checkAccess])
-
-  // TODOS los useMemo deben estar ANTES de cualquier early return
-  // Obtener todas las categorías únicas
   const categories = useMemo(() => {
     if (!client) return ['all']
     const cats = [...new Set(client.content.map(item => item.category))]
     return ['all', ...cats]
   }, [client])
 
-  // Filtrar contenido por categoría y búsqueda
   const filteredContent = useMemo(() => {
     if (!client) return []
     let filtered = client.content
-
-    // Filtrar por categoría
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(item => item.category === selectedCategory)
     }
-
-    // Filtrar por búsqueda
     if (searchTerm) {
       const term = searchTerm.toLowerCase()
       filtered = filtered.filter(item =>
@@ -117,108 +85,80 @@ const ClientContent = () => {
         item.category.toLowerCase().includes(term)
       )
     }
-
     return filtered
   }, [client, selectedCategory, searchTerm])
 
-  // Agrupar por categoría para mostrar
   const groupedContent = useMemo(() => {
     const groups = {}
     filteredContent.forEach(item => {
-      if (!groups[item.category]) {
-        groups[item.category] = []
-      }
+      if (!groups[item.category]) groups[item.category] = []
       groups[item.category].push(item)
     })
     return groups
   }, [filteredContent])
 
-  // AHORA sí podemos hacer early returns después de TODOS los hooks
-  // Si no existe el cliente, redirigir al directorio
-  if (!client) {
-    return <Navigate to="/clientes" replace />
-  }
-
-  // Si no tiene acceso, mostrar modal
-  if (!hasAccess) {
-    const handleSubmit = (code) => {
-      return validateCode(code)
-    }
-
-    const handleCancel = () => {
-      window.location.href = '/clientes'
-    }
-
-    const displayClient = client.name
-
-    return (
-      <AccessModal
-        client={displayClient}
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-      />
-    )
-  }
+  if (!client) return <Navigate to="/clientes" replace />
 
   const ClientIcon = getClientIcon(client.icon)
 
   return (
-    <div className="client-content-page">
+    <div className="cc-page">
       {/* Header */}
-      <header className="client-header">
-        <div className="header-content">
-          <Link to="/clientes" className="back-link">
-            ← Directorio de Clientes
+      <header className="cc-header">
+        <div className="cc-header-bg" />
+        <div className="cc-header-content">
+          <Link to="/clientes" className="cc-back">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            Directorio de Clientes
           </Link>
 
-          <div className="client-info">
-            <div className="client-logo-large-container">
-              <ClientIcon size={80} className="client-logo-large-svg" />
+          <div className="cc-client-info">
+            <div className="cc-client-logo">
+              <ClientIcon size={64} />
             </div>
-            <div className="client-details">
+            <div className="cc-client-details">
               <h1>{client.name}</h1>
-              <div className="client-meta-info">
-                <span className="meta-item">
-                  <IndustryIcon size={18} className="meta-icon-svg-content" />
+              <div className="cc-meta-row">
+                <span className="cc-meta-chip">
+                  <IndustryIcon size={14} />
                   {client.industry}
                 </span>
-                <span className="meta-item">
-                  <LocationIcon size={18} className="meta-icon-svg-content" />
+                <span className="cc-meta-chip">
+                  <LocationIcon size={14} />
                   {client.country}
                 </span>
-                <span className="meta-item">
-                  <DocumentIcon size={18} className="meta-icon-svg-content" />
+                <span className="cc-meta-chip">
+                  <DocumentIcon size={14} />
                   {client.content.length} documentos
                 </span>
               </div>
-              <p className="client-description">{client.description}</p>
+              <p className="cc-client-desc">{client.description}</p>
             </div>
           </div>
         </div>
       </header>
 
       {/* Filters */}
-      <div className="filters-section">
-        <div className="filters-container">
-          {/* Search */}
-          <div className="search-box">
+      <div className="cc-filters">
+        <div className="cc-filters-inner">
+          <div className="cc-search-box">
+            <SearchIcon size={16} className="cc-search-icon" />
             <input
               type="text"
               placeholder="Buscar documentos..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input-small"
+              className="cc-search-input"
             />
-            <SearchIcon size={18} className="search-icon-small" />
           </div>
-
-          {/* Category Filters */}
-          <div className="category-filters">
+          <div className="cc-category-filters">
             {categories.map(category => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
+                className={`cc-cat-btn ${selectedCategory === category ? 'active' : ''}`}
               >
                 {category === 'all' ? 'Todos' : category}
               </button>
@@ -228,28 +168,29 @@ const ClientContent = () => {
       </div>
 
       {/* Content */}
-      <div className="content-section">
-        <div className="content-container">
+      <div className="cc-content">
+        <div className="cc-content-inner">
           {Object.keys(groupedContent).length > 0 ? (
             Object.entries(groupedContent).map(([category, items]) => {
               const CategoryIcon = getCategoryIcon(category)
               return (
-                <div key={category} className="category-section">
-                  <h2 className="category-title">
-                    <CategoryIcon size={28} className="category-icon-svg" />
+                <div key={category} className="cc-category-section">
+                  <h2 className="cc-category-title">
+                    <CategoryIcon size={22} className="cc-category-icon" />
                     {category}
+                    <span className="cc-category-count">{items.length}</span>
                   </h2>
-                  <div className="documents-grid">
+                  <div className="cc-docs-grid">
                     {items.map((item, index) => (
-                      <DocumentCard key={index} item={item} category={category} clientId={clientId} />
+                      <DocumentCard key={index} item={item} category={category} />
                     ))}
                   </div>
                 </div>
               )
             })
           ) : (
-            <div className="no-content">
-              <p>No se encontraron documentos con "{searchTerm}"</p>
+            <div className="cc-empty">
+              <p>No se encontraron documentos con &ldquo;{searchTerm}&rdquo;</p>
             </div>
           )}
         </div>
@@ -258,84 +199,43 @@ const ClientContent = () => {
   )
 }
 
-/**
- * DocumentCard - Tarjeta individual de documento
- */
-const DocumentCard = ({ item, category, clientId }) => {
+const DocumentCard = ({ item, category }) => {
   const isPlaceholder = item.type === 'placeholder'
   const isExternal = item.path.startsWith('http')
   const isJsx = item.type === 'jsx'
   const DocIcon = getCategoryIcon(category)
 
-  // Si es placeholder, no renderizar link
-  if (isPlaceholder) {
-    return (
-      <div className="document-card placeholder">
-        <div className="document-icon-container">
-          <DocIcon size={32} className="document-icon-svg" />
-        </div>
-        <h3 className="document-title">{item.title}</h3>
-        <p className="document-description">{item.description}</p>
-        <div className="document-footer">
-          <span className="document-type">Próximamente</span>
+  const cardContent = (
+    <>
+      <div className="cc-doc-icon">
+        <DocIcon size={24} />
+      </div>
+      <div className="cc-doc-body">
+        <h3 className="cc-doc-title">{item.title}</h3>
+        <p className="cc-doc-desc">{item.description}</p>
+        <div className="cc-doc-footer">
+          <span className="cc-doc-type">
+            {isPlaceholder ? 'Proximamente' : item.type === 'jsx' ? 'React' : 'HTML'}
+          </span>
+          {!isPlaceholder && (
+            <span className="cc-doc-link">
+              {isExternal ? 'Abrir' : 'Ver'}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </span>
+          )}
         </div>
       </div>
-    )
-  }
-
-  // Si es externo, usar <a>
-  if (isExternal) {
-    return (
-      <a
-        href={item.path}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="document-card"
-      >
-        <div className="document-icon-container">
-          <DocIcon size={32} className="document-icon-svg" />
-        </div>
-        <h3 className="document-title">{item.title}</h3>
-        <p className="document-description">{item.description}</p>
-        <div className="document-footer">
-          <span className="document-type">{item.type === 'jsx' ? 'React' : 'HTML'}</span>
-          <span className="document-link">Abrir →</span>
-        </div>
-      </a>
-    )
-  }
-
-  // Si es JSX, usar Link de React Router
-  if (isJsx) {
-    return (
-      <Link to={item.path} className="document-card">
-        <div className="document-icon-container">
-          <DocIcon size={32} className="document-icon-svg" />
-        </div>
-        <h3 className="document-title">{item.title}</h3>
-        <p className="document-description">{item.description}</p>
-        <div className="document-footer">
-          <span className="document-type">React</span>
-          <span className="document-link">Ver →</span>
-        </div>
-      </Link>
-    )
-  }
-
-  // HTML estático - usar <a>
-  return (
-    <a href={item.path} className="document-card" target="_blank" rel="noopener noreferrer">
-      <div className="document-icon-container">
-        <DocIcon size={32} className="document-icon-svg" />
-      </div>
-      <h3 className="document-title">{item.title}</h3>
-      <p className="document-description">{item.description}</p>
-      <div className="document-footer">
-        <span className="document-type">HTML</span>
-        <span className="document-link">Abrir →</span>
-      </div>
-    </a>
+    </>
   )
+
+  const className = `cc-doc-card ${isPlaceholder ? 'placeholder' : ''}`
+
+  if (isPlaceholder) return <div className={className}>{cardContent}</div>
+  if (isExternal) return <a href={item.path} target="_blank" rel="noopener noreferrer" className={className}>{cardContent}</a>
+  if (isJsx) return <Link to={item.path} className={className}>{cardContent}</Link>
+  return <a href={item.path} target="_blank" rel="noopener noreferrer" className={className}>{cardContent}</a>
 }
 
 export default ClientContent
