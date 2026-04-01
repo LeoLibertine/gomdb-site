@@ -408,7 +408,12 @@
       "src": "/mcp/mcp-server(?:/.*)?$",
       "dest": "/mcp/mcp-server.html"
     },
-    
+
+    {
+      "src": "/clientes/bancolombia/qm/qm-evolution_1(?:/.*)?$",
+      "dest": "/clientes/bancolombia/qm/qm-evolution_1.html"
+    },
+
     {
       "src": "/(.*)",
       "dest": "/index.html"

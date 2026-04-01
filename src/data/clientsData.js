@@ -147,7 +147,7 @@ export const CLIENTS_DATA = [
       {
         title: 'Query Model — Evolución Estratégica',
         description: 'Evolución estratégica del modelo de queries en Bancolombia',
-        path: '/clientes/bancolombia/qm/qm-evolution_1.html',
+        path: '/clientes/bancolombia/qm/qm-evolution_1',
         type: 'html',
         category: 'Arquitectura'
       }
