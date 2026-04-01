@@ -143,6 +143,13 @@ export const CLIENTS_DATA = [
         path: '/clientes/bancolombia/whymongo.html',
         type: 'html',
         category: 'General'
+      },
+      {
+        title: 'Query Model — Evolución Estratégica',
+        description: 'Evolución estratégica del modelo de queries en Bancolombia',
+        path: '/clientes/bancolombia/qm/qm-evolution_1.html',
+        type: 'html',
+        category: 'Arquitectura'
       }
     ]
   },

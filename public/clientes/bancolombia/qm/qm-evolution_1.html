@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Query Model — Evolución Estratégica</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0B1215;
+  --bg2: #0F1A1E;
+  --surface: #131F24;
+  --surface2: #182830;
+  --green: #00ED64;
+  --green-dim: #00684A;
+  --green-glow: rgba(0,237,100,0.08);
+  --blue: #4DA6FF;
+  --blue-dim: #1A3A5C;
+  --orange: #FF9F43;
+  --red: #FF6B6B;
+  --white: #E8ECEE;
+  --gray: #6B7D85;
+  --gray-lt: #8FA3AC;
+  --line: rgba(255,255,255,0.04);
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans: 'DM Sans', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--sans);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== GRAIN OVERLAY ===== */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 10000;
+}
+
+/* ===== GRID OVERLAY ===== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(90deg, var(--line) 1px, transparent 1px),
+    linear-gradient(var(--line) 1px, transparent 1px);
+  background-size: 80px 80px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.4;
+}
+
+/* ===== NAV ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 0.9rem 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(11,18,21,0.92);
+  backdrop-filter: blur(24px) saturate(1.2);
+  border-bottom: 1px solid var(--line);
+}
+.nav-brand { font-family: var(--mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray); }
+.nav-brand em { color: var(--green); font-style: normal; }
+.nav-links { display: flex; gap: 2.2rem; }
+.nav-links a { font-size: 0.72rem; font-weight: 500; color: var(--gray); text-decoration: none; letter-spacing: 0.04em; transition: color 0.3s; position: relative; }
+.nav-links a:hover { color: var(--green); }
+.nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--green); transition: width 0.3s; }
+.nav-links a:hover::after { width: 100%; }
+.nav-tag { font-family: var(--mono); font-size: 0.6rem; font-weight: 500; color: var(--green-dim); letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid rgba(0,237,100,0.15); padding: 0.25rem 0.6rem; border-radius: 3px; }
+
+/* ===== SECTIONS ===== */
+section { padding: 7rem 4rem; position: relative; z-index: 2; }
+.kicker { font-family: var(--mono); font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1.2rem; display: inline-flex; align-items: center; gap: 0.5rem; }
+.kicker::before { content: ''; width: 20px; height: 1px; background: currentColor; }
+.kicker.green { color: var(--green); }
+.kicker.red { color: var(--red); }
+.kicker.blue { color: var(--blue); }
+.kicker.orange { color: var(--orange); }
+.headline {
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 5.5vw, 4rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+  max-width: 800px;
+}
+.headline em { font-style: italic; color: var(--green); }
+.subtext { font-size: 1rem; color: var(--gray-lt); max-width: 580px; line-height: 1.75; margin-bottom: 3rem; font-weight: 300; }
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lineGrow { from { width: 0; } to { width: 100%; } }
+@keyframes countUp { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+.reveal { opacity: 0; transform: translateY(50px); transition: opacity 1s cubic-bezier(0.16,1,0.3,1), transform 1s cubic-bezier(0.16,1,0.3,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
+.reveal-d3 { transition-delay: 0.3s; }
+.reveal-d4 { transition-delay: 0.4s; }
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 10rem 4rem 6rem;
+  position: relative; z-index: 2;
+  overflow: hidden;
+}
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+}
+.hero-orb.g { width: 600px; height: 600px; top: -20%; right: -10%; background: rgba(0,237,100,0.04); animation: float 12s ease-in-out infinite; }
+.hero-orb.b { width: 400px; height: 400px; bottom: -10%; left: 10%; background: rgba(77,166,255,0.03); animation: float 16s ease-in-out infinite reverse; }
+@keyframes float { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-20px, -30px); } }
+
+.hero-content { position: relative; z-index: 2; max-width: 900px; }
+.hero-kicker { font-family: var(--mono); font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin-bottom: 2.5rem; display: inline-flex; align-items: center; gap: 0.6rem; animation: slideUp 0.8s ease both; }
+.hero-kicker::before { content: ''; width: 30px; height: 1px; background: var(--green); }
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 2rem;
+  animation: slideUp 0.8s ease 0.1s both;
+}
+.hero h1 em { font-style: italic; color: var(--green); }
+.hero-desc {
+  font-size: 1.1rem; color: var(--gray-lt); max-width: 600px;
+  line-height: 1.8; font-weight: 300;
+  animation: slideUp 0.8s ease 0.2s both;
+}
+.hero-stats {
+  margin-top: 3.5rem;
+  display: flex; gap: 3rem;
+  animation: slideUp 0.8s ease 0.35s both;
+}
+.h-stat { display: flex; flex-direction: column; gap: 0.2rem; }
+.h-stat .val { font-family: var(--mono); font-size: 1.6rem; font-weight: 600; color: var(--green); }
+.h-stat .lbl { font-size: 0.68rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.1em; }
+
+.scroll-cue {
+  position: absolute; bottom: 2.5rem; left: 4rem;
+  display: flex; align-items: center; gap: 0.8rem;
+  animation: slideUp 0.8s ease 0.5s both;
+}
+.scroll-cue span { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); letter-spacing: 0.15em; text-transform: uppercase; }
+.scroll-cue .line { width: 40px; height: 1px; background: linear-gradient(90deg, var(--green), transparent); animation: pulse 2s ease infinite; }
+@keyframes pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+/* ===== ENGAGEMENT ===== */
+.engagement { background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%); }
+.eng-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border-radius: 12px; overflow: hidden; margin-top: 0.5rem; }
+.eng-cell {
+  background: var(--surface);
+  padding: 2rem 1.5rem;
+  position: relative;
+  transition: background 0.4s;
+}
+.eng-cell:hover { background: var(--surface2); }
+.eng-cell::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--green);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.eng-cell:hover::after { transform: scaleX(1); }
+.eng-num { font-family: var(--mono); font-size: 0.6rem; color: var(--green); letter-spacing: 0.1em; margin-bottom: 1rem; }
+.eng-cell h3 { font-family: var(--serif); font-size: 1.15rem; font-weight: 400; margin-bottom: 0.6rem; line-height: 1.3; }
+.eng-cell p { font-size: 0.78rem; color: var(--gray); line-height: 1.55; }
+
+/* ===== PERCEPTION ===== */
+.perception { background: var(--bg2); }
+.perc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+.perc-card {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 1.8rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s;
+  border: 1px solid transparent;
+}
+.perc-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0,237,100,0.08);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.perc-card .accent { position: absolute; top: 0; left: 0; width: 3px; height: 100%; }
+.perc-card .accent.g { background: var(--green); }
+.perc-card .accent.b { background: var(--blue); }
+.perc-card .accent.o { background: var(--orange); }
+.perc-card h3 { font-family: var(--serif); font-size: 1.05rem; font-weight: 400; margin-bottom: 0.5rem; margin-left: 0.8rem; }
+.perc-card.green h3 { color: var(--green); }
+.perc-card.blue h3 { color: var(--blue); }
+.perc-card.orange h3 { color: var(--orange); }
+.perc-card p { font-size: 0.8rem; color: var(--gray-lt); line-height: 1.6; margin-left: 0.8rem; }
+
+/* ===== ARCHITECTURE ===== */
+.architecture { background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%); }
+.arch-container {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.arch-container::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--green), var(--blue), transparent);
+}
+.arch-label { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2rem; }
+.pipeline-wrap { width: 100%; overflow-x: auto; margin: 1.5rem 0; padding: 0.5rem 0; }
+.pipeline-wrap svg { display: block; margin: 0 auto; }
+.arch-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border-radius: 8px; overflow: hidden; margin-top: 2rem; }
+.arch-meta-cell { background: var(--bg); padding: 1.2rem; }
+.arch-meta-cell .label { font-family: var(--mono); font-size: 0.58rem; color: var(--green); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.4rem; }
+.arch-meta-cell p { font-size: 0.75rem; color: var(--gray); line-height: 1.5; }
+
+/* ===== EVIDENCE ===== */
+.evidence { background: var(--bg); }
+.ev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.ev-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1.8rem 2rem;
+  display: flex; gap: 1rem; align-items: flex-start;
+  transition: border-color 0.3s;
+}
+.ev-card:hover { border-color: rgba(0,237,100,0.12); }
+.ev-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 0.5rem; flex-shrink: 0; }
+.ev-dot.g { background: var(--green); box-shadow: 0 0 12px rgba(0,237,100,0.4); }
+.ev-dot.b { background: var(--blue); box-shadow: 0 0 12px rgba(77,166,255,0.4); }
+.ev-card h4 { font-family: var(--serif); font-size: 0.95rem; font-weight: 400; margin-bottom: 0.35rem; }
+.ev-card p { font-size: 0.78rem; color: var(--gray-lt); line-height: 1.55; }
+.caveat-box {
+  margin-top: 2rem;
+  padding: 1.2rem 1.5rem;
+  background: var(--green-glow);
+  border-left: 2px solid var(--green-dim);
+  border-radius: 0 6px 6px 0;
+  font-size: 0.78rem; color: var(--gray-lt); line-height: 1.6; font-style: italic;
+}
+.caveat-box strong { color: var(--green); font-style: normal; }
+
+/* ===== DIVIDER ===== */
+.divider {
+  padding: 5rem 4rem;
+  text-align: center;
+  position: relative; z-index: 2;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.divider h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 400;
+  color: var(--gray);
+  font-style: italic;
+}
+.divider h2 em { color: var(--green); font-style: italic; }
+
+/* ===== TIMELINES ===== */
+.timelines { background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%); }
+.tl-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.tl-col {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.tl-col::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.tl-col.short::before { background: linear-gradient(90deg, var(--red), transparent 80%); }
+.tl-col.long::before { background: linear-gradient(90deg, var(--green), transparent 80%); }
+.tl-badge { font-family: var(--mono); font-size: 0.58rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 3px; display: inline-block; margin-bottom: 1.2rem; }
+.tl-col.short .tl-badge { background: rgba(255,107,107,0.1); color: var(--red); border: 1px solid rgba(255,107,107,0.15); }
+.tl-col.long .tl-badge { background: var(--green-glow); color: var(--green); border: 1px solid rgba(0,237,100,0.15); }
+.tl-col h3 { font-family: var(--serif); font-size: 1.4rem; font-weight: 400; margin-bottom: 0.4rem; }
+.tl-col .goal { font-family: var(--serif); font-size: 0.9rem; font-style: italic; margin-bottom: 1.5rem; }
+.tl-col.short .goal { color: var(--red); }
+.tl-col.long .goal { color: var(--green); }
+.tl-item { display: flex; gap: 0.7rem; align-items: baseline; margin-bottom: 0.6rem; }
+.tl-item .dot { width: 4px; height: 4px; border-radius: 50%; margin-top: 0.4rem; flex-shrink: 0; }
+.tl-col.short .tl-item .dot { background: var(--red); }
+.tl-col.long .tl-item .dot { background: var(--green); }
+.tl-item p { font-size: 0.82rem; color: var(--gray-lt); line-height: 1.45; }
+.tl-note { margin-top: 1.5rem; padding: 0.8rem 1rem; border-radius: 6px; font-size: 0.75rem; line-height: 1.5; }
+.tl-note.warn { background: rgba(255,107,107,0.05); border: 1px solid rgba(255,107,107,0.1); color: var(--red); }
+.tl-note.ok { background: var(--green-glow); border: 1px solid rgba(0,237,100,0.1); color: var(--green); }
+.tl-callout { margin-top: 2rem; padding: 1.5rem 2rem; background: var(--surface); border-left: 2px solid var(--orange); border-radius: 0 8px 8px 0; }
+.tl-callout p { font-size: 0.88rem; color: var(--white); line-height: 1.6; }
+.tl-callout strong { color: var(--orange); }
+
+/* ===== RISK ===== */
+.risk { background: var(--bg2); }
+.risk-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.risk-col { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 2.5rem; position: relative; overflow: hidden; }
+.risk-col::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.risk-col.bad::before { background: var(--red); }
+.risk-col.good::before { background: var(--green); }
+.risk-col h3 { font-family: var(--serif); font-size: 1.2rem; font-weight: 400; margin-bottom: 0.8rem; }
+.risk-col.bad h3 { color: var(--red); }
+.risk-col.good h3 { color: var(--green); }
+.risk-col p { font-size: 0.85rem; color: var(--gray-lt); line-height: 1.6; margin-bottom: 1rem; }
+.risk-list { padding: 0.8rem 1rem; border-radius: 6px; font-family: var(--mono); font-size: 0.72rem; line-height: 1.7; }
+.risk-col.bad .risk-list { background: rgba(255,107,107,0.05); color: var(--red); }
+.risk-col.good .risk-list { background: var(--green-glow); color: var(--green); }
+.risk-quote {
+  margin-top: 3rem;
+  text-align: center;
+  font-family: var(--serif);
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  font-style: italic;
+  color: var(--white);
+  line-height: 1.4;
+}
+.risk-quote em { color: var(--green); }
+
+/* ===== POV FROM/TO ===== */
+.pov { background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%); }
+.ft-split { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 1rem; align-items: center; }
+.ft-col { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 2.5rem; position: relative; overflow: hidden; }
+.ft-col::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.ft-col.from::before { background: var(--gray); opacity: 0.3; }
+.ft-col.to::before { background: var(--green); }
+.ft-badge { font-family: var(--mono); font-size: 0.58rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; display: inline-block; }
+.ft-col.from .ft-badge { color: var(--gray); }
+.ft-col.to .ft-badge { color: var(--green); }
+.ft-col h3 { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; margin-bottom: 1rem; }
+.ft-item { display: flex; gap: 0.6rem; align-items: baseline; margin-bottom: 0.5rem; }
+.ft-item .d { width: 4px; height: 4px; border-radius: 50%; margin-top: 0.4rem; flex-shrink: 0; }
+.ft-col.from .ft-item .d { background: var(--gray); }
+.ft-col.to .ft-item .d { background: var(--green); }
+.ft-item p { font-size: 0.82rem; line-height: 1.45; }
+.ft-col.from .ft-item p { color: var(--gray); }
+.ft-col.to .ft-item p { color: var(--white); }
+.ft-arrow { text-align: center; font-size: 2rem; color: var(--green); animation: arrowPulse 2.5s ease infinite; }
+@keyframes arrowPulse { 0%,100% { opacity: 0.3; transform: translateX(0); } 50% { opacity: 1; transform: translateX(5px); } }
+
+.prin-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border-radius: 12px; overflow: hidden; margin-top: 3rem; }
+.prin-cell { background: var(--surface); padding: 2rem 1.5rem; text-align: center; transition: background 0.4s; }
+.prin-cell:hover { background: var(--surface2); }
+.prin-cell .p-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.6rem; }
+.prin-cell:nth-child(1) .p-label { color: var(--green); }
+.prin-cell:nth-child(2) .p-label { color: var(--blue); }
+.prin-cell:nth-child(3) .p-label { color: var(--orange); }
+.prin-cell:nth-child(4) .p-label { color: var(--green); }
+.prin-cell h4 { font-family: var(--serif); font-size: 1.05rem; font-weight: 400; margin-bottom: 0.5rem; }
+.prin-cell p { font-size: 0.72rem; color: var(--gray); line-height: 1.5; }
+
+/* ===== TARGET ===== */
+.target { background: var(--bg); }
+.target-box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 2.5rem; position: relative; overflow: hidden; }
+.target-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--green), var(--blue), transparent); }
+.layer-row { display: flex; align-items: stretch; gap: 1.5rem; padding: 1.5rem; border-radius: 8px; background: var(--bg); margin-bottom: 1rem; border: 1px solid var(--line); transition: border-color 0.3s; }
+.layer-row:hover { border-color: rgba(0,237,100,0.1); }
+.layer-tag { font-family: var(--mono); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; min-width: 160px; padding-top: 0.2rem; }
+.layer-row:nth-child(1) .layer-tag { color: var(--green); }
+.layer-row:nth-child(2) .layer-tag { color: var(--blue); }
+.layer-row:nth-child(3) .layer-tag { color: var(--green); }
+.layer-row h4 { font-family: var(--serif); font-size: 0.95rem; font-weight: 400; margin-bottom: 0.3rem; }
+.layer-row p { font-size: 0.78rem; color: var(--gray-lt); line-height: 1.55; }
+.target-note { margin-top: 1.5rem; font-size: 0.82rem; color: var(--gray); line-height: 1.6; font-style: italic; padding-left: 1rem; border-left: 2px solid var(--green-dim); }
+
+/* ===== QUESTIONS ===== */
+.questions { background: var(--bg2); }
+.q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1.5rem 1.8rem;
+  display: flex; gap: 1rem; align-items: flex-start;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.q-card:hover { border-color: rgba(0,237,100,0.12); transform: translateY(-2px); }
+.q-num { font-family: var(--mono); font-size: 1.2rem; font-weight: 600; color: var(--green); flex-shrink: 0; }
+.q-card p { font-size: 0.82rem; color: var(--gray-lt); line-height: 1.5; }
+
+/* ===== NEXT STEPS ===== */
+.nextsteps { background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%); }
+.ns-box {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 3rem;
+  position: relative; overflow: hidden;
+}
+.ns-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--green); }
+.ns-box h3 { font-family: var(--serif); font-size: 1.4rem; font-weight: 400; margin-bottom: 0.4rem; }
+.ns-box .sub { font-size: 0.9rem; color: var(--gray); margin-bottom: 2rem; }
+.ns-cols { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 2rem; }
+.ns-divider { background: var(--line); }
+.ns-col h4 { font-family: var(--mono); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
+.ns-col:first-child h4 { color: var(--green); }
+.ns-col:last-child h4 { color: var(--blue); }
+.ns-item { display: flex; gap: 0.5rem; align-items: baseline; margin-bottom: 0.6rem; }
+.ns-item .d { width: 4px; height: 4px; border-radius: 50%; margin-top: 0.4rem; flex-shrink: 0; }
+.ns-col:first-child .ns-item .d { background: var(--green); }
+.ns-col:last-child .ns-item .d { background: var(--blue); }
+.ns-item p { font-size: 0.8rem; color: var(--gray-lt); line-height: 1.4; }
+
+/* ===== CLOSING ===== */
+.closing {
+  padding: 8rem 4rem;
+  text-align: center;
+  position: relative; z-index: 2;
+}
+.closing h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 4vw, 2.5rem);
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 2rem;
+  max-width: 700px;
+  margin-left: auto; margin-right: auto;
+}
+.closing h2 em { font-style: italic; color: var(--green); }
+.closing p { font-size: 0.95rem; color: var(--gray); max-width: 500px; margin: 0 auto; line-height: 1.7; font-weight: 300; }
+
+footer {
+  padding: 2rem 4rem;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  position: relative; z-index: 2;
+}
+footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); letter-spacing: 0.1em; }
+
+@media (max-width: 900px) {
+  section { padding: 5rem 1.5rem; }
+  .hero { padding: 7rem 1.5rem 4rem; }
+  .eng-grid, .perc-grid, .prin-grid, .arch-meta { grid-template-columns: 1fr 1fr; }
+  .tl-split, .risk-split, .ft-split, .q-grid, .ns-cols, .ev-grid { grid-template-columns: 1fr; }
+  .ft-arrow { transform: rotate(90deg); }
+  nav .nav-links { display: none; }
+}
+@media (max-width: 600px) {
+  .eng-grid, .perc-grid, .prin-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Banco<em>colombia</em> × MongoDB</div>
+  <div class="nav-links">
+    <a href="#engagement">Engagement</a><a href="#perception">Percepción</a><a href="#arch">Arquitectura</a>
+    <a href="#timelines">Dos Tiempos</a><a href="#risk">Riesgo</a><a href="#pov">Visión</a><a href="#nextsteps">Siguientes Pasos</a>
+  </div>
+  <div class="nav-tag">Confidencial</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb g"></div>
+  <div class="hero-orb b"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">Estrategia de Evolución del Query Model</div>
+    <h1>Del éxito en contingencia<br>a <em>capa estratégica<br>de acceso</em></h1>
+    <p class="hero-desc">Durante febrero 2026, un componente operacional basado en MongoDB sostuvo cargas críticas de lectura mientras el core legacy estaba caído. La pregunta ahora no es si expandirlo — sino cómo hacerlo con intención arquitectónica.</p>
+    <div class="hero-stats">
+      <div class="h-stat"><span class="val">CQRS</span><span class="lbl">Patrón en producción</span></div>
+      <div class="h-stat"><span class="val">CDC</span><span class="lbl">Pipeline tiempo real</span></div>
+      <div class="h-stat"><span class="val">~200</span><span class="lbl">Consumidores del core</span></div>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>Scroll</span><div class="line"></div></div>
+</section>
+
+<!-- ENGAGEMENT -->
+<section class="engagement" id="engagement">
+  <div class="reveal"><span class="kicker green">Nuestro Engagement</span><h2 class="headline">Cómo llegamos<br>hasta aquí.</h2><p class="subtext">En los últimos meses, el equipo de Solutions Architecture de MongoDB ha construido un entendimiento profundo de la arquitectura de Bancolombia.</p></div>
+  <div class="eng-grid reveal reveal-d1">
+    <div class="eng-cell"><div class="eng-num">01 — INFRA</div><h3>Health Check &<br>Evaluación</h3><p>Análisis de clusters en producción (Boton, ATHENPCD, Query Model PDN). Recomendaciones de performance y optimización de índices.</p></div>
+    <div class="eng-cell"><div class="eng-num">02 — ARQUITECTURA</div><h3>Deep Dive del<br>Query Model</h3><p>Múltiples sesiones con el equipo de arquitectura del banco. Pipeline CQRS, mecanismos de CDC, flujos de datos y arquitectura de contingencia.</p></div>
+    <div class="eng-cell"><div class="eng-num">03 — TFW</div><h3>Workshop de<br>Depósitos</h3><p>Propuesta integral de ODL para el dominio de Depósitos. Modelo de documentos, pipeline, estrategia de CDC y sizing. Listo para revisión.</p></div>
+    <div class="eng-cell"><div class="eng-num">04 — EJECUTIVO</div><h3>Alineación<br>Estratégica</h3><p>Sesiones ejecutivas sobre arquitectura de resiliencia, opciones multi-región y proof points de bancos Tier-1. Alineación en curso.</p></div>
+  </div>
+</section>
+
+<!-- PERCEPTION -->
+<section class="perception" id="perception">
+  <div class="reveal"><span class="kicker green">Entendimiento Actual</span><h2 class="headline">Lo que vemos hoy<br>en el <em>Query Model.</em></h2><p class="subtext">Basado en nuestras sesiones con el equipo de arquitectura del banco.</p></div>
+  <div class="perc-grid reveal reveal-d1">
+    <div class="perc-card green"><div class="accent g"></div><h3>Patrón CQRS</h3><p>Escrituras al iSeries. Lecturas desde MongoDB. ~70% lecturas, ~30% escrituras.</p></div>
+    <div class="perc-card blue"><div class="accent b"></div><h3>Dominios de Datos</h3><p>Materializa relación, cuenta, cliente, movimientos, saldos y cuentas escritas para Depósitos.</p></div>
+    <div class="perc-card green"><div class="accent g"></div><h3>Rol en Contingencia</h3><p>Switch entre iSeries y QM. El objetivo: leer desde QM permanentemente, no solo en contingencia.</p></div>
+    <div class="perc-card blue"><div class="accent b"></div><h3>Limitaciones Conocidas</h3><p>Bolsillos, bloqueos parciales y retenciones regulatorias no representados en contingencia.</p></div>
+    <div class="perc-card orange"><div class="accent o"></div><h3>Expansión: Bonos</h3><p>Segundo cluster "Core Banking" desplegado. QM expandiéndose a nuevos dominios financieros.</p></div>
+    <div class="perc-card orange"><div class="accent o"></div><h3>Visibilidad Ejecutiva</h3><p>Alta visibilidad tras el incidente. MongoDB identificado como componente relevante.</p></div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="architecture" id="arch">
+  <div class="reveal"><span class="kicker green">Arquitectura Actual</span><h2 class="headline">El pipeline que mantiene<br>los <em>canales vivos.</em></h2><p class="subtext">Flujo CDC en tiempo real desde el core legacy hacia MongoDB, donde sirve todas las lecturas de canales digitales.</p></div>
+  <div class="arch-container reveal reveal-d1">
+    <div class="arch-label">Pipeline del Query Model — Estado Actual en Producción</div>
+    <div class="pipeline-wrap">
+      <svg viewBox="0 0 920 180" width="920" height="180" xmlns="http://www.w3.org/2000/svg">
+        <text x="460" y="16" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="600" letter-spacing="2">PIPELINE CDC EN TIEMPO REAL</text>
+        <rect x="10" y="30" width="125" height="100" rx="8" fill="#1a0f0f" stroke="#FF6B6B" stroke-width="1"/>
+        <text x="72" y="62" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono" font-size="15" font-weight="600">AS/400</text>
+        <text x="72" y="80" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">Core iSeries</text>
+        <text x="72" y="93" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="8">RPG + DB2</text>
+        <text x="72" y="118" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono" font-size="7" font-weight="500">ESCRITURAS</text>
+        <line x1="143" y1="80" x2="183" y2="80" stroke="#00ED64" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+        <polygon points="180,76 188,80 180,84" fill="#00ED64" opacity="0.5"/>
+        <rect x="193" y="30" width="125" height="100" rx="8" fill="#1a1508" stroke="#FF9F43" stroke-width="1"/>
+        <text x="255" y="60" text-anchor="middle" fill="#FF9F43" font-family="IBM Plex Mono" font-size="12" font-weight="600">IBM IDR</text>
+        <text x="255" y="78" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">Change Data</text>
+        <text x="255" y="91" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">Capture</text>
+        <text x="255" y="118" text-anchor="middle" fill="#FF9F43" font-family="IBM Plex Mono" font-size="7" font-weight="500">CDC TIEMPO REAL</text>
+        <line x1="326" y1="80" x2="366" y2="80" stroke="#00ED64" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+        <polygon points="363,76 371,80 363,84" fill="#00ED64" opacity="0.5"/>
+        <rect x="376" y="30" width="125" height="100" rx="8" fill="#0d1520" stroke="#4DA6FF" stroke-width="1"/>
+        <text x="438" y="60" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="12" font-weight="600">Kafka</text>
+        <text x="438" y="78" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">Bus de Eventos</text>
+        <text x="438" y="91" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">Landing Zone</text>
+        <text x="438" y="118" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="7" font-weight="500">CONFLUENT</text>
+        <line x1="509" y1="80" x2="549" y2="80" stroke="#00ED64" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+        <polygon points="546,76 554,80 546,84" fill="#00ED64" opacity="0.5"/>
+        <rect x="559" y="30" width="125" height="100" rx="8" fill="#0d1520" stroke="#4DA6FF" stroke-width="1"/>
+        <text x="621" y="60" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="12" font-weight="600">Flink</text>
+        <text x="621" y="78" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">Procesamiento</text>
+        <text x="621" y="91" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">de Streams</text>
+        <text x="621" y="118" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="7" font-weight="500">TRANSFORMACIÓN</text>
+        <line x1="692" y1="80" x2="732" y2="80" stroke="#00ED64" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+        <polygon points="729,76 737,80 729,84" fill="#00ED64" opacity="0.5"/>
+        <rect x="742" y="30" width="135" height="100" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1.5"/>
+        <text x="809" y="58" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="12" font-weight="600">MongoDB</text>
+        <text x="809" y="74" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="10">Atlas</text>
+        <text x="809" y="93" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">Query Model / ODL</text>
+        <text x="809" y="118" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="7" font-weight="500">LECTURAS 24/7</text>
+        <line x1="809" y1="135" x2="809" y2="152" stroke="#00ED64" stroke-width="1" opacity="0.3"/>
+        <polygon points="805,152 809,160 813,152" fill="#00ED64" opacity="0.4"/>
+        <rect x="742" y="162" width="135" height="16" rx="4" fill="rgba(0,104,74,0.2)"/>
+        <text x="809" y="174" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="7" font-weight="500">→ CANALES DIGITALES</text>
+      </svg>
+    </div>
+    <div class="arch-meta">
+      <div class="arch-meta-cell"><div class="label">Sincronización</div><p>CDC en tiempo real durante el día. Reconciliación por lotes en recuperación.</p></div>
+      <div class="arch-meta-cell"><div class="label">Transformación</div><p>~200 campos crudos estandarizados en modelo de documentos canónico.</p></div>
+      <div class="arch-meta-cell"><div class="label">Recuperación</div><p>Monitor automatizado emite evento de contingencia. Canales switchean.</p></div>
+      <div class="arch-meta-cell"><div class="label">Conectores</div><p>Rutas independientes iSeries-a-Bolt y iSeries-a-CORIMO.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- EVIDENCE -->
+<section class="evidence" id="evidence">
+  <div class="reveal"><span class="kicker green">Evidencia Interna</span><h2 class="headline">Lo que demostró durante<br><em>febrero 2026.</em></h2><p class="subtext">Prueba de relevancia — no prueba de que la arquitectura objetivo completa ya esté implementada.</p></div>
+  <div class="ev-grid reveal reveal-d1">
+    <div class="ev-card"><div class="ev-dot g"></div><div><h4>Componente se mantuvo disponible</h4><p>MongoDB continuó sirviendo lecturas a canales digitales mientras el AS/400 estuvo indisponible por un período extendido.</p></div></div>
+    <div class="ev-card"><div class="ev-dot g"></div><div><h4>Cargas de lectura sostenidas</h4><p>Saldos, historial de transacciones e información de cuentas se siguieron sirviendo a App Personas y canales.</p></div></div>
+    <div class="ev-card"><div class="ev-dot b"></div><div><h4>Retroalimentación interna positiva</h4><p>El equipo de arquitectura dio feedback positivo sobre el rol de MongoDB en este tipo de carga operacional.</p></div></div>
+    <div class="ev-card"><div class="ev-dot b"></div><div><h4>Alta visibilidad ejecutiva</h4><p>Tras el incidente, se evaluó la expansión de capacidades de MongoDB a más servicios y dominios.</p></div></div>
+  </div>
+  <div class="caveat-box reveal reveal-d2"><strong>Encuadre:</strong> Esta evidencia valida al Query Model como componente relevante. La propuesta construye sobre esta base para definir un camino de evolución controlada e intencional.</div>
+</section>
+
+<!-- DIVIDER -->
+<div class="divider"><div class="reveal"><h2>Lo que funciona hoy está claro.<br>La pregunta es: <em>¿hacia dónde evoluciona?</em></h2></div></div>
+
+<!-- TIMELINES -->
+<section class="timelines" id="timelines">
+  <div class="reveal"><span class="kicker green">Insight Crítico</span><h2 class="headline">Dos tiempos diferentes.<br><em>No deben confundirse.</em></h2><p class="subtext">El banco gestiona dos horizontes en paralelo. Mezclar ambas conversaciones genera deuda técnica.</p></div>
+  <div class="tl-split reveal reveal-d1">
+    <div class="tl-col short">
+      <div class="tl-badge">Corto Plazo</div>
+      <h3>Modo Contingencia</h3>
+      <div class="goal">"¿Qué hacemos si nos volvemos a caer?"</div>
+      <div class="tl-item"><div class="dot"></div><p>Habilitar más capacidades rápido vía Query Model</p></div>
+      <div class="tl-item"><div class="dot"></div><p>Mejorar disponibilidad de saldos y lecturas</p></div>
+      <div class="tl-item"><div class="dot"></div><p>Framework de "Misiones" (~13 iniciativas)</p></div>
+      <div class="tl-item"><div class="dot"></div><p>Sin tiempo para rediseño completo</p></div>
+      <div class="tl-note warn">⚠ Riesgo: expandir QM sin estructura — "meter más saldos" sin propósito arquitectónico.</div>
+    </div>
+    <div class="tl-col long">
+      <div class="tl-badge">Largo Plazo</div>
+      <h3>Arquitectura Objetivo</h3>
+      <div class="goal">"¿Cómo escala este componente de forma sostenible?"</div>
+      <div class="tl-item"><div class="dot"></div><p>Modelo canónico por producto bien definido</p></div>
+      <div class="tl-item"><div class="dot"></div><p>APIs limpias y bien definidas por dominio</p></div>
+      <div class="tl-item"><div class="dot"></div><p>Capa compartida de datos (shared data layer)</p></div>
+      <div class="tl-item"><div class="dot"></div><p>Evolución ordenada del Query Model</p></div>
+      <div class="tl-note ok">✓ Productos nuevos (Molde) se trabajarán greenfield con modelo canónico.</div>
+    </div>
+  </div>
+  <div class="tl-callout reveal reveal-d2"><p><strong>Lo que esto significa:</strong> Una cosa es lo que se necesita para la próxima caída. Otra es cómo se diseña una capacidad durable. El Query Model necesita servir al corto plazo sin comprometer el largo plazo.</p></div>
+</section>
+
+<!-- RISK -->
+<section class="risk" id="risk">
+  <div class="reveal"><span class="kicker red">Riesgo Principal</span><h2 class="headline">El mayor riesgo no es invertir poco —<br>es <em>crecer sin estructura.</em></h2><p class="subtext">El Query Model funcionó bien. Por eso la tentación de "meterle más." Pero sin principios claros, se vuelve otro componente táctico inflado.</p></div>
+  <div class="risk-split reveal reveal-d1">
+    <div class="risk-col bad">
+      <h3>Si crece sin gobierno</h3>
+      <p>Se agrega dominio tras dominio sin ownership claro. Cada equipo pide "meter más saldos" y el QM se vuelve un catch-all sin límites.</p>
+      <div class="risk-list">→ Sin modelo canónico<br>→ Sin límites de dominio<br>→ Sin ownership por producto<br>→ Otro componente táctico inflado</div>
+    </div>
+    <div class="risk-col good">
+      <h3>Si crece con intención</h3>
+      <p>Cada expansión sigue principios: qué dominio, qué modelo canónico, quién es dueño, cómo se alimenta. QM evoluciona como capacidad.</p>
+      <div class="risk-list">✓ Dominio definido<br>✓ Modelo canónico claro<br>✓ Ownership asignado<br>✓ Capacidad estratégica reutilizable</div>
+    </div>
+  </div>
+  <div class="risk-quote reveal reveal-d2">"La evolución correcta no es hacerlo <em>más grande.</em><br>Es hacerlo <em>más intencional.</em>"</div>
+</section>
+
+<!-- POV -->
+<section class="pov" id="pov">
+  <div class="reveal"><span class="kicker green">Nuestra Visión</span><h2 class="headline">De capa táctica a <em>capa<br>estratégica de acceso.</em></h2><p class="subtext">No lo vemos solo como contingencia. Lo vemos como una posible capa estratégica — siempre que evolucione con gobierno y diseño.</p></div>
+  <div class="ft-split reveal reveal-d1">
+    <div class="ft-col from">
+      <div class="ft-badge">HOY</div>
+      <h3>Capa de Contingencia</h3>
+      <div class="ft-item"><div class="d"></div><p>Activada solo en modo contingencia</p></div>
+      <div class="ft-item"><div class="d"></div><p>Subset de lecturas (depósitos)</p></div>
+      <div class="ft-item"><div class="d"></div><p>Alcance táctico y reactivo</p></div>
+      <div class="ft-item"><div class="d"></div><p>Habilitación por emergencia</p></div>
+      <div class="ft-item"><div class="d"></div><p>Sin modelo canónico formal</p></div>
+    </div>
+    <div class="ft-arrow">→</div>
+    <div class="ft-col to">
+      <div class="ft-badge">FUTURO</div>
+      <h3>Capa Estratégica de Acceso</h3>
+      <div class="ft-item"><div class="d"></div><p>Siempre activa — lectura por defecto</p></div>
+      <div class="ft-item"><div class="d"></div><p>Reutilizable a través de dominios</p></div>
+      <div class="ft-item"><div class="d"></div><p>Alineada a datos canónicos por producto</p></div>
+      <div class="ft-item"><div class="d"></div><p>Gobernada, escalable, event-driven</p></div>
+      <div class="ft-item"><div class="d"></div><p>Parte de la arquitectura objetivo</p></div>
+    </div>
+  </div>
+  <div class="prin-grid reveal reveal-d2">
+    <div class="prin-cell"><div class="p-label">Product-Aware</div><h4>Alineada a dominios</h4><p>Cada producto define su modelo. Ownership por dominio.</p></div>
+    <div class="prin-cell"><div class="p-label">Canonical-Ready</div><h4>Modelos canónicos</h4><p>Apoyada en modelos bien definidos. No se copia, se estandariza.</p></div>
+    <div class="prin-cell"><div class="p-label">Event-Driven</div><h4>Alimentada por CDC</h4><p>No por batch ni queries al core. Flujo de eventos en tiempo real.</p></div>
+    <div class="prin-cell"><div class="p-label">API-Serving</div><h4>Consumo operacional</h4><p>No solo contingencia — servicio permanente 24/7.</p></div>
+  </div>
+</section>
+
+<!-- TARGET -->
+<section class="target" id="target">
+  <div class="reveal"><span class="kicker blue">Dirección Objetivo</span><h2 class="headline">Datos de producto +<br><em>capa compartida de acceso.</em></h2><p class="subtext">Producto con modelo canónico claro, eventos bien definidos y una capa de acceso que no se rompa cada vez que cambia el core.</p></div>
+  <div class="target-box reveal reveal-d1">
+    <div class="layer-row"><div class="layer-tag">Dominios /<br>Productos</div><div><h4>Cada producto define su modelo canónico</h4><p>CDTs, depósitos, pagos, tarjetas — cada uno con ownership claro, datos bien definidos, APIs documentadas. Esto es lo que el banco llama Data Mesh.</p></div></div>
+    <div class="layer-row"><div class="layer-tag">Capa de<br>Eventos</div><div><h4>CDC + Kafka + Stream Processing</h4><p>Cada producto publica sus cambios como eventos. La capa de distribución los consume y materializa. Centralización del acceso, no de los datos.</p></div></div>
+    <div class="layer-row"><div class="layer-tag">Query Model<br>Evolucionado</div><div><h4>Capa operacional de lectura — siempre activa</h4><p>Materializa datos canónicos de cada dominio. Alimentada por CDC/eventos. Sirve a todos los canales digitales por defecto. Ejecuta sobre MongoDB Atlas.</p></div></div>
+  </div>
+  <div class="target-note reveal reveal-d2">No se trata de etiquetas como "data mesh" o "data fabric." Se trata de que cada producto tenga su data limpia, bien definida, y que exista una capa de acceso operacional que no dependa del core para cada lectura.</div>
+</section>
+
+<!-- QUESTIONS -->
+<section class="questions" id="questions">
+  <div class="reveal"><span class="kicker orange">Preguntas Clave</span><h2 class="headline">Lo que debemos definir<br><em>juntos antes de escalar.</em></h2><p class="subtext">Antes de expandir el Query Model, necesitamos responder estas preguntas en sesión conjunta.</p></div>
+  <div class="q-grid reveal reveal-d1">
+    <div class="q-card"><div class="q-num">01</div><p>¿Cuál es el rol previsto del Query Model en la arquitectura objetivo? ¿Contingencia o capa permanente?</p></div>
+    <div class="q-card"><div class="q-num">02</div><p>¿Qué workloads pertenecen al Query Model — y cuáles no? ¿Dónde está el límite?</p></div>
+    <div class="q-card"><div class="q-num">03</div><p>¿Qué debería ser específico por producto vs. compartido a través de dominios?</p></div>
+    <div class="q-card"><div class="q-num">04</div><p>¿Qué modelos canónicos existen hoy y qué falta definir antes de materializar en el ODL?</p></div>
+    <div class="q-card"><div class="q-num">05</div><p>¿Cuál es la relación entre Query Model, data lake y capa de acceso compartida?</p></div>
+    <div class="q-card"><div class="q-num">06</div><p>¿Qué se resuelve solo para contingencia vs. qué se resuelve para servicio permanente?</p></div>
+  </div>
+</section>
+
+<!-- NEXT STEPS -->
+<section class="nextsteps" id="nextsteps">
+  <div class="reveal"><span class="kicker green">Siguiente Paso</span><h2 class="headline">Sesión de alineación<br><em>estratégica.</em></h2><p class="subtext">Una sola conversación, todos en el mismo idioma.</p></div>
+  <div class="ns-box reveal reveal-d1">
+    <h3>Workshop de Alineación — Query Model Evolution</h3>
+    <div class="sub">Sesión estratégica, no deep dive técnico. Alinear la visión antes de expandir.</div>
+    <div class="ns-cols">
+      <div class="ns-col"><h4>Participantes</h4>
+        <div class="ns-item"><div class="d"></div><p>Líder de Datos & Integración</p></div>
+        <div class="ns-item"><div class="d"></div><p>Arquitecto del Query Model</p></div>
+        <div class="ns-item"><div class="d"></div><p>Arquitectura Empresarial</p></div>
+        <div class="ns-item"><div class="d"></div><p>Coordinación de Arquitectura</p></div>
+        <div class="ns-item"><div class="d"></div><p>Equipo MongoDB SA (Advisory + CXO)</p></div>
+      </div>
+      <div class="ns-divider"></div>
+      <div class="ns-col"><h4>Objetivos</h4>
+        <div class="ns-item"><div class="d"></div><p>Validar el rol objetivo del Query Model</p></div>
+        <div class="ns-item"><div class="d"></div><p>Alinear corto plazo vs. largo plazo</p></div>
+        <div class="ns-item"><div class="d"></div><p>Identificar primer scope acotado</p></div>
+        <div class="ns-item"><div class="d"></div><p>Evitar crecimiento desordenado</p></div>
+        <div class="ns-item"><div class="d"></div><p>Definir modelo de trabajo conjunto</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing">
+  <div class="reveal">
+    <h2>El Query Model ya no es solo una solución de contingencia.<br>Tiene el potencial de convertirse en una <em>capacidad estratégica del banco.</em></h2>
+    <p>La oportunidad es darle forma a su evolución antes de que crezca de manera desestructurada. Estamos listos para trabajar junto al equipo de arquitectura y definir esa dirección.</p>
+  </div>
+</section>
+
+<footer><p>MongoDB × Bancolombia — Estrategia de Evolución del Query Model — Confidencial — Abril 2026</p></footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
