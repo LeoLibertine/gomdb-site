@@ -386,6 +386,8 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 .layer-row h4 { font-family: var(--serif); font-size: 0.95rem; font-weight: 400; margin-bottom: 0.3rem; }
 .layer-row p { font-size: 0.78rem; color: var(--gray-lt); line-height: 1.55; }
 .target-note { margin-top: 1.5rem; font-size: 0.82rem; color: var(--gray); line-height: 1.6; font-style: italic; padding-left: 1rem; border-left: 2px solid var(--green-dim); }
+.target-example { margin-top: 1.5rem; padding: 1.2rem 1.5rem; background: rgba(255,159,67,0.06); border-left: 3px solid var(--orange); border-radius: 0 6px 6px 0; font-size: 0.82rem; color: var(--gray-lt); line-height: 1.6; }
+.target-example strong { color: var(--orange); }
 
 /* ===== QUESTIONS ===== */
 .questions { background: var(--bg2); }
@@ -470,7 +472,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   <div class="nav-brand">Banco<em>colombia</em> × MongoDB</div>
   <div class="nav-links">
     <a href="#engagement">Engagement</a><a href="#perception">Percepción</a><a href="#arch">Arquitectura</a>
-    <a href="#timelines">Dos Tiempos</a><a href="#risk">Riesgo</a><a href="#pov">Visión</a><a href="#nextsteps">Siguientes Pasos</a>
+    <a href="#timelines">Dos Tiempos</a><a href="#risk">Riesgo</a><a href="#whynow">Por Qué Ahora</a><a href="#pov">Visión</a><a href="#nextsteps">Siguientes Pasos</a>
   </div>
   <div class="nav-tag">Confidencial</div>
 </nav>
@@ -507,11 +509,11 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
 <section class="perception" id="perception">
   <div class="reveal"><span class="kicker green">Entendimiento Actual</span><h2 class="headline">Lo que vemos hoy<br>en el <em>Query Model.</em></h2><p class="subtext">Basado en nuestras sesiones con el equipo de arquitectura del banco.</p></div>
   <div class="perc-grid reveal reveal-d1">
-    <div class="perc-card green"><div class="accent g"></div><h3>Patrón CQRS</h3><p>Escrituras al iSeries. Lecturas desde MongoDB. ~70% lecturas, ~30% escrituras.</p></div>
+    <div class="perc-card green"><div class="accent g"></div><h3>Patrón CQRS</h3><p>Escrituras al iSeries. Lecturas desde MongoDB. ~70% lecturas, ~30% escrituras. Más de 1,000 TPS validados en contingencia.</p></div>
     <div class="perc-card blue"><div class="accent b"></div><h3>Dominios de Datos</h3><p>Materializa relación, cuenta, cliente, movimientos, saldos y cuentas escritas para Depósitos.</p></div>
     <div class="perc-card green"><div class="accent g"></div><h3>Rol en Contingencia</h3><p>Switch entre iSeries y QM. El objetivo: leer desde QM permanentemente, no solo en contingencia.</p></div>
-    <div class="perc-card blue"><div class="accent b"></div><h3>Limitaciones Conocidas</h3><p>Bolsillos, bloqueos parciales y retenciones regulatorias no representados en contingencia.</p></div>
-    <div class="perc-card orange"><div class="accent o"></div><h3>Expansión: Bonos</h3><p>Segundo cluster "Core Banking" desplegado. QM expandiéndose a nuevos dominios financieros.</p></div>
+    <div class="perc-card blue"><div class="accent b"></div><h3>Sin Ownership Formal</h3><p>La capa de datos no tiene dueño definido — hoy vive dentro del programa CoreX, en transición hacia Datos & Integración.</p></div>
+    <div class="perc-card orange"><div class="accent o"></div><h3>~175 Consumidores Críticos</h3><p>De ~200 consumidores del core, solo ~25 están desacoplados vía APIs. Los ~175 restantes siguen acoplados directamente al iSeries.</p></div>
     <div class="perc-card orange"><div class="accent o"></div><h3>Visibilidad Ejecutiva</h3><p>Alta visibilidad tras el incidente. MongoDB identificado como componente relevante.</p></div>
   </div>
 </section>
@@ -633,6 +635,18 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   <div class="risk-quote reveal reveal-d2">"La evolución correcta no es hacerlo <em>más grande.</em><br>Es hacerlo <em>más intencional.</em>"</div>
 </section>
 
+<!-- WHY NOW -->
+<section class="perception" id="whynow">
+  <div class="reveal"><span class="kicker orange">Por Qué Ahora</span><h2 class="headline">La presión de expandir ya existe.<br>La pregunta es si crece <em>ordenado.</em></h2><p class="subtext">El éxito del Query Model en febrero generó tracción interna. Hay misiones activas para habilitar más capacidades. Si se expande sin frontera clara, se vuelve otro componente táctico inflado.</p></div>
+  <div class="perc-grid reveal reveal-d1">
+    <div class="perc-card orange"><div class="accent o"></div><h3>Misiones Activas</h3><p>13 misiones post-contingencia identificadas internamente para habilitar más capacidades.</p></div>
+    <div class="perc-card green"><div class="accent g"></div><h3>Presión de Crecimiento</h3><p>Se quiere meter más saldos y más dominios al QM — la demanda de expansión ya es real.</p></div>
+    <div class="perc-card" style="border-left: 3px solid var(--red);"><h3 style="color: var(--red); margin-left: 0.8rem;">Riesgo de Desorden</h3><p style="margin-left: 0.8rem;">Sin gobierno, cada equipo agrega a su manera. El QM se vuelve un catch-all sin límites.</p></div>
+    <div class="perc-card green"><div class="accent g"></div><h3>Ventana de Decisión</h3><p>Ownership en transición hacia Datos & Integración. Es el momento de definir la frontera.</p></div>
+  </div>
+  <div class="caveat-box reveal reveal-d2" style="font-style: italic; color: var(--white); border-left-color: var(--orange); background: rgba(255,159,67,0.06);">"No es meter por meter. Es escalar hacia un propósito."</div>
+</section>
+
 <!-- POV -->
 <section class="pov" id="pov">
   <div class="reveal"><span class="kicker green">Nuestra Visión</span><h2 class="headline">De capa táctica a <em>capa<br>estratégica de acceso.</em></h2><p class="subtext">No lo vemos solo como contingencia. Lo vemos como una posible capa estratégica — siempre que evolucione con gobierno y diseño.</p></div>
@@ -674,6 +688,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
     <div class="layer-row"><div class="layer-tag">Query Model<br>Evolucionado</div><div><h4>Capa operacional de lectura — siempre activa</h4><p>Materializa datos canónicos de cada dominio. Alimentada por CDC/eventos. Sirve a todos los canales digitales por defecto. Ejecuta sobre MongoDB Atlas.</p></div></div>
   </div>
   <div class="target-note reveal reveal-d2">No se trata de etiquetas como "data mesh" o "data fabric." Se trata de que cada producto tenga su data limpia, bien definida, y que exista una capa de acceso operacional que no dependa del core para cada lectura.</div>
+  <div class="target-example reveal reveal-d3"><strong>Ejemplo real:</strong> Bonos necesita datos de cuenta (capa de sistema) + datos de instrumento financiero (dominio inversiones). Hoy no tienen dónde juntarlos limpiamente. Un QM evolucionado resuelve esto como capa compartida de acceso.</div>
 </section>
 
 <!-- QUESTIONS -->
@@ -691,11 +706,11 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
 
 <!-- NEXT STEPS -->
 <section class="nextsteps" id="nextsteps">
-  <div class="reveal"><span class="kicker green">Siguiente Paso</span><h2 class="headline">Sesión de alineación<br><em>estratégica.</em></h2><p class="subtext">Una sola conversación, todos en el mismo idioma.</p></div>
+  <div class="reveal"><span class="kicker green">Siguiente Paso</span><h2 class="headline">Working session<br>de <em>co-diseño.</em></h2><p class="subtext">Definir juntos la frontera del Query Model antes de expandirlo.</p></div>
   <div class="ns-box reveal reveal-d1">
-    <h3>Workshop de Alineación — Query Model Evolution</h3>
-    <div class="sub">Sesión estratégica, no deep dive técnico. Alinear la visión antes de expandir.</div>
-    <div class="ns-cols">
+    <h3>Working Session — Co-diseño del Query Model</h3>
+    <div class="sub">Definir juntos la frontera, el ownership y el primer scope de expansión.</div>
+    <div class="ns-cols" style="grid-template-columns: 1fr 1px 1fr 1px 1fr;">
       <div class="ns-col"><h4>Participantes</h4>
         <div class="ns-item"><div class="d"></div><p>Líder de Datos & Integración</p></div>
         <div class="ns-item"><div class="d"></div><p>Arquitecto del Query Model</p></div>
@@ -704,12 +719,18 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
         <div class="ns-item"><div class="d"></div><p>Equipo MongoDB SA (Advisory + CXO)</p></div>
       </div>
       <div class="ns-divider"></div>
-      <div class="ns-col"><h4>Objetivos</h4>
-        <div class="ns-item"><div class="d"></div><p>Validar el rol objetivo del Query Model</p></div>
-        <div class="ns-item"><div class="d"></div><p>Alinear corto plazo vs. largo plazo</p></div>
-        <div class="ns-item"><div class="d"></div><p>Identificar primer scope acotado</p></div>
-        <div class="ns-item"><div class="d"></div><p>Evitar crecimiento desordenado</p></div>
-        <div class="ns-item"><div class="d"></div><p>Definir modelo de trabajo conjunto</p></div>
+      <div class="ns-col"><h4 style="color: var(--blue);">Decisiones a Resolver</h4>
+        <div class="ns-item"><div class="d" style="background: var(--blue);"></div><p>Rol objetivo del Query Model — ¿contingencia o capa permanente?</p></div>
+        <div class="ns-item"><div class="d" style="background: var(--blue);"></div><p>Primer scope de expansión — ¿Bonos? ¿otro dominio?</p></div>
+        <div class="ns-item"><div class="d" style="background: var(--blue);"></div><p>Principios de gobierno y ownership por producto</p></div>
+        <div class="ns-item"><div class="d" style="background: var(--blue);"></div><p>Modelo canónico: qué existe hoy vs. qué falta definir</p></div>
+      </div>
+      <div class="ns-divider"></div>
+      <div class="ns-col"><h4 style="color: var(--orange);">Cómo Aportamos</h4>
+        <div class="ns-item"><div class="d" style="background: var(--orange);"></div><p>Architecture review del QM actual + recomendaciones</p></div>
+        <div class="ns-item"><div class="d" style="background: var(--orange);"></div><p>Design review del modelo de datos para nuevos dominios</p></div>
+        <div class="ns-item"><div class="d" style="background: var(--orange);"></div><p>Expertise SA dedicado mientras se arma el equipo interno</p></div>
+        <div class="ns-item"><div class="d" style="background: var(--orange);"></div><p>Acompañamiento técnico + estratégico en el despliegue</p></div>
       </div>
     </div>
   </div>
@@ -719,7 +740,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
 <section class="closing">
   <div class="reveal">
     <h2>El Query Model ya no es solo una solución de contingencia.<br>Tiene el potencial de convertirse en una <em>capacidad estratégica del banco.</em></h2>
-    <p>La oportunidad es darle forma a su evolución antes de que crezca de manera desestructurada. Estamos listos para trabajar junto al equipo de arquitectura y definir esa dirección.</p>
+    <p>No les venimos a vender buzzwords. Les venimos a co-diseñar cómo convertir el Query Model en una capacidad reutilizable.</p>
   </div>
 </section>
 
