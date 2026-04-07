@@ -389,6 +389,45 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 .target-example { margin-top: 1.5rem; padding: 1.2rem 1.5rem; background: rgba(255,159,67,0.06); border-left: 3px solid var(--orange); border-radius: 0 6px 6px 0; font-size: 0.82rem; color: var(--gray-lt); line-height: 1.6; }
 .target-example strong { color: var(--orange); }
 
+/* ===== AI SECTION ===== */
+.ai-section { background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%); }
+.ai-toggle-wrap { display: flex; justify-content: center; margin-bottom: 2.5rem; }
+.ai-toggle {
+  display: flex; align-items: center; gap: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; cursor: pointer; user-select: none;
+}
+.ai-toggle-btn {
+  padding: 0.7rem 1.5rem; font-family: var(--mono); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; transition: all 0.35s; color: var(--gray); background: transparent; border: none; cursor: pointer;
+}
+.ai-toggle-btn.active-bad { background: rgba(255,107,107,0.12); color: var(--red); box-shadow: inset 0 -2px 0 var(--red); }
+.ai-toggle-btn.active-good { background: var(--green-glow); color: var(--green); box-shadow: inset 0 -2px 0 var(--green); }
+
+.ai-state { position: relative; min-height: 420px; }
+.ai-panel { transition: opacity 0.4s, transform 0.4s; position: absolute; top: 0; left: 0; width: 100%; }
+.ai-panel.hidden { opacity: 0; pointer-events: none; transform: translateY(12px); }
+.ai-panel.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+.ai-diagram { display: flex; justify-content: center; margin-bottom: 2rem; }
+.ai-points { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.ai-point {
+  display: flex; gap: 0.8rem; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1.2rem 1.4rem; transition: border-color 0.3s;
+}
+.ai-point:hover { border-color: rgba(255,255,255,0.06); }
+.ai-point .dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 0.45rem; flex-shrink: 0; }
+.ai-point .dot.r { background: var(--red); box-shadow: 0 0 8px rgba(255,107,107,0.4); }
+.ai-point .dot.g { background: var(--green); box-shadow: 0 0 8px rgba(0,237,100,0.4); }
+.ai-point p { font-size: 0.8rem; color: var(--gray-lt); line-height: 1.5; }
+
+.ai-note { margin-top: 2rem; font-size: 0.82rem; color: var(--gray); line-height: 1.6; font-style: italic; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+/* SVG animations */
+@keyframes dashRun { to { stroke-dashoffset: -20; } }
+@keyframes lineAppear { from { stroke-dashoffset: 200; } to { stroke-dashoffset: 0; } }
+.ai-line-fragile { stroke-dasharray: 5,5; animation: dashRun 0.8s linear infinite; }
+.ai-panel.visible .ai-line-solid { stroke-dasharray: 200; stroke-dashoffset: 200; animation: lineAppear 0.8s ease forwards; }
+
+@media (max-width: 900px) { .ai-points { grid-template-columns: 1fr; } .ai-state { min-height: 480px; } }
+@media (max-width: 600px) { .ai-diagram svg { width: 100%; height: auto; } }
+
 /* ===== QUESTIONS ===== */
 .questions { background: var(--bg2); }
 .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -472,7 +511,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   <div class="nav-brand">Banco<em>colombia</em> × MongoDB</div>
   <div class="nav-links">
     <a href="#engagement">Engagement</a><a href="#perception">Percepción</a><a href="#arch">Arquitectura</a>
-    <a href="#timelines">Dos Tiempos</a><a href="#risk">Riesgo</a><a href="#whynow">Por Qué Ahora</a><a href="#pov">Visión</a><a href="#nextsteps">Siguientes Pasos</a>
+    <a href="#timelines">Dos Tiempos</a><a href="#risk">Riesgo</a><a href="#whynow">Por Qué Ahora</a><a href="#pov">Visión</a><a href="#ai">AI</a><a href="#nextsteps">Siguientes Pasos</a>
   </div>
   <div class="nav-tag">Confidencial</div>
 </nav>
@@ -691,6 +730,100 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   <div class="target-example reveal reveal-d3"><strong>Ejemplo real:</strong> Bonos necesita datos de cuenta (capa de sistema) + datos de instrumento financiero (dominio inversiones). Hoy no tienen dónde juntarlos limpiamente. Un QM evolucionado resuelve esto como capa compartida de acceso.</div>
 </section>
 
+<!-- AI -->
+<section class="ai-section" id="ai">
+  <div class="reveal"><span class="kicker blue">Habilitador para AI</span><h2 class="headline">Una capa compartida de datos<br>también habilita <em>AI.</em></h2><p class="subtext">Sin una capa compartida de datos operativos, cada caso de AI termina conectándose punto a punto a sistemas legacy. Con ella, AI consume datos frescos, estandarizados y gobernados.</p></div>
+
+  <div class="ai-toggle-wrap reveal reveal-d1">
+    <div class="ai-toggle" id="aiToggle">
+      <button class="ai-toggle-btn active-bad" id="btnBad" onclick="setAIState('bad')">Sin capa compartida</button>
+      <button class="ai-toggle-btn" id="btnGood" onclick="setAIState('good')">Con capa compartida</button>
+    </div>
+  </div>
+
+  <div class="ai-state reveal reveal-d2">
+    <!-- STATE BAD -->
+    <div class="ai-panel visible" id="panelBad">
+      <div class="ai-diagram">
+        <svg viewBox="0 0 520 340" width="520" height="340" xmlns="http://www.w3.org/2000/svg">
+          <!-- Central node -->
+          <rect x="185" y="130" width="150" height="60" rx="10" fill="#1a0f0f" stroke="#FF6B6B" stroke-width="1.5"/>
+          <text x="260" y="157" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono" font-size="11" font-weight="600">Legacy / iSeries</text>
+          <text x="260" y="175" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="8">Core Bancario</text>
+          <!-- Outer nodes -->
+          <rect x="30" y="10" width="110" height="40" rx="8" fill="#1a0f0f" stroke="#FF6B6B" stroke-width="1" opacity="0.8"/>
+          <text x="85" y="35" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono" font-size="9" font-weight="500">Copilot</text>
+          <rect x="200" y="5" width="120" height="40" rx="8" fill="#1a0f0f" stroke="#FF6B6B" stroke-width="1" opacity="0.8"/>
+          <text x="260" y="30" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono" font-size="9" font-weight="500">Detección Fraude</text>
+          <rect x="380" y="10" width="110" height="40" rx="8" fill="#1a0f0f" stroke="#FF6B6B" stroke-width="1" opacity="0.8"/>
+          <text x="435" y="35" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono" font-size="9" font-weight="500">Analítica</text>
+          <rect x="20" y="270" width="130" height="40" rx="8" fill="#1a0f0f" stroke="#FF6B6B" stroke-width="1" opacity="0.8"/>
+          <text x="85" y="295" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono" font-size="9" font-weight="500">Asistente Cliente</text>
+          <rect x="370" y="270" width="110" height="40" rx="8" fill="#1a0f0f" stroke="#FF6B6B" stroke-width="1" opacity="0.8"/>
+          <text x="425" y="295" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono" font-size="9" font-weight="500">Scoring</text>
+          <!-- Lines -->
+          <line x1="85" y1="50" x2="220" y2="135" stroke="#FF6B6B" stroke-width="1" class="ai-line-fragile" opacity="0.6"/>
+          <line x1="260" y1="45" x2="260" y2="130" stroke="#FF6B6B" stroke-width="1" class="ai-line-fragile" opacity="0.6"/>
+          <line x1="435" y1="50" x2="305" y2="135" stroke="#FF6B6B" stroke-width="1" class="ai-line-fragile" opacity="0.6"/>
+          <line x1="85" y1="270" x2="220" y2="190" stroke="#FF6B6B" stroke-width="1" class="ai-line-fragile" opacity="0.6"/>
+          <line x1="425" y1="270" x2="305" y2="190" stroke="#FF6B6B" stroke-width="1" class="ai-line-fragile" opacity="0.6"/>
+        </svg>
+      </div>
+      <div class="ai-points">
+        <div class="ai-point"><div class="dot r"></div><p>Datos inconsistentes entre consumidores</p></div>
+        <div class="ai-point"><div class="dot r"></div><p>Integración frágil y no reutilizable</p></div>
+        <div class="ai-point"><div class="dot r"></div><p>Sin contexto operativo confiable</p></div>
+        <div class="ai-point"><div class="dot r"></div><p>Cada caso de AI re-integra desde cero</p></div>
+      </div>
+    </div>
+
+    <!-- STATE GOOD -->
+    <div class="ai-panel hidden" id="panelGood">
+      <div class="ai-diagram">
+        <svg viewBox="0 0 520 340" width="520" height="340" xmlns="http://www.w3.org/2000/svg">
+          <!-- Legacy node (dim, top-left) -->
+          <rect x="10" y="140" width="120" height="50" rx="8" fill="#131F24" stroke="#6B7D85" stroke-width="1" opacity="0.5"/>
+          <text x="70" y="162" text-anchor="middle" fill="#6B7D85" font-family="IBM Plex Mono" font-size="9" font-weight="500">Legacy / iSeries</text>
+          <text x="70" y="178" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">CDC →</text>
+          <!-- Arrow legacy to QM -->
+          <line x1="130" y1="165" x2="185" y2="165" stroke="#00684A" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+          <polygon points="182,161 190,165 182,169" fill="#00684A" opacity="0.5"/>
+          <!-- Central QM node -->
+          <rect x="190" y="130" width="160" height="65" rx="10" fill="#0d1a0d" stroke="#00ED64" stroke-width="1.5"/>
+          <text x="270" y="155" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="10" font-weight="600">Query Model</text>
+          <text x="270" y="170" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="10" font-weight="600">Evolucionado</text>
+          <text x="270" y="185" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="8">MongoDB Atlas</text>
+          <!-- Outer nodes -->
+          <rect x="60" y="10" width="110" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
+          <text x="115" y="35" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Copilot</text>
+          <rect x="210" y="5" width="120" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
+          <text x="270" y="30" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Detección Fraude</text>
+          <rect x="370" y="10" width="110" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
+          <text x="425" y="35" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Analítica</text>
+          <rect x="50" y="270" width="130" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
+          <text x="115" y="295" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Asistente Cliente</text>
+          <rect x="370" y="270" width="110" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
+          <text x="425" y="295" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Scoring</text>
+          <!-- Lines solid green -->
+          <line x1="115" y1="50" x2="225" y2="135" stroke="#00ED64" stroke-width="1.2" class="ai-line-solid" opacity="0.7"/>
+          <line x1="270" y1="45" x2="270" y2="130" stroke="#00ED64" stroke-width="1.2" class="ai-line-solid" opacity="0.7"/>
+          <line x1="425" y1="50" x2="315" y2="135" stroke="#00ED64" stroke-width="1.2" class="ai-line-solid" opacity="0.7"/>
+          <line x1="115" y1="270" x2="225" y2="195" stroke="#00ED64" stroke-width="1.2" class="ai-line-solid" opacity="0.7"/>
+          <line x1="425" y1="270" x2="315" y2="195" stroke="#00ED64" stroke-width="1.2" class="ai-line-solid" opacity="0.7"/>
+        </svg>
+      </div>
+      <div class="ai-points">
+        <div class="ai-point"><div class="dot g"></div><p>Asistentes y copilots con contexto real</p></div>
+        <div class="ai-point"><div class="dot g"></div><p>Decisiones basadas en datos operativos frescos</p></div>
+        <div class="ai-point"><div class="dot g"></div><p>Analítica avanzada sobre datos estandarizados</p></div>
+        <div class="ai-point"><div class="dot g"></div><p>Nuevos consumidores inteligentes sin re-integrar</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-note reveal reveal-d3">Esto no es un caso de AI adicional. Es un beneficio que viene incluido si la capa de datos se diseña bien.</div>
+</section>
+
 <!-- QUESTIONS -->
 <section class="questions" id="questions">
   <div class="reveal"><span class="kicker orange">Preguntas Clave</span><h2 class="headline">Lo que debemos definir<br><em>juntos antes de escalar.</em></h2><p class="subtext">Antes de expandir el Query Model, necesitamos responder estas preguntas en sesión conjunta.</p></div>
@@ -751,6 +884,24 @@ const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+function setAIState(state) {
+  const panelBad = document.getElementById('panelBad');
+  const panelGood = document.getElementById('panelGood');
+  const btnBad = document.getElementById('btnBad');
+  const btnGood = document.getElementById('btnGood');
+  if (state === 'good') {
+    panelBad.classList.replace('visible', 'hidden');
+    panelGood.classList.replace('hidden', 'visible');
+    btnBad.className = 'ai-toggle-btn';
+    btnGood.className = 'ai-toggle-btn active-good';
+  } else {
+    panelGood.classList.replace('visible', 'hidden');
+    panelBad.classList.replace('hidden', 'visible');
+    btnGood.className = 'ai-toggle-btn';
+    btnBad.className = 'ai-toggle-btn active-bad';
+  }
+}
 </script>
 </body>
 </html>
