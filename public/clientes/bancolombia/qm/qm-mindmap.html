@@ -84,7 +84,7 @@ nav {
 
 .mindmap-canvas {
   position: relative;
-  width: 100%;
+  min-width: 140vw;
   min-height: 160vh;
 }
 
@@ -800,9 +800,8 @@ window.addEventListener('resize', () => {
 
 // Scroll to center on load
 setTimeout(() => {
-  const canvasH = canvas.offsetHeight;
-  const viewH = mindmap.offsetHeight;
-  mindmap.scrollTop = (canvasH - viewH) / 2;
+  mindmap.scrollTop = (canvas.offsetHeight - mindmap.offsetHeight) / 2;
+  mindmap.scrollLeft = (canvas.offsetWidth - mindmap.offsetWidth) / 2;
 }, 100);
 
 // Redraw connections when scrolling (for correct positioning)
