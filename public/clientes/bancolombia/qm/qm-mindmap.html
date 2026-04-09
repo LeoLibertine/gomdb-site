@@ -289,6 +289,34 @@ nav {
   font-size: 0.72rem;
   color: var(--gray-lt);
   line-height: 1.4;
+  max-width: 260px;
+}
+
+/* ===== LEGEND ===== */
+.legend {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 2rem;
+  display: flex;
+  gap: 1.2rem;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.8s;
+}
+.legend.visible { opacity: 1; }
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.52rem;
+  color: var(--gray);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.legend-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
 }
 
 /* ===== HINT ===== */
@@ -358,6 +386,13 @@ nav {
   <!-- Branches populated by JS -->
 </div>
 
+<div class="legend" id="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#00ED64;box-shadow:0 0 4px rgba(0,237,100,0.5)"></div>Estrategia</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4DA6FF;box-shadow:0 0 4px rgba(77,166,255,0.5)"></div>Estado actual</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#FF9F43;box-shadow:0 0 4px rgba(255,159,67,0.5)"></div>Ecosistema</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#FF6B6B;box-shadow:0 0 4px rgba(255,107,107,0.5)"></div>Riesgo</div>
+</div>
+
 <div class="hint" id="hint">
   <div class="pulse"></div>
   <span>Haz clic en una rama para explorar — clic en el centro para resetear</span>
@@ -366,16 +401,30 @@ nav {
 <script>
 const BRANCHES = [
   {
+    id: 'engagement',
+    label: 'Engagement',
+    title: 'Nuestro Recorrido',
+    color: 'green',
+    pos: { x: 12, y: 18 },
+    items: [
+      'Health Check: clusters Boton, ATHENPCD, QM PDN',
+      'Deep Dive: múltiples sesiones con arquitectura del banco',
+      'Workshop Depósitos: ODL, modelo de documentos y sizing',
+      'Alineación ejecutiva: resiliencia y multi-región'
+    ]
+  },
+  {
     id: 'arch',
     label: 'Arquitectura',
     title: 'Pipeline CDC',
     color: 'green',
-    pos: { x: 18, y: 22 },
+    pos: { x: 39, y: 12 },
     items: [
-      'AS/400 → IBM IDR → Kafka → Flink → MongoDB',
-      'Patrón CQRS: escrituras a iSeries, lecturas desde MongoDB',
-      'Consultas de lectura = 3-4x el volumen transaccional',
-      'CDC en tiempo real + reconciliación batch'
+      'AS/400 → IBM IDR → Kafka → Flink → MongoDB Atlas',
+      'Patrón CQRS: escrituras iSeries, lecturas MongoDB',
+      'Lecturas = 3-4x el volumen transaccional',
+      'CDC tiempo real + reconciliación batch en recuperación',
+      'Rutas independientes: iSeries-a-Bolt e iSeries-a-CORIMO'
     ]
   },
   {
@@ -383,38 +432,39 @@ const BRANCHES = [
     label: 'Evidencia',
     title: 'Febrero 2026',
     color: 'blue',
-    pos: { x: 50, y: 12 },
+    pos: { x: 66, y: 12 },
     items: [
-      'MongoDB sostuvo cargas críticas mientras el core estaba caído',
-      'Canales digitales sin interrupción para usuarios finales',
-      'Feedback interno positivo del equipo de arquitectura',
+      'MongoDB sostuvo cargas críticas — core iSeries caído',
+      'Saldos, transacciones y cuentas servidos sin interrupción',
+      'Feedback positivo del equipo de arquitectura',
       'Alta visibilidad ejecutiva tras el incidente'
     ]
   },
   {
     id: 'evolution',
-    label: 'Oportunidad',
-    title: 'Vector de Evolución',
+    label: 'Visión',
+    title: 'Capa Estratégica',
     color: 'green',
-    pos: { x: 82, y: 22 },
+    pos: { x: 89, y: 18 },
     items: [
-      'De contingencia a capa estratégica permanente',
-      'Modelo canónico por producto (depósitos, bonos, pagos)',
-      'Event-driven y API-serving 24/7',
-      'Habilitador para AI: copilots, scoring, analítica'
+      'De contingencia táctica a capa de acceso permanente',
+      'Product-Aware: cada producto define su modelo',
+      'Canonical-Ready: modelos bien definidos, no copias',
+      'Event-Driven: alimentada por CDC, no batch',
+      'API-Serving: consumo operacional 24/7'
     ]
   },
   {
     id: 'role',
-    label: 'Rol actual',
+    label: 'Estado actual',
     title: 'Modo Contingencia',
     color: 'blue',
-    pos: { x: 14, y: 74 },
+    pos: { x: 10, y: 74 },
     items: [
-      'Switch automático cuando el core cae',
+      'Switch automático cuando core cae — reactivo',
       'Materializa depósitos: saldos, cuentas, movimientos',
       'Sirve lecturas a canales digitales del banco',
-      'Objetivo: lectura permanente, no solo en contingencia'
+      'Sin ownership formal — entre CoreX y Datos & Integración'
     ]
   },
   {
@@ -422,25 +472,38 @@ const BRANCHES = [
     label: 'Ecosistema',
     title: '~200 Consumidores',
     color: 'orange',
-    pos: { x: 50, y: 82 },
+    pos: { x: 35, y: 82 },
     items: [
       '~200 consumidores del core bancario iSeries',
-      '~175 acoplados directamente — sin capa de abstracción',
+      '~175 acoplados directamente sin capa de abstracción',
       'Solo ~25 desacoplados vía APIs',
-      'Oportunidad masiva de desacoplamiento con QM'
+      '~13 misiones post-contingencia para expandir capacidades'
     ]
   },
   {
     id: 'tensions',
-    label: 'Tensiones',
-    title: 'Riesgos Actuales',
+    label: 'Riesgo',
+    title: 'Crecer sin Gobierno',
     color: 'red',
-    pos: { x: 86, y: 74 },
+    pos: { x: 65, y: 82 },
     items: [
-      'Sin ownership formal de la capa de datos',
       'Sin modelo canónico definido por dominio',
-      '~13 misiones de expansión activas post-contingencia',
-      'Presión de "meter más saldos" sin estructura ni gobierno'
+      'Presión de "meter más saldos" sin estructura',
+      'Cada equipo agrega a su manera — se vuelve catch-all',
+      'Riesgo: otro componente táctico inflado sin límites'
+    ]
+  },
+  {
+    id: 'ai',
+    label: 'Habilitador',
+    title: 'AI & Datos',
+    color: 'blue',
+    pos: { x: 90, y: 74 },
+    items: [
+      'Copilots y asistentes con contexto operativo real',
+      'Detección de fraude sobre datos frescos y estandarizados',
+      'Analítica avanzada sin re-integrar desde cero',
+      'Sin capa compartida → cada caso AI conecta punto a punto'
     ]
   }
 ];
@@ -591,8 +654,11 @@ function animateEntrance() {
     });
   }, 900);
 
-  // 4. Show hint
-  setTimeout(() => hint.classList.add('visible'), 2400);
+  // 4. Show hint + legend
+  setTimeout(() => {
+    hint.classList.add('visible');
+    document.getElementById('legend').classList.add('visible');
+  }, 2400);
 }
 
 // Focus/unfocus a branch
