@@ -207,7 +207,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   <div class="nav-brand">Banco<em>colombia</em> × MongoDB</div>
   <div class="nav-links">
     <a href="#context">Contexto</a><a href="#params">Parámetros</a><a href="#sizing">Sizing</a>
-    <a href="#justification">Justificación</a><a href="#arch">Arquitectura</a><a href="#phases">Fases</a><a href="#considerations">Consideraciones</a>
+    <a href="#justification">Justificación</a><a href="#arch">Arquitectura</a><a href="#phases">Fases</a><a href="#considerations">Técnico</a><a href="#design-review">Design Review</a>
   </div>
   <div class="nav-tag">Confidencial</div>
 </nav>
@@ -253,13 +253,13 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   </div>
   <div class="params-grid reveal reveal-d1">
     <div class="param-card g"><div class="p-label">Operaciones pico</div><div class="p-val">10,000 ops/s</div><div class="p-desc">8,000 lecturas + 2,000 escrituras por segundo en pico.</div></div>
-    <div class="param-card g"><div class="p-label">Ratio lectura/escritura</div><div class="p-val">80 / 20</div><div class="p-desc">Workload dominado por consultas. Lecturas = 3-4x el volumen transaccional.</div></div>
+    <div class="param-card g"><div class="p-label">Ratio lectura/escritura</div><div class="p-val">70 / 30</div><div class="p-desc">Workload dominado por consultas (respuesta del equipo: 70% reads, 30% writes).</div></div>
     <div class="param-card b"><div class="p-label">Cuentas proyectadas</div><div class="p-val">22M</div><div class="p-desc">Todos los productos. Fase 1 (Bonos+CDT+InvVirtual): ~1M. Fase 2 (+Depósitos): 22M.</div></div>
     <div class="param-card b"><div class="p-label">Movimientos/día</div><div class="p-val">30M</div><div class="p-desc">Postings diarios proyectados. Fase 1: ~1.1M/día. Fase 2 con Depósitos: ~30M/día.</div></div>
     <div class="param-card o"><div class="p-label">Tamaño documento</div><div class="p-val">~1.5 KB</div><div class="p-desc">Promedio BSON entre cuentas (~1-2KB) y postings (~1-1.5KB). WiredTiger snappy comprime ~50%.</div></div>
     <div class="param-card o"><div class="p-label">Data en disco (Fase 2)</div><div class="p-val">~5 TB</div><div class="p-desc">Raw ~8.1 TB → comprimido ~4 TB + ~1 TB índices. Fase 1: ~180 GB en disco.</div></div>
-    <div class="param-card g"><div class="p-label">Retención hot</div><div class="p-val">6 meses</div><div class="p-desc">Datos accesibles con latencia operacional. Después → Online Archive (S3).</div></div>
-    <div class="param-card b"><div class="p-label">Conexiones</div><div class="p-val">2,500</div><div class="p-desc">20-50 pods × 50 conexiones por pod. Pool de conexiones gestionado.</div></div>
+    <div class="param-card g"><div class="p-label">Retención hot</div><div class="p-val">3–6 meses</div><div class="p-desc">Hot storage entre 3 y 6 meses (por definir). Después → Online Archive (S3).</div></div>
+    <div class="param-card b"><div class="p-label">Conexiones</div><div class="p-val">2,500*</div><div class="p-desc">20-50 pods × 50 conexiones por pod. *Cuestionario reporta 25,000 — validar cálculo en working session.</div></div>
     <div class="param-card g"><div class="p-label">SLA de latencia</div><div class="p-val">200 ms</div><div class="p-desc">Latencia máxima aceptable para consultas de lectura desde canales digitales.</div></div>
   </div>
 </section>
@@ -505,10 +505,119 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   <div class="cons-grid reveal reveal-d1">
     <div class="cons-card"><span class="tag">Shard Key</span><h4>Sharding por accountId (hashed)</h4><p>Distribución uniforme de cuentas entre shards. Soporta el patrón de acceso principal (consultas por cuenta). Evita hotspots de productos con muchas cuentas (ahorro, corriente). Si se inicia sin sharding, la migración posterior tiene cierta complejidad — evaluar trade-offs.</p></div>
     <div class="cons-card"><span class="tag">Indexes</span><h4>Estrategia de índices por colección</h4><p>Cuentas: <code>_id</code> + <code>parameters.mdmKey</code>. Postings: <code>accountId</code> + <code>requestId</code>. Considerar compuesto: <code>{accountId: 1, valueTime: -1}</code> para consultas por rango de fecha. Índice en <code>transactionId</code> para tracking.</p></div>
-    <div class="cons-card"><span class="tag">Online Archive</span><h4>S3 después de 6 meses</h4><p>Movimientos con más de 6 meses van a Online Archive (S3). Reduce costo de almacenamiento ~90%. Latencia aceptable para consultas históricas que el usuario solicita explícitamente. Campo de archivado: <code>valueTime</code> o <code>insertionTime</code>.</p></div>
+    <div class="cons-card"><span class="tag">Online Archive</span><h4>S3 después de 3-6 meses</h4><p>Movimientos con más de 3-6 meses (por definir) van a Online Archive (S3). Reduce costo de almacenamiento ~90%. Latencia aceptable para consultas históricas. Campo de archivado: <code>valueTime</code> o <code>insertionTime</code>.</p></div>
     <div class="cons-card"><span class="tag">Connection Pool</span><h4>2,500 conexiones gestionadas</h4><p>50 pods × 50 conexiones = 2,500 conexiones. M80 soporta >10,000. Tuning recomendado: <code>maxPoolSize: 50</code>, <code>minPoolSize: 10</code>, <code>maxIdleTimeMS: 60000</code>. Monitorear y ajustar según uso real.</p></div>
     <div class="cons-card"><span class="tag">CDC Pipeline</span><h4>Idempotencia y deduplicación</h4><p>Usar <code>requestId</code> como clave de deduplicación en operaciones upsert. Monitorear lag del consumer Kafka — alertar si >5 segundos. Dead letter queue para transformaciones fallidas. Rate limiting en el microservicio consumidor.</p></div>
     <div class="cons-card"><span class="tag">Sharding Decision</span><h4>¿Empezar con o sin sharding?</h4><p>Recomendación: si se va a necesitar sharding, ideal arrancar con sharding desde día uno. Migrar de non-sharded a sharded en producción tiene cierta complejidad. Se presentarán ambas opciones con trade-offs para decisión conjunta.</p></div>
+  </div>
+</section>
+
+<!-- DESIGN REVIEW -->
+<section id="design-review" style="background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);">
+  <div class="reveal"><span class="kicker green">Design Review</span>
+    <h2 class="headline">Respuestas del equipo<br>que definen el <em>diseño.</em></h2>
+    <p class="subtext">Información del cuestionario de Design Review completado por el equipo de arquitectura de Bancolombia. Estos puntos guían las decisiones de modelo de datos, pipeline y operaciones.</p>
+  </div>
+
+  <!-- B1: Modelo de datos y acceso -->
+  <div class="arch-wrap reveal reveal-d1" style="margin-bottom: 2rem;">
+    <div class="arch-label">B1 — Modelo de Datos y Patrones de Acceso</div>
+    <table class="just-table">
+      <thead><tr><th>Pregunta</th><th>Respuesta del equipo</th><th>Implicación de diseño</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Patrón de lectura</td>
+          <td>Consultas de cuenta y movimientos <strong>por separado</strong> (dos requests independientes)</td>
+          <td>No se requiere embedding de postings dentro de cuentas. Dos colecciones independientes es correcto.</td>
+        </tr>
+        <tr>
+          <td>Queries cross-account</td>
+          <td class="check">Sí — cuentas de un titular filtradas por <code>type</code></td>
+          <td>Índice compuesto <code>{stakeholderIds: 1, type: 1}</code> recomendado. Evaluar si se necesita un documento de "vista consolidada" por titular.</td>
+        </tr>
+        <tr>
+          <td>Cuentas hot</td>
+          <td class="warn">Ahorro y corriente (Fase 2)</td>
+          <td>En Fase 1 (Bonos/CDT) no hay hotspots significativos. En Fase 2, cuentas de ahorro con miles de mov/día requieren particionado por <code>valueTime</code> o sharding.</td>
+        </tr>
+        <tr>
+          <td>Formato de accountId</td>
+          <td><code>S12345678901</code>, <code>D11111111111</code></td>
+          <td>Prefijo por producto (S=Savings, D=Deposits, B=Bonds). Distribución de hash aceptable para shard key. No es secuencial — buena cardinalidad.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- B2: Pipeline CDC / Kafka -->
+  <div class="arch-wrap reveal reveal-d2" style="margin-bottom: 2rem;">
+    <div class="arch-label">B2 — Pipeline CDC / Kafka</div>
+    <table class="just-table">
+      <thead><tr><th>Pregunta</th><th>Respuesta del equipo</th><th>Implicación de diseño</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Consumidor Kafka</td>
+          <td><strong>Microservicio</strong> lee de Kafka e inserta en MongoDB (no Kafka Connect Sink)</td>
+          <td>Control total sobre transformación y error handling. El microservicio debe implementar idempotencia con <code>requestId</code> para manejar reintentos y redeliveries.</td>
+        </tr>
+        <tr>
+          <td>Atomicidad del evento</td>
+          <td class="check">Atómico — un evento = un movimiento completo</td>
+          <td>A diferencia de iSeries (donde llegaba en 3 partes), Vault publica eventos completos. Simplifica el consumer — no hay que ensamblar partes ni manejar transacciones parciales.</td>
+        </tr>
+        <tr>
+          <td>Payload Kafka</td>
+          <td>JSON con <code>postingInstructionBatch</code> que incluye postings + balances actualizados</td>
+          <td>El evento trae tanto los movimientos como los saldos resultantes. El consumer puede hacer upsert de la cuenta (saldos) e insert del posting en una sola operación. Evaluar uso de <code>bulkWrite</code> para eficiencia.</td>
+        </tr>
+        <tr>
+          <td>Schema del evento</td>
+          <td>Incluye: <code>requestId</code>, <code>transactionId</code>, <code>postings[]</code>, <code>balances[]</code>, <code>instructionDetails</code></td>
+          <td>Campos de deduplicación disponibles (<code>requestId</code>). Metadata de negocio (<code>transactionCode</code>) permite categorización. <code>valueTime</code> e <code>insertionTime</code> para archivado y auditoría.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- B3: Consistencia y operaciones -->
+  <div class="arch-wrap reveal reveal-d3">
+    <div class="arch-label">B3 — Consistencia, Disponibilidad y Operaciones</div>
+    <table class="just-table">
+      <thead><tr><th>Pregunta</th><th>Respuesta del equipo</th><th>Implicación de diseño</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Lag aceptable core → QM</td>
+          <td class="warn"><strong>200 ms</strong></td>
+          <td>Extremadamente bajo. El consumer Kafka debe procesar en near real-time. Monitorear lag del consumer group como métrica crítica. Alertar si >1 segundo.</td>
+        </tr>
+        <tr>
+          <td>¿QM es path primario?</td>
+          <td class="warn"><strong>Sí — no hay fallback al core</strong></td>
+          <td>El QM es la única fuente de lectura para los canales. Si se cae, no hay plan B. Esto eleva el SLA del cluster a crítico. Justifica M50 sobre M40 por headroom operativo.</td>
+        </tr>
+        <tr>
+          <td>SLA de disponibilidad</td>
+          <td>99.9%</td>
+          <td>Atlas M50+ ofrece 99.95% con replica set multi-AZ. Cumple el SLA. Multi-region en evaluación para futuro.</td>
+        </tr>
+        <tr>
+          <td>Multi-region</td>
+          <td>En evaluación</td>
+          <td>No requerido para Fase 1. Si se decide en Fase 2, el modelo de replica set facilita la extensión a multi-region sin cambios en la aplicación.</td>
+        </tr>
+        <tr>
+          <td>Quién opera el cluster</td>
+          <td>Equipo interno del banco</td>
+          <td>Atlas simplifica operaciones. Recomendar capacitación en monitoring (Performance Advisor, Real-Time Panel) y alertas. Runbook de operaciones para el equipo.</td>
+        </tr>
+        <tr>
+          <td>Batch operations</td>
+          <td class="warn">Sí — proceso de conciliación de movimientos</td>
+          <td>Picos de escritura batch (conciliación). Horario y volumen por definir. Puede impactar performance de lecturas si coincide con pico. Evaluar secondary preferred reads durante batch.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout green" style="margin-top:1.5rem;"><strong>Dato crítico para el working session:</strong> El QM es path primario sin fallback y el lag aceptable es 200ms. Estas dos condiciones juntas significan que tanto el cluster como el pipeline CDC son componentes de misión crítica. El diseño debe priorizar disponibilidad y latencia por encima de optimización de costos.</div>
   </div>
 </section>
 
