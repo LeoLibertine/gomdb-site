@@ -148,6 +148,23 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 .just-table .check { color: var(--green); font-weight: 600; }
 .just-table .warn { color: var(--orange); font-weight: 600; }
 
+/* Gaps / Pending items */
+.gaps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.gap-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1.5rem 1.8rem; position: relative; overflow: hidden; transition: border-color 0.3s; }
+.gap-card:hover { border-color: rgba(255,159,67,0.15); }
+.gap-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.gap-card.critical::before { background: var(--red); }
+.gap-card.important::before { background: var(--orange); }
+.gap-card.nice::before { background: var(--blue); }
+.gap-pri { font-family: var(--mono); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; display: inline-block; padding: 0.15rem 0.5rem; border-radius: 3px; margin-bottom: 0.7rem; }
+.gap-card.critical .gap-pri { color: var(--red); background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.15); }
+.gap-card.important .gap-pri { color: var(--orange); background: rgba(255,159,67,0.1); border: 1px solid rgba(255,159,67,0.15); }
+.gap-card.nice .gap-pri { color: var(--blue); background: rgba(77,166,255,0.1); border: 1px solid rgba(77,166,255,0.15); }
+.gap-card h4 { font-family: var(--serif); font-size: 1rem; font-weight: 400; color: var(--white); margin-bottom: 0.4rem; }
+.gap-card .gap-q { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); margin-bottom: 0.5rem; }
+.gap-card p { font-size: 0.78rem; color: var(--gray-lt); line-height: 1.6; }
+.gap-card code { font-family: var(--mono); font-size: 0.72rem; color: var(--green); background: rgba(0,237,100,0.06); padding: 0.1rem 0.35rem; border-radius: 3px; }
+
 /* Headroom bars */
 .headroom { margin-top: 2rem; }
 .hr-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
@@ -207,7 +224,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   <div class="nav-brand">Banco<em>colombia</em> × MongoDB</div>
   <div class="nav-links">
     <a href="#context">Contexto</a><a href="#params">Parámetros</a><a href="#sizing">Sizing</a>
-    <a href="#justification">Justificación</a><a href="#arch">Arquitectura</a><a href="#phases">Fases</a><a href="#considerations">Técnico</a><a href="#design-review">Design Review</a>
+    <a href="#justification">Justificación</a><a href="#arch">Arquitectura</a><a href="#phases">Fases</a><a href="#considerations">Técnico</a><a href="#design-review">Design Review</a><a href="#gaps">Pendientes</a>
   </div>
   <div class="nav-tag">Confidencial</div>
 </nav>
@@ -619,6 +636,74 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
     </table>
     <div class="callout green" style="margin-top:1.5rem;"><strong>Dato crítico para el working session:</strong> El QM es path primario sin fallback y el lag aceptable es 200ms. Estas dos condiciones juntas significan que tanto el cluster como el pipeline CDC son componentes de misión crítica. El diseño debe priorizar disponibilidad y latencia por encima de optimización de costos.</div>
   </div>
+</section>
+
+<!-- GAPS -->
+<section id="gaps" style="background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);">
+  <div class="reveal"><span class="kicker orange">Información Pendiente</span>
+    <h2 class="headline">Lo que falta para cerrar<br>el <em>Design Review.</em></h2>
+    <p class="subtext">Datos que el equipo no completó en el cuestionario o que quedaron parciales. Se recomienda resolverlos en el working session del jueves o antes vía correo.</p>
+  </div>
+
+  <div class="gaps-grid reveal reveal-d1">
+    <div class="gap-card critical">
+      <div class="gap-pri">Bloqueante — Sizing</div>
+      <div class="gap-q">A2-Q2 · Volumen actual en DEV/QA</div>
+      <h4>GB reales en el cluster de desarrollo</h4>
+      <p>No respondieron cuántos documentos ni cuántos GB ocupa el cluster en DEV/QA. Este dato valida la compresión real de WiredTiger y confirma el sizing. Un <code>db.stats()</code> en DEV les da el número.</p>
+    </div>
+
+    <div class="gap-card critical">
+      <div class="gap-pri">Bloqueante — Sizing</div>
+      <div class="gap-q">A1 · Columna GB estimados (vacía)</div>
+      <h4>Tamaño de datos por producto</h4>
+      <p>La columna de GB estimados está vacía para todos los productos (Bonos, CDT, Inv. Virtual, Depósitos). Sin esto, el cálculo de storage se basa en estimaciones del tamaño del documento JSON, no en datos reales.</p>
+    </div>
+
+    <div class="gap-card critical">
+      <div class="gap-pri">Bloqueante — Operaciones</div>
+      <div class="gap-q">A3-Q6 · Proceso batch de conciliación</div>
+      <h4>Volumen, horario y frecuencia del batch</h4>
+      <p>Confirmaron que existe un proceso de conciliación de movimientos pero no dieron detalles. Necesitamos: ¿cuántos movimientos genera? ¿a qué hora corre? ¿diario, semanal? Puede impactar latencia de lecturas si coincide con pico.</p>
+    </div>
+
+    <div class="gap-card important">
+      <div class="gap-pri">Importante — Costos</div>
+      <div class="gap-q">B3-Q22 · Ambientes requeridos</div>
+      <h4>DEV / QA / Staging / Prod — ¿qué tiers?</h4>
+      <p>Dijeron que opera equipo interno pero no especificaron qué ambientes necesitan ni si quieren mismo tier en todos o diferenciado. Esto impacta directamente el costo total de la solución.</p>
+    </div>
+
+    <div class="gap-card important">
+      <div class="gap-pri">Importante — Compliance</div>
+      <div class="gap-q">A4-Q9 · Retención total en archive</div>
+      <h4>¿Cuántos años guardar en S3?</h4>
+      <p>Dijeron "mover a S3 después de ciertos años" pero no definieron cuántos. La SFC puede tener requisitos específicos de retención para productos financieros. Impacta costo de S3 y estrategia de lifecycle.</p>
+    </div>
+
+    <div class="gap-card important">
+      <div class="gap-pri">Importante — Compliance</div>
+      <div class="gap-q">A4-Q11 · Requisitos de la SFC</div>
+      <h4>Regulación específica de la Superintendencia</h4>
+      <p>Solo confirmaron Encryption at Rest. No mencionaron si la SFC requiere KMIP (key management externo), client-side FLE (field-level encryption), auditoría de acceso a datos, o residencia de datos.</p>
+    </div>
+
+    <div class="gap-card nice">
+      <div class="gap-pri">Por validar</div>
+      <div class="gap-q">A3-Q7 · Conexiones concurrentes</div>
+      <h4>¿2,500 o 25,000 conexiones?</h4>
+      <p>El cuestionario dice "50 pods × 50 conexiones = 25,000". La math correcta de 50×50 es 2,500. ¿Error de cálculo o maxPoolSize diferente? Validar en el working session — impacta la configuración del connection pool.</p>
+    </div>
+
+    <div class="gap-card nice">
+      <div class="gap-pri">Por validar</div>
+      <div class="gap-q">A4-Q12 · Timeline multi-region</div>
+      <h4>¿Cuándo se decide multi-region?</h4>
+      <p>Dijeron "en evaluación". Sería útil saber si es un horizonte 2026 o 2027+. Impacta si el diseño inicial debe considerar write concerns y read preferences cross-region desde ahora.</p>
+    </div>
+  </div>
+
+  <div class="callout orange reveal reveal-d2" style="margin-top: 2rem;"><strong>Recomendación:</strong> Los 3 items bloqueantes (datos en DEV/QA, GB por producto, y detalle del batch) se pueden resolver con un <code>db.stats()</code> y una conversación de 10 minutos con el equipo de operaciones. Idealmente antes del working session del jueves para llegar con propuesta cerrada.</div>
 </section>
 
 <!-- CLOSING -->
