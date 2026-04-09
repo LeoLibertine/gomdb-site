@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Core Bancario — Sizing Sharded | MongoDB Atlas</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0B1215;
+  --bg2: #0F1A1E;
+  --surface: #131F24;
+  --surface2: #182830;
+  --green: #00ED64;
+  --green-dim: #00684A;
+  --green-glow: rgba(0,237,100,0.08);
+  --blue: #4DA6FF;
+  --blue-dim: #1A3A5C;
+  --orange: #FF9F43;
+  --red: #FF6B6B;
+  --white: #E8ECEE;
+  --gray: #6B7D85;
+  --gray-lt: #8FA3AC;
+  --line: rgba(255,255,255,0.04);
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans: 'DM Sans', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--white); font-family: var(--sans); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+body::after { content: ''; position: fixed; inset: 0; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.025'/%3E%3C/svg%3E"); pointer-events: none; z-index: 10000; }
+body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(90deg, var(--line) 1px, transparent 1px), linear-gradient(var(--line) 1px, transparent 1px); background-size: 80px 80px; pointer-events: none; z-index: 1; opacity: 0.4; }
+
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0.9rem 2.5rem; display: flex; align-items: center; justify-content: space-between; background: rgba(11,18,21,0.92); backdrop-filter: blur(24px) saturate(1.2); border-bottom: 1px solid var(--line); }
+.nav-brand { font-family: var(--mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray); }
+.nav-brand em { color: var(--green); font-style: normal; }
+.nav-links { display: flex; gap: 2.2rem; }
+.nav-links a { font-size: 0.72rem; font-weight: 500; color: var(--gray); text-decoration: none; letter-spacing: 0.04em; transition: color 0.3s; position: relative; }
+.nav-links a:hover { color: var(--green); }
+.nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--green); transition: width 0.3s; }
+.nav-links a:hover::after { width: 100%; }
+.nav-tag { font-family: var(--mono); font-size: 0.6rem; font-weight: 500; color: var(--green-dim); letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid rgba(0,237,100,0.15); padding: 0.25rem 0.6rem; border-radius: 3px; }
+
+section { padding: 7rem 4rem; position: relative; z-index: 2; }
+.kicker { font-family: var(--mono); font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1.2rem; display: inline-flex; align-items: center; gap: 0.5rem; }
+.kicker::before { content: ''; width: 20px; height: 1px; background: currentColor; }
+.kicker.green { color: var(--green); }
+.kicker.blue { color: var(--blue); }
+.kicker.orange { color: var(--orange); }
+.headline { font-family: var(--serif); font-size: clamp(2.2rem, 5.5vw, 4rem); font-weight: 400; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1.5rem; max-width: 800px; }
+.headline em { font-style: italic; color: var(--green); }
+.subtext { font-size: 1rem; color: var(--gray-lt); max-width: 580px; line-height: 1.75; margin-bottom: 3rem; font-weight: 300; }
+
+/* Animations */
+@keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes float { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-20px, -30px); } }
+.reveal { opacity: 0; transform: translateY(50px); transition: opacity 1s cubic-bezier(0.16,1,0.3,1), transform 1s cubic-bezier(0.16,1,0.3,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
+.reveal-d3 { transition-delay: 0.3s; }
+
+/* Hero */
+.hero { min-height: 100vh; display: flex; align-items: center; padding: 10rem 4rem 6rem; position: relative; z-index: 2; overflow: hidden; }
+.hero-orb { position: absolute; border-radius: 50%; filter: blur(120px); pointer-events: none; }
+.hero-orb.g { width: 600px; height: 600px; top: -20%; right: -10%; background: rgba(0,237,100,0.04); animation: float 12s ease-in-out infinite; }
+.hero-orb.b { width: 400px; height: 400px; bottom: -10%; left: 10%; background: rgba(77,166,255,0.03); animation: float 16s ease-in-out infinite reverse; }
+.hero-content { position: relative; z-index: 2; max-width: 900px; }
+.hero-kicker { font-family: var(--mono); font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin-bottom: 2.5rem; display: inline-flex; align-items: center; gap: 0.6rem; animation: slideUp 0.8s ease both; }
+.hero-kicker::before { content: ''; width: 30px; height: 1px; background: var(--green); }
+.hero h1 { font-family: var(--serif); font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 400; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 2rem; animation: slideUp 0.8s ease 0.1s both; }
+.hero h1 em { font-style: italic; color: var(--green); }
+.hero-desc { font-size: 1.1rem; color: var(--gray-lt); max-width: 600px; line-height: 1.8; font-weight: 300; animation: slideUp 0.8s ease 0.2s both; }
+.hero-stats { margin-top: 3.5rem; display: flex; gap: 3rem; animation: slideUp 0.8s ease 0.35s both; }
+.h-stat { display: flex; flex-direction: column; gap: 0.2rem; }
+.h-stat .val { font-family: var(--mono); font-size: 1.6rem; font-weight: 600; color: var(--green); }
+.h-stat .lbl { font-size: 0.68rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* Recommendation Card */
+.rec-card { background: var(--surface); border: 1px solid rgba(0,237,100,0.15); border-radius: 12px; padding: 2.5rem; position: relative; overflow: hidden; }
+.rec-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--green); }
+.rec-badge { font-family: var(--mono); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--green); background: var(--green-glow); border: 1px solid rgba(0,237,100,0.15); padding: 0.3rem 0.8rem; border-radius: 4px; display: inline-block; margin-bottom: 1.5rem; }
+.rec-title { font-family: var(--serif); font-size: 2rem; font-weight: 400; margin-bottom: 0.3rem; }
+.rec-sub { font-size: 0.85rem; color: var(--gray); margin-bottom: 2rem; }
+.rec-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border-radius: 8px; overflow: hidden; }
+.rec-cell { background: var(--bg); padding: 1.2rem; text-align: center; }
+.rec-cell .num { font-family: var(--mono); font-size: 1.4rem; font-weight: 600; color: var(--green); }
+.rec-cell .unit { font-family: var(--mono); font-size: 0.7rem; color: var(--green); opacity: 0.7; }
+.rec-cell .desc { font-size: 0.68rem; color: var(--gray); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* Architecture Diagram */
+.arch-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 2.5rem; position: relative; overflow: hidden; }
+.arch-wrap::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--green), var(--blue), transparent); }
+.arch-label { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2rem; }
+.arch-svg-wrap { width: 100%; overflow-x: auto; margin: 1rem 0; padding: 0.5rem 0; }
+.arch-svg-wrap svg { display: block; margin: 0 auto; }
+
+/* Params Grid */
+.params-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+.param-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1.5rem; position: relative; overflow: hidden; transition: border-color 0.3s; }
+.param-card:hover { border-color: rgba(0,237,100,0.1); }
+.param-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; }
+.param-card.g::before { background: var(--green); }
+.param-card.b::before { background: var(--blue); }
+.param-card.o::before { background: var(--orange); }
+.param-card .p-label { font-family: var(--mono); font-size: 0.58rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; margin-left: 0.8rem; }
+.param-card.g .p-label { color: var(--green); }
+.param-card.b .p-label { color: var(--blue); }
+.param-card.o .p-label { color: var(--orange); }
+.param-card .p-val { font-family: var(--mono); font-size: 1.3rem; font-weight: 600; color: var(--white); margin-left: 0.8rem; margin-bottom: 0.2rem; }
+.param-card .p-desc { font-size: 0.75rem; color: var(--gray); margin-left: 0.8rem; line-height: 1.5; }
+
+/* Phase Timeline */
+.phase-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.phase-col { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 2.5rem; position: relative; overflow: hidden; }
+.phase-col::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.phase-col.p1::before { background: linear-gradient(90deg, var(--orange), transparent 80%); }
+.phase-col.p2::before { background: linear-gradient(90deg, var(--green), transparent 80%); }
+.phase-badge { font-family: var(--mono); font-size: 0.58rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 3px; display: inline-block; margin-bottom: 1.2rem; }
+.phase-col.p1 .phase-badge { background: rgba(255,159,67,0.1); color: var(--orange); border: 1px solid rgba(255,159,67,0.15); }
+.phase-col.p2 .phase-badge { background: var(--green-glow); color: var(--green); border: 1px solid rgba(0,237,100,0.15); }
+.phase-col h3 { font-family: var(--serif); font-size: 1.4rem; font-weight: 400; margin-bottom: 0.4rem; }
+.phase-col .goal { font-family: var(--serif); font-size: 0.9rem; font-style: italic; margin-bottom: 1.5rem; }
+.phase-col.p1 .goal { color: var(--orange); }
+.phase-col.p2 .goal { color: var(--green); }
+.phase-item { display: flex; gap: 0.7rem; align-items: baseline; margin-bottom: 0.6rem; }
+.phase-item .dot { width: 4px; height: 4px; border-radius: 50%; margin-top: 0.4rem; flex-shrink: 0; }
+.phase-col.p1 .phase-item .dot { background: var(--orange); }
+.phase-col.p2 .phase-item .dot { background: var(--green); }
+.phase-item p { font-size: 0.82rem; color: var(--gray-lt); line-height: 1.45; }
+
+/* Considerations */
+.cons-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+.cons-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1.8rem 2rem; transition: border-color 0.3s; }
+.cons-card:hover { border-color: rgba(0,237,100,0.12); }
+.cons-card h4 { font-family: var(--serif); font-size: 1rem; font-weight: 400; margin-bottom: 0.5rem; color: var(--white); }
+.cons-card .tag { font-family: var(--mono); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); margin-bottom: 0.6rem; display: block; }
+.cons-card p { font-size: 0.78rem; color: var(--gray-lt); line-height: 1.6; }
+.cons-card code { font-family: var(--mono); font-size: 0.72rem; color: var(--green); background: rgba(0,237,100,0.06); padding: 0.1rem 0.35rem; border-radius: 3px; }
+
+/* Justification table */
+.just-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+.just-table th { font-family: var(--mono); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); text-align: left; padding: 0.8rem 1rem; border-bottom: 1px solid rgba(0,237,100,0.15); }
+.just-table td { font-size: 0.78rem; color: var(--gray-lt); padding: 0.7rem 1rem; border-bottom: 1px solid var(--line); line-height: 1.5; }
+.just-table td:first-child { font-family: var(--mono); font-size: 0.72rem; color: var(--white); font-weight: 500; white-space: nowrap; }
+.just-table tr:last-child td { border-bottom: none; }
+.just-table .check { color: var(--green); font-weight: 600; }
+.just-table .warn { color: var(--orange); font-weight: 600; }
+
+/* Gaps / Pending items */
+.gaps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.gap-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1.5rem 1.8rem; position: relative; overflow: hidden; transition: border-color 0.3s; }
+.gap-card:hover { border-color: rgba(255,159,67,0.15); }
+.gap-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.gap-card.critical::before { background: var(--red); }
+.gap-card.important::before { background: var(--orange); }
+.gap-card.nice::before { background: var(--blue); }
+.gap-pri { font-family: var(--mono); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; display: inline-block; padding: 0.15rem 0.5rem; border-radius: 3px; margin-bottom: 0.7rem; }
+.gap-card.critical .gap-pri { color: var(--red); background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.15); }
+.gap-card.important .gap-pri { color: var(--orange); background: rgba(255,159,67,0.1); border: 1px solid rgba(255,159,67,0.15); }
+.gap-card.nice .gap-pri { color: var(--blue); background: rgba(77,166,255,0.1); border: 1px solid rgba(77,166,255,0.15); }
+.gap-card h4 { font-family: var(--serif); font-size: 1rem; font-weight: 400; color: var(--white); margin-bottom: 0.4rem; }
+.gap-card .gap-q { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); margin-bottom: 0.5rem; }
+.gap-card p { font-size: 0.78rem; color: var(--gray-lt); line-height: 1.6; }
+.gap-card code { font-family: var(--mono); font-size: 0.72rem; color: var(--green); background: rgba(0,237,100,0.06); padding: 0.1rem 0.35rem; border-radius: 3px; }
+
+/* Sharding options */
+.shard-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem; }
+.shard-opt { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 2.2rem; position: relative; overflow: hidden; transition: border-color 0.3s; }
+.shard-opt:hover { border-color: rgba(0,237,100,0.12); }
+.shard-opt::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.shard-opt.recommended::before { background: var(--green); }
+.shard-opt.alternative::before { background: var(--blue); }
+.shard-opt-badge { font-family: var(--mono); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 3px; display: inline-block; margin-bottom: 1rem; }
+.shard-opt.recommended .shard-opt-badge { background: var(--green-glow); color: var(--green); border: 1px solid rgba(0,237,100,0.15); }
+.shard-opt.alternative .shard-opt-badge { background: rgba(77,166,255,0.08); color: var(--blue); border: 1px solid rgba(77,166,255,0.15); }
+.shard-opt h3 { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; margin-bottom: 0.3rem; color: var(--white); }
+.shard-opt .shard-key-code { font-family: var(--mono); font-size: 0.82rem; color: var(--green); background: rgba(0,237,100,0.06); padding: 0.4rem 0.8rem; border-radius: 4px; display: inline-block; margin-bottom: 1.2rem; border: 1px solid rgba(0,237,100,0.1); }
+.shard-opt.alternative .shard-key-code { color: var(--blue); background: rgba(77,166,255,0.06); border-color: rgba(77,166,255,0.1); }
+.pro-con { margin-top: 0.8rem; }
+.pro-con .label { font-family: var(--mono); font-size: 0.58rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
+.pro-con .label.pro { color: var(--green); }
+.pro-con .label.con { color: var(--red); }
+.pro-con ul { list-style: none; padding: 0; }
+.pro-con li { font-size: 0.78rem; color: var(--gray-lt); line-height: 1.55; padding: 0.2rem 0 0.2rem 1rem; position: relative; }
+.pro-con li::before { content: ''; position: absolute; left: 0; top: 0.55rem; width: 4px; height: 4px; border-radius: 50%; }
+.pro-con .pro li::before { background: var(--green); }
+.pro-con .con li::before { background: var(--red); }
+.shard-col-label { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1.2rem; margin-bottom: 0.4rem; }
+
+/* Headroom bars */
+.headroom { margin-top: 2rem; }
+.hr-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+.hr-label { font-family: var(--mono); font-size: 0.65rem; color: var(--gray); width: 80px; text-transform: uppercase; letter-spacing: 0.08em; flex-shrink: 0; }
+.hr-bar-bg { flex: 1; height: 24px; background: var(--bg); border-radius: 4px; overflow: hidden; position: relative; }
+.hr-bar { height: 100%; border-radius: 4px; position: relative; transition: width 1.5s cubic-bezier(0.16,1,0.3,1); width: 0; }
+.hr-bar.green { background: linear-gradient(90deg, var(--green-dim), var(--green)); }
+.hr-bar.blue { background: linear-gradient(90deg, var(--blue-dim), var(--blue)); }
+.hr-bar.orange { background: linear-gradient(90deg, rgba(255,159,67,0.3), var(--orange)); }
+.hr-bar-label { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-family: var(--mono); font-size: 0.6rem; font-weight: 600; color: var(--bg); }
+.hr-cap { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); width: 80px; text-align: right; flex-shrink: 0; }
+
+/* Callout */
+.callout { margin-top: 2rem; padding: 1.2rem 1.5rem; border-radius: 0 6px 6px 0; font-size: 0.82rem; line-height: 1.6; }
+.callout.green { background: var(--green-glow); border-left: 2px solid var(--green-dim); color: var(--gray-lt); }
+.callout.green strong { color: var(--green); }
+.callout.orange { background: rgba(255,159,67,0.06); border-left: 2px solid var(--orange); color: var(--gray-lt); }
+.callout.orange strong { color: var(--orange); }
+
+/* Divider */
+.divider { padding: 5rem 4rem; text-align: center; position: relative; z-index: 2; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.divider h2 { font-family: var(--serif); font-size: clamp(1.3rem, 3vw, 1.8rem); font-weight: 400; color: var(--gray); font-style: italic; }
+.divider h2 em { color: var(--green); font-style: italic; }
+
+/* Closing */
+.closing { padding: 8rem 4rem; text-align: center; position: relative; z-index: 2; }
+.closing h2 { font-family: var(--serif); font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 400; line-height: 1.2; margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto; }
+.closing h2 em { font-style: italic; color: var(--green); }
+.closing p { font-size: 0.95rem; color: var(--gray); max-width: 500px; margin: 0 auto; line-height: 1.7; font-weight: 300; }
+
+footer { padding: 2rem 4rem; border-top: 1px solid var(--line); text-align: center; position: relative; z-index: 2; }
+footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); letter-spacing: 0.1em; }
+
+/* SVG pipeline animations */
+@keyframes dashFlow { to { stroke-dashoffset: -14; } }
+@keyframes nodePulse { 0%,100% { opacity: 0.15; } 50% { opacity: 0.35; } }
+
+/* Scroll progress */
+.scroll-progress { position: fixed; top: 0; left: 0; width: 0; height: 2px; background: linear-gradient(90deg, var(--green), var(--blue)); z-index: 1001; }
+.nav-links a.active { color: var(--green); }
+.nav-links a.active::after { width: 100%; }
+
+@media (max-width: 900px) {
+  section { padding: 5rem 1.5rem; }
+  .hero { padding: 7rem 1.5rem 4rem; }
+  .params-grid, .cons-grid { grid-template-columns: 1fr; }
+  .phase-split { grid-template-columns: 1fr; }
+  .rec-grid { grid-template-columns: 1fr 1fr; }
+  nav .nav-links { display: none; }
+  .scroll-progress { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Banco<em>colombia</em> × MongoDB</div>
+  <div class="nav-links">
+    <a href="#context">Contexto</a><a href="#params">Parámetros</a><a href="#sizing">Sizing</a>
+    <a href="#justification">Justificación</a><a href="#arch">Arquitectura</a><a href="#phases">Fases</a><a href="#considerations">Técnico</a><a href="#design-review">Design Review</a><a href="#gaps">Pendientes</a><a href="#sharding">Sharding</a>
+  </div>
+  <div class="nav-tag">Confidencial</div>
+</nav>
+<div class="scroll-progress"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-orb g"></div>
+  <div class="hero-orb b"></div>
+  <div class="hero-content">
+    <div class="hero-kicker">Core Bancario — Query Model</div>
+    <h1>Sizing <em>Sharded</em> para<br><em>Bonos &amp; Core<br>Bancario</em></h1>
+    <p class="hero-desc">Dimensionamiento con sharding habilitado desde día uno. Escalabilidad horizontal preparada para cuando Depósitos migre al modelo. Patrón CQRS donde MongoDB sirve todas las consultas de lectura.</p>
+    <div class="hero-stats">
+      <div class="h-stat"><span class="val">M40 → M60</span><span class="lbl">Tiers más pequeños</span></div>
+      <div class="h-stat"><span class="val">6</span><span class="lbl">Nodos (2 shards × 3)</span></div>
+      <div class="h-stat"><span class="val">2</span><span class="lbl">Shards</span></div>
+      <div class="h-stat"><span class="val">2 Fases</span><span class="lbl">Inicial → Crecimiento</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTEXT -->
+<section id="context" style="background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);">
+  <div class="reveal"><span class="kicker green">Contexto del Proyecto</span>
+    <h2 class="headline">Un Query Model transversal<br>para <em>todos los productos.</em></h2>
+    <p class="subtext">El banco está implementando un patrón CQRS donde las operaciones de escritura van al core (iSeries) y las consultas de lectura se sirven desde MongoDB Atlas.</p>
+  </div>
+  <div class="cons-grid reveal reveal-d1">
+    <div class="cons-card"><span class="tag">Caso de uso</span><h4>Patrón CQRS para Core Bancario</h4><p>Separación de comandos (escrituras al iSeries) y consultas (lecturas desde MongoDB). El Query Model materializa cuentas, saldos y movimientos de todos los productos del banco en un modelo unificado.</p></div>
+    <div class="cons-card"><span class="tag">Primer producto</span><h4>Bonos — en 3 meses a producción</h4><p>Bonos es el primer producto que entra al nuevo modelo dentro de la Plataforma de Desarrollo de Negocio. Seguirán CDT e Inversión Virtual. Luego, Depósitos migra desde el QM de contingencia actual.</p></div>
+    <div class="cons-card"><span class="tag">Modelo de datos</span><h4>Cuentas + Postings (Movimientos)</h4><p>Dos colecciones principales: <code>cuentas</code> con saldos por tipo, y <code>postings</code> con los movimientos de cada cuenta. Modelo canónico reutilizable para todos los productos del core bancario.</p></div>
+    <div class="cons-card"><span class="tag">Arquitectura CDC</span><h4>Eventos vía Kafka — misma base del QM actual</h4><p>Operaciones modifican el core y publican eventos en Kafka (broker empresarial). El microservicio consumidor materializa en MongoDB. Misma arquitectura que el QM de contingencia, orientada a eventos.</p></div>
+  </div>
+  <div class="callout green reveal reveal-d2"><strong>Objetivo estratégico:</strong> Este QM no es solo para Bonos. Es el chasis reutilizable para todos los productos del banco. Lo que se diseñe hoy debe estar preparado para escalar cuando Depósitos (~20M cuentas, ~25M movimientos/día) migre a este modelo.</div>
+</section>
+
+<!-- SIZING PARAMS -->
+<section id="params" style="background: var(--bg2);">
+  <div class="reveal"><span class="kicker blue">Parámetros de Entrada</span>
+    <h2 class="headline">Los datos que alimentaron<br>la <em>calculadora.</em></h2>
+    <p class="subtext">Información real del cuestionario de sizing completado por el equipo de Bancolombia.</p>
+  </div>
+  <div class="params-grid reveal reveal-d1">
+    <div class="param-card g"><div class="p-label">Operaciones pico</div><div class="p-val">10,000 ops/s</div><div class="p-desc">8,000 lecturas + 2,000 escrituras por segundo en pico.</div></div>
+    <div class="param-card g"><div class="p-label">Ratio lectura/escritura</div><div class="p-val">70 / 30</div><div class="p-desc">Workload dominado por consultas (respuesta del equipo: 70% reads, 30% writes).</div></div>
+    <div class="param-card b"><div class="p-label">Cuentas proyectadas</div><div class="p-val">22M</div><div class="p-desc">Todos los productos. Fase 1 (Bonos+CDT+InvVirtual): ~1M. Fase 2 (+Depósitos): 22M.</div></div>
+    <div class="param-card b"><div class="p-label">Movimientos/día</div><div class="p-val">30M</div><div class="p-desc">Postings diarios proyectados. Fase 1: ~1.1M/día. Fase 2 con Depósitos: ~30M/día.</div></div>
+    <div class="param-card o"><div class="p-label">Tamaño documento</div><div class="p-val">~1.5 KB</div><div class="p-desc">Promedio BSON entre cuentas (~1-2KB) y postings (~1-1.5KB). WiredTiger snappy comprime ~50%.</div></div>
+    <div class="param-card o"><div class="p-label">Data en disco (Fase 2)</div><div class="p-val">~5 TB</div><div class="p-desc">Raw ~8.1 TB → comprimido ~4 TB + ~1 TB índices. Fase 1: ~180 GB en disco.</div></div>
+    <div class="param-card g"><div class="p-label">Retención hot</div><div class="p-val">3–6 meses</div><div class="p-desc">Hot storage entre 3 y 6 meses (por definir). Después → Online Archive (S3).</div></div>
+    <div class="param-card b"><div class="p-label">Conexiones</div><div class="p-val">2,500*</div><div class="p-desc">20-50 pods × 50 conexiones por pod. *Cuestionario reporta 25,000 — validar cálculo en working session.</div></div>
+    <div class="param-card g"><div class="p-label">SLA de latencia</div><div class="p-val">200 ms</div><div class="p-desc">Latencia máxima aceptable para consultas de lectura desde canales digitales.</div></div>
+  </div>
+</section>
+
+<!-- SIZING RECOMMENDATION -->
+<section id="sizing" style="background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);">
+  <div class="reveal"><span class="kicker green">Recomendación — Sizing Sharded en Dos Fases</span>
+    <h2 class="headline">2 shards de M40,<br><em>crecer a 2× M60.</em></h2>
+    <p class="subtext">Sharding habilitado desde día uno. Tiers más pequeños, escalabilidad horizontal. Sin migración de non-sharded a sharded en producción.</p>
+  </div>
+
+  <!-- FASE 1: 2× M40 -->
+  <div class="rec-card reveal reveal-d1" style="margin-bottom: 2rem; border-color: rgba(255,159,67,0.2);">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--orange);"></div>
+    <div class="rec-badge" style="background:rgba(255,159,67,0.1);color:var(--orange);border-color:rgba(255,159,67,0.2);">Fase 1 — Sizing Inicial (Bonos + CDT + Inv. Virtual)</div>
+    <div class="rec-title">2 Shards × M40 — General</div>
+    <div class="rec-sub">AWS us-east-1 (N. Virginia) · Private Link · Encryption at Rest · Shard Key: accountId (hashed)</div>
+    <div class="rec-grid">
+      <div class="rec-cell"><div class="num">6</div><div class="desc">Nodos totales</div></div>
+      <div class="rec-cell"><div class="num">2</div><div class="desc">Shards</div></div>
+      <div class="rec-cell"><div class="num">16</div><div class="unit">GB RAM</div><div class="desc">Por nodo (32 GB total)</div></div>
+      <div class="rec-cell"><div class="num">1,500</div><div class="unit">GB</div><div class="desc">Storage total (750×2)</div></div>
+    </div>
+    <div class="headroom">
+      <div class="hr-row">
+        <div class="hr-label">Reads</div>
+        <div class="hr-bar-bg"><div class="hr-bar green" data-width="40"><div class="hr-bar-label">8K / ~20K</div></div></div>
+        <div class="hr-cap">~2.5x headroom</div>
+      </div>
+      <div class="hr-row">
+        <div class="hr-label">Writes</div>
+        <div class="hr-bar-bg"><div class="hr-bar blue" data-width="10"><div class="hr-bar-label">2K / ~20K</div></div></div>
+        <div class="hr-cap">~10x headroom</div>
+      </div>
+      <div class="hr-row">
+        <div class="hr-label">Storage</div>
+        <div class="hr-bar-bg"><div class="hr-bar orange" data-width="12"><div class="hr-bar-label">~180 GB / 1.5 TB</div></div></div>
+        <div class="hr-cap">~88% libre</div>
+      </div>
+    </div>
+    <div class="callout orange" style="margin-top:1.5rem;"><strong>Fase 1 cubre:</strong> Bonos (~100 cuentas), CDT e Inversión Virtual (~1M cuentas, ~1.1M mov/día). Data ~90 GB por shard. Sharding habilitado desde inicio — cuando Depósitos entre, no se requiere migración de arquitectura, solo upgrade de tier.</div>
+  </div>
+
+  <!-- FASE 2: 2× M60 -->
+  <div class="rec-card reveal reveal-d2">
+    <div class="rec-badge">Fase 2 — Sizing Crecimiento (+ Depósitos · 1-2 años)</div>
+    <div class="rec-title">2 Shards × M60 — General</div>
+    <div class="rec-sub">AWS us-east-1 (N. Virginia) · Private Link · Encryption at Rest · Shard Key: accountId (hashed)</div>
+    <div class="rec-grid">
+      <div class="rec-cell"><div class="num">6</div><div class="desc">Nodos totales</div></div>
+      <div class="rec-cell"><div class="num">2</div><div class="desc">Shards</div></div>
+      <div class="rec-cell"><div class="num">64</div><div class="unit">GB RAM</div><div class="desc">Por nodo (128 GB total)</div></div>
+      <div class="rec-cell"><div class="num">8,000</div><div class="unit">GB</div><div class="desc">Storage total (4TB×2)</div></div>
+    </div>
+    <div class="headroom">
+      <div class="hr-row">
+        <div class="hr-label">Reads</div>
+        <div class="hr-bar-bg"><div class="hr-bar green" data-width="20"><div class="hr-bar-label">8K / ~40K</div></div></div>
+        <div class="hr-cap">~5x headroom</div>
+      </div>
+      <div class="hr-row">
+        <div class="hr-label">Writes</div>
+        <div class="hr-bar-bg"><div class="hr-bar blue" data-width="5"><div class="hr-bar-label">2K / ~40K</div></div></div>
+        <div class="hr-cap">~20x headroom</div>
+      </div>
+      <div class="hr-row">
+        <div class="hr-label">Storage</div>
+        <div class="hr-bar-bg"><div class="hr-bar orange" data-width="62.5"><div class="hr-bar-label">~5 TB / 8 TB</div></div></div>
+        <div class="hr-cap">~37% libre</div>
+      </div>
+    </div>
+    <div class="callout green" style="margin-top:1.5rem;"><strong>Fase 2 cubre:</strong> Todo el core bancario (~22M cuentas, ~30M mov/día, ~5 TB en disco). Cada shard maneja ~11M cuentas y ~2.5 TB. Upgrade de M40 a M60 por shard es online, sin downtime. Si se necesita más capacidad, se agrega un 3er shard sin rediseñar.</div>
+  </div>
+
+  <div class="callout green reveal reveal-d3" style="margin-top:2rem;"><strong>¿Por qué sharding desde día uno?</strong> Migrar de non-sharded a sharded en producción con datos requiere redistribución de chunks y tiene impacto en performance. Habilitarlo desde el inicio con tiers pequeños (M40) evita esa complejidad. El costo de 2×M40 es comparable a 1×M50, pero con la ventaja de escalabilidad horizontal ya habilitada y sin migración futura.</div>
+</section>
+
+<!-- WHY SHARDED -->
+<section id="justification" style="background: var(--bg);">
+  <div class="reveal"><span class="kicker blue">Justificación — ¿Por qué Sharding desde día uno?</span>
+    <h2 class="headline">Sharded vs Non-Sharded:<br><em>trade-offs reales.</em></h2>
+    <p class="subtext">Comparativa entre la opción de replica set único (M50→M80) y la opción sharded (2×M40→2×M60). Ambas son viables — aquí los argumentos para cada una.</p>
+  </div>
+  <div class="arch-wrap reveal reveal-d1">
+    <div class="arch-label">Comparativa: Sharded (2×M40) vs Non-Sharded (1×M50) — Fase 1</div>
+    <table class="just-table">
+      <thead><tr><th>Criterio</th><th>1× M50 (Non-Sharded)</th><th>2× M40 (Sharded)</th><th>Ventaja</th></tr></thead>
+      <tbody>
+        <tr><td>RAM total</td><td>32 GB (1 nodo primary)</td><td class="check">32 GB (2 primaries × 16 GB)</td><td>Equivalente — misma RAM total</td></tr>
+        <tr><td>Ops/sec totales</td><td>~15K</td><td class="check">~20K</td><td>Sharded: +33% capacidad por distribución</td></tr>
+        <tr><td>Storage total</td><td>1.5 TB</td><td>1.5 TB (750 GB × 2)</td><td>Equivalente</td></tr>
+        <tr><td>Nodos totales</td><td class="check">3</td><td>6</td><td>Non-sharded: menor costo de infra</td></tr>
+        <tr><td>Complejidad operativa</td><td class="check">Simple</td><td>Moderada (mongos, config servers)</td><td>Non-sharded: más fácil de operar</td></tr>
+        <tr><td>Migración a Fase 2</td><td class="warn">Requiere sh.shardCollection()</td><td class="check">Solo upgrade de tier</td><td>Sharded: sin migración de arquitectura</td></tr>
+        <tr><td>Fault isolation</td><td>1 primary = SPOF de writes</td><td class="check">2 primaries independientes</td><td>Sharded: mejor aislamiento de fallos</td></tr>
+        <tr><td>Picos nómina</td><td>Todo el pico en 1 shard</td><td class="check">Distribuido entre 2 shards</td><td>Sharded: absorbe picos mejor</td></tr>
+      </tbody>
+    </table>
+    <div class="callout green" style="margin-top:1.5rem;"><strong>Argumento principal:</strong> El costo de 2×M40 (6 nodos) es comparable al de 1×M50 (3 nodos), pero se obtiene escalabilidad horizontal desde el inicio. La migración de non-sharded a sharded en producción con datos y tráfico es una operación compleja que se evita completamente.</div>
+  </div>
+
+  <div class="arch-wrap reveal reveal-d2" style="margin-top: 2rem;">
+    <div class="arch-label">Comparativa: Sharded (2×M60) vs Non-Sharded (1×M80) — Fase 2</div>
+    <table class="just-table">
+      <thead><tr><th>Criterio</th><th>1× M80 (Non-Sharded)</th><th>2× M60 (Sharded)</th><th>Ventaja</th></tr></thead>
+      <tbody>
+        <tr><td>RAM total</td><td>128 GB (1 primary)</td><td class="check">128 GB (2 × 64 GB)</td><td>Equivalente — misma RAM total</td></tr>
+        <tr><td>Ops/sec totales</td><td>~41K reads / ~345K writes</td><td class="check">~40K reads / ~40K writes</td><td>Comparable en reads, M80 gana en writes raw</td></tr>
+        <tr><td>Storage total</td><td class="check">14.3 TB</td><td>8 TB (4 TB × 2)</td><td>M80: más storage (Extended Storage)</td></tr>
+        <tr><td>Data ~5 TB en disco</td><td>35% usado</td><td>62.5% usado</td><td>M80: más headroom de storage</td></tr>
+        <tr><td>Escalabilidad futura</td><td class="warn">Vertical (M80 → M80 NVMe?)</td><td class="check">Horizontal (agregar shard 3, 4...)</td><td>Sharded: crecimiento ilimitado</td></tr>
+        <tr><td>Nodos totales</td><td class="check">3</td><td>6 + config servers</td><td>Non-sharded: menor footprint</td></tr>
+        <tr><td>Si se necesita más</td><td class="warn">No hay tier arriba de M80</td><td class="check">Agregar shards o subir a M80</td><td>Sharded: más opciones de crecimiento</td></tr>
+      </tbody>
+    </table>
+    <div class="callout green" style="margin-top:1.5rem;"><strong>Trade-off clave en Fase 2:</strong> El M80 tiene 14.3 TB de Extended Storage (sobra). Pero si los datos crecen más allá de lo proyectado, no hay tier superior. Con sharding, se agrega un 3er shard o incluso se sube cada shard a M80 — la escalabilidad es prácticamente ilimitada.</div>
+  </div>
+
+  <div class="arch-wrap reveal reveal-d3" style="margin-top: 2rem;">
+    <div class="arch-label">Impacto de la compresión WiredTiger (Snappy)</div>
+    <table class="just-table">
+      <thead><tr><th>Métrica</th><th>Raw (BSON)</th><th>En disco (~50% compresión)</th><th>Por shard (÷2)</th></tr></thead>
+      <tbody>
+        <tr><td>Fase 1 — Data</td><td>~300 GB</td><td class="check">~150 GB</td><td>~75 GB</td></tr>
+        <tr><td>Fase 1 — Índices</td><td>—</td><td>~30 GB</td><td>~15 GB</td></tr>
+        <tr><td>Fase 1 — Total</td><td>~300 GB</td><td class="check">~180 GB</td><td>~90 GB por shard (12% de 750 GB)</td></tr>
+        <tr><td>Fase 2 — Data</td><td>~8.1 TB</td><td class="check">~4 TB</td><td>~2 TB</td></tr>
+        <tr><td>Fase 2 — Índices</td><td>—</td><td>~1 TB</td><td>~500 GB</td></tr>
+        <tr><td>Fase 2 — Total</td><td>~8.1 TB</td><td class="check">~5 TB</td><td>~2.5 TB por shard (62.5% de 4 TB)</td></tr>
+      </tbody>
+    </table>
+    <div class="callout green" style="margin-top:1.5rem;"><strong>Sobre la compresión:</strong> WiredTiger con snappy comprime documentos JSON financieros ~50%. Con sharding, cada shard maneja la mitad de los datos. En Fase 2, 2.5 TB por shard en un M60 de 4 TB es un uso saludable del 62.5%.</div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE DIAGRAM -->
+<section id="arch" style="background: var(--bg);">
+  <div class="reveal"><span class="kicker green">Arquitectura Objetivo</span>
+    <h2 class="headline">Cluster MongoDB Atlas<br>en <em>Virginia (us-east-1).</em></h2>
+    <p class="subtext">Sharded cluster con 2 shards, mongos router, conectividad Private Link, con Online Archive hacia S3. Arranca con 2×M40, escala a 2×M60 cuando Depósitos migre.</p>
+  </div>
+  <div class="arch-wrap reveal reveal-d1">
+    <div class="arch-label">Arquitectura Sharded del Cluster — Producción</div>
+    <div class="arch-svg-wrap">
+      <svg viewBox="0 0 960 520" width="960" height="520" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background region -->
+        <rect x="180" y="20" width="600" height="480" rx="12" fill="none" stroke="rgba(0,237,100,0.08)" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="480" y="45" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="600" letter-spacing="2">AWS US-EAST-1 (N. VIRGINIA)</text>
+        <text x="480" y="60" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">Private Link · Encryption at Rest · 2×M40 (Fase 1) → 2×M60 (Fase 2) · Shard Key: accountId hashed</text>
+
+        <!-- Mongos Router -->
+        <rect x="390" y="75" width="180" height="50" rx="8" fill="#1a1a0d" stroke="#FF9F43" stroke-width="1.5"/>
+        <rect x="386" y="71" width="188" height="58" rx="10" fill="none" stroke="#FF9F43" stroke-width="0.5" opacity="0">
+          <animate attributeName="opacity" values="0;0.3;0" dur="3s" repeatCount="indefinite"/>
+        </rect>
+        <text x="480" y="98" text-anchor="middle" fill="#FF9F43" font-family="IBM Plex Mono" font-size="11" font-weight="600">MONGOS ROUTER</text>
+        <text x="480" y="115" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">Query routing · Shard key: accountId (hashed)</text>
+
+        <!-- Config Server -->
+        <rect x="620" y="78" width="120" height="44" rx="6" fill="#131F24" stroke="#6B7D85" stroke-width="1" opacity="0.7"/>
+        <text x="680" y="98" text-anchor="middle" fill="#6B7D85" font-family="IBM Plex Mono" font-size="8" font-weight="500">CONFIG SVR</text>
+        <text x="680" y="112" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="6">Metadata · 3 nodos</text>
+        <line x1="570" y1="100" x2="620" y2="100" stroke="#6B7D85" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+
+        <!-- Lines from mongos to shards -->
+        <line x1="440" y1="125" x2="310" y2="175" stroke="#00ED64" stroke-width="1" stroke-dasharray="4,3" opacity="0.4">
+          <animate attributeName="stroke-dashoffset" values="0;-14" dur="1.5s" repeatCount="indefinite"/>
+        </line>
+        <line x1="520" y1="125" x2="650" y2="175" stroke="#4DA6FF" stroke-width="1" stroke-dasharray="4,3" opacity="0.4">
+          <animate attributeName="stroke-dashoffset" values="0;-14" dur="1.5s" repeatCount="indefinite"/>
+        </line>
+
+        <!-- SHARD 1 box -->
+        <rect x="200" y="170" width="260" height="210" rx="10" fill="none" stroke="rgba(0,237,100,0.12)" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="330" y="190" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="8" font-weight="600" letter-spacing="1.5">SHARD 1</text>
+
+        <!-- Shard 1 Primary -->
+        <rect x="260" y="200" width="140" height="55" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1.5"/>
+        <rect x="256" y="196" width="148" height="63" rx="10" fill="none" stroke="#00ED64" stroke-width="0.5" opacity="0">
+          <animate attributeName="opacity" values="0;0.2;0" dur="3s" repeatCount="indefinite"/>
+        </rect>
+        <text x="330" y="222" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="10" font-weight="600">PRIMARY</text>
+        <text x="330" y="240" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">R+W · M40 (Fase 1) → M60</text>
+
+        <!-- Shard 1 Secondaries -->
+        <rect x="215" y="280" width="110" height="45" rx="6" fill="#0d1520" stroke="#4DA6FF" stroke-width="1"/>
+        <text x="270" y="300" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="8" font-weight="600">SEC-1</text>
+        <text x="270" y="315" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="6">AZ-1</text>
+
+        <rect x="340" y="280" width="110" height="45" rx="6" fill="#0d1520" stroke="#4DA6FF" stroke-width="1"/>
+        <text x="395" y="300" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="8" font-weight="600">SEC-2</text>
+        <text x="395" y="315" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="6">AZ-2</text>
+
+        <!-- Shard 1 replication -->
+        <line x1="300" y1="255" x2="275" y2="280" stroke="#4DA6FF" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.3"/>
+        <line x1="360" y1="255" x2="390" y2="280" stroke="#4DA6FF" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.3"/>
+
+        <text x="330" y="360" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="6" opacity="0.6">~11M CUENTAS · ~2.5 TB (FASE 2)</text>
+
+        <!-- SHARD 2 box -->
+        <rect x="500" y="170" width="260" height="210" rx="10" fill="none" stroke="rgba(77,166,255,0.12)" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="630" y="190" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="8" font-weight="600" letter-spacing="1.5">SHARD 2</text>
+
+        <!-- Shard 2 Primary -->
+        <rect x="560" y="200" width="140" height="55" rx="8" fill="#0d1520" stroke="#4DA6FF" stroke-width="1.5"/>
+        <rect x="556" y="196" width="148" height="63" rx="10" fill="none" stroke="#4DA6FF" stroke-width="0.5" opacity="0">
+          <animate attributeName="opacity" values="0;0.2;0" dur="3s" repeatCount="indefinite"/>
+        </rect>
+        <text x="630" y="222" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="10" font-weight="600">PRIMARY</text>
+        <text x="630" y="240" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">R+W · M40 (Fase 1) → M60</text>
+
+        <!-- Shard 2 Secondaries -->
+        <rect x="515" y="280" width="110" height="45" rx="6" fill="#0d1520" stroke="#4DA6FF" stroke-width="1"/>
+        <text x="570" y="300" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="8" font-weight="600">SEC-1</text>
+        <text x="570" y="315" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="6">AZ-1</text>
+
+        <rect x="640" y="280" width="110" height="45" rx="6" fill="#0d1520" stroke="#4DA6FF" stroke-width="1"/>
+        <text x="695" y="300" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="8" font-weight="600">SEC-2</text>
+        <text x="695" y="315" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="6">AZ-2</text>
+
+        <!-- Shard 2 replication -->
+        <line x1="600" y1="255" x2="575" y2="280" stroke="#4DA6FF" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.3"/>
+        <line x1="660" y1="255" x2="690" y2="280" stroke="#4DA6FF" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.3"/>
+
+        <text x="630" y="360" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="6" opacity="0.6">~11M CUENTAS · ~2.5 TB (FASE 2)</text>
+
+        <!-- CDC Pipeline (left) -->
+        <rect x="10" y="78" width="110" height="50" rx="8" fill="#1a0f0f" stroke="#FF6B6B" stroke-width="1"/>
+        <text x="65" y="100" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono" font-size="9" font-weight="600">iSeries</text>
+        <text x="65" y="115" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="6">Core Bancario</text>
+
+        <line x1="120" y1="100" x2="155" y2="100" stroke="#FF9F43" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+        <text x="137" y="93" text-anchor="middle" fill="#FF9F43" font-family="IBM Plex Mono" font-size="5" letter-spacing="1">CDC</text>
+
+        <rect x="155" y="80" width="50" height="42" rx="6" fill="#1a1508" stroke="#FF9F43" stroke-width="1"/>
+        <text x="180" y="100" text-anchor="middle" fill="#FF9F43" font-family="IBM Plex Mono" font-size="8" font-weight="600">Kafka</text>
+        <text x="180" y="113" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="5">Broker</text>
+
+        <line x1="205" y1="100" x2="390" y2="100" stroke="#00ED64" stroke-width="1" stroke-dasharray="4,3" opacity="0.4">
+          <animate attributeName="stroke-dashoffset" values="0;-14" dur="1s" repeatCount="indefinite"/>
+        </line>
+        <polygon points="387,96 395,100 387,104" fill="#00ED64" opacity="0.5"/>
+
+        <!-- Online Archive (bottom right) -->
+        <rect x="800" y="270" width="140" height="60" rx="10" fill="#131F24" stroke="#6B7D85" stroke-width="1" opacity="0.6"/>
+        <text x="870" y="295" text-anchor="middle" fill="#6B7D85" font-family="IBM Plex Mono" font-size="9" font-weight="500">Online Archive</text>
+        <text x="870" y="310" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">S3 · > 3-6 meses</text>
+
+        <line x1="760" y1="300" x2="800" y2="300" stroke="#6B7D85" stroke-width="1" stroke-dasharray="4,3" opacity="0.3"/>
+        <polygon points="797,296 805,300 797,304" fill="#6B7D85" opacity="0.3"/>
+
+        <!-- App / Channels (left bottom) -->
+        <rect x="10" y="260" width="110" height="50" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.7"/>
+        <text x="65" y="282" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="8" font-weight="600">Canales</text>
+        <text x="65" y="296" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">20-50 pods</text>
+
+        <line x1="120" y1="285" x2="390" y2="100" stroke="#00ED64" stroke-width="1" opacity="0.2"/>
+        <text x="220" y="200" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="5" letter-spacing="1" opacity="0.6" transform="rotate(-30 220 200)">PRIVATE LINK → MONGOS</text>
+
+        <!-- Capacity label -->
+        <rect x="240" y="400" width="480" height="50" rx="6" fill="rgba(0,237,100,0.04)" stroke="rgba(0,237,100,0.1)" stroke-width="1"/>
+        <text x="480" y="420" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="8" font-weight="500">FASE 1 (2×M40): ~20K OPS/SEC · 1.5 TB TOTAL  →  FASE 2 (2×M60): ~40K OPS · 8 TB TOTAL</text>
+        <text x="480" y="438" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">2 Shards × 3 nodos · Multi-AZ · Failover por shard · Escalable a 3+ shards · Zero downtime upgrade</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="divider"><div class="reveal"><h2>Diseñado para Bonos hoy.<br>Preparado para <em>todo el core bancario mañana.</em></h2></div></div>
+
+<!-- PHASES -->
+<section id="phases" style="background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);">
+  <div class="reveal"><span class="kicker orange">Despliegue por Fases</span>
+    <h2 class="headline">Crecimiento paulatino.<br><em>Sin rediseñar.</em></h2>
+    <p class="subtext">El cluster escala conforme migran productos. Lo que se implementa hoy no se rehace mañana.</p>
+  </div>
+  <div class="phase-split reveal reveal-d1">
+    <div class="phase-col p1">
+      <div class="phase-badge">Fase 1 — Ahora (3 meses)</div>
+      <h3>Bonos + CDT + Inv. Virtual</h3>
+      <div class="goal">"Primer producto en producción con el modelo nuevo."</div>
+      <div class="phase-item"><div class="dot"></div><p>Bonos: ~100 cuentas, ~120 movimientos/día</p></div>
+      <div class="phase-item"><div class="dot"></div><p>CDT + Inversión Virtual: ~1M cuentas, ~1.1M mov/día</p></div>
+      <div class="phase-item"><div class="dot"></div><p>Data en disco: ~90 GB por shard (~180 GB total entre 2 shards)</p></div>
+      <div class="phase-item"><div class="dot"></div><p><strong>Recomendación: 2 Shards × M40</strong> — 16 GB RAM/nodo, 750 GB/shard</p></div>
+      <div class="phase-item"><div class="dot"></div><p>Sharding habilitado desde inicio — sin migración de arquitectura futura</p></div>
+    </div>
+    <div class="phase-col p2">
+      <div class="phase-badge">Fase 2 — 1-2 Años</div>
+      <h3>+ Depósitos + Contingencia</h3>
+      <div class="goal">"El grueso del volumen migra al modelo objetivo."</div>
+      <div class="phase-item"><div class="dot"></div><p>Depósitos migra desde QM de contingencia actual</p></div>
+      <div class="phase-item"><div class="dot"></div><p>~22M cuentas totales, ~30M movimientos/día</p></div>
+      <div class="phase-item"><div class="dot"></div><p>Data en disco: ~2.5 TB por shard (~5 TB total entre 2 shards)</p></div>
+      <div class="phase-item"><div class="dot"></div><p><strong>Upgrade a 2 Shards × M60</strong> — 64 GB RAM/nodo, 4 TB/shard</p></div>
+      <div class="phase-item"><div class="dot"></div><p>Solo upgrade de tier por shard — o agregar 3er shard si se necesita más</p></div>
+    </div>
+  </div>
+  <div class="callout orange reveal reveal-d2"><strong>Nota de Brian (Core Bancario):</strong> "Lo que se crea acá debe estar pensado para que crezca. Inicialmente vamos a tener poquitas cuentas, pero debe estar preparado para cuando entre Depósitos con sus 20 millones de cuentas y 20 millones de movimientos por día."</div>
+</section>
+
+<!-- CONSIDERATIONS -->
+<section id="considerations" style="background: var(--bg2);">
+  <div class="reveal"><span class="kicker blue">Consideraciones Técnicas</span>
+    <h2 class="headline">Lo que hay que definir<br>en el <em>working session.</em></h2>
+    <p class="subtext">Decisiones de diseño que impactan el rendimiento y la evolución del cluster.</p>
+  </div>
+  <div class="cons-grid reveal reveal-d1">
+    <div class="cons-card"><span class="tag">Shard Key</span><h4>Sharding por accountId (hashed)</h4><p>Distribución uniforme de cuentas entre shards. Soporta el patrón de acceso principal (consultas por cuenta). Evita hotspots de productos con muchas cuentas (ahorro, corriente). Si se inicia sin sharding, la migración posterior tiene cierta complejidad — evaluar trade-offs.</p></div>
+    <div class="cons-card"><span class="tag">Indexes</span><h4>Estrategia de índices por colección</h4><p>Cuentas: <code>_id</code> + <code>parameters.mdmKey</code>. Postings: <code>accountId</code> + <code>requestId</code>. Considerar compuesto: <code>{accountId: 1, valueTime: -1}</code> para consultas por rango de fecha. Índice en <code>transactionId</code> para tracking.</p></div>
+    <div class="cons-card"><span class="tag">Online Archive</span><h4>S3 después de 3-6 meses</h4><p>Movimientos con más de 3-6 meses (por definir) van a Online Archive (S3). Reduce costo de almacenamiento ~90%. Latencia aceptable para consultas históricas. Campo de archivado: <code>valueTime</code> o <code>insertionTime</code>.</p></div>
+    <div class="cons-card"><span class="tag">Connection Pool</span><h4>2,500 conexiones vía mongos</h4><p>50 pods × 50 conexiones = 2,500. Las conexiones van al mongos router, que las distribuye entre shards. Tuning: <code>maxPoolSize: 50</code>, <code>minPoolSize: 10</code>. Mongos maneja el ruteo transparente a cada shard.</p></div>
+    <div class="cons-card"><span class="tag">CDC Pipeline</span><h4>Idempotencia y deduplicación</h4><p>Usar <code>requestId</code> como clave de deduplicación en operaciones upsert. Monitorear lag del consumer Kafka — alertar si >5 segundos. Dead letter queue para transformaciones fallidas. Rate limiting en el microservicio consumidor.</p></div>
+    <div class="cons-card"><span class="tag">Balanceo</span><h4>Distribución de chunks entre shards</h4><p>Con <code>accountId: "hashed"</code>, los chunks se distribuyen uniformemente. Monitorear <code>sh.status()</code> para validar balance. Si un shard acumula más chunks (ej. por inserts masivos de un producto), el balancer de Atlas redistribuye automáticamente.</p></div>
+  </div>
+</section>
+
+<!-- DESIGN REVIEW -->
+<section id="design-review" style="background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);">
+  <div class="reveal"><span class="kicker green">Design Review</span>
+    <h2 class="headline">Respuestas del equipo<br>que definen el <em>diseño.</em></h2>
+    <p class="subtext">Información del cuestionario de Design Review completado por el equipo de arquitectura de Bancolombia. Estos puntos guían las decisiones de modelo de datos, pipeline y operaciones.</p>
+  </div>
+
+  <!-- B1: Modelo de datos y acceso -->
+  <div class="arch-wrap reveal reveal-d1" style="margin-bottom: 2rem;">
+    <div class="arch-label">B1 — Modelo de Datos y Patrones de Acceso</div>
+    <table class="just-table">
+      <thead><tr><th>Pregunta</th><th>Respuesta del equipo</th><th>Implicación de diseño</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Patrón de lectura</td>
+          <td>Consultas de cuenta y movimientos <strong>por separado</strong> (dos requests independientes)</td>
+          <td>No se requiere embedding de postings dentro de cuentas. Dos colecciones independientes es correcto.</td>
+        </tr>
+        <tr>
+          <td>Queries cross-account</td>
+          <td class="check">Sí — cuentas de un titular filtradas por <code>type</code></td>
+          <td>Índice compuesto <code>{stakeholderIds: 1, type: 1}</code> recomendado. Evaluar si se necesita un documento de "vista consolidada" por titular.</td>
+        </tr>
+        <tr>
+          <td>Cuentas hot</td>
+          <td class="warn">Ahorro y corriente (Fase 2)</td>
+          <td>En Fase 1 (Bonos/CDT) no hay hotspots significativos. En Fase 2, cuentas de ahorro con miles de mov/día requieren particionado por <code>valueTime</code> o sharding.</td>
+        </tr>
+        <tr>
+          <td>Formato de accountId</td>
+          <td><code>S12345678901</code>, <code>D11111111111</code></td>
+          <td>Prefijo por producto (S=Savings, D=Deposits, B=Bonds). Distribución de hash aceptable para shard key. No es secuencial — buena cardinalidad.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- B2: Pipeline CDC / Kafka -->
+  <div class="arch-wrap reveal reveal-d2" style="margin-bottom: 2rem;">
+    <div class="arch-label">B2 — Pipeline CDC / Kafka</div>
+    <table class="just-table">
+      <thead><tr><th>Pregunta</th><th>Respuesta del equipo</th><th>Implicación de diseño</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Consumidor Kafka</td>
+          <td><strong>Microservicio</strong> lee de Kafka e inserta en MongoDB (no Kafka Connect Sink)</td>
+          <td>Control total sobre transformación y error handling. El microservicio debe implementar idempotencia con <code>requestId</code> para manejar reintentos y redeliveries.</td>
+        </tr>
+        <tr>
+          <td>Atomicidad del evento</td>
+          <td class="check">Atómico — un evento = un movimiento completo</td>
+          <td>A diferencia de iSeries (donde llegaba en 3 partes), Vault publica eventos completos. Simplifica el consumer — no hay que ensamblar partes ni manejar transacciones parciales.</td>
+        </tr>
+        <tr>
+          <td>Payload Kafka</td>
+          <td>JSON con <code>postingInstructionBatch</code> que incluye postings + balances actualizados</td>
+          <td>El evento trae tanto los movimientos como los saldos resultantes. El consumer puede hacer upsert de la cuenta (saldos) e insert del posting en una sola operación. Evaluar uso de <code>bulkWrite</code> para eficiencia.</td>
+        </tr>
+        <tr>
+          <td>Schema del evento</td>
+          <td>Incluye: <code>requestId</code>, <code>transactionId</code>, <code>postings[]</code>, <code>balances[]</code>, <code>instructionDetails</code></td>
+          <td>Campos de deduplicación disponibles (<code>requestId</code>). Metadata de negocio (<code>transactionCode</code>) permite categorización. <code>valueTime</code> e <code>insertionTime</code> para archivado y auditoría.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- B3: Consistencia y operaciones -->
+  <div class="arch-wrap reveal reveal-d3">
+    <div class="arch-label">B3 — Consistencia, Disponibilidad y Operaciones</div>
+    <table class="just-table">
+      <thead><tr><th>Pregunta</th><th>Respuesta del equipo</th><th>Implicación de diseño</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Lag aceptable core → QM</td>
+          <td class="warn"><strong>200 ms</strong></td>
+          <td>Extremadamente bajo. El consumer Kafka debe procesar en near real-time. Monitorear lag del consumer group como métrica crítica. Alertar si >1 segundo.</td>
+        </tr>
+        <tr>
+          <td>¿QM es path primario?</td>
+          <td class="warn"><strong>Sí — no hay fallback al core</strong></td>
+          <td>El QM es la única fuente de lectura para los canales. Si se cae, no hay plan B. Esto eleva el SLA del cluster a crítico. Justifica M50 sobre M40 por headroom operativo.</td>
+        </tr>
+        <tr>
+          <td>SLA de disponibilidad</td>
+          <td>99.9%</td>
+          <td>Atlas M50+ ofrece 99.95% con replica set multi-AZ. Cumple el SLA. Multi-region en evaluación para futuro.</td>
+        </tr>
+        <tr>
+          <td>Multi-region</td>
+          <td>En evaluación</td>
+          <td>No requerido para Fase 1. Si se decide en Fase 2, el modelo de replica set facilita la extensión a multi-region sin cambios en la aplicación.</td>
+        </tr>
+        <tr>
+          <td>Quién opera el cluster</td>
+          <td>Equipo interno del banco</td>
+          <td>Atlas simplifica operaciones. Recomendar capacitación en monitoring (Performance Advisor, Real-Time Panel) y alertas. Runbook de operaciones para el equipo.</td>
+        </tr>
+        <tr>
+          <td>Batch operations</td>
+          <td class="warn">Sí — proceso de conciliación de movimientos</td>
+          <td>Picos de escritura batch (conciliación). Horario y volumen por definir. Puede impactar performance de lecturas si coincide con pico. Evaluar secondary preferred reads durante batch.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout green" style="margin-top:1.5rem;"><strong>Dato crítico para el working session:</strong> El QM es path primario sin fallback y el lag aceptable es 200ms. Estas dos condiciones juntas significan que tanto el cluster como el pipeline CDC son componentes de misión crítica. El diseño debe priorizar disponibilidad y latencia por encima de optimización de costos.</div>
+  </div>
+</section>
+
+<!-- GAPS -->
+<section id="gaps" style="background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);">
+  <div class="reveal"><span class="kicker orange">Información Pendiente</span>
+    <h2 class="headline">Lo que falta para cerrar<br>el <em>Design Review.</em></h2>
+    <p class="subtext">Datos que el equipo no completó en el cuestionario o que quedaron parciales. Se recomienda resolverlos en el working session del jueves o antes vía correo.</p>
+  </div>
+
+  <div class="gaps-grid reveal reveal-d1">
+    <div class="gap-card critical">
+      <div class="gap-pri">Bloqueante — Sizing</div>
+      <div class="gap-q">A2-Q2 · Volumen actual en DEV/QA</div>
+      <h4>GB reales en el cluster de desarrollo</h4>
+      <p>No respondieron cuántos documentos ni cuántos GB ocupa el cluster en DEV/QA. Este dato valida la compresión real de WiredTiger y confirma el sizing. Un <code>db.stats()</code> en DEV les da el número.</p>
+    </div>
+
+    <div class="gap-card critical">
+      <div class="gap-pri">Bloqueante — Sizing</div>
+      <div class="gap-q">A1 · Columna GB estimados (vacía)</div>
+      <h4>Tamaño de datos por producto</h4>
+      <p>La columna de GB estimados está vacía para todos los productos (Bonos, CDT, Inv. Virtual, Depósitos). Sin esto, el cálculo de storage se basa en estimaciones del tamaño del documento JSON, no en datos reales.</p>
+    </div>
+
+    <div class="gap-card critical">
+      <div class="gap-pri">Bloqueante — Operaciones</div>
+      <div class="gap-q">A3-Q6 · Proceso batch de conciliación</div>
+      <h4>Volumen, horario y frecuencia del batch</h4>
+      <p>Confirmaron que existe un proceso de conciliación de movimientos pero no dieron detalles. Necesitamos: ¿cuántos movimientos genera? ¿a qué hora corre? ¿diario, semanal? Puede impactar latencia de lecturas si coincide con pico.</p>
+    </div>
+
+    <div class="gap-card important">
+      <div class="gap-pri">Importante — Costos</div>
+      <div class="gap-q">B3-Q22 · Ambientes requeridos</div>
+      <h4>DEV / QA / Staging / Prod — ¿qué tiers?</h4>
+      <p>Dijeron que opera equipo interno pero no especificaron qué ambientes necesitan ni si quieren mismo tier en todos o diferenciado. Esto impacta directamente el costo total de la solución.</p>
+    </div>
+
+    <div class="gap-card important">
+      <div class="gap-pri">Importante — Compliance</div>
+      <div class="gap-q">A4-Q9 · Retención total en archive</div>
+      <h4>¿Cuántos años guardar en S3?</h4>
+      <p>Dijeron "mover a S3 después de ciertos años" pero no definieron cuántos. La SFC puede tener requisitos específicos de retención para productos financieros. Impacta costo de S3 y estrategia de lifecycle.</p>
+    </div>
+
+    <div class="gap-card important">
+      <div class="gap-pri">Importante — Compliance</div>
+      <div class="gap-q">A4-Q11 · Requisitos de la SFC</div>
+      <h4>Regulación específica de la Superintendencia</h4>
+      <p>Solo confirmaron Encryption at Rest. No mencionaron si la SFC requiere KMIP (key management externo), client-side FLE (field-level encryption), auditoría de acceso a datos, o residencia de datos.</p>
+    </div>
+
+    <div class="gap-card nice">
+      <div class="gap-pri">Por validar</div>
+      <div class="gap-q">A3-Q7 · Conexiones concurrentes</div>
+      <h4>¿2,500 o 25,000 conexiones?</h4>
+      <p>El cuestionario dice "50 pods × 50 conexiones = 25,000". La math correcta de 50×50 es 2,500. ¿Error de cálculo o maxPoolSize diferente? Validar en el working session — impacta la configuración del connection pool.</p>
+    </div>
+
+    <div class="gap-card nice">
+      <div class="gap-pri">Por validar</div>
+      <div class="gap-q">A4-Q12 · Timeline multi-region</div>
+      <h4>¿Cuándo se decide multi-region?</h4>
+      <p>Dijeron "en evaluación". Sería útil saber si es un horizonte 2026 o 2027+. Impacta si el diseño inicial debe considerar write concerns y read preferences cross-region desde ahora.</p>
+    </div>
+  </div>
+
+  <div class="callout orange reveal reveal-d2" style="margin-top: 2rem;"><strong>Recomendación:</strong> Los 3 items bloqueantes (datos en DEV/QA, GB por producto, y detalle del batch) se pueden resolver con un <code>db.stats()</code> y una conversación de 10 minutos con el equipo de operaciones. Idealmente antes del working session del jueves para llegar con propuesta cerrada.</div>
+</section>
+
+<!-- SHARDING PROPOSAL -->
+<section id="sharding" style="background: var(--bg2);">
+  <div class="reveal"><span class="kicker green">Configuración de Sharding</span>
+    <h2 class="headline">Shard key seleccionada<br>y <em>opciones evaluadas.</em></h2>
+    <p class="subtext">El equipo confirmó: "shard key a nivel cuenta". Aquí la configuración recomendada con la alternativa evaluada para cada colección.</p>
+  </div>
+
+  <!-- Colección: cuentas -->
+  <div class="reveal reveal-d1">
+    <div class="shard-col-label" style="margin-bottom: 1rem; font-size: 0.7rem;">Colección: <code style="font-size:0.75rem;color:var(--green);background:rgba(0,237,100,0.06);padding:0.15rem 0.4rem;border-radius:3px;">cuentas</code></div>
+    <div class="shard-split">
+      <div class="shard-opt recommended">
+        <div class="shard-opt-badge">Opción A — Recomendada</div>
+        <h3>Hashed por _id</h3>
+        <div class="shard-key-code">{ _id: "hashed" }</div>
+        <p style="font-size:0.78rem;color:var(--gray-lt);line-height:1.6;margin-bottom:0.8rem;">El <code>_id</code> de cuentas ya ES el accountId (<code>B00000000001</code>, <code>S12345678901</code>). Hashed distribuye uniformemente sin importar el prefijo de producto.</p>
+        <div class="pro-con">
+          <div class="label pro">Ventajas</div>
+          <ul class="pro">
+            <li>Distribución perfecta entre shards — sin hotspots por producto</li>
+            <li>Query por <code>_id</code> va directo a un solo shard (targeted)</li>
+            <li>No requiere índice adicional — el shard key usa el <code>_id</code> existente</li>
+            <li>Los prefijos S/D/B no crean chunks desbalanceados como harían con ranged</li>
+          </ul>
+        </div>
+        <div class="pro-con">
+          <div class="label con">Trade-offs</div>
+          <ul class="con">
+            <li>Queries cross-account por <code>stakeholderIds</code> son scatter-gather</li>
+            <li>No soporta range queries sobre el shard key (hashed no mantiene orden)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="shard-opt alternative">
+        <div class="shard-opt-badge">Opción B — Alternativa</div>
+        <h3>Ranged por _id</h3>
+        <div class="shard-key-code">{ _id: 1 }</div>
+        <p style="font-size:0.78rem;color:var(--gray-lt);line-height:1.6;margin-bottom:0.8rem;">Shard key ranged aprovecha que el <code>_id</code> tiene prefijo de producto. Cuentas del mismo tipo quedan en el mismo rango de chunks.</p>
+        <div class="pro-con">
+          <div class="label pro">Ventajas</div>
+          <ul class="pro">
+            <li>Queries por rango de cuentas del mismo producto son eficientes</li>
+            <li>Facilita operaciones de archivado por producto</li>
+          </ul>
+        </div>
+        <div class="pro-con">
+          <div class="label con">Trade-offs</div>
+          <ul class="con">
+            <li>Riesgo de hotspots: Depósitos (D*) tiene 20M cuentas vs Bonos (B*) 100 — distribución muy desigual</li>
+            <li>Si un producto domina, un shard recibe la mayoría del tráfico</li>
+            <li>Requiere monitoreo activo de balanceo de chunks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Colección: postings -->
+  <div class="reveal reveal-d2" style="margin-top: 2.5rem;">
+    <div class="shard-col-label" style="margin-bottom: 1rem; font-size: 0.7rem;">Colección: <code style="font-size:0.75rem;color:var(--green);background:rgba(0,237,100,0.06);padding:0.15rem 0.4rem;border-radius:3px;">postings</code></div>
+    <div class="shard-split">
+      <div class="shard-opt recommended">
+        <div class="shard-opt-badge">Opción A — Recomendada</div>
+        <h3>Hashed por accountId</h3>
+        <div class="shard-key-code">{ accountId: "hashed" }</div>
+        <p style="font-size:0.78rem;color:var(--gray-lt);line-height:1.6;margin-bottom:0.8rem;">Todos los movimientos de una cuenta quedan en el mismo shard. Query principal (movimientos de una cuenta) es targeted.</p>
+        <div class="pro-con">
+          <div class="label pro">Ventajas</div>
+          <ul class="pro">
+            <li>Query <code>{accountId: X}</code> va directo a un shard — colocación de datos</li>
+            <li>Distribución uniforme entre shards</li>
+            <li>Consistente con el shard key de <code>cuentas</code> — misma lógica de ruteo</li>
+            <li>El consumer CDC inserta por cuenta — writes son targeted</li>
+          </ul>
+        </div>
+        <div class="pro-con">
+          <div class="label con">Trade-offs</div>
+          <ul class="con">
+            <li>Query "todos los movimientos de HOY" (sin filtro de cuenta) es scatter-gather</li>
+            <li>Range scan por <code>valueTime</code> sin filtro de accountId es scatter-gather</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="shard-opt alternative">
+        <div class="shard-opt-badge">Opción B — Alternativa</div>
+        <h3>Compound accountId + valueTime</h3>
+        <div class="shard-key-code">{ accountId: 1, valueTime: 1 }</div>
+        <p style="font-size:0.78rem;color:var(--gray-lt);line-height:1.6;margin-bottom:0.8rem;">Compound key que mantiene colocación por cuenta y además permite range queries por fecha dentro de esa cuenta.</p>
+        <div class="pro-con">
+          <div class="label pro">Ventajas</div>
+          <ul class="pro">
+            <li>Queries <code>{accountId: X, valueTime: {$gte, $lte}}</code> son targeted y eficientes</li>
+            <li>Soporta el patrón "últimos N movimientos de la cuenta"</li>
+            <li>Facilita Online Archive por fecha (archivado por <code>valueTime</code>)</li>
+          </ul>
+        </div>
+        <div class="pro-con">
+          <div class="label con">Trade-offs</div>
+          <ul class="con">
+            <li>Sin hash — cuentas hot (ahorro/corriente en Fase 2) crean chunks grandes</li>
+            <li>Distribución menos uniforme que hashed</li>
+            <li>La shard key compound es immutable — no se puede cambiar después</li>
+            <li>Más complejo de operar: requiere monitoreo de chunk splits</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Why this approach -->
+  <div class="arch-wrap reveal reveal-d3" style="margin-top: 2.5rem;">
+    <div class="arch-label">¿Por qué sharding desde día uno?</div>
+    <table class="just-table">
+      <thead><tr><th>Razón</th><th>Detalle</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="check">Evita migración futura</td>
+          <td>Migrar de non-sharded a sharded en producción con datos y tráfico requiere <code>sh.shardCollection()</code> con redistribución de chunks. Tiene impacto en performance durante la migración. Habilitarlo desde el inicio elimina este riesgo.</td>
+        </tr>
+        <tr>
+          <td class="check">Costo comparable</td>
+          <td>2 shards de M40 (6 nodos × 16 GB) tiene un costo similar a 1 replica set de M50 (3 nodos × 32 GB). Misma RAM total (32 GB), pero con escalabilidad horizontal.</td>
+        </tr>
+        <tr>
+          <td class="check">Fase 2 es inevitable</td>
+          <td>Depósitos va a migrar al QM. Con 22M cuentas y 30M mov/día, sharding será necesario. Mejor tener la arquitectura lista que migrar bajo presión.</td>
+        </tr>
+        <tr>
+          <td class="check">Mejor fault isolation</td>
+          <td>Con 2 primaries independientes, un problema en un shard solo afecta la mitad de las cuentas. En replica set único, el primary es single point of failure para writes.</td>
+        </tr>
+        <tr>
+          <td class="check">Picos distribuidos</td>
+          <td>Nóminas y fin de mes distribuyen la carga entre shards. Un solo replica set absorbe todo el pico. El QM es path primario sin fallback — distribuir la carga reduce el riesgo.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout green reveal" style="margin-top: 2rem;"><strong>Configuración seleccionada:</strong> <code>accountId: "hashed"</code> para ambas colecciones (<code>cuentas</code> usa <code>_id</code> que ya es el accountId). Distribución uniforme, queries targeted por cuenta, writes del CDC targeted. El trade-off de scatter-gather en queries cross-account por titular es aceptable — representan una fracción menor del tráfico (B1-Q13: consultas por cuenta individual).</div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing">
+  <div class="reveal">
+    <h2>Dos fases, un solo modelo sharded.<br>De 2×M40 con Bonos a 2×M60 como <em>capa de lectura de todo el core bancario.</em></h2>
+    <p>Sizing sharded en dos fases basado en datos reales del cuestionario de Bancolombia. Escalabilidad horizontal desde día uno — sin migración de arquitectura futura.</p>
+  </div>
+</section>
+
+<footer><p>MongoDB × Bancolombia — Core Bancario QM Sizing (Sharded) — Confidencial — Abril 2026</p></footer>
+
+<script>
+/* Reveal on scroll */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* Headroom bars animation */
+const barObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.hr-bar').forEach(bar => {
+        bar.style.width = bar.dataset.width + '%';
+      });
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.headroom').forEach(el => barObs.observe(el));
+
+/* Scroll progress + active nav */
+const progressBar = document.querySelector('.scroll-progress');
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  if (progressBar) progressBar.style.width = ((scrollTop / docHeight) * 100) + '%';
+  let current = '';
+  sections.forEach(section => {
+    if (scrollTop >= section.offsetTop - 200) current = section.id;
+  });
+  navLinks.forEach(link => {
+    link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+  });
+}, { passive: true });
+</script>
+</body>
+</html>
