@@ -28,7 +28,7 @@
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { height: 100%; overflow: hidden; }
+html, body { height: 100%; overflow: hidden; scrollbar-width: thin; scrollbar-color: var(--green-dim) var(--bg); }
 body {
   background: var(--bg);
   color: var(--white);
@@ -75,13 +75,23 @@ nav {
   inset: 0;
   top: 52px;
   z-index: 2;
-  overflow: hidden;
+  overflow: auto;
+}
+.mindmap::-webkit-scrollbar { width: 6px; }
+.mindmap::-webkit-scrollbar-track { background: var(--bg); }
+.mindmap::-webkit-scrollbar-thumb { background: var(--green-dim); border-radius: 3px; }
+.mindmap::-webkit-scrollbar-thumb:hover { background: var(--green); }
+
+.mindmap-canvas {
+  position: relative;
+  width: 100%;
+  min-height: 160vh;
 }
 
 /* SVG connections layer */
 .connections {
   position: absolute;
-  inset: 0;
+  top: 0; left: 0;
   width: 100%;
   height: 100%;
   z-index: 1;
@@ -373,18 +383,20 @@ nav {
 </nav>
 
 <div class="mindmap" id="mindmap">
-  <!-- SVG connections drawn by JS -->
-  <svg class="connections" id="connections"></svg>
+  <div class="mindmap-canvas" id="mindmapCanvas">
+    <!-- SVG connections drawn by JS -->
+    <svg class="connections" id="connections"></svg>
 
-  <!-- Center node -->
-  <div class="center-node" id="centerNode">
-    <div class="center-ring">
-      <h1>Query<br>Model</h1>
-      <p>Situación actual</p>
+    <!-- Center node -->
+    <div class="center-node" id="centerNode">
+      <div class="center-ring">
+        <h1>Query<br>Model</h1>
+        <p>Situación actual</p>
+      </div>
     </div>
-  </div>
 
-  <!-- Branches populated by JS -->
+    <!-- Branches populated by JS -->
+  </div>
 </div>
 
 <div class="legend" id="legend">
@@ -406,7 +418,7 @@ const BRANCHES = [
     label: '3 Pilares',
     title: 'Estrategia de Datos',
     color: 'green',
-    pos: { x: 50, y: 5 },
+    pos: { x: 50, y: 6 },
     items: [
       'CDP (Customer Data Platform) — Pilar analítico',
       'Data Access Layer — Pilar operacional / APIs',
@@ -420,7 +432,7 @@ const BRANCHES = [
     label: 'Engagement',
     title: 'Nuestro Recorrido',
     color: 'green',
-    pos: { x: 8, y: 15 },
+    pos: { x: 10, y: 18 },
     items: [
       'Health Check: clusters Boton, Athenea PCE, QM PDN',
       'Deep Dive: múltiples sesiones con arquitectura del banco',
@@ -433,7 +445,7 @@ const BRANCHES = [
     label: 'Arquitectura',
     title: 'Pipeline CDC',
     color: 'green',
-    pos: { x: 28, y: 8 },
+    pos: { x: 25, y: 10 },
     items: [
       'AS/400 → CDC Extractor → Kafka → Stream Processor → MongoDB Atlas',
       'Patrón CQRS: escrituras iSeries, lecturas MongoDB',
@@ -447,7 +459,7 @@ const BRANCHES = [
     label: 'Evidencia',
     title: 'Febrero 2026',
     color: 'blue',
-    pos: { x: 72, y: 8 },
+    pos: { x: 75, y: 10 },
     items: [
       'MongoDB sostuvo cargas críticas — core iSeries caído',
       'Saldos, transacciones y cuentas servidos sin interrupción',
@@ -460,7 +472,7 @@ const BRANCHES = [
     label: 'Visión',
     title: 'Capa Estratégica',
     color: 'green',
-    pos: { x: 92, y: 15 },
+    pos: { x: 90, y: 18 },
     items: [
       'De contingencia táctica a capa de acceso permanente',
       'Product-Aware: cada producto define su modelo',
@@ -474,7 +486,7 @@ const BRANCHES = [
     label: 'Dos Tracks',
     title: 'Tracks en Paralelo',
     color: 'orange',
-    pos: { x: 5, y: 50 },
+    pos: { x: 6, y: 42 },
     items: [
       'Track 1: QM Contingencia → Acceso permanente en tiempo real',
       'Track 2: QM Core Modernizado (Bonos como piloto)',
@@ -488,7 +500,7 @@ const BRANCHES = [
     label: 'Estado actual',
     title: 'Modo Contingencia',
     color: 'blue',
-    pos: { x: 18, y: 82 },
+    pos: { x: 8, y: 62 },
     items: [
       'Switch automático cuando core cae — reactivo',
       'Materializa depósitos: saldos, cuentas, movimientos',
@@ -501,7 +513,7 @@ const BRANCHES = [
     label: 'Ecosistema',
     title: '~200 Consumidores',
     color: 'orange',
-    pos: { x: 38, y: 90 },
+    pos: { x: 20, y: 82 },
     items: [
       '~200 consumidores del core bancario iSeries',
       '~175 acoplados directamente sin capa de abstracción',
@@ -514,7 +526,7 @@ const BRANCHES = [
     label: 'Convergencia',
     title: 'Roadmap de Unificación',
     color: 'green',
-    pos: { x: 50, y: 95 },
+    pos: { x: 50, y: 92 },
     items: [
       'Fase 1: Bonos live en QM Modernizado',
       'Fase 2: CDT + Inversión Virtual migran al nuevo core',
@@ -528,7 +540,7 @@ const BRANCHES = [
     label: 'Riesgo',
     title: 'Crecer sin Gobierno',
     color: 'red',
-    pos: { x: 62, y: 90 },
+    pos: { x: 80, y: 82 },
     items: [
       'Sin modelo canónico definido por dominio',
       'Presión de "meter más saldos" sin estructura',
@@ -541,7 +553,7 @@ const BRANCHES = [
     label: 'Cluster PDN',
     title: 'Health Check Productivo',
     color: 'orange',
-    pos: { x: 95, y: 35 },
+    pos: { x: 94, y: 42 },
     items: [
       'Tier M80 (auto-scaling al techo) — extendido a M140',
       'Disco: 358 GB / 598 GB (~60% usado) — Auto-Expand activo',
@@ -556,7 +568,7 @@ const BRANCHES = [
     label: 'Capacidades',
     title: 'Habilitadas por QM',
     color: 'blue',
-    pos: { x: 95, y: 62 },
+    pos: { x: 92, y: 62 },
     items: [
       'Consulta tiempo real: saldos y movimientos sin impactar core',
       'Autorización mejorada: reducción de latencia cross-producto',
@@ -570,7 +582,7 @@ const BRANCHES = [
     label: 'Habilitador AI',
     title: 'AI & Datos',
     color: 'blue',
-    pos: { x: 82, y: 85 },
+    pos: { x: 88, y: 78 },
     items: [
       'Copilots y asistentes con contexto operativo real',
       'Detección de fraude sobre datos frescos y estandarizados',
@@ -588,6 +600,7 @@ const COLORS = {
 };
 
 const mindmap = document.getElementById('mindmap');
+const canvas = document.getElementById('mindmapCanvas');
 const svg = document.getElementById('connections');
 const centerNode = document.getElementById('centerNode');
 const hint = document.getElementById('hint');
@@ -624,12 +637,12 @@ BRANCHES.forEach((b, i) => {
     toggleFocus(b.id);
   });
 
-  mindmap.appendChild(div);
+  canvas.appendChild(div);
 });
 
 // Draw SVG connections
 function drawConnections() {
-  const rect = mindmap.getBoundingClientRect();
+  const rect = canvas.getBoundingClientRect();
   const cx = rect.width * 0.5;
   const cy = (rect.height * 0.5);
 
@@ -784,6 +797,18 @@ window.addEventListener('resize', () => {
   svg.querySelectorAll('.conn-path').forEach(p => p.classList.add('drawn'));
   svg.querySelectorAll('.conn-glow').forEach(p => p.classList.add('drawn'));
 });
+
+// Scroll to center on load
+setTimeout(() => {
+  const canvasH = canvas.offsetHeight;
+  const viewH = mindmap.offsetHeight;
+  mindmap.scrollTop = (canvasH - viewH) / 2;
+}, 100);
+
+// Redraw connections when scrolling (for correct positioning)
+mindmap.addEventListener('scroll', () => {
+  // connections stay in canvas, no redraw needed
+}, { passive: true });
 
 // Start
 animateEntrance();
