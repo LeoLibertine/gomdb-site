@@ -165,6 +165,30 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 .gap-card p { font-size: 0.78rem; color: var(--gray-lt); line-height: 1.6; }
 .gap-card code { font-family: var(--mono); font-size: 0.72rem; color: var(--green); background: rgba(0,237,100,0.06); padding: 0.1rem 0.35rem; border-radius: 3px; }
 
+/* Sharding options */
+.shard-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem; }
+.shard-opt { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 2.2rem; position: relative; overflow: hidden; transition: border-color 0.3s; }
+.shard-opt:hover { border-color: rgba(0,237,100,0.12); }
+.shard-opt::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.shard-opt.recommended::before { background: var(--green); }
+.shard-opt.alternative::before { background: var(--blue); }
+.shard-opt-badge { font-family: var(--mono); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 3px; display: inline-block; margin-bottom: 1rem; }
+.shard-opt.recommended .shard-opt-badge { background: var(--green-glow); color: var(--green); border: 1px solid rgba(0,237,100,0.15); }
+.shard-opt.alternative .shard-opt-badge { background: rgba(77,166,255,0.08); color: var(--blue); border: 1px solid rgba(77,166,255,0.15); }
+.shard-opt h3 { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; margin-bottom: 0.3rem; color: var(--white); }
+.shard-opt .shard-key-code { font-family: var(--mono); font-size: 0.82rem; color: var(--green); background: rgba(0,237,100,0.06); padding: 0.4rem 0.8rem; border-radius: 4px; display: inline-block; margin-bottom: 1.2rem; border: 1px solid rgba(0,237,100,0.1); }
+.shard-opt.alternative .shard-key-code { color: var(--blue); background: rgba(77,166,255,0.06); border-color: rgba(77,166,255,0.1); }
+.pro-con { margin-top: 0.8rem; }
+.pro-con .label { font-family: var(--mono); font-size: 0.58rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
+.pro-con .label.pro { color: var(--green); }
+.pro-con .label.con { color: var(--red); }
+.pro-con ul { list-style: none; padding: 0; }
+.pro-con li { font-size: 0.78rem; color: var(--gray-lt); line-height: 1.55; padding: 0.2rem 0 0.2rem 1rem; position: relative; }
+.pro-con li::before { content: ''; position: absolute; left: 0; top: 0.55rem; width: 4px; height: 4px; border-radius: 50%; }
+.pro-con .pro li::before { background: var(--green); }
+.pro-con .con li::before { background: var(--red); }
+.shard-col-label { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 1.2rem; margin-bottom: 0.4rem; }
+
 /* Headroom bars */
 .headroom { margin-top: 2rem; }
 .hr-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
@@ -224,7 +248,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   <div class="nav-brand">Banco<em>colombia</em> × MongoDB</div>
   <div class="nav-links">
     <a href="#context">Contexto</a><a href="#params">Parámetros</a><a href="#sizing">Sizing</a>
-    <a href="#justification">Justificación</a><a href="#arch">Arquitectura</a><a href="#phases">Fases</a><a href="#considerations">Técnico</a><a href="#design-review">Design Review</a><a href="#gaps">Pendientes</a>
+    <a href="#justification">Justificación</a><a href="#arch">Arquitectura</a><a href="#phases">Fases</a><a href="#considerations">Técnico</a><a href="#design-review">Design Review</a><a href="#gaps">Pendientes</a><a href="#sharding">Sharding</a>
   </div>
   <div class="nav-tag">Confidencial</div>
 </nav>
@@ -704,6 +728,146 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   </div>
 
   <div class="callout orange reveal reveal-d2" style="margin-top: 2rem;"><strong>Recomendación:</strong> Los 3 items bloqueantes (datos en DEV/QA, GB por producto, y detalle del batch) se pueden resolver con un <code>db.stats()</code> y una conversación de 10 minutos con el equipo de operaciones. Idealmente antes del working session del jueves para llegar con propuesta cerrada.</div>
+</section>
+
+<!-- SHARDING PROPOSAL -->
+<section id="sharding" style="background: var(--bg2);">
+  <div class="reveal"><span class="kicker green">Propuesta de Sharding</span>
+    <h2 class="headline">Dos opciones para<br><em>discutir en el working session.</em></h2>
+    <p class="subtext">El equipo confirmó: "shard key a nivel cuenta". Aquí presentamos las dos estrategias viables con trade-offs para tomar la decisión conjunta.</p>
+  </div>
+
+  <!-- Colección: cuentas -->
+  <div class="reveal reveal-d1">
+    <div class="shard-col-label" style="margin-bottom: 1rem; font-size: 0.7rem;">Colección: <code style="font-size:0.75rem;color:var(--green);background:rgba(0,237,100,0.06);padding:0.15rem 0.4rem;border-radius:3px;">cuentas</code></div>
+    <div class="shard-split">
+      <div class="shard-opt recommended">
+        <div class="shard-opt-badge">Opción A — Recomendada</div>
+        <h3>Hashed por _id</h3>
+        <div class="shard-key-code">{ _id: "hashed" }</div>
+        <p style="font-size:0.78rem;color:var(--gray-lt);line-height:1.6;margin-bottom:0.8rem;">El <code>_id</code> de cuentas ya ES el accountId (<code>B00000000001</code>, <code>S12345678901</code>). Hashed distribuye uniformemente sin importar el prefijo de producto.</p>
+        <div class="pro-con">
+          <div class="label pro">Ventajas</div>
+          <ul class="pro">
+            <li>Distribución perfecta entre shards — sin hotspots por producto</li>
+            <li>Query por <code>_id</code> va directo a un solo shard (targeted)</li>
+            <li>No requiere índice adicional — el shard key usa el <code>_id</code> existente</li>
+            <li>Los prefijos S/D/B no crean chunks desbalanceados como harían con ranged</li>
+          </ul>
+        </div>
+        <div class="pro-con">
+          <div class="label con">Trade-offs</div>
+          <ul class="con">
+            <li>Queries cross-account por <code>stakeholderIds</code> son scatter-gather</li>
+            <li>No soporta range queries sobre el shard key (hashed no mantiene orden)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="shard-opt alternative">
+        <div class="shard-opt-badge">Opción B — Alternativa</div>
+        <h3>Ranged por _id</h3>
+        <div class="shard-key-code">{ _id: 1 }</div>
+        <p style="font-size:0.78rem;color:var(--gray-lt);line-height:1.6;margin-bottom:0.8rem;">Shard key ranged aprovecha que el <code>_id</code> tiene prefijo de producto. Cuentas del mismo tipo quedan en el mismo rango de chunks.</p>
+        <div class="pro-con">
+          <div class="label pro">Ventajas</div>
+          <ul class="pro">
+            <li>Queries por rango de cuentas del mismo producto son eficientes</li>
+            <li>Facilita operaciones de archivado por producto</li>
+          </ul>
+        </div>
+        <div class="pro-con">
+          <div class="label con">Trade-offs</div>
+          <ul class="con">
+            <li>Riesgo de hotspots: Depósitos (D*) tiene 20M cuentas vs Bonos (B*) 100 — distribución muy desigual</li>
+            <li>Si un producto domina, un shard recibe la mayoría del tráfico</li>
+            <li>Requiere monitoreo activo de balanceo de chunks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Colección: postings -->
+  <div class="reveal reveal-d2" style="margin-top: 2.5rem;">
+    <div class="shard-col-label" style="margin-bottom: 1rem; font-size: 0.7rem;">Colección: <code style="font-size:0.75rem;color:var(--green);background:rgba(0,237,100,0.06);padding:0.15rem 0.4rem;border-radius:3px;">postings</code></div>
+    <div class="shard-split">
+      <div class="shard-opt recommended">
+        <div class="shard-opt-badge">Opción A — Recomendada</div>
+        <h3>Hashed por accountId</h3>
+        <div class="shard-key-code">{ accountId: "hashed" }</div>
+        <p style="font-size:0.78rem;color:var(--gray-lt);line-height:1.6;margin-bottom:0.8rem;">Todos los movimientos de una cuenta quedan en el mismo shard. Query principal (movimientos de una cuenta) es targeted.</p>
+        <div class="pro-con">
+          <div class="label pro">Ventajas</div>
+          <ul class="pro">
+            <li>Query <code>{accountId: X}</code> va directo a un shard — colocación de datos</li>
+            <li>Distribución uniforme entre shards</li>
+            <li>Consistente con el shard key de <code>cuentas</code> — misma lógica de ruteo</li>
+            <li>El consumer CDC inserta por cuenta — writes son targeted</li>
+          </ul>
+        </div>
+        <div class="pro-con">
+          <div class="label con">Trade-offs</div>
+          <ul class="con">
+            <li>Query "todos los movimientos de HOY" (sin filtro de cuenta) es scatter-gather</li>
+            <li>Range scan por <code>valueTime</code> sin filtro de accountId es scatter-gather</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="shard-opt alternative">
+        <div class="shard-opt-badge">Opción B — Alternativa</div>
+        <h3>Compound accountId + valueTime</h3>
+        <div class="shard-key-code">{ accountId: 1, valueTime: 1 }</div>
+        <p style="font-size:0.78rem;color:var(--gray-lt);line-height:1.6;margin-bottom:0.8rem;">Compound key que mantiene colocación por cuenta y además permite range queries por fecha dentro de esa cuenta.</p>
+        <div class="pro-con">
+          <div class="label pro">Ventajas</div>
+          <ul class="pro">
+            <li>Queries <code>{accountId: X, valueTime: {$gte, $lte}}</code> son targeted y eficientes</li>
+            <li>Soporta el patrón "últimos N movimientos de la cuenta"</li>
+            <li>Facilita Online Archive por fecha (archivado por <code>valueTime</code>)</li>
+          </ul>
+        </div>
+        <div class="pro-con">
+          <div class="label con">Trade-offs</div>
+          <ul class="con">
+            <li>Sin hash — cuentas hot (ahorro/corriente en Fase 2) crean chunks grandes</li>
+            <li>Distribución menos uniforme que hashed</li>
+            <li>La shard key compound es immutable — no se puede cambiar después</li>
+            <li>Más complejo de operar: requiere monitoreo de chunk splits</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decision framework -->
+  <div class="arch-wrap reveal reveal-d3" style="margin-top: 2.5rem;">
+    <div class="arch-label">Decisión: ¿Empezar con o sin sharding?</div>
+    <table class="just-table">
+      <thead><tr><th>Escenario</th><th>Recomendación</th><th>Razón</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Fase 1 solamente</td>
+          <td class="check">Sin sharding (Replica Set)</td>
+          <td>~1M cuentas y ~180 GB no requieren sharding. Simplifica operaciones, monitoreo y troubleshooting. Un M50 con 3 nodos es más que suficiente.</td>
+        </tr>
+        <tr>
+          <td>Fase 1 pensando en Fase 2</td>
+          <td class="warn">Evaluar sharding desde día uno</td>
+          <td>Migrar de non-sharded a sharded en producción con datos requiere <code>sh.shardCollection()</code> con redistribución de chunks. Es posible pero tiene impacto en performance durante la migración.</td>
+        </tr>
+        <tr>
+          <td>Fase 2 confirmada a corto plazo</td>
+          <td class="check">Sharding desde día uno</td>
+          <td>Si Depósitos migra en menos de 12 meses, mejor arrancar con sharding habilitado. Los 22M cuentas y 30M mov/día lo van a necesitar. El costo de complejidad hoy es menor que migrar después con carga.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout green" style="margin-top:1.5rem;"><strong>Pregunta clave para el working session:</strong> ¿Cuál es el timeline real de Depósitos? Si es >12 meses, arrancar sin sharding y migrar después es razonable. Si es <12 meses, habilitar sharding ahora con <code>accountId: "hashed"</code> en ambas colecciones evita una migración compleja más adelante.</div>
+  </div>
+
+  <div class="callout green reveal" style="margin-top: 2rem;"><strong>Nuestra recomendación:</strong> Opción A (hashed) para ambas colecciones. Distribución uniforme, queries targeted por cuenta, simplicidad operativa. El trade-off de scatter-gather en queries cross-account es aceptable porque representan una fracción menor del tráfico (la consulta principal es por cuenta individual, confirmado en B1-Q13).</div>
 </section>
 
 <!-- CLOSING -->
