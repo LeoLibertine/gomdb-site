@@ -98,7 +98,7 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
   max-width: 800px;
 }
 .headline em { font-style: italic; color: var(--green); }
-.subtext { font-size: 1rem; color: var(--gray-lt); max-width: 580px; line-height: 1.75; margin-bottom: 3rem; font-weight: 300; }
+.subtext { font-size: 1.1rem; color: #C8D6DB; max-width: 620px; line-height: 1.8; margin-bottom: 3rem; font-weight: 300; }
 
 /* ===== ANIMATIONS ===== */
 @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
@@ -185,9 +185,9 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
   transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
 }
 .eng-cell:hover::after { transform: scaleX(1); }
-.eng-num { font-family: var(--mono); font-size: 0.6rem; color: var(--green); letter-spacing: 0.1em; margin-bottom: 1rem; }
-.eng-cell h3 { font-family: var(--serif); font-size: 1.15rem; font-weight: 400; margin-bottom: 0.6rem; line-height: 1.3; }
-.eng-cell p { font-size: 0.78rem; color: var(--gray); line-height: 1.55; }
+.eng-num { font-family: var(--mono); font-size: 0.7rem; color: var(--green); letter-spacing: 0.1em; margin-bottom: 1rem; }
+.eng-cell h3 { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; margin-bottom: 0.6rem; line-height: 1.3; }
+.eng-cell p { font-size: 0.92rem; color: var(--gray-lt); line-height: 1.65; }
 
 /* ===== PERCEPTION ===== */
 .perception { background: var(--bg2); }
@@ -210,11 +210,11 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 .perc-card .accent.g { background: var(--green); }
 .perc-card .accent.b { background: var(--blue); }
 .perc-card .accent.o { background: var(--orange); }
-.perc-card h3 { font-family: var(--serif); font-size: 1.05rem; font-weight: 400; margin-bottom: 0.5rem; margin-left: 0.8rem; }
+.perc-card h3 { font-family: var(--serif); font-size: 1.2rem; font-weight: 500; margin-bottom: 0.5rem; margin-left: 0.8rem; }
 .perc-card.green h3 { color: var(--green); }
 .perc-card.blue h3 { color: var(--blue); }
 .perc-card.orange h3 { color: var(--orange); }
-.perc-card p { font-size: 0.8rem; color: var(--gray-lt); line-height: 1.6; margin-left: 0.8rem; }
+.perc-card p { font-size: 0.95rem; color: #C8D6DB; line-height: 1.7; margin-left: 0.8rem; }
 
 /* ===== ARCHITECTURE ===== */
 .architecture { background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%); }
@@ -231,13 +231,13 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
   position: absolute; top: 0; left: 0; right: 0; height: 1px;
   background: linear-gradient(90deg, transparent, var(--green), var(--blue), transparent);
 }
-.arch-label { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2rem; }
+.arch-label { font-family: var(--mono); font-size: 0.72rem; color: var(--gray-lt); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2rem; }
 .pipeline-wrap { width: 100%; overflow-x: auto; margin: 1.5rem 0; padding: 0.5rem 0; }
 .pipeline-wrap svg { display: block; margin: 0 auto; }
 .arch-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border-radius: 8px; overflow: hidden; margin-top: 2rem; }
 .arch-meta-cell { background: var(--bg); padding: 1.2rem; }
-.arch-meta-cell .label { font-family: var(--mono); font-size: 0.58rem; color: var(--green); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.4rem; }
-.arch-meta-cell p { font-size: 0.75rem; color: var(--gray); line-height: 1.5; }
+.arch-meta-cell .label { font-family: var(--mono); font-size: 0.68rem; color: var(--green); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.4rem; }
+.arch-meta-cell p { font-size: 0.88rem; color: #C8D6DB; line-height: 1.6; }
 
 /* ===== EVIDENCE ===== */
 .evidence { background: var(--bg); }
@@ -254,15 +254,15 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 .ev-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 0.5rem; flex-shrink: 0; }
 .ev-dot.g { background: var(--green); box-shadow: 0 0 12px rgba(0,237,100,0.4); }
 .ev-dot.b { background: var(--blue); box-shadow: 0 0 12px rgba(77,166,255,0.4); }
-.ev-card h4 { font-family: var(--serif); font-size: 0.95rem; font-weight: 400; margin-bottom: 0.35rem; }
-.ev-card p { font-size: 0.78rem; color: var(--gray-lt); line-height: 1.55; }
+.ev-card h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 400; margin-bottom: 0.35rem; }
+.ev-card p { font-size: 0.92rem; color: #C8D6DB; line-height: 1.65; }
 .caveat-box {
   margin-top: 2rem;
-  padding: 1.2rem 1.5rem;
+  padding: 1.4rem 1.8rem;
   background: var(--green-glow);
   border-left: 2px solid var(--green-dim);
   border-radius: 0 6px 6px 0;
-  font-size: 0.78rem; color: var(--gray-lt); line-height: 1.6; font-style: italic;
+  font-size: 0.92rem; color: #C8D6DB; line-height: 1.7; font-style: italic;
 }
 .caveat-box strong { color: var(--green); font-style: normal; }
 
@@ -308,12 +308,12 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 .tl-item .dot { width: 4px; height: 4px; border-radius: 50%; margin-top: 0.4rem; flex-shrink: 0; }
 .tl-col.short .tl-item .dot { background: var(--red); }
 .tl-col.long .tl-item .dot { background: var(--green); }
-.tl-item p { font-size: 0.82rem; color: var(--gray-lt); line-height: 1.45; }
-.tl-note { margin-top: 1.5rem; padding: 0.8rem 1rem; border-radius: 6px; font-size: 0.75rem; line-height: 1.5; }
+.tl-item p { font-size: 0.95rem; color: #C8D6DB; line-height: 1.55; }
+.tl-note { margin-top: 1.5rem; padding: 0.8rem 1rem; border-radius: 6px; font-size: 0.88rem; line-height: 1.5; }
 .tl-note.warn { background: rgba(255,107,107,0.05); border: 1px solid rgba(255,107,107,0.1); color: var(--red); }
 .tl-note.ok { background: var(--green-glow); border: 1px solid rgba(0,237,100,0.1); color: var(--green); }
 .tl-callout { margin-top: 2rem; padding: 1.5rem 2rem; background: var(--surface); border-left: 2px solid var(--orange); border-radius: 0 8px 8px 0; }
-.tl-callout p { font-size: 0.88rem; color: var(--white); line-height: 1.6; }
+.tl-callout p { font-size: 0.95rem; color: var(--white); line-height: 1.7; }
 .tl-callout strong { color: var(--orange); }
 
 /* ===== RISK ===== */
@@ -326,8 +326,8 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 .risk-col h3 { font-family: var(--serif); font-size: 1.2rem; font-weight: 400; margin-bottom: 0.8rem; }
 .risk-col.bad h3 { color: var(--red); }
 .risk-col.good h3 { color: var(--green); }
-.risk-col p { font-size: 0.85rem; color: var(--gray-lt); line-height: 1.6; margin-bottom: 1rem; }
-.risk-list { padding: 0.8rem 1rem; border-radius: 6px; font-family: var(--mono); font-size: 0.72rem; line-height: 1.7; }
+.risk-col p { font-size: 0.95rem; color: #C8D6DB; line-height: 1.7; margin-bottom: 1rem; }
+.risk-list { padding: 0.8rem 1rem; border-radius: 6px; font-family: var(--mono); font-size: 0.85rem; line-height: 1.8; }
 .risk-col.bad .risk-list { background: rgba(255,107,107,0.05); color: var(--red); }
 .risk-col.good .risk-list { background: var(--green-glow); color: var(--green); }
 .risk-quote {
@@ -356,8 +356,8 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 .ft-item .d { width: 4px; height: 4px; border-radius: 50%; margin-top: 0.4rem; flex-shrink: 0; }
 .ft-col.from .ft-item .d { background: var(--gray); }
 .ft-col.to .ft-item .d { background: var(--green); }
-.ft-item p { font-size: 0.82rem; line-height: 1.45; }
-.ft-col.from .ft-item p { color: var(--gray); }
+.ft-item p { font-size: 0.95rem; line-height: 1.55; }
+.ft-col.from .ft-item p { color: var(--gray-lt); }
 .ft-col.to .ft-item p { color: var(--white); }
 .ft-arrow { text-align: center; font-size: 2rem; color: var(--green); animation: arrowPulse 2.5s ease infinite; }
 @keyframes arrowPulse { 0%,100% { opacity: 0.3; transform: translateX(0); } 50% { opacity: 1; transform: translateX(5px); } }
@@ -370,8 +370,8 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 .prin-cell:nth-child(2) .p-label { color: var(--blue); }
 .prin-cell:nth-child(3) .p-label { color: var(--orange); }
 .prin-cell:nth-child(4) .p-label { color: var(--green); }
-.prin-cell h4 { font-family: var(--serif); font-size: 1.05rem; font-weight: 400; margin-bottom: 0.5rem; }
-.prin-cell p { font-size: 0.72rem; color: var(--gray); line-height: 1.5; }
+.prin-cell h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 400; margin-bottom: 0.5rem; }
+.prin-cell p { font-size: 0.88rem; color: #C8D6DB; line-height: 1.6; }
 
 /* ===== TARGET ===== */
 .target { background: var(--bg); }
@@ -383,10 +383,10 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 .layer-row:nth-child(1) .layer-tag { color: var(--green); }
 .layer-row:nth-child(2) .layer-tag { color: var(--blue); }
 .layer-row:nth-child(3) .layer-tag { color: var(--green); }
-.layer-row h4 { font-family: var(--serif); font-size: 0.95rem; font-weight: 400; margin-bottom: 0.3rem; }
-.layer-row p { font-size: 0.78rem; color: var(--gray-lt); line-height: 1.55; }
-.target-note { margin-top: 1.5rem; font-size: 0.82rem; color: var(--gray); line-height: 1.6; font-style: italic; padding-left: 1rem; border-left: 2px solid var(--green-dim); }
-.target-example { margin-top: 1.5rem; padding: 1.2rem 1.5rem; background: rgba(255,159,67,0.06); border-left: 3px solid var(--orange); border-radius: 0 6px 6px 0; font-size: 0.82rem; color: var(--gray-lt); line-height: 1.6; }
+.layer-row h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 400; margin-bottom: 0.3rem; }
+.layer-row p { font-size: 0.92rem; color: #C8D6DB; line-height: 1.65; }
+.target-note { margin-top: 1.5rem; font-size: 0.92rem; color: #C8D6DB; line-height: 1.7; font-style: italic; padding-left: 1rem; border-left: 2px solid var(--green-dim); }
+.target-example { margin-top: 1.5rem; padding: 1.2rem 1.5rem; background: rgba(255,159,67,0.06); border-left: 3px solid var(--orange); border-radius: 0 6px 6px 0; font-size: 0.92rem; color: #C8D6DB; line-height: 1.7; }
 .target-example strong { color: var(--orange); }
 
 /* ===== AI SECTION ===== */
@@ -415,9 +415,9 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 .ai-point .dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 0.45rem; flex-shrink: 0; }
 .ai-point .dot.r { background: var(--red); box-shadow: 0 0 8px rgba(255,107,107,0.4); }
 .ai-point .dot.g { background: var(--green); box-shadow: 0 0 8px rgba(0,237,100,0.4); }
-.ai-point p { font-size: 0.8rem; color: var(--gray-lt); line-height: 1.5; }
+.ai-point p { font-size: 0.95rem; color: #C8D6DB; line-height: 1.6; }
 
-.ai-note { margin-top: 2rem; font-size: 0.82rem; color: var(--gray); line-height: 1.6; font-style: italic; text-align: center; max-width: 600px; margin-left: auto; margin-right: auto; }
+.ai-note { margin-top: 2rem; font-size: 0.95rem; color: #C8D6DB; line-height: 1.7; font-style: italic; text-align: center; max-width: 650px; margin-left: auto; margin-right: auto; }
 
 /* SVG animations */
 @keyframes dashRun { to { stroke-dashoffset: -20; } }
@@ -441,7 +441,7 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 }
 .q-card:hover { border-color: rgba(0,237,100,0.12); transform: translateY(-2px); }
 .q-num { font-family: var(--mono); font-size: 1.2rem; font-weight: 600; color: var(--green); flex-shrink: 0; }
-.q-card p { font-size: 0.82rem; color: var(--gray-lt); line-height: 1.5; }
+.q-card p { font-size: 0.95rem; color: #C8D6DB; line-height: 1.6; }
 
 /* ===== NEXT STEPS ===== */
 .nextsteps { background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%); }
@@ -457,14 +457,14 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
 .ns-box .sub { font-size: 0.9rem; color: var(--gray); margin-bottom: 2rem; }
 .ns-cols { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 2rem; }
 .ns-divider { background: var(--line); }
-.ns-col h4 { font-family: var(--mono); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
+.ns-col h4 { font-family: var(--mono); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; }
 .ns-col:first-child h4 { color: var(--green); }
 .ns-col:last-child h4 { color: var(--blue); }
 .ns-item { display: flex; gap: 0.5rem; align-items: baseline; margin-bottom: 0.6rem; }
 .ns-item .d { width: 4px; height: 4px; border-radius: 50%; margin-top: 0.4rem; flex-shrink: 0; }
 .ns-col:first-child .ns-item .d { background: var(--green); }
 .ns-col:last-child .ns-item .d { background: var(--blue); }
-.ns-item p { font-size: 0.8rem; color: var(--gray-lt); line-height: 1.4; }
+.ns-item p { font-size: 0.92rem; color: #C8D6DB; line-height: 1.55; }
 
 /* ===== CLOSING ===== */
 .closing {
@@ -569,8 +569,8 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
 <nav>
   <div class="nav-brand">Banco<em>colombia</em> × MongoDB</div>
   <div class="nav-links">
-    <a href="#engagement">Engagement</a><a href="#perception">Percepción</a><a href="#arch">Arquitectura</a>
-    <a href="#timelines">Dos Tiempos</a><a href="#risk">Riesgo</a><a href="#whynow">Por Qué Ahora</a><a href="#pov">Visión</a><a href="#ai">AI</a><a href="#nextsteps">Siguientes Pasos</a>
+    <a href="#pillars">3 Pilares</a><a href="#engagement">Engagement</a><a href="#arch">Arquitectura</a><a href="#cluster">Cluster</a>
+    <a href="#tracks">Dos Tracks</a><a href="#convergence">Convergencia</a><a href="#capabilities">Capacidades</a><a href="#risk">Riesgo</a><a href="#pov">Visión</a><a href="#ai">AI</a><a href="#nextsteps">Siguientes Pasos</a>
   </div>
   <div class="nav-tag">Confidencial</div>
 </nav>
@@ -593,11 +593,22 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   <div class="scroll-cue"><span>Scroll</span><div class="line"></div></div>
 </section>
 
+<!-- THREE PILLARS -->
+<section class="perception" id="pillars">
+  <div class="reveal"><span class="kicker green">Contexto Estratégico</span><h2 class="headline">Los tres pilares de la<br><em>estrategia de datos.</em></h2><p class="subtext">El Query Model no es un componente aislado — es uno de los tres pilares fundamentales de la estrategia de datos del banco.</p></div>
+  <div class="perc-grid reveal reveal-d1" style="grid-template-columns: 1fr 1fr 1fr;">
+    <div class="perc-card blue" style="text-align:center;"><div class="accent b"></div><h3>CDP</h3><p><strong style="color:var(--blue);">Customer Data Platform</strong><br>Pilar analítico. Segmentación, perfilamiento de clientes y modelos predictivos.</p></div>
+    <div class="perc-card orange" style="text-align:center;"><div class="accent o"></div><h3>Data Access Layer</h3><p><strong style="color:var(--orange);">Pilar Operacional</strong><br>APIs y servicios de acceso a datos. Capa de abstracción para consumidores.</p></div>
+    <div class="perc-card green" style="text-align:center; border: 1px solid rgba(0,237,100,0.2);"><div class="accent g"></div><h3>Query Model</h3><p><strong style="color:var(--green);">Pilar Transaccional</strong><br>Consultas en tiempo real. Lectura optimizada de saldos, movimientos y estado de cuenta.</p></div>
+  </div>
+  <div class="caveat-box reveal reveal-d2"><strong>Visión unificada:</strong> Estos tres pilares trabajan de forma complementaria. El QM alimenta la capa transaccional en tiempo real, el DAL expone los datos como APIs operacionales, y el CDP habilita la analítica. La estrategia de gobierno de datos los conecta transversalmente.</div>
+</section>
+
 <!-- ENGAGEMENT -->
 <section class="engagement" id="engagement">
   <div class="reveal"><span class="kicker green">Nuestro Engagement</span><h2 class="headline">Cómo llegamos<br>hasta aquí.</h2><p class="subtext">En los últimos meses, el equipo de Solutions Architecture de MongoDB ha construido un entendimiento profundo de la arquitectura de Bancolombia.</p></div>
   <div class="eng-grid reveal reveal-d1">
-    <div class="eng-cell"><div class="eng-num">01 — INFRA</div><h3>Health Check &<br>Evaluación</h3><p>Análisis de clusters en producción (Boton, ATHENPCD, Query Model PDN). Recomendaciones de performance y optimización de índices.</p></div>
+    <div class="eng-cell"><div class="eng-num">01 — INFRA</div><h3>Health Check &<br>Evaluación</h3><p>Análisis de clusters en producción (Boton, Athenea PCE, Query Model PDN). Recomendaciones de performance y optimización de índices.</p></div>
     <div class="eng-cell"><div class="eng-num">02 — ARQUITECTURA</div><h3>Deep Dive del<br>Query Model</h3><p>Múltiples sesiones con el equipo de arquitectura del banco. Pipeline CQRS, mecanismos de CDC, flujos de datos y arquitectura de contingencia.</p></div>
     <div class="eng-cell"><div class="eng-num">03 — TFW</div><h3>Workshop de<br>Depósitos</h3><p>Propuesta integral de ODL para el dominio de Depósitos. Modelo de documentos, pipeline, estrategia de CDC y sizing. Listo para revisión.</p></div>
     <div class="eng-cell"><div class="eng-num">04 — EJECUTIVO</div><h3>Alineación<br>Estratégica</h3><p>Sesiones ejecutivas sobre arquitectura de resiliencia, opciones multi-región y proof points de bancos Tier-1. Alineación en curso.</p></div>
@@ -611,7 +622,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
     <div class="perc-card green"><div class="accent g"></div><h3>Patrón CQRS</h3><p>Escrituras al iSeries. Lecturas desde MongoDB. Consultas de lectura representan 3-4x el volumen transaccional.</p></div>
     <div class="perc-card blue"><div class="accent b"></div><h3>Dominios de Datos</h3><p>Materializa relación, cuenta, cliente, movimientos, saldos y cuentas escritas para Depósitos.</p></div>
     <div class="perc-card green"><div class="accent g"></div><h3>Rol en Contingencia</h3><p>Switch entre iSeries y QM. El objetivo: leer desde QM permanentemente, no solo en contingencia.</p></div>
-    <div class="perc-card blue"><div class="accent b"></div><h3>Sin Ownership Formal</h3><p>La capa de datos no tiene dueño definido — hoy vive dentro del programa CoreX, en transición hacia Datos & Integración.</p></div>
+    <div class="perc-card green"><div class="accent g"></div><h3>Ownership Estratégico</h3><p>Juan Carlos Sepúlveda como owner de la estrategia de datos. Visión transversal de gobierno, dominios y pilares de información.</p></div>
     <div class="perc-card orange"><div class="accent o"></div><h3>~175 Consumidores Críticos</h3><p>De ~200 consumidores del core, solo ~25 están desacoplados vía APIs. Los ~175 restantes siguen acoplados directamente al iSeries.</p></div>
     <div class="perc-card orange"><div class="accent o"></div><h3>Visibilidad Ejecutiva</h3><p>Alta visibilidad tras el incidente. MongoDB identificado como componente relevante.</p></div>
   </div>
@@ -633,7 +644,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
         <line x1="143" y1="80" x2="183" y2="80" stroke="#00ED64" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
         <polygon points="180,76 188,80 180,84" fill="#00ED64" opacity="0.5"/>
         <rect x="193" y="30" width="125" height="100" rx="8" fill="#1a1508" stroke="#FF9F43" stroke-width="1"/>
-        <text x="255" y="60" text-anchor="middle" fill="#FF9F43" font-family="IBM Plex Mono" font-size="12" font-weight="600">IBM IDR</text>
+        <text x="255" y="60" text-anchor="middle" fill="#FF9F43" font-family="IBM Plex Mono" font-size="11" font-weight="600">CDC Extractor</text>
         <text x="255" y="78" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">Change Data</text>
         <text x="255" y="91" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">Capture</text>
         <text x="255" y="118" text-anchor="middle" fill="#FF9F43" font-family="IBM Plex Mono" font-size="7" font-weight="500">CDC TIEMPO REAL</text>
@@ -647,9 +658,10 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
         <line x1="509" y1="80" x2="549" y2="80" stroke="#00ED64" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
         <polygon points="546,76 554,80 546,84" fill="#00ED64" opacity="0.5"/>
         <rect x="559" y="30" width="125" height="100" rx="8" fill="#0d1520" stroke="#4DA6FF" stroke-width="1"/>
-        <text x="621" y="60" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="12" font-weight="600">Flink</text>
-        <text x="621" y="78" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">Procesamiento</text>
-        <text x="621" y="91" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">de Streams</text>
+        <text x="621" y="55" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="10" font-weight="600">Stream</text>
+        <text x="621" y="70" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="10" font-weight="600">Processor</text>
+        <text x="621" y="88" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">Procesamiento</text>
+        <text x="621" y="100" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">de Streams</text>
         <text x="621" y="118" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="7" font-weight="500">TRANSFORMACIÓN</text>
         <line x1="692" y1="80" x2="732" y2="80" stroke="#00ED64" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
         <polygon points="729,76 737,80 729,84" fill="#00ED64" opacity="0.5"/>
@@ -697,6 +709,67 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   </div>
 </section>
 
+<!-- CLUSTER HEALTH CHECK -->
+<section class="perception" id="cluster">
+  <div class="reveal"><span class="kicker orange">Diagnóstico del Cluster</span><h2 class="headline">Estado actual del cluster<br><em>productivo Query Model.</em></h2><p class="subtext">Análisis realizado por el equipo de Solutions Architecture de MongoDB sobre el cluster PDN. Plan de remediación en curso con el equipo de DBA del banco.</p></div>
+
+  <!-- Cluster Overview Cards -->
+  <div class="perc-grid reveal reveal-d1" style="grid-template-columns: repeat(4, 1fr);">
+    <div class="perc-card green" style="text-align:center;"><div class="accent g"></div><h3 style="font-size:1.8rem; margin-bottom:0.2rem;">M80</h3><p>Tier actual<br><span style="color:var(--green); font-size:0.7rem;">Auto-scale extendido a M140</span></p></div>
+    <div class="perc-card blue" style="text-align:center;"><div class="accent b"></div><h3 style="font-size:1.8rem; margin-bottom:0.2rem;">358 GB</h3><p>Disco utilizado<br><span style="color:var(--blue); font-size:0.7rem;">de 598 GB (~60% usado)</span></p></div>
+    <div class="perc-card orange" style="text-align:center;"><div class="accent o"></div><h3 style="font-size:1.8rem; margin-bottom:0.2rem;">80%</h3><p>WiredTiger Cache<br><span style="color:var(--orange); font-size:0.7rem;">81% ocupado por índices</span></p></div>
+    <div class="perc-card" style="text-align:center; border-left: 3px solid var(--red);"><h3 style="font-size:1.8rem; margin-bottom:0.2rem; color:var(--red); margin-left:0.8rem;">25.7%</h3><p style="margin-left:0.8rem;">Lock contention<br><span style="color:var(--red); font-size:0.7rem;">Ratio write:read 2.7:1</span></p></div>
+  </div>
+
+  <!-- Findings Grid -->
+  <div style="margin-top:2rem;">
+    <div class="ev-grid reveal reveal-d1">
+      <div class="ev-card"><div class="ev-dot g"></div><div><h4>Espacio en disco — Resuelto</h4><p>Inicialmente reportado 16% libre (CRITICAL). Validación actual: ~40% libre. Auto-Expand Storage habilitado. Monitoreo de tendencia 7-14 días recomendado.</p></div></div>
+      <div class="ev-card" style="border-color:rgba(255,159,67,0.15);"><div class="ev-dot" style="background:var(--orange); box-shadow:0 0 12px rgba(255,159,67,0.4);"></div><div><h4>WiredTiger Cache — Confirmado</h4><p>Cache de 82.4 GB, 66 GB en uso. Working set dominado por índices. Colección MovementsEndOfDay: 117 GB + 24 GB índices. processed_events: 42 GB en índices (sin uso actual).</p></div></div>
+      <div class="ev-card" style="border-color:rgba(255,107,107,0.15);"><div class="ev-dot" style="background:var(--red); box-shadow:0 0 12px rgba(255,107,107,0.4);"></div><div><h4>Lock Contention — Confirmado</h4><p>25.7% del tiempo. Workload dominado por escrituras (5.79B updates en 4 días). Cada update mantiene 29 índices incluyendo los no usados. TTL de processed_events con expireAfterSeconds=0.</p></div></div>
+      <div class="ev-card" style="border-color:rgba(255,159,67,0.15);"><div class="ev-dot" style="background:var(--orange); box-shadow:0 0 12px rgba(255,159,67,0.4);"></div><div><h4>12 índices sin uso — 35.2 GB</h4><p>Parcialmente confirmado. Índices creados para casos históricos. El cluster solo recibe escrituras (réplica), por lo que la baja lectura es esperada. Pendiente profiler 7 días.</p></div></div>
+    </div>
+  </div>
+
+  <!-- Key Collections -->
+  <div class="arch-container reveal reveal-d2" style="margin-top:2rem;">
+    <div class="arch-label">Colecciones Principales — Peso en el Cluster</div>
+    <div class="pipeline-wrap">
+      <svg viewBox="0 0 800 200" width="800" height="200" xmlns="http://www.w3.org/2000/svg">
+        <!-- MovementsEndOfDay -->
+        <rect x="20" y="30" width="230" height="80" rx="8" fill="#0d1520" stroke="#FF9F43" stroke-width="1.2"/>
+        <text x="135" y="55" text-anchor="middle" fill="#FF9F43" font-family="IBM Plex Mono" font-size="10" font-weight="600">MovementsEndOfDay</text>
+        <text x="135" y="75" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">117.82 GB datos + 24 GB índices</text>
+        <text x="135" y="95" text-anchor="middle" fill="#FF9F43" font-family="IBM Plex Mono" font-size="7" font-weight="500">MAYOR PESO EN DATOS</text>
+
+        <!-- processed_events -->
+        <rect x="285" y="30" width="230" height="80" rx="8" fill="#1a0f0f" stroke="#FF6B6B" stroke-width="1.2"/>
+        <text x="400" y="55" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono" font-size="10" font-weight="600">processed_events</text>
+        <text x="400" y="75" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">42 GB solo en índices — sin uso actual</text>
+        <text x="400" y="95" text-anchor="middle" fill="#FF6B6B" font-family="IBM Plex Mono" font-size="7" font-weight="500">TTL expireAfterSeconds = 0</text>
+
+        <!-- MovementsRealtime -->
+        <rect x="550" y="30" width="230" height="80" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1.2"/>
+        <text x="665" y="55" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="10" font-weight="600">MovementsRealtime</text>
+        <text x="665" y="75" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="9">~15 campos por documento</text>
+        <text x="665" y="95" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="7" font-weight="500">INSERT + DELETE (SIN UPDATES)</text>
+
+        <!-- Bottom context -->
+        <rect x="20" y="140" width="760" height="45" rx="8" fill="rgba(77,166,255,0.04)" stroke="rgba(77,166,255,0.1)" stroke-width="1"/>
+        <text x="400" y="160" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="9" font-weight="500">CONTEXTO ARQUITECTÓNICO</text>
+        <text x="400" y="176" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="8">El cluster opera como réplica del sistema primario — solo recibe escrituras en operación normal. Lecturas activas solo en contingencia.</text>
+      </svg>
+    </div>
+    <div class="arch-meta" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="arch-meta-cell"><div class="label">Patrón de queries</div><p>Últimos movimientos por cuenta. Nuevos desarrollos filtrarán por fecha + cuenta.</p></div>
+      <div class="arch-meta-cell"><div class="label">Write concern</div><p>Majority. Todas las escrituras replicadas desde el sistema origen con write concern.</p></div>
+      <div class="arch-meta-cell"><div class="label">Plan de remediación</div><p>Depurar índices no usados, validar TTL de processed_events, evaluar sharding pre-fase 2.</p></div>
+    </div>
+  </div>
+
+  <div class="caveat-box reveal reveal-d3" style="border-left-color: var(--orange); background: rgba(255,159,67,0.04);"><strong>Acción inmediata:</strong> Depurar los 12 índices sin uso (35.2 GB) reducirá lock contention y liberará WiredTiger cache. Esto es prerequisito antes de escalar el tier o evaluar sharding.</div>
+</section>
+
 <!-- EVIDENCE -->
 <section class="evidence" id="evidence">
   <div class="reveal"><span class="kicker green">Evidencia Interna</span><h2 class="headline">Lo que demostró durante<br><em>febrero 2026.</em></h2><p class="subtext">Prueba de relevancia — no prueba de que la arquitectura objetivo completa ya esté implementada.</p></div>
@@ -738,6 +811,139 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
     </div>
   </div>
   <div class="tl-callout reveal reveal-d2"><p><strong>Lo que esto significa:</strong> Una cosa es lo que se necesita para la próxima caída. Otra es cómo se diseña una capacidad durable. El Query Model necesita servir al corto plazo sin comprometer el largo plazo.</p></div>
+</section>
+
+<!-- TWO TRACKS -->
+<section class="perception" id="tracks">
+  <div class="reveal"><span class="kicker orange">Dos Tracks en Paralelo</span><h2 class="headline">Contingencia y modernización<br><em>avanzan simultáneamente.</em></h2><p class="subtext">El banco ejecuta dos líneas de trabajo que convergen en el futuro en una sola arquitectura QM.</p></div>
+  <div class="tl-split reveal reveal-d1">
+    <div class="tl-col short" style="border-top: none;">
+      <div class="tl-col short" style="background:transparent;border:none;padding:0;">
+        <div class="tl-badge">Track 1</div>
+      </div>
+      <h3>QM Contingencia → Acceso Permanente</h3>
+      <div class="goal">"Evolucionar lo que ya funciona"</div>
+      <div class="tl-item"><div class="dot"></div><p>Estado actual: QM de contingencia ante caídas del iSeries</p></div>
+      <div class="tl-item"><div class="dot"></div><p>Evolución: de contingencia a capa de acceso permanente en tiempo real</p></div>
+      <div class="tl-item"><div class="dot"></div><p>Pipeline: iSeries → CDC Extractor → Kafka → Stream Processor → Atlas</p></div>
+      <div class="tl-item"><div class="dot"></div><p>Alcance: ~20M cuentas de depósitos + productos existentes</p></div>
+      <div class="tl-item"><div class="dot"></div><p>Pendiente: post-review del QM actual (colecciones, modelo, índices)</p></div>
+      <div class="tl-note warn">⚠ Reducir dependencia directa del core para consultas de lectura.</div>
+    </div>
+    <div class="tl-col long" style="border-top: none;">
+      <div class="tl-col long" style="background:transparent;border:none;padding:0;">
+        <div class="tl-badge">Track 2</div>
+      </div>
+      <h3>QM Core Modernizado</h3>
+      <div class="goal">"Lo que hacemos en Bonos sienta las bases para todo"</div>
+      <div class="tl-item"><div class="dot"></div><p>Nuevo core bancario arranca con producto Bonos</p></div>
+      <div class="tl-item"><div class="dot"></div><p>Pipeline: Nuevo Core → CDC → Kafka → Stream Processor → Atlas</p></div>
+      <div class="tl-item"><div class="dot"></div><p>Colecciones: Account State (cuentas) + Postings (movimientos)</p></div>
+      <div class="tl-item"><div class="dot"></div><p>Sizing inicial: ~100K cuentas, crecimiento a millones</p></div>
+      <div class="tl-item"><div class="dot"></div><p>Greenfield: modelo canónico desde el inicio</p></div>
+      <div class="tl-note ok">✓ Bonos como piloto sienta las bases para CDT, Inversiones y más.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONVERGENCE -->
+<section class="architecture" id="convergence">
+  <div class="reveal"><span class="kicker green">Convergencia</span><h2 class="headline">Ambos tracks convergen en una<br><em>arquitectura QM unificada.</em></h2><p class="subtext">Cuando Depósitos migre al nuevo core, el QM de contingencia se retira. El QM modernizado absorbe todo.</p></div>
+  <div class="arch-container reveal reveal-d1">
+    <div class="arch-label">Roadmap de Evolución — Convergencia de Tracks</div>
+    <div class="pipeline-wrap">
+      <svg viewBox="0 0 920 260" width="920" height="260" xmlns="http://www.w3.org/2000/svg">
+        <!-- Phase labels -->
+        <text x="110" y="20" text-anchor="middle" fill="#FF9F43" font-family="IBM Plex Mono" font-size="9" font-weight="600" letter-spacing="1.5">ACTUAL</text>
+        <text x="310" y="20" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="9" font-weight="600" letter-spacing="1.5">FASE 1</text>
+        <text x="510" y="20" text-anchor="middle" fill="#4DA6FF" font-family="IBM Plex Mono" font-size="9" font-weight="600" letter-spacing="1.5">FASE 2</text>
+        <text x="710" y="20" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="600" letter-spacing="1.5">FASE 3</text>
+        <text x="880" y="20" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="600" letter-spacing="1.5">FINAL</text>
+
+        <!-- Track 1 row (contingencia) -->
+        <text x="15" y="72" fill="#FF9F43" font-family="IBM Plex Mono" font-size="8" font-weight="600">TRACK 1</text>
+        <text x="15" y="84" fill="#6B7D85" font-family="DM Sans" font-size="7">Contingencia</text>
+
+        <rect x="60" y="55" width="140" height="40" rx="6" fill="rgba(255,159,67,0.1)" stroke="#FF9F43" stroke-width="1"/>
+        <text x="130" y="72" text-anchor="middle" fill="#FF9F43" font-family="DM Sans" font-size="9" font-weight="500">Depósitos</text>
+        <text x="130" y="85" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">Contingencia activa</text>
+
+        <rect x="220" y="55" width="180" height="40" rx="6" fill="rgba(255,159,67,0.08)" stroke="#FF9F43" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="310" y="72" text-anchor="middle" fill="#FF9F43" font-family="DM Sans" font-size="9" font-weight="500">Evolucionando</text>
+        <text x="310" y="85" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">Hacia acceso permanente</text>
+
+        <rect x="420" y="55" width="180" height="40" rx="6" fill="rgba(255,107,107,0.06)" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <text x="510" y="72" text-anchor="middle" fill="#FF6B6B" font-family="DM Sans" font-size="9" font-weight="500">Reduciendo scope</text>
+        <text x="510" y="85" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">Migrando a Track 2</text>
+
+        <rect x="620" y="55" width="180" height="40" rx="6" fill="rgba(255,107,107,0.04)" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="2,4" opacity="0.5"/>
+        <text x="710" y="77" text-anchor="middle" fill="#FF6B6B" font-family="DM Sans" font-size="9" font-weight="500" opacity="0.7">Se retira</text>
+
+        <!-- Track 2 row (modernizado) -->
+        <text x="15" y="152" fill="#00ED64" font-family="IBM Plex Mono" font-size="8" font-weight="600">TRACK 2</text>
+        <text x="15" y="164" fill="#6B7D85" font-family="DM Sans" font-size="7">Modernizado</text>
+
+        <rect x="220" y="135" width="180" height="40" rx="6" fill="rgba(0,237,100,0.08)" stroke="#00ED64" stroke-width="1"/>
+        <text x="310" y="152" text-anchor="middle" fill="#00ED64" font-family="DM Sans" font-size="9" font-weight="500">Bonos live</text>
+        <text x="310" y="165" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">Piloto nuevo core</text>
+
+        <rect x="420" y="135" width="180" height="40" rx="6" fill="rgba(0,237,100,0.1)" stroke="#00ED64" stroke-width="1.2"/>
+        <text x="510" y="152" text-anchor="middle" fill="#00ED64" font-family="DM Sans" font-size="9" font-weight="500">+ CDT + Inv. Virtual</text>
+        <text x="510" y="165" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">Expandiendo dominios</text>
+
+        <rect x="620" y="135" width="180" height="40" rx="6" fill="rgba(0,237,100,0.12)" stroke="#00ED64" stroke-width="1.5"/>
+        <text x="710" y="152" text-anchor="middle" fill="#00ED64" font-family="DM Sans" font-size="9" font-weight="500">+ Depósitos</text>
+        <text x="710" y="165" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">Absorbe todo</text>
+
+        <!-- Final unified -->
+        <rect x="820" y="100" width="90" height="60" rx="8" fill="rgba(0,237,100,0.15)" stroke="#00ED64" stroke-width="2"/>
+        <text x="865" y="125" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="10" font-weight="600">QM</text>
+        <text x="865" y="140" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="8">Unificado</text>
+        <text x="865" y="155" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">Todos los productos</text>
+
+        <!-- Convergence arrows -->
+        <line x1="800" y1="75" x2="820" y2="120" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+        <line x1="800" y1="155" x2="820" y2="140" stroke="#00ED64" stroke-width="1.2" opacity="0.5"/>
+        <polygon points="817,118 823,122 819,126" fill="#FF6B6B" opacity="0.4"/>
+        <polygon points="817,138 823,140 817,142" fill="#00ED64" opacity="0.6"/>
+
+        <!-- Horizontal connection lines -->
+        <line x1="200" y1="75" x2="220" y2="75" stroke="#FF9F43" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+        <line x1="400" y1="75" x2="420" y2="75" stroke="#FF9F43" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+        <line x1="600" y1="75" x2="620" y2="75" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="3,3" opacity="0.3"/>
+        <line x1="400" y1="155" x2="420" y2="155" stroke="#00ED64" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+        <line x1="600" y1="155" x2="620" y2="155" stroke="#00ED64" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+
+        <!-- Bottom legend -->
+        <rect x="200" y="210" width="10" height="10" rx="2" fill="rgba(255,159,67,0.15)" stroke="#FF9F43" stroke-width="1"/>
+        <text x="218" y="219" fill="#6B7D85" font-family="DM Sans" font-size="8">Track 1 — QM Contingencia</text>
+        <rect x="400" y="210" width="10" height="10" rx="2" fill="rgba(0,237,100,0.15)" stroke="#00ED64" stroke-width="1"/>
+        <text x="418" y="219" fill="#6B7D85" font-family="DM Sans" font-size="8">Track 2 — QM Modernizado</text>
+        <rect x="600" y="210" width="10" height="10" rx="2" fill="rgba(0,237,100,0.15)" stroke="#00ED64" stroke-width="2"/>
+        <text x="618" y="219" fill="#6B7D85" font-family="DM Sans" font-size="8">Arquitectura Unificada Final</text>
+      </svg>
+    </div>
+    <div class="arch-meta">
+      <div class="arch-meta-cell"><div class="label">Fase 1 — Bonos</div><p>Piloto en nuevo core con modelo canónico. ~100K cuentas iniciales, Account State + Postings.</p></div>
+      <div class="arch-meta-cell"><div class="label">Fase 2 — Expansión</div><p>CDT e Inversión Virtual migran. QM Contingencia reduce su alcance progresivamente.</p></div>
+      <div class="arch-meta-cell"><div class="label">Fase 3 — Depósitos</div><p>Cuando Depósitos migra al nuevo core, el QM Contingencia se retira completamente.</p></div>
+      <div class="arch-meta-cell"><div class="label">Final — Unificado</div><p>Una sola arquitectura QM para todos los productos. Gobierno por dominio. Data Products.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CAPABILITIES -->
+<section class="perception" id="capabilities">
+  <div class="reveal"><span class="kicker blue">Capacidades Habilitadas</span><h2 class="headline">Lo que el QM evolucionado<br><em>habilita para el banco.</em></h2><p class="subtext">Más allá de contingencia — un QM maduro desbloquea capacidades estratégicas para toda la organización.</p></div>
+  <div class="perc-grid reveal reveal-d1">
+    <div class="perc-card green"><div class="accent g"></div><h3>Consulta en Tiempo Real</h3><p>Saldos, movimientos y estado de cuenta sin impactar el core. Lectura permanente desde MongoDB Atlas.</p></div>
+    <div class="perc-card blue"><div class="accent b"></div><h3>Autorización Mejorada</h3><p>Reducción del tiempo de respuesta en autorizaciones cross-producto. Datos pre-materializados listos para consulta.</p></div>
+    <div class="perc-card green"><div class="accent g"></div><h3>Resiliencia como Diseño</h3><p>QM como path primario de lectura — no como fallback. Disponibilidad 99.9% sin depender del core para cada lectura.</p></div>
+    <div class="perc-card blue"><div class="accent b"></div><h3>Snapshots de Saldos</h3><p>Nueva colección de snapshots diarios para conciliación. ~20-30M cuentas × 60 días de retención hot.</p></div>
+    <div class="perc-card orange"><div class="accent o"></div><h3>Archivo Inteligente</h3><p>Online Archive a S3 después de 3-6 meses hot. Datos históricos accesibles sin impactar performance del cluster.</p></div>
+    <div class="perc-card orange"><div class="accent o"></div><h3>Gobierno por Dominio</h3><p>Cada dominio bancario (Bonos, CDT, Depósitos) responsable de sus propios datos. Alineado a Data Mesh / Data Products.</p></div>
+  </div>
+  <div class="caveat-box reveal reveal-d2" style="border-left-color: var(--blue); background: rgba(77,166,255,0.04);"><strong>Latencia CDC objetivo:</strong> ≤200ms. <strong>SLA objetivo:</strong> 99.9%. <strong>Sharding:</strong> No necesario fase 1, planificado antes de fase 2 (accountId hashed). <strong>Operación:</strong> Equipo interno del banco.</div>
 </section>
 
 <!-- RISK -->
@@ -967,12 +1173,12 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
 <section class="questions" id="questions">
   <div class="reveal"><span class="kicker orange">Preguntas Clave</span><h2 class="headline">Lo que debemos definir<br><em>juntos antes de escalar.</em></h2><p class="subtext">Antes de expandir el Query Model, necesitamos responder estas preguntas en sesión conjunta.</p></div>
   <div class="q-grid reveal reveal-d1">
-    <div class="q-card"><div class="q-num">01</div><p>¿Cuál es el rol previsto del Query Model en la arquitectura objetivo? ¿Contingencia o capa permanente?</p></div>
-    <div class="q-card"><div class="q-num">02</div><p>¿Qué workloads pertenecen al Query Model — y cuáles no? ¿Dónde está el límite?</p></div>
-    <div class="q-card"><div class="q-num">03</div><p>¿Qué debería ser específico por producto vs. compartido a través de dominios?</p></div>
-    <div class="q-card"><div class="q-num">04</div><p>¿Qué modelos canónicos existen hoy y qué falta definir antes de materializar en el ODL?</p></div>
-    <div class="q-card"><div class="q-num">05</div><p>¿Cuál es la relación entre Query Model, data lake y capa de acceso compartida?</p></div>
-    <div class="q-card"><div class="q-num">06</div><p>¿Qué se resuelve solo para contingencia vs. qué se resuelve para servicio permanente?</p></div>
+    <div class="q-card"><div class="q-num">01</div><p>¿Cómo se alinea el modelo canónico de Bonos con la visión de data products del banco?</p></div>
+    <div class="q-card"><div class="q-num">02</div><p>¿Cuál es el timeline esperado para que CDT e Inversión Virtual migren al nuevo core?</p></div>
+    <div class="q-card"><div class="q-num">03</div><p>¿Qué decisiones de gobierno necesitamos para que cada dominio sea dueño de sus datos en el QM?</p></div>
+    <div class="q-card"><div class="q-num">04</div><p>¿Necesitamos snapshots de saldos diarios para conciliación? ¿Cuántos días de retención hot?</p></div>
+    <div class="q-card"><div class="q-num">05</div><p>¿Cuál es la latencia CDC aceptable para autorización en tiempo real? ¿≤200ms es suficiente?</p></div>
+    <div class="q-card"><div class="q-num">06</div><p>¿Cómo encaja el QM evolucionado con el CDP y el Data Access Layer en la estrategia unificada?</p></div>
   </div>
 </section>
 
@@ -984,18 +1190,18 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
     <div class="sub">Definir juntos la frontera, el ownership y el primer scope de expansión.</div>
     <div class="ns-cols" style="grid-template-columns: 1fr 1px 1fr 1px 1fr;">
       <div class="ns-col"><h4>Participantes</h4>
+        <div class="ns-item"><div class="d"></div><p>Juan Carlos Sepúlveda — Owner Estrategia de Datos</p></div>
         <div class="ns-item"><div class="d"></div><p>Líder de Datos & Integración</p></div>
         <div class="ns-item"><div class="d"></div><p>Arquitecto del Query Model</p></div>
-        <div class="ns-item"><div class="d"></div><p>Arquitectura Empresarial</p></div>
-        <div class="ns-item"><div class="d"></div><p>Coordinación de Arquitectura</p></div>
+        <div class="ns-item"><div class="d"></div><p>Equipo de Dominio Bonos</p></div>
         <div class="ns-item"><div class="d"></div><p>Equipo MongoDB SA (Advisory + CXO)</p></div>
       </div>
       <div class="ns-divider"></div>
       <div class="ns-col"><h4 style="color: var(--blue);">Decisiones a Resolver</h4>
-        <div class="ns-item"><div class="d" style="background: var(--blue);"></div><p>Rol objetivo del Query Model — ¿contingencia o capa permanente?</p></div>
-        <div class="ns-item"><div class="d" style="background: var(--blue);"></div><p>Primer scope de expansión — ¿Bonos? ¿otro dominio?</p></div>
-        <div class="ns-item"><div class="d" style="background: var(--blue);"></div><p>Principios de gobierno y ownership por producto</p></div>
-        <div class="ns-item"><div class="d" style="background: var(--blue);"></div><p>Modelo canónico: qué existe hoy vs. qué falta definir</p></div>
+        <div class="ns-item"><div class="d" style="background: var(--blue);"></div><p>Review del QM actual: colecciones, modelo de datos, índices</p></div>
+        <div class="ns-item"><div class="d" style="background: var(--blue);"></div><p>Diseño del modelo canónico para Bonos (Account State + Postings)</p></div>
+        <div class="ns-item"><div class="d" style="background: var(--blue);"></div><p>Sizing y tier de Atlas para Track 2 (Bonos piloto)</p></div>
+        <div class="ns-item"><div class="d" style="background: var(--blue);"></div><p>Gobierno por dominio: ownership de datos en cada producto</p></div>
       </div>
       <div class="ns-divider"></div>
       <div class="ns-col"><h4 style="color: var(--orange);">Cómo Aportamos</h4>
@@ -1011,8 +1217,8 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
 <!-- CLOSING -->
 <section class="closing">
   <div class="reveal">
-    <h2>El Query Model ya no es solo una solución de contingencia.<br>Tiene el potencial de convertirse en una <em>capacidad estratégica del banco.</em></h2>
-    <p>No les venimos a vender buzzwords. Les venimos a co-diseñar cómo convertir el Query Model en una capacidad reutilizable.</p>
+    <h2>El Query Model es un pilar de la estrategia de datos.<br>Dos tracks convergen hacia una <em>arquitectura unificada.</em></h2>
+    <p>No les venimos a vender buzzwords. Les venimos a co-diseñar cómo Bonos sienta las bases para todos los productos — y cómo el QM evoluciona de contingencia a capacidad estratégica.</p>
   </div>
 </section>
 

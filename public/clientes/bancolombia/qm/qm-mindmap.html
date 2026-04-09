@@ -402,13 +402,27 @@ nav {
 <script>
 const BRANCHES = [
   {
+    id: 'pillars',
+    label: '3 Pilares',
+    title: 'Estrategia de Datos',
+    color: 'green',
+    pos: { x: 50, y: 5 },
+    items: [
+      'CDP (Customer Data Platform) — Pilar analítico',
+      'Data Access Layer — Pilar operacional / APIs',
+      'Query Model (QM) — Pilar transaccional / tiempo real',
+      'QM no es un componente aislado: es un pilar fundamental',
+      'Sepúlveda como owner transversal de la estrategia'
+    ]
+  },
+  {
     id: 'engagement',
     label: 'Engagement',
     title: 'Nuestro Recorrido',
     color: 'green',
-    pos: { x: 12, y: 18 },
+    pos: { x: 8, y: 15 },
     items: [
-      'Health Check: clusters Boton, ATHENPCD, QM PDN',
+      'Health Check: clusters Boton, Athenea PCE, QM PDN',
       'Deep Dive: múltiples sesiones con arquitectura del banco',
       'Workshop Depósitos: ODL, modelo de documentos y sizing',
       'Alineación ejecutiva: resiliencia y multi-región'
@@ -419,9 +433,9 @@ const BRANCHES = [
     label: 'Arquitectura',
     title: 'Pipeline CDC',
     color: 'green',
-    pos: { x: 39, y: 12 },
+    pos: { x: 28, y: 8 },
     items: [
-      'AS/400 → IBM IDR → Kafka → Flink → MongoDB Atlas',
+      'AS/400 → CDC Extractor → Kafka → Stream Processor → MongoDB Atlas',
       'Patrón CQRS: escrituras iSeries, lecturas MongoDB',
       'Lecturas = 3-4x el volumen transaccional',
       'CDC tiempo real + reconciliación batch en recuperación',
@@ -433,7 +447,7 @@ const BRANCHES = [
     label: 'Evidencia',
     title: 'Febrero 2026',
     color: 'blue',
-    pos: { x: 66, y: 12 },
+    pos: { x: 72, y: 8 },
     items: [
       'MongoDB sostuvo cargas críticas — core iSeries caído',
       'Saldos, transacciones y cuentas servidos sin interrupción',
@@ -446,7 +460,7 @@ const BRANCHES = [
     label: 'Visión',
     title: 'Capa Estratégica',
     color: 'green',
-    pos: { x: 89, y: 18 },
+    pos: { x: 92, y: 15 },
     items: [
       'De contingencia táctica a capa de acceso permanente',
       'Product-Aware: cada producto define su modelo',
@@ -456,16 +470,30 @@ const BRANCHES = [
     ]
   },
   {
+    id: 'tracks',
+    label: 'Dos Tracks',
+    title: 'Tracks en Paralelo',
+    color: 'orange',
+    pos: { x: 5, y: 50 },
+    items: [
+      'Track 1: QM Contingencia → Acceso permanente en tiempo real',
+      'Track 2: QM Core Modernizado (Bonos como piloto)',
+      'Track 1: ~20M cuentas depósitos + productos existentes',
+      'Track 2: Nuevo core → CDC → Kafka → Stream Processor → Atlas',
+      'Track 2: Colecciones Account State + Postings (movimientos)'
+    ]
+  },
+  {
     id: 'role',
     label: 'Estado actual',
     title: 'Modo Contingencia',
     color: 'blue',
-    pos: { x: 10, y: 74 },
+    pos: { x: 18, y: 82 },
     items: [
       'Switch automático cuando core cae — reactivo',
       'Materializa depósitos: saldos, cuentas, movimientos',
       'Sirve lecturas a canales digitales del banco',
-      'Sin ownership formal — entre CoreX y Datos & Integración'
+      'Owner estratégico: Juan Carlos Sepúlveda (Datos & Integración)'
     ]
   },
   {
@@ -473,7 +501,7 @@ const BRANCHES = [
     label: 'Ecosistema',
     title: '~200 Consumidores',
     color: 'orange',
-    pos: { x: 35, y: 82 },
+    pos: { x: 38, y: 90 },
     items: [
       '~200 consumidores del core bancario iSeries',
       '~175 acoplados directamente sin capa de abstracción',
@@ -482,11 +510,25 @@ const BRANCHES = [
     ]
   },
   {
+    id: 'convergence',
+    label: 'Convergencia',
+    title: 'Roadmap de Unificación',
+    color: 'green',
+    pos: { x: 50, y: 95 },
+    items: [
+      'Fase 1: Bonos live en QM Modernizado',
+      'Fase 2: CDT + Inversión Virtual migran al nuevo core',
+      'Fase 3: Depósitos migra → QM Contingencia se retira',
+      'Final: Una sola arquitectura QM para todos los productos',
+      'Gobierno por dominio alineado a Data Mesh / Data Products'
+    ]
+  },
+  {
     id: 'tensions',
     label: 'Riesgo',
     title: 'Crecer sin Gobierno',
     color: 'red',
-    pos: { x: 65, y: 82 },
+    pos: { x: 62, y: 90 },
     items: [
       'Sin modelo canónico definido por dominio',
       'Presión de "meter más saldos" sin estructura',
@@ -495,11 +537,40 @@ const BRANCHES = [
     ]
   },
   {
+    id: 'cluster',
+    label: 'Cluster PDN',
+    title: 'Health Check Productivo',
+    color: 'orange',
+    pos: { x: 95, y: 35 },
+    items: [
+      'Tier M80 (auto-scaling al techo) — extendido a M140',
+      'Disco: 358 GB / 598 GB (~60% usado) — Auto-Expand activo',
+      'WiredTiger Cache: 80% usado, 81% ocupado por índices',
+      'Lock contention 25.7% — ratio write:read 2.7:1',
+      '12 índices sin uso (35.2 GB) — pendiente depuración',
+      'Cluster opera como réplica: solo escrituras en operación normal'
+    ]
+  },
+  {
+    id: 'capabilities',
+    label: 'Capacidades',
+    title: 'Habilitadas por QM',
+    color: 'blue',
+    pos: { x: 95, y: 62 },
+    items: [
+      'Consulta tiempo real: saldos y movimientos sin impactar core',
+      'Autorización mejorada: reducción de latencia cross-producto',
+      'Resiliencia: QM como path primario, no como fallback',
+      'Snapshots diarios de saldos para conciliación',
+      'Online Archive a S3 después de 3-6 meses hot'
+    ]
+  },
+  {
     id: 'ai',
-    label: 'Habilitador',
+    label: 'Habilitador AI',
     title: 'AI & Datos',
     color: 'blue',
-    pos: { x: 90, y: 74 },
+    pos: { x: 82, y: 85 },
     items: [
       'Copilots y asistentes con contexto operativo real',
       'Detección de fraude sobre datos frescos y estandarizados',
