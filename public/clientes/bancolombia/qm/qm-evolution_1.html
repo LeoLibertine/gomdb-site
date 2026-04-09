@@ -396,15 +396,15 @@ section { padding: 7rem 4rem; position: relative; z-index: 2; }
   display: flex; align-items: center; gap: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; cursor: pointer; user-select: none;
 }
 .ai-toggle-btn {
-  padding: 0.7rem 1.5rem; font-family: var(--mono); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; transition: all 0.35s; color: var(--gray); background: transparent; border: none; cursor: pointer;
+  padding: 0.7rem 1.5rem; font-family: var(--mono); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); color: var(--gray); background: transparent; border: none; cursor: pointer;
 }
 .ai-toggle-btn.active-bad { background: rgba(255,107,107,0.12); color: var(--red); box-shadow: inset 0 -2px 0 var(--red); }
 .ai-toggle-btn.active-good { background: var(--green-glow); color: var(--green); box-shadow: inset 0 -2px 0 var(--green); }
 
 .ai-state { position: relative; min-height: 420px; }
-.ai-panel { transition: opacity 0.4s, transform 0.4s; position: absolute; top: 0; left: 0; width: 100%; }
-.ai-panel.hidden { opacity: 0; pointer-events: none; transform: translateY(12px); }
-.ai-panel.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.ai-panel { transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1), filter 0.6s ease; position: absolute; top: 0; left: 0; width: 100%; }
+.ai-panel.hidden { opacity: 0; pointer-events: none; transform: translateY(20px) scale(0.97); filter: blur(6px); }
+.ai-panel.visible { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); filter: blur(0px); }
 
 .ai-diagram { display: flex; justify-content: center; margin-bottom: 2rem; }
 .ai-points { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
@@ -492,6 +492,63 @@ footer {
 }
 footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); letter-spacing: 0.1em; }
 
+/* ===== SCROLL PROGRESS ===== */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--green), var(--blue));
+  z-index: 1001;
+}
+
+/* ===== NAV ACTIVE ===== */
+.nav-links a.active { color: var(--green); }
+.nav-links a.active::after { width: 100%; }
+
+/* ===== PIPELINE DATA FLOW ===== */
+.arch-container.visible .pipeline-wrap line[stroke-dasharray] {
+  animation: dashFlow 1s linear infinite;
+}
+@keyframes dashFlow { to { stroke-dashoffset: -14; } }
+.pipe-pulse { opacity: 0; transition: opacity 0.8s ease 0.5s; }
+.arch-container.visible .pipe-pulse { opacity: 1; }
+
+/* ===== RISK EFFECTS ===== */
+@keyframes subtleFlicker {
+  0%, 100% { border-color: var(--line); }
+  15% { border-color: rgba(255,107,107,0.2); }
+  17% { border-color: var(--line); }
+  19% { border-color: rgba(255,107,107,0.12); }
+  21%, 80% { border-color: var(--line); }
+  82% { border-color: rgba(255,107,107,0.15); }
+  84% { border-color: var(--line); }
+}
+@keyframes subtleGlow {
+  0%, 100% { border-color: var(--line); box-shadow: 0 0 0 transparent; }
+  50% { border-color: rgba(0,237,100,0.15); box-shadow: 0 0 40px rgba(0,237,100,0.04); }
+}
+.risk-col.bad.animated { animation: subtleFlicker 4s ease-in-out infinite; }
+.risk-col.good.animated { animation: subtleGlow 3s ease-in-out infinite; }
+
+/* ===== RISK QUOTE GLOW ===== */
+.risk-quote.visible em {
+  text-shadow: 0 0 30px rgba(0,237,100,0.2);
+}
+
+/* ===== AI DIAGRAM ENHANCED ===== */
+.ai-node { cursor: pointer; transition: filter 0.3s ease; }
+.ai-node:hover { filter: drop-shadow(0 0 12px rgba(0,237,100,0.4)); }
+.ai-node:hover rect { stroke-width: 2; }
+.ai-cdc-line { animation: dashFlow 1s linear infinite; }
+
+/* ===== CLOSING SPOTLIGHT ===== */
+.closing .reveal.visible h2 em {
+  text-shadow: 0 0 40px rgba(0,237,100,0.15);
+  transition: text-shadow 1.5s ease;
+}
+
 @media (max-width: 900px) {
   section { padding: 5rem 1.5rem; }
   .hero { padding: 7rem 1.5rem 4rem; }
@@ -499,6 +556,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   .tl-split, .risk-split, .ft-split, .q-grid, .ns-cols, .ev-grid { grid-template-columns: 1fr; }
   .ft-arrow { transform: rotate(90deg); }
   nav .nav-links { display: none; }
+  .scroll-progress { display: none; }
 }
 @media (max-width: 600px) {
   .eng-grid, .perc-grid, .prin-grid { grid-template-columns: 1fr; }
@@ -515,6 +573,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   </div>
   <div class="nav-tag">Confidencial</div>
 </nav>
+<div class="scroll-progress"></div>
 
 <!-- HERO -->
 <section class="hero">
@@ -527,7 +586,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
     <div class="hero-stats">
       <div class="h-stat"><span class="val">CQRS</span><span class="lbl">Patrón en producción</span></div>
       <div class="h-stat"><span class="val">CDC</span><span class="lbl">Pipeline tiempo real</span></div>
-      <div class="h-stat"><span class="val">~200</span><span class="lbl">Consumidores del core</span></div>
+      <div class="h-stat"><span class="val" data-count="200" data-prefix="~">~0</span><span class="lbl">Consumidores del core</span></div>
     </div>
   </div>
   <div class="scroll-cue"><span>Scroll</span><div class="line"></div></div>
@@ -548,7 +607,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
 <section class="perception" id="perception">
   <div class="reveal"><span class="kicker green">Entendimiento Actual</span><h2 class="headline">Lo que vemos hoy<br>en el <em>Query Model.</em></h2><p class="subtext">Basado en nuestras sesiones con el equipo de arquitectura del banco.</p></div>
   <div class="perc-grid reveal reveal-d1">
-    <div class="perc-card green"><div class="accent g"></div><h3>Patrón CQRS</h3><p>Escrituras al iSeries. Lecturas desde MongoDB. ~70% lecturas, ~30% escrituras. Más de 1,000 TPS validados en contingencia.</p></div>
+    <div class="perc-card green"><div class="accent g"></div><h3>Patrón CQRS</h3><p>Escrituras al iSeries. Lecturas desde MongoDB. Consultas de lectura representan 3-4x el volumen transaccional.</p></div>
     <div class="perc-card blue"><div class="accent b"></div><h3>Dominios de Datos</h3><p>Materializa relación, cuenta, cliente, movimientos, saldos y cuentas escritas para Depósitos.</p></div>
     <div class="perc-card green"><div class="accent g"></div><h3>Rol en Contingencia</h3><p>Switch entre iSeries y QM. El objetivo: leer desde QM permanentemente, no solo en contingencia.</p></div>
     <div class="perc-card blue"><div class="accent b"></div><h3>Sin Ownership Formal</h3><p>La capa de datos no tiene dueño definido — hoy vive dentro del programa CoreX, en transición hacia Datos & Integración.</p></div>
@@ -602,11 +661,35 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
         <polygon points="805,152 809,160 813,152" fill="#00ED64" opacity="0.4"/>
         <rect x="742" y="162" width="135" height="16" rx="4" fill="rgba(0,104,74,0.2)"/>
         <text x="809" y="174" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="7" font-weight="500">→ CANALES DIGITALES</text>
+        <!-- Data flow pulse -->
+        <g class="pipe-pulse">
+          <defs>
+            <filter id="pulseGlow" x="-200%" y="-200%" width="500%" height="500%">
+              <feGaussianBlur stdDeviation="4" result="glow"/>
+              <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <circle r="4" fill="#00ED64" filter="url(#pulseGlow)">
+            <animate attributeName="cx" values="72;255;438;621;809" dur="4s" repeatCount="indefinite" keyTimes="0;0.25;0.5;0.75;1" calcMode="spline" keySplines="0.45 0.05 0.55 0.95;0.45 0.05 0.55 0.95;0.45 0.05 0.55 0.95;0.45 0.05 0.55 0.95"/>
+            <animate attributeName="cy" values="80;80;80;80;80" dur="4s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0;0.85;0.85;0.85;0" dur="4s" repeatCount="indefinite" keyTimes="0;0.08;0.5;0.92;1"/>
+          </circle>
+          <circle r="10" fill="none" stroke="#00ED64" stroke-width="0.8">
+            <animate attributeName="cx" values="72;255;438;621;809" dur="4s" repeatCount="indefinite" keyTimes="0;0.25;0.5;0.75;1" calcMode="spline" keySplines="0.45 0.05 0.55 0.95;0.45 0.05 0.55 0.95;0.45 0.05 0.55 0.95;0.45 0.05 0.55 0.95"/>
+            <animate attributeName="cy" values="80;80;80;80;80" dur="4s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0;0.15;0.15;0.15;0" dur="4s" repeatCount="indefinite" keyTimes="0;0.08;0.5;0.92;1"/>
+          </circle>
+          <circle r="3.5" fill="#00ED64" filter="url(#pulseGlow)">
+            <animate attributeName="cx" values="72;255;438;621;809" dur="4s" begin="2s" repeatCount="indefinite" keyTimes="0;0.25;0.5;0.75;1" calcMode="spline" keySplines="0.45 0.05 0.55 0.95;0.45 0.05 0.55 0.95;0.45 0.05 0.55 0.95;0.45 0.05 0.55 0.95"/>
+            <animate attributeName="cy" values="80;80;80;80;80" dur="4s" begin="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0;0.6;0.6;0.6;0" dur="4s" begin="2s" repeatCount="indefinite" keyTimes="0;0.08;0.5;0.92;1"/>
+          </circle>
+        </g>
       </svg>
     </div>
     <div class="arch-meta">
       <div class="arch-meta-cell"><div class="label">Sincronización</div><p>CDC en tiempo real durante el día. Reconciliación por lotes en recuperación.</p></div>
-      <div class="arch-meta-cell"><div class="label">Transformación</div><p>~200 campos crudos estandarizados en modelo de documentos canónico.</p></div>
+      <div class="arch-meta-cell"><div class="label">Transformación</div><p>Datos crudos del core estandarizados en modelo de documentos canónico.</p></div>
       <div class="arch-meta-cell"><div class="label">Recuperación</div><p>Monitor automatizado emite evento de contingencia. Canales switchean.</p></div>
       <div class="arch-meta-cell"><div class="label">Conectores</div><p>Rutas independientes iSeries-a-Bolt y iSeries-a-CORIMO.</p></div>
     </div>
@@ -618,7 +701,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
   <div class="reveal"><span class="kicker green">Evidencia Interna</span><h2 class="headline">Lo que demostró durante<br><em>febrero 2026.</em></h2><p class="subtext">Prueba de relevancia — no prueba de que la arquitectura objetivo completa ya esté implementada.</p></div>
   <div class="ev-grid reveal reveal-d1">
     <div class="ev-card"><div class="ev-dot g"></div><div><h4>Componente se mantuvo disponible</h4><p>MongoDB continuó sirviendo lecturas a canales digitales mientras el AS/400 estuvo indisponible por un período extendido.</p></div></div>
-    <div class="ev-card"><div class="ev-dot g"></div><div><h4>Cargas de lectura sostenidas</h4><p>Saldos, historial de transacciones e información de cuentas se siguieron sirviendo a App Personas y canales.</p></div></div>
+    <div class="ev-card"><div class="ev-dot g"></div><div><h4>Cargas de lectura sostenidas</h4><p>Saldos, historial de transacciones e información de cuentas se siguieron sirviendo a los canales digitales del banco.</p></div></div>
     <div class="ev-card"><div class="ev-dot b"></div><div><h4>Retroalimentación interna positiva</h4><p>El equipo de arquitectura dio feedback positivo sobre el rol de MongoDB en este tipo de carga operacional.</p></div></div>
     <div class="ev-card"><div class="ev-dot b"></div><div><h4>Alta visibilidad ejecutiva</h4><p>Tras el incidente, se evaluó la expansión de capacidades de MongoDB a más servicios y dominios.</p></div></div>
   </div>
@@ -678,7 +761,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
 <section class="perception" id="whynow">
   <div class="reveal"><span class="kicker orange">Por Qué Ahora</span><h2 class="headline">La presión de expandir ya existe.<br>La pregunta es si crece <em>ordenado.</em></h2><p class="subtext">El éxito del Query Model en febrero generó tracción interna. Hay misiones activas para habilitar más capacidades. Si se expande sin frontera clara, se vuelve otro componente táctico inflado.</p></div>
   <div class="perc-grid reveal reveal-d1">
-    <div class="perc-card orange"><div class="accent o"></div><h3>Misiones Activas</h3><p>13 misiones post-contingencia identificadas internamente para habilitar más capacidades.</p></div>
+    <div class="perc-card orange"><div class="accent o"></div><h3>Misiones Activas</h3><p>~13 misiones post-contingencia identificadas internamente para habilitar más capacidades.</p></div>
     <div class="perc-card green"><div class="accent g"></div><h3>Presión de Crecimiento</h3><p>Se quiere meter más saldos y más dominios al QM — la demanda de expansión ya es real.</p></div>
     <div class="perc-card" style="border-left: 3px solid var(--red);"><h3 style="color: var(--red); margin-left: 0.8rem;">Riesgo de Desorden</h3><p style="margin-left: 0.8rem;">Sin gobierno, cada equipo agrega a su manera. El QM se vuelve un catch-all sin límites.</p></div>
     <div class="perc-card green"><div class="accent g"></div><h3>Ventana de Decisión</h3><p>Ownership en transición hacia Datos & Integración. Es el momento de definir la frontera.</p></div>
@@ -722,7 +805,7 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
 <section class="target" id="target">
   <div class="reveal"><span class="kicker blue">Dirección Objetivo</span><h2 class="headline">Datos de producto +<br><em>capa compartida de acceso.</em></h2><p class="subtext">Producto con modelo canónico claro, eventos bien definidos y una capa de acceso que no se rompa cada vez que cambia el core.</p></div>
   <div class="target-box reveal reveal-d1">
-    <div class="layer-row"><div class="layer-tag">Dominios /<br>Productos</div><div><h4>Cada producto define su modelo canónico</h4><p>CDTs, depósitos, pagos, tarjetas — cada uno con ownership claro, datos bien definidos, APIs documentadas. Esto es lo que el banco llama Data Mesh.</p></div></div>
+    <div class="layer-row"><div class="layer-tag">Dominios /<br>Productos</div><div><h4>Cada producto define su modelo canónico</h4><p>Depósitos, bonos, pagos, tarjetas — cada uno con ownership claro, datos bien definidos, APIs documentadas. Alineado con la visión de data mesh y data fabric que el banco está evaluando.</p></div></div>
     <div class="layer-row"><div class="layer-tag">Capa de<br>Eventos</div><div><h4>CDC + Kafka + Stream Processing</h4><p>Cada producto publica sus cambios como eventos. La capa de distribución los consume y materializa. Centralización del acceso, no de los datos.</p></div></div>
     <div class="layer-row"><div class="layer-tag">Query Model<br>Evolucionado</div><div><h4>Capa operacional de lectura — siempre activa</h4><p>Materializa datos canónicos de cada dominio. Alimentada por CDC/eventos. Sirve a todos los canales digitales por defecto. Ejecuta sobre MongoDB Atlas.</p></div></div>
   </div>
@@ -781,35 +864,90 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
     <div class="ai-panel hidden" id="panelGood">
       <div class="ai-diagram">
         <svg viewBox="0 0 520 340" width="520" height="340" xmlns="http://www.w3.org/2000/svg">
-          <!-- Legacy node (dim, top-left) -->
+          <defs>
+            <filter id="aiNodeGlow" x="-200%" y="-200%" width="500%" height="500%">
+              <feGaussianBlur stdDeviation="3.5" result="glow"/>
+              <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- Legacy node (dim) -->
           <rect x="10" y="140" width="120" height="50" rx="8" fill="#131F24" stroke="#6B7D85" stroke-width="1" opacity="0.5"/>
           <text x="70" y="162" text-anchor="middle" fill="#6B7D85" font-family="IBM Plex Mono" font-size="9" font-weight="500">Legacy / iSeries</text>
           <text x="70" y="178" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="7">CDC →</text>
-          <!-- Arrow legacy to QM -->
-          <line x1="130" y1="165" x2="185" y2="165" stroke="#00684A" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+          <!-- CDC arrow (animated dash) -->
+          <line x1="130" y1="165" x2="185" y2="165" stroke="#00684A" stroke-width="1" stroke-dasharray="4,3" opacity="0.4" class="ai-cdc-line"/>
           <polygon points="182,161 190,165 182,169" fill="#00684A" opacity="0.5"/>
-          <!-- Central QM node -->
+
+          <!-- Central QM node + breathing glow -->
+          <rect x="186" y="126" width="168" height="73" rx="12" fill="none" stroke="#00ED64" stroke-width="0.8" opacity="0">
+            <animate attributeName="opacity" values="0;0.25;0" dur="3s" repeatCount="indefinite"/>
+          </rect>
           <rect x="190" y="130" width="160" height="65" rx="10" fill="#0d1a0d" stroke="#00ED64" stroke-width="1.5"/>
           <text x="270" y="155" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="10" font-weight="600">Query Model</text>
           <text x="270" y="170" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="10" font-weight="600">Evolucionado</text>
           <text x="270" y="185" text-anchor="middle" fill="#6B7D85" font-family="DM Sans" font-size="8">MongoDB Atlas</text>
-          <!-- Outer nodes -->
-          <rect x="60" y="10" width="110" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
-          <text x="115" y="35" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Copilot</text>
-          <rect x="210" y="5" width="120" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
-          <text x="270" y="30" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Detección Fraude</text>
-          <rect x="370" y="10" width="110" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
-          <text x="425" y="35" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Analítica</text>
-          <rect x="50" y="270" width="130" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
-          <text x="115" y="295" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Asistente Cliente</text>
-          <rect x="370" y="270" width="110" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
-          <text x="425" y="295" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Scoring</text>
+
           <!-- Lines solid green -->
           <line x1="115" y1="50" x2="225" y2="135" stroke="#00ED64" stroke-width="1.2" class="ai-line-solid" opacity="0.7"/>
           <line x1="270" y1="45" x2="270" y2="130" stroke="#00ED64" stroke-width="1.2" class="ai-line-solid" opacity="0.7"/>
           <line x1="425" y1="50" x2="315" y2="135" stroke="#00ED64" stroke-width="1.2" class="ai-line-solid" opacity="0.7"/>
           <line x1="115" y1="270" x2="225" y2="195" stroke="#00ED64" stroke-width="1.2" class="ai-line-solid" opacity="0.7"/>
           <line x1="425" y1="270" x2="315" y2="195" stroke="#00ED64" stroke-width="1.2" class="ai-line-solid" opacity="0.7"/>
+
+          <!-- Outer nodes (hoverable) -->
+          <g class="ai-node">
+            <rect x="60" y="10" width="110" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
+            <text x="115" y="35" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Copilot</text>
+          </g>
+          <g class="ai-node">
+            <rect x="210" y="5" width="120" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
+            <text x="270" y="30" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Detección Fraude</text>
+          </g>
+          <g class="ai-node">
+            <rect x="370" y="10" width="110" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
+            <text x="425" y="35" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Analítica</text>
+          </g>
+          <g class="ai-node">
+            <rect x="50" y="270" width="130" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
+            <text x="115" y="295" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Asistente Cliente</text>
+          </g>
+          <g class="ai-node">
+            <rect x="370" y="270" width="110" height="40" rx="8" fill="#0d1a0d" stroke="#00ED64" stroke-width="1" opacity="0.8"/>
+            <text x="425" y="295" text-anchor="middle" fill="#00ED64" font-family="IBM Plex Mono" font-size="9" font-weight="500">Scoring</text>
+          </g>
+
+          <!-- Data flow pulses: QM → each consumer (staggered) -->
+          <!-- → Copilot -->
+          <circle r="2.5" fill="#00ED64" filter="url(#aiNodeGlow)" opacity="0">
+            <animate attributeName="cx" values="225;170;115" dur="2.2s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+            <animate attributeName="cy" values="135;92;50" dur="2.2s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+            <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.2s" begin="0s" repeatCount="indefinite" keyTimes="0;0.1;0.75;1"/>
+          </circle>
+          <!-- → Detección Fraude -->
+          <circle r="2.5" fill="#00ED64" filter="url(#aiNodeGlow)" opacity="0">
+            <animate attributeName="cx" values="270;270;270" dur="2.2s" begin="0.4s" repeatCount="indefinite"/>
+            <animate attributeName="cy" values="130;87;45" dur="2.2s" begin="0.4s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+            <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.2s" begin="0.4s" repeatCount="indefinite" keyTimes="0;0.1;0.75;1"/>
+          </circle>
+          <!-- → Analítica -->
+          <circle r="2.5" fill="#00ED64" filter="url(#aiNodeGlow)" opacity="0">
+            <animate attributeName="cx" values="315;370;425" dur="2.2s" begin="0.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+            <animate attributeName="cy" values="135;92;50" dur="2.2s" begin="0.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+            <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.2s" begin="0.8s" repeatCount="indefinite" keyTimes="0;0.1;0.75;1"/>
+          </circle>
+          <!-- → Asistente Cliente -->
+          <circle r="2.5" fill="#00ED64" filter="url(#aiNodeGlow)" opacity="0">
+            <animate attributeName="cx" values="225;170;115" dur="2.2s" begin="1.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+            <animate attributeName="cy" values="195;232;270" dur="2.2s" begin="1.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+            <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.2s" begin="1.2s" repeatCount="indefinite" keyTimes="0;0.1;0.75;1"/>
+          </circle>
+          <!-- → Scoring -->
+          <circle r="2.5" fill="#00ED64" filter="url(#aiNodeGlow)" opacity="0">
+            <animate attributeName="cx" values="315;370;425" dur="2.2s" begin="1.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+            <animate attributeName="cy" values="195;232;270" dur="2.2s" begin="1.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+            <animate attributeName="opacity" values="0;0.8;0.8;0" dur="2.2s" begin="1.6s" repeatCount="indefinite" keyTimes="0;0.1;0.75;1"/>
+          </circle>
         </svg>
       </div>
       <div class="ai-points">
@@ -880,11 +1018,70 @@ footer p { font-family: var(--mono); font-size: 0.6rem; color: var(--gray); lett
 <footer><p>MongoDB × Bancolombia — Estrategia de Evolución del Query Model — Confidencial — Abril 2026</p></footer>
 
 <script>
+/* ===== REVEAL ON SCROLL ===== */
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
+/* ===== SCROLL PROGRESS + ACTIVE NAV ===== */
+const progressBar = document.querySelector('.scroll-progress');
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  if (progressBar) progressBar.style.width = ((scrollTop / docHeight) * 100) + '%';
+
+  let current = '';
+  sections.forEach(section => {
+    if (scrollTop >= section.offsetTop - 200) current = section.id;
+  });
+  navLinks.forEach(link => {
+    link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+  });
+}, { passive: true });
+
+/* ===== COUNTER ANIMATION ===== */
+function animateCounter(el) {
+  const target = parseInt(el.dataset.count);
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '';
+  const duration = 1800;
+  const start = performance.now();
+
+  function update(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = prefix + Math.round(target * eased) + suffix;
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+const counterObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !e.target.dataset.counted) {
+      e.target.dataset.counted = 'true';
+      animateCounter(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-count]').forEach(el => counterObs.observe(el));
+
+/* ===== RISK COLUMN EFFECTS ===== */
+const riskObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.risk-col').forEach(col => col.classList.add('animated'));
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.risk-split').forEach(el => riskObs.observe(el));
+
+/* ===== AI TOGGLE (ENHANCED) ===== */
 function setAIState(state) {
   const panelBad = document.getElementById('panelBad');
   const panelGood = document.getElementById('panelGood');
@@ -895,6 +1092,11 @@ function setAIState(state) {
     panelGood.classList.replace('hidden', 'visible');
     btnBad.className = 'ai-toggle-btn';
     btnGood.className = 'ai-toggle-btn active-good';
+    panelGood.querySelectorAll('.ai-line-solid').forEach(line => {
+      line.style.animation = 'none';
+      line.offsetHeight;
+      line.style.animation = '';
+    });
   } else {
     panelGood.classList.replace('visible', 'hidden');
     panelBad.classList.replace('hidden', 'visible');
