@@ -1019,7 +1019,10 @@
                 'trending-up': '📈',
                 'users': '👥',
                 'star': '⭐',
-                'dollar-sign': '
+                'dollar-sign': '💲'
+            };
+            return fallbacks[iconName] || '•';
+        }
 
         // Generar el diagrama de radar
         function generateRadarChart() {
