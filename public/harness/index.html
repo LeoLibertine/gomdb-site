@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harness SE Candidate Lab — Leo Alarcon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0B1215;
+            --bg2: #0F1A1E;
+            --surface: #131F24;
+            --surface2: #182830;
+            --blue: #0278D5;
+            --blue-light: #00ADE4;
+            --blue-dim: #024B82;
+            --blue-glow: rgba(2,120,213,0.08);
+            --green: #00ED64;
+            --orange: #FF9F43;
+            --red: #FF6B6B;
+            --white: #E8ECEE;
+            --gray: #8FA3AC;
+            --gray-lt: #B0C4CE;
+            --line: rgba(255,255,255,0.04);
+            --serif: 'Instrument Serif', Georgia, serif;
+            --sans: 'DM Sans', sans-serif;
+            --mono: 'IBM Plex Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--white);
+            line-height: 1.8;
+            font-size: 17px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Scroll Progress */
+        #scroll-progress {
+            position: fixed; top: 0; left: 0; height: 2px; z-index: 10000;
+            background: linear-gradient(90deg, var(--blue), var(--blue-light));
+            transition: width 0.1s linear;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+            background: rgba(11,18,21,0.85); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--line);
+            padding: 0 2rem; height: 56px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-brand { font-family: var(--mono); font-size: 0.8rem; color: var(--gray-lt); letter-spacing: 0.05em; }
+        .nav-brand span { color: var(--blue); font-weight: 600; }
+        .nav-links { display: flex; gap: 1.8rem; }
+        .nav-links a {
+            color: var(--gray); font-size: 0.75rem; text-decoration: none;
+            letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500;
+            transition: color 0.3s; position: relative;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--white); }
+        .nav-links a.active::after {
+            content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+            height: 1px; background: var(--blue);
+        }
+        .nav-badge {
+            font-family: var(--mono); font-size: 0.6rem; color: var(--blue);
+            border: 1px solid rgba(2,120,213,0.3); border-radius: 4px;
+            padding: 0.25rem 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+            padding: 6rem 2rem 4rem; position: relative; overflow: hidden;
+        }
+        .hero-orb {
+            position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none;
+        }
+        .hero-orb-1 { width: 500px; height: 500px; background: rgba(2,120,213,0.06); top: -100px; right: -100px; animation: float 8s ease-in-out infinite; }
+        .hero-orb-2 { width: 400px; height: 400px; background: rgba(0,173,228,0.04); bottom: -50px; left: -100px; animation: float 10s ease-in-out infinite reverse; }
+        .hero-kicker {
+            font-family: var(--mono); font-size: 0.7rem; color: var(--blue);
+            letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1.5rem;
+        }
+        .hero h1 {
+            font-family: var(--serif); font-size: clamp(2.8rem, 6vw, 4.5rem);
+            font-weight: 400; line-height: 1.15; max-width: 700px; margin-bottom: 1.5rem;
+        }
+        .hero h1 em { font-style: italic; color: var(--blue); }
+        .hero-desc {
+            color: var(--gray-lt); font-size: 1.15rem; max-width: 580px;
+            line-height: 1.8; margin-bottom: 3rem;
+        }
+        .hero-stats {
+            display: flex; gap: 3rem; padding-top: 2rem;
+            border-top: 1px solid var(--line);
+        }
+        .hero-stat { text-align: center; }
+        .hero-stat .num {
+            font-family: var(--serif); font-size: 2.5rem; color: var(--blue);
+            line-height: 1;
+        }
+        .hero-stat .label {
+            font-size: 0.7rem; color: var(--gray); text-transform: uppercase;
+            letter-spacing: 0.1em; margin-top: 0.3rem;
+        }
+
+        /* Sections */
+        .section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
+        .section-line { width: 40px; height: 2px; background: var(--blue); margin-bottom: 1rem; }
+        .section-kicker {
+            font-family: var(--mono); font-size: 0.7rem; color: var(--blue);
+            letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem;
+        }
+        .section h2 {
+            font-family: var(--serif); font-size: clamp(2rem, 4vw, 2.8rem);
+            font-weight: 400; margin-bottom: 1rem;
+        }
+        .section-desc { color: var(--gray-lt); font-size: 1.1rem; max-width: 650px; margin-bottom: 2.5rem; }
+
+        /* Cards Grid */
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; }
+        .card {
+            background: var(--surface); border: 1px solid var(--line);
+            border-radius: 12px; padding: 1.8rem;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .card:hover { transform: translateY(-3px); border-color: rgba(2,120,213,0.2); }
+        .card-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 1rem; background: var(--blue-glow);
+        }
+        .card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.6rem; }
+        .card p { font-size: 0.95rem; color: var(--gray-lt); line-height: 1.7; }
+
+        /* Architecture SVG */
+        .arch-diagram {
+            background: var(--surface); border: 1px solid var(--line);
+            border-radius: 16px; padding: 2.5rem; margin: 2rem 0;
+            overflow-x: auto;
+        }
+        .arch-diagram svg { display: block; margin: 0 auto; width: 100%; max-width: 860px; height: auto; }
+
+        /* Timeline */
+        .timeline { position: relative; padding-left: 3rem; margin: 2rem 0; }
+        .timeline::before {
+            content: ''; position: absolute; left: 15px; top: 0; bottom: 0;
+            width: 1px; background: linear-gradient(to bottom, var(--blue), var(--line));
+        }
+        .timeline-item {
+            position: relative; margin-bottom: 2.5rem;
+            padding-left: 1.5rem; opacity: 0; transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+        .timeline-item.visible { opacity: 1; transform: translateY(0); }
+        .timeline-dot {
+            position: absolute; left: -2.85rem; top: 0.3rem;
+            width: 12px; height: 12px; border-radius: 50%;
+            background: var(--blue); border: 2px solid var(--bg);
+            box-shadow: 0 0 0 3px rgba(2,120,213,0.2);
+        }
+        .timeline-dot.green { background: var(--green); box-shadow: 0 0 0 3px rgba(0,237,100,0.2); }
+        .timeline-dot.orange { background: var(--orange); box-shadow: 0 0 0 3px rgba(255,159,67,0.2); }
+        .timeline-num { font-family: var(--mono); font-size: 0.65rem; color: var(--blue); letter-spacing: 0.1em; text-transform: uppercase; }
+        .timeline-title { font-size: 1.2rem; font-weight: 600; margin: 0.2rem 0 0.4rem; }
+        .timeline-desc { font-size: 0.95rem; color: var(--gray-lt); }
+
+        /* Exercise Deep Dive */
+        .exercise {
+            padding: 5rem 2rem; max-width: 1100px; margin: 0 auto;
+            border-top: 1px solid var(--line);
+        }
+        .exercise-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 2rem; }
+        .exercise-content h3 { font-size: 1.2rem; font-weight: 600; margin: 1.5rem 0 0.6rem; }
+        .exercise-content p { font-size: 1rem; color: var(--gray-lt); line-height: 1.8; }
+
+        /* Code Block */
+        .code-block {
+            background: var(--bg); border: 1px solid var(--line);
+            border-radius: 8px; padding: 1.2rem; margin: 1rem 0;
+            font-family: var(--mono); font-size: 0.88rem; color: var(--gray-lt);
+            overflow-x: auto; line-height: 1.7;
+        }
+        .code-block .cmd { color: var(--blue-light); }
+        .code-block .out { color: var(--gray); }
+        .code-block .ok { color: var(--green); }
+        .code-block .kw { color: var(--orange); }
+
+        /* Screenshots */
+        .screenshots { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+        .screenshot {
+            border-radius: 8px; overflow: hidden; border: 1px solid var(--line);
+            cursor: pointer; transition: transform 0.3s, border-color 0.3s;
+        }
+        .screenshot:hover { transform: scale(1.02); border-color: rgba(2,120,213,0.3); }
+        .screenshot img { width: 100%; height: auto; display: block; }
+        .screenshot-caption {
+            padding: 0.6rem 0.8rem; background: var(--surface);
+            font-size: 0.7rem; color: var(--gray); text-align: center;
+        }
+
+        /* Pipeline SVG */
+        .pipeline-diagram {
+            background: var(--surface); border: 1px solid var(--line);
+            border-radius: 12px; padding: 2rem; margin: 2rem 0;
+            overflow-x: auto;
+        }
+        .pipeline-diagram svg { display: block; margin: 0 auto; width: 100%; max-width: 820px; height: auto; }
+
+        /* Canary Diagram */
+        .canary-phases {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .canary-phase {
+            background: var(--surface); border: 1px solid var(--line);
+            border-radius: 12px; padding: 1.5rem; text-align: center;
+            position: relative;
+        }
+        .canary-phase::after {
+            content: ''; position: absolute; right: -1rem; top: 50%;
+            border: 6px solid transparent; border-left-color: var(--blue);
+        }
+        .canary-phase:last-child::after { display: none; }
+        .canary-phase .phase-num { font-family: var(--mono); font-size: 0.6rem; color: var(--blue); letter-spacing: 0.15em; text-transform: uppercase; }
+        .canary-phase h4 { font-size: 1.1rem; margin: 0.5rem 0; }
+        .canary-phase p { font-size: 0.9rem; color: var(--gray-lt); }
+        .canary-bar { height: 6px; border-radius: 3px; margin-top: 1rem; background: var(--bg); overflow: hidden; }
+        .canary-bar-fill { height: 100%; border-radius: 3px; transition: width 1.5s ease; }
+
+        /* Evidence Gallery */
+        .gallery-filters { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .gallery-filter {
+            font-family: var(--mono); font-size: 0.7rem; padding: 0.4rem 1rem;
+            border: 1px solid var(--line); border-radius: 6px; background: transparent;
+            color: var(--gray); cursor: pointer; transition: all 0.3s;
+            letter-spacing: 0.05em; text-transform: uppercase;
+        }
+        .gallery-filter.active, .gallery-filter:hover {
+            background: var(--blue-glow); border-color: rgba(2,120,213,0.3);
+            color: var(--blue);
+        }
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;
+        }
+        .gallery-item { transition: opacity 0.4s, transform 0.4s; }
+        .gallery-item.hidden { opacity: 0; transform: scale(0.95); position: absolute; pointer-events: none; }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed; inset: 0; z-index: 99998; background: rgba(0,0,0,0.92);
+            display: none; align-items: center; justify-content: center;
+            cursor: zoom-out; backdrop-filter: blur(10px);
+        }
+        .lightbox.open { display: flex; }
+        .lightbox img { max-width: 90vw; max-height: 88vh; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .lightbox-close {
+            position: absolute; top: 1.5rem; right: 1.5rem;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255,255,255,0.08); border: none; cursor: pointer;
+            color: var(--white); font-size: 1.2rem; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .lightbox-nav {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(255,255,255,0.08); border: none; cursor: pointer;
+            color: var(--white); font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .lightbox-nav:hover { background: rgba(255,255,255,0.15); }
+        .lightbox-prev { left: 1.5rem; }
+        .lightbox-next { right: 1.5rem; }
+        .lightbox-caption { position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%); color: var(--gray-lt); font-size: 0.8rem; font-family: var(--mono); }
+
+        /* Learnings */
+        .learning-card {
+            background: var(--surface); border: 1px solid var(--line);
+            border-radius: 12px; padding: 1.5rem; border-left: 3px solid var(--blue);
+        }
+        .learning-card h4 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .learning-card p { font-size: 0.95rem; color: var(--gray-lt); line-height: 1.7; }
+
+        .callout {
+            background: rgba(2,120,213,0.06); border: 1px solid rgba(2,120,213,0.15);
+            border-radius: 12px; padding: 1.5rem; margin: 2rem 0;
+            font-size: 0.95rem; color: var(--gray-lt); line-height: 1.7;
+        }
+        .callout strong { color: var(--white); }
+
+        /* Personal callout */
+        .my-take {
+            background: rgba(2,120,213,0.04); border-left: 3px solid var(--blue);
+            border-radius: 0 10px 10px 0; padding: 1.2rem 1.5rem; margin: 1.5rem 0;
+            font-size: 0.95rem; color: var(--gray-lt); line-height: 1.7;
+        }
+        .my-take .my-take-label {
+            font-family: var(--mono); font-size: 0.7rem; color: var(--blue);
+            letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem;
+        }
+
+        /* Requirements table */
+        .req-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+        .req-table th {
+            text-align: left; font-family: var(--mono); font-size: 0.7rem;
+            color: var(--blue); letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 0.8rem 1rem; border-bottom: 1px solid rgba(2,120,213,0.2);
+        }
+        .req-table td {
+            padding: 1rem; font-size: 0.95rem; border-bottom: 1px solid var(--line);
+            vertical-align: top;
+        }
+        .req-table td:first-child { color: var(--gray-lt); }
+        .req-table td:last-child { color: var(--white); }
+        .req-check { color: var(--green); margin-right: 0.4rem; }
+
+        /* Footer */
+        footer {
+            text-align: center; padding: 3rem 2rem; border-top: 1px solid var(--line);
+            font-family: var(--mono); font-size: 0.65rem; color: var(--gray);
+            letter-spacing: 0.1em; text-transform: uppercase;
+        }
+
+        /* Reveal Animation */
+        .reveal { opacity: 0; transform: translateY(24px); transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* Animations */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        @keyframes pulse-dot { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .exercise-grid { grid-template-columns: 1fr; }
+            .canary-phases { grid-template-columns: 1fr; }
+            .canary-phase::after { display: none; }
+            .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+            .nav-links { display: none; }
+        }
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2rem; }
+            .section h2 { font-size: 1.6rem; }
+            nav { padding: 0 1rem; }
+        }
+
+        /* Orange accent for bonus */
+        .orange-accent .section-kicker { color: var(--orange); }
+        .orange-accent .section-line { background: var(--orange); }
+        .orange-accent .card-icon { background: rgba(255,159,67,0.1); }
+
+        /* Expandable/collapsible sections */
+        .expandable { cursor: pointer; }
+        .expandable-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1.2rem 1.5rem; background: var(--surface); border: 1px solid var(--line);
+            border-radius: 10px; margin-bottom: 0.6rem; transition: all 0.3s;
+        }
+        .expandable-header:hover { border-color: rgba(2,120,213,0.3); background: var(--surface2); }
+        .expandable-header h4 { font-size: 1.05rem; font-weight: 500; }
+        .expandable-arrow {
+            width: 24px; height: 24px; border-radius: 50%;
+            background: var(--blue-glow); display: flex; align-items: center; justify-content: center;
+            transition: transform 0.3s; flex-shrink: 0;
+        }
+        .expandable-arrow svg { transition: transform 0.3s; }
+        .expandable.open .expandable-arrow svg { transform: rotate(180deg); }
+        .expandable-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            padding: 0 1.5rem;
+        }
+        .expandable.open .expandable-body { max-height: 2000px; }
+        .expandable-body-inner { padding: 0.5rem 0 1.5rem; }
+
+        /* Interactive tooltip on cards */
+        .card { position: relative; cursor: default; }
+        .card::before {
+            content: ''; position: absolute; inset: -1px; border-radius: 13px;
+            background: linear-gradient(135deg, rgba(2,120,213,0.15), transparent, transparent);
+            opacity: 0; transition: opacity 0.4s; z-index: -1;
+        }
+        .card:hover::before { opacity: 1; }
+
+        /* Animated stat bars */
+        .stat-bar { display: flex; align-items: center; gap: 0.8rem; margin: 0.5rem 0; }
+        .stat-bar-label { font-family: var(--mono); font-size: 0.75rem; color: var(--gray); min-width: 90px; }
+        .stat-bar-track { flex: 1; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+        .stat-bar-fill {
+            height: 100%; border-radius: 3px; width: 0;
+            transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .stat-bar-fill.blue { background: linear-gradient(90deg, var(--blue), var(--blue-light)); }
+        .stat-bar-fill.green { background: linear-gradient(90deg, #00884A, var(--green)); }
+        .stat-bar-value { font-family: var(--mono); font-size: 0.8rem; color: var(--white); min-width: 50px; text-align: right; }
+
+        /* Floating action - back to top */
+        .back-to-top {
+            position: fixed; bottom: 2rem; right: 2rem; width: 44px; height: 44px;
+            border-radius: 50%; background: var(--blue); border: none; cursor: pointer;
+            color: white; font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+            opacity: 0; transform: translateY(10px); transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(2,120,213,0.3); z-index: 999;
+        }
+        .back-to-top.visible { opacity: 1; transform: translateY(0); }
+        .back-to-top:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(2,120,213,0.4); }
+
+        /* Screenshot hover zoom hint */
+        .screenshot::after {
+            content: 'Click to expand'; position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 0.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: var(--gray-lt); font-size: 0.7rem; text-align: center; font-family: var(--mono);
+            opacity: 0; transition: opacity 0.3s; letter-spacing: 0.05em;
+        }
+        .screenshot { position: relative; }
+        .screenshot:hover::after { opacity: 1; }
+
+        /* Canary animation */
+        .canary-phase { transition: transform 0.3s, border-color 0.3s; }
+        .canary-phase:hover { transform: translateY(-4px); border-color: rgba(2,120,213,0.25); }
+    </style>
+</head>
+<body>
+    <script src="auth-guard.js"></script>
+
+    <!-- Scroll Progress -->
+    <div id="scroll-progress"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-brand">LEO ALARCON <span>/ Harness</span></div>
+        <div class="nav-links">
+            <a href="#approach">My Approach</a>
+            <a href="#architecture">Architecture</a>
+            <a href="#ci">CI Pipeline</a>
+            <a href="#cd">CD Pipeline</a>
+            <a href="#templates">Templates</a>
+            <a href="#evidence">Evidence</a>
+        </div>
+        <div class="nav-badge">SE Candidate Lab</div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="top">
+        <div class="hero-orb hero-orb-1"></div>
+        <div class="hero-orb hero-orb-2"></div>
+        <div class="hero-kicker">Harness Enterprise SE Candidate Lab</div>
+        <h1>Five Exercises,<br>One <em>Complete Platform.</em></h1>
+        <p class="hero-desc">
+            End-to-end implementation of Harness CI/CD on a local Kubernetes cluster &mdash;
+            from infrastructure bootstrap to templatized pipelines. Built, tested, and deployed hands-on.
+        </p>
+        <div class="hero-stats">
+            <div class="hero-stat"><div class="num" data-target="5">0</div><div class="label">Exercises</div></div>
+            <div class="hero-stat"><div class="num" data-target="1">0</div><div class="label">K8s Cluster</div></div>
+            <div class="hero-stat"><div class="num" data-target="2">0</div><div class="label">Pipeline Stages</div></div>
+            <div class="hero-stat"><div class="num" data-target="1">0</div><div class="label">Template</div></div>
+        </div>
+    </section>
+
+    <!-- My Approach -->
+    <section class="section reveal" id="approach">
+        <div class="section-line"></div>
+        <div class="section-kicker">My Approach</div>
+        <h2>How I Tackled This Lab</h2>
+        <p class="section-desc">Before diving into the technical details, here's the thinking behind the decisions I made.</p>
+
+        <div class="my-take">
+            <div class="my-take-label">Why my own app instead of the Java tutorial</div>
+            The lab suggested using a Java tutorial, but I chose to use <strong>Mekari</strong> &mdash; a Python/FastAPI application I built myself. It already had everything the lab needed: a Dockerfile, a test suite, and a containerized architecture. Using my own project felt more authentic than following a cookie-cutter tutorial, and it let me demonstrate that I can adapt Harness to real-world scenarios, not just pre-built examples.
+        </div>
+
+        <div class="my-take">
+            <div class="my-take-label">Why Colima instead of Minikube</div>
+            Practical reasons. I already had Colima installed from a previous project at MongoDB &mdash; originally I started using it because I didn't have Docker Desktop permissions on my corporate laptop, and Colima was the lightweight alternative that just worked. Since it already had k3s configured, it made sense to reuse it rather than install something new.
+        </div>
+
+        <div class="my-take">
+            <div class="my-take-label">First impression of the platform</div>
+            What struck me most was how <strong>mature</strong> the product feels. The visual pipeline builder is intuitive &mdash; you see the flow as a diagram, not just lines of YAML. The Delegate concept is clever: a lightweight agent that lives inside your infrastructure and connects back to the SaaS platform. And honestly, going from zero to a fully working CI/CD pipeline was faster than I expected. The number of options and integrations available tells me this is a platform built for enterprise scale.
+        </div>
+
+        <div class="my-take">
+            <div class="my-take-label">Challenges along the way</div>
+            The main challenge was <strong>laptop performance</strong> &mdash; running Docker + Kubernetes locally is resource-intensive, and I had to stop and restart the environment between sessions. There was also a YAML indentation issue when creating the Kubernetes manifests by hand, which reminded me that YAML is unforgiving with whitespace. Nothing major broke, but these are the real-world friction points that come with hands-on work.
+        </div>
+
+        <h3 style="margin-top:2.5rem; font-family: var(--serif); font-size: 1.5rem; font-weight: 400;">Lab Requirements vs. What I Did</h3>
+        <table class="req-table">
+            <thead>
+                <tr><th>Lab Requirement</th><th>My Implementation</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Set up a Kubernetes cluster</td>
+                    <td><span class="req-check">&#10003;</span> Colima with k3s (local, lightweight)</td>
+                </tr>
+                <tr>
+                    <td>Sign up for Harness Free Trial</td>
+                    <td><span class="req-check">&#10003;</span> Account: thearcticmonkey7</td>
+                </tr>
+                <tr>
+                    <td>Install the Harness Delegate</td>
+                    <td><span class="req-check">&#10003;</span> Helm chart in harness-delegate-ng namespace</td>
+                </tr>
+                <tr>
+                    <td>CI: Build an application from source</td>
+                    <td><span class="req-check">&#10003;</span> Python/FastAPI app (Mekari) from GitHub</td>
+                </tr>
+                <tr>
+                    <td>CI: Run tests</td>
+                    <td><span class="req-check">&#10003;</span> pytest suite on Python 3.11 container</td>
+                </tr>
+                <tr>
+                    <td>CI: Build and Push Docker image</td>
+                    <td><span class="req-check">&#10003;</span> leolibertine/mekari:latest on DockerHub</td>
+                </tr>
+                <tr>
+                    <td>CD: Deploy to K8s with manifests</td>
+                    <td><span class="req-check">&#10003;</span> deployment.yaml + service.yaml in k8s/</td>
+                </tr>
+                <tr>
+                    <td>CD: Use canary release strategy</td>
+                    <td><span class="req-check">&#10003;</span> Canary &rarr; Delete &rarr; Rolling Deployment</td>
+                </tr>
+                <tr>
+                    <td>Bonus: Templatize a step</td>
+                    <td><span class="req-check">&#10003;</span> Run Tests Template (v1, referenced in pipeline)</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Executive Summary -->
+    <section class="section reveal" id="overview">
+        <div class="section-line"></div>
+        <div class="section-kicker">Executive Summary</div>
+        <h2>What Was Accomplished</h2>
+        <p class="section-desc">A complete Harness CI/CD platform configured from scratch, demonstrating infrastructure setup, continuous integration, continuous deployment with canary strategy, and pipeline templatization.</p>
+        <div class="cards">
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0278D5" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                </div>
+                <h3>Infrastructure</h3>
+                <p>Local Kubernetes cluster provisioned using Colima with k3s runtime. Lightweight, fast, and fully functional for development workloads.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0278D5" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h3>Delegate</h3>
+                <p>Harness Delegate installed via Helm chart in a dedicated namespace. Acts as the bridge between the Harness SaaS platform and the local cluster.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0278D5" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <h3>CI/CD Pipeline</h3>
+                <p>Two-stage pipeline: CI runs tests and pushes a Docker image to DockerHub. CD deploys to Kubernetes using a canary release strategy.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0278D5" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                </div>
+                <h3>Templates</h3>
+                <p>Reusable step template created for test execution. Referenced directly in the pipeline, enabling standardization across future pipelines.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Diagram -->
+    <section class="section reveal" id="architecture">
+        <div class="section-line"></div>
+        <div class="section-kicker">Architecture</div>
+        <h2>End-to-End Flow</h2>
+        <p class="section-desc">From source code to production deployment &mdash; every component connected through Harness.</p>
+        <div class="arch-diagram">
+            <svg viewBox="0 0 860 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- GitHub -->
+                <rect x="10" y="60" width="140" height="80" rx="12" fill="#131F24" stroke="#2a3a42" stroke-width="1"/>
+                <text x="80" y="95" text-anchor="middle" fill="#E8ECEE" font-family="DM Sans" font-size="13" font-weight="600">GitHub</text>
+                <text x="80" y="118" text-anchor="middle" fill="#6B7D85" font-family="IBM Plex Mono" font-size="9">Source Code</text>
+
+                <!-- Arrow 1 -->
+                <line x1="150" y1="100" x2="230" y2="100" stroke="#2a3a42" stroke-width="1" stroke-dasharray="4 3"/>
+                <circle cx="190" cy="100" r="3" fill="#0278D5" opacity="0.6">
+                    <animate attributeName="cx" values="155;225" dur="2s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+                </circle>
+
+                <!-- Harness Platform -->
+                <rect x="230" y="30" width="250" height="140" rx="12" fill="#0B1215" stroke="#0278D5" stroke-width="1.5" opacity="0.9"/>
+                <text x="355" y="55" text-anchor="middle" fill="#0278D5" font-family="IBM Plex Mono" font-size="9" letter-spacing="1.5">HARNESS PLATFORM</text>
+                <rect x="250" y="70" width="100" height="45" rx="8" fill="#131F24" stroke="#2a3a42" stroke-width="1"/>
+                <text x="300" y="97" text-anchor="middle" fill="#00ADE4" font-family="DM Sans" font-size="12" font-weight="600">CI</text>
+                <rect x="370" y="70" width="100" height="45" rx="8" fill="#131F24" stroke="#2a3a42" stroke-width="1"/>
+                <text x="420" y="97" text-anchor="middle" fill="#00ADE4" font-family="DM Sans" font-size="12" font-weight="600">CD</text>
+                <!-- Internal arrow -->
+                <line x1="350" y1="92" x2="370" y2="92" stroke="#2a3a42" stroke-width="1" stroke-dasharray="3 2"/>
+                <!-- Delegate label -->
+                <rect x="280" y="130" width="160" height="28" rx="6" fill="rgba(2,120,213,0.08)" stroke="rgba(2,120,213,0.15)" stroke-width="1"/>
+                <text x="360" y="148" text-anchor="middle" fill="#6B7D85" font-family="IBM Plex Mono" font-size="9">Delegate (helm-delegate)</text>
+
+                <!-- Arrow 2 to DockerHub -->
+                <line x1="355" y1="30" x2="580" y2="30" stroke="#2a3a42" stroke-width="1" stroke-dasharray="4 3"/>
+                <line x1="580" y1="30" x2="580" y2="60" stroke="#2a3a42" stroke-width="1" stroke-dasharray="4 3"/>
+                <circle cx="355" cy="30" r="3" fill="#00ADE4" opacity="0.6">
+                    <animate attributeName="cx" values="355;575" dur="2.5s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0;1;0" dur="2.5s" repeatCount="indefinite"/>
+                </circle>
+
+                <!-- Arrow 3 to K8s -->
+                <line x1="480" y1="100" x2="560" y2="100" stroke="#2a3a42" stroke-width="1" stroke-dasharray="4 3"/>
+                <circle cx="490" cy="100" r="3" fill="#0278D5" opacity="0.6">
+                    <animate attributeName="cx" values="485;555" dur="1.8s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite"/>
+                </circle>
+
+                <!-- DockerHub -->
+                <rect x="530" y="60" width="140" height="35" rx="8" fill="#131F24" stroke="#2a3a42" stroke-width="1"/>
+                <text x="600" y="82" text-anchor="middle" fill="#E8ECEE" font-family="DM Sans" font-size="12" font-weight="600">DockerHub</text>
+
+                <!-- K8s Cluster -->
+                <rect x="530" y="110" width="140" height="60" rx="8" fill="#131F24" stroke="#00ADE4" stroke-width="1"/>
+                <text x="600" y="135" text-anchor="middle" fill="#E8ECEE" font-family="DM Sans" font-size="12" font-weight="600">K8s Cluster</text>
+                <text x="600" y="155" text-anchor="middle" fill="#6B7D85" font-family="IBM Plex Mono" font-size="9">Colima / k3s</text>
+
+                <!-- Labels row -->
+                <rect x="700" y="65" width="150" height="100" rx="8" fill="transparent"/>
+                <text x="720" y="85" fill="#6B7D85" font-family="IBM Plex Mono" font-size="8" letter-spacing="1">CONNECTORS</text>
+                <circle cx="720" cy="105" r="3" fill="#00ED64"/><text x="730" y="109" fill="#8FA3AC" font-family="DM Sans" font-size="10">GitHub</text>
+                <circle cx="720" cy="125" r="3" fill="#00ED64"/><text x="730" y="129" fill="#8FA3AC" font-family="DM Sans" font-size="10">DockerHub</text>
+                <circle cx="720" cy="145" r="3" fill="#00ED64"/><text x="730" y="149" fill="#8FA3AC" font-family="DM Sans" font-size="10">K8s-Colima</text>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Exercise Timeline - Interactive Expandable -->
+    <section class="section reveal" id="timeline">
+        <div class="section-line"></div>
+        <div class="section-kicker">Lab Exercises</div>
+        <h2>Completion Timeline</h2>
+        <p class="section-desc">Each exercise built on the previous one. Click any exercise to see what was involved.</p>
+
+        <div class="expandable" onclick="this.classList.toggle('open')">
+            <div class="expandable-header">
+                <div><span style="color:var(--green);margin-right:0.6rem;">&#10003;</span><h4 style="display:inline;">Exercise 01 &mdash; Kubernetes Cluster Setup</h4></div>
+                <div class="expandable-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0278D5" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="expandable-body"><div class="expandable-body-inner">
+                <p>Provisioned a local K8s cluster using <strong>Colima with k3s</strong>. This is a lightweight Kubernetes distribution that runs inside a VM on macOS. Verified node readiness and confirmed core services: CoreDNS, metrics-server, and local-path-provisioner.</p>
+                <div class="stat-bar"><span class="stat-bar-label">Complexity</span><div class="stat-bar-track"><div class="stat-bar-fill blue" data-width="30%"></div></div><span class="stat-bar-value">Low</span></div>
+                <div class="stat-bar"><span class="stat-bar-label">Time</span><div class="stat-bar-track"><div class="stat-bar-fill blue" data-width="20%"></div></div><span class="stat-bar-value">~10 min</span></div>
+            </div></div>
+        </div>
+
+        <div class="expandable" onclick="this.classList.toggle('open')">
+            <div class="expandable-header">
+                <div><span style="color:var(--green);margin-right:0.6rem;">&#10003;</span><h4 style="display:inline;">Exercise 02 &mdash; Harness Delegate Installation</h4></div>
+                <div class="expandable-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0278D5" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="expandable-body"><div class="expandable-body-inner">
+                <p>Deployed the <strong>Harness Delegate via Helm chart</strong> into a dedicated <code>harness-delegate-ng</code> namespace. The delegate acts as an agent running inside the cluster that communicates with Harness SaaS &mdash; it receives pipeline instructions and executes them locally. Confirmed heartbeat connection in the Harness UI.</p>
+                <div class="stat-bar"><span class="stat-bar-label">Complexity</span><div class="stat-bar-track"><div class="stat-bar-fill blue" data-width="40%"></div></div><span class="stat-bar-value">Medium</span></div>
+                <div class="stat-bar"><span class="stat-bar-label">Time</span><div class="stat-bar-track"><div class="stat-bar-fill blue" data-width="30%"></div></div><span class="stat-bar-value">~15 min</span></div>
+            </div></div>
+        </div>
+
+        <div class="expandable" onclick="this.classList.toggle('open')">
+            <div class="expandable-header">
+                <div><span style="color:var(--green);margin-right:0.6rem;">&#10003;</span><h4 style="display:inline;">Exercise 03 &mdash; Continuous Integration Pipeline</h4></div>
+                <div class="expandable-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0278D5" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="expandable-body"><div class="expandable-body-inner">
+                <p>Built a full CI pipeline: <strong>clone source code</strong> from GitHub, <strong>run pytest</strong> on a Python 3.11 container, and <strong>build + push a Docker image</strong> to DockerHub. This required configuring three connectors (GitHub, DockerHub, K8s) and managing secrets for authentication.</p>
+                <div class="stat-bar"><span class="stat-bar-label">Complexity</span><div class="stat-bar-track"><div class="stat-bar-fill blue" data-width="70%"></div></div><span class="stat-bar-value">High</span></div>
+                <div class="stat-bar"><span class="stat-bar-label">Time</span><div class="stat-bar-track"><div class="stat-bar-fill blue" data-width="60%"></div></div><span class="stat-bar-value">~45 min</span></div>
+                <div class="stat-bar"><span class="stat-bar-label">Pipeline Run</span><div class="stat-bar-track"><div class="stat-bar-fill green" data-width="100%"></div></div><span class="stat-bar-value">3m 16s</span></div>
+            </div></div>
+        </div>
+
+        <div class="expandable" onclick="this.classList.toggle('open')">
+            <div class="expandable-header">
+                <div><span style="color:var(--green);margin-right:0.6rem;">&#10003;</span><h4 style="display:inline;">Exercise 04 &mdash; Continuous Deployment with Canary</h4></div>
+                <div class="expandable-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0278D5" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="expandable-body"><div class="expandable-body-inner">
+                <p>Extended the pipeline with a <strong>CD deployment stage</strong>. Created Kubernetes manifests (Deployment + Service), configured the service, environment, and infrastructure in Harness, and selected the <strong>canary release strategy</strong>: deploy to a small subset first, verify, then roll out to all pods.</p>
+                <div class="stat-bar"><span class="stat-bar-label">Complexity</span><div class="stat-bar-track"><div class="stat-bar-fill blue" data-width="80%"></div></div><span class="stat-bar-value">High</span></div>
+                <div class="stat-bar"><span class="stat-bar-label">Time</span><div class="stat-bar-track"><div class="stat-bar-fill blue" data-width="50%"></div></div><span class="stat-bar-value">~30 min</span></div>
+                <div class="stat-bar"><span class="stat-bar-label">Pipeline Run</span><div class="stat-bar-track"><div class="stat-bar-fill green" data-width="100%"></div></div><span class="stat-bar-value">4m 59s</span></div>
+            </div></div>
+        </div>
+
+        <div class="expandable" onclick="this.classList.toggle('open')">
+            <div class="expandable-header">
+                <div><span style="color:var(--orange);margin-right:0.6rem;">&#9733;</span><h4 style="display:inline;">Bonus &mdash; Pipeline Templates</h4></div>
+                <div class="expandable-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF9F43" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+            </div>
+            <div class="expandable-body"><div class="expandable-body-inner">
+                <p>Templatized the <strong>Run Tests step</strong> and referenced it directly in the pipeline. The template is stored at project scope (v1 STABLE), and any future pipeline can reuse it. Changes to the template automatically propagate to all pipelines that reference it.</p>
+                <div class="stat-bar"><span class="stat-bar-label">Complexity</span><div class="stat-bar-track"><div class="stat-bar-fill blue" data-width="25%"></div></div><span class="stat-bar-value">Low</span></div>
+                <div class="stat-bar"><span class="stat-bar-label">Time</span><div class="stat-bar-track"><div class="stat-bar-fill blue" data-width="15%"></div></div><span class="stat-bar-value">~5 min</span></div>
+            </div></div>
+        </div>
+    </section>
+
+    <!-- Exercise 1 & 2: Infrastructure -->
+    <section class="exercise reveal" id="infra">
+        <div class="section-kicker">Exercises 01 & 02</div>
+        <h2>Infrastructure Setup</h2>
+        <div class="exercise-grid">
+            <div class="exercise-content">
+                <h3>Kubernetes with Colima</h3>
+                <p>Instead of using a cloud provider, I chose to run a local Kubernetes cluster using Colima with the k3s distribution. This provides a lightweight but fully-functional K8s environment that's ideal for development and testing.</p>
+                <div class="code-block">
+                    <span class="cmd">$ colima start --kubernetes</span><br>
+                    <span class="out">INFO starting colima</span><br>
+                    <span class="out">INFO runtime: docker+k3s</span><br>
+                    <span class="ok">INFO done</span>
+                </div>
+                <h3>Harness Delegate</h3>
+                <p>The Delegate is the key component that connects the Harness SaaS platform to your local infrastructure. It runs as a pod inside the cluster and listens for instructions from Harness &mdash; pulling manifests, executing deployments, and reporting back status.</p>
+                <div class="my-take">
+                    <div class="my-take-label">What I want to understand better</div>
+                    The Delegate architecture is something I want to dig deeper into. I understand it acts as a bridge &mdash; but the specifics of how it communicates with Harness SaaS (polling vs. WebSocket, how it handles network failures, multi-delegate setups) are areas I'd love to explore further.
+                </div>
+                <div class="code-block">
+                    <span class="cmd">$ kubectl get pods -n harness-delegate-ng</span><br>
+                    <span class="out">NAME &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READY &nbsp; STATUS</span><br>
+                    <span class="ok">helm-delegate-78669bdff5-8vbms &nbsp; 1/1 &nbsp;&nbsp;&nbsp; Running</span>
+                </div>
+            </div>
+            <div class="exercise-screenshots">
+                <div class="screenshots">
+                    <div class="screenshot" onclick="openLightbox(0)">
+                        <img src="screenshots/01-delegate-running.png" alt="Delegate running in terminal" loading="lazy">
+                        <div class="screenshot-caption">Delegate pod running (1/1 Ready)</div>
+                    </div>
+                    <div class="screenshot" onclick="openLightbox(1)">
+                        <img src="screenshots/02-app-deployed.png" alt="Application pods and services" loading="lazy">
+                        <div class="screenshot-caption">Pods and services in default namespace</div>
+                    </div>
+                    <div class="screenshot" onclick="openLightbox(2)">
+                        <img src="screenshots/03-connectors.png" alt="Harness connectors page" loading="lazy">
+                        <div class="screenshot-caption">All connectors verified &mdash; Success</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Exercise 3: CI Pipeline -->
+    <section class="exercise reveal" id="ci">
+        <div class="section-kicker">Exercise 03</div>
+        <h2>Continuous Integration Pipeline</h2>
+        <p class="section-desc">The CI stage automates the entire path from source code to a deployable artifact. Every push to main triggers the full sequence.</p>
+
+        <!-- CI Pipeline Diagram -->
+        <div class="pipeline-diagram">
+            <svg viewBox="0 0 820 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Step boxes -->
+                <rect x="0" y="25" width="110" height="50" rx="8" fill="#131F24" stroke="#2a3a42"/>
+                <text x="55" y="55" text-anchor="middle" fill="#8FA3AC" font-family="DM Sans" font-size="10">Initialize</text>
+                <circle cx="55" cy="15" r="6" fill="#00ED64" opacity="0.8"/>
+
+                <line x1="110" y1="50" x2="150" y2="50" stroke="#2a3a42" stroke-dasharray="4 3"/>
+
+                <rect x="150" y="25" width="110" height="50" rx="8" fill="#131F24" stroke="#2a3a42"/>
+                <text x="205" y="55" text-anchor="middle" fill="#8FA3AC" font-family="DM Sans" font-size="10">Clone Repo</text>
+                <circle cx="205" cy="15" r="6" fill="#00ED64" opacity="0.8"/>
+
+                <line x1="260" y1="50" x2="300" y2="50" stroke="#2a3a42" stroke-dasharray="4 3"/>
+
+                <rect x="300" y="25" width="110" height="50" rx="8" fill="#131F24" stroke="#2a3a42"/>
+                <text x="355" y="48" text-anchor="middle" fill="#8FA3AC" font-family="DM Sans" font-size="10">Build</text>
+                <text x="355" y="62" text-anchor="middle" fill="#8FA3AC" font-family="DM Sans" font-size="10">Intelligence</text>
+                <circle cx="355" cy="15" r="6" fill="#00ED64" opacity="0.8"/>
+
+                <line x1="410" y1="50" x2="450" y2="50" stroke="#2a3a42" stroke-dasharray="4 3"/>
+
+                <rect x="450" y="25" width="110" height="50" rx="8" fill="#131F24" stroke="#0278D5" stroke-width="1.5"/>
+                <text x="505" y="55" text-anchor="middle" fill="#00ADE4" font-family="DM Sans" font-size="10" font-weight="600">Run Tests</text>
+                <circle cx="505" cy="15" r="6" fill="#00ED64" opacity="0.8"/>
+
+                <line x1="560" y1="50" x2="600" y2="50" stroke="#2a3a42" stroke-dasharray="4 3"/>
+
+                <rect x="600" y="25" width="110" height="50" rx="8" fill="#131F24" stroke="#2a3a42"/>
+                <text x="655" y="48" text-anchor="middle" fill="#8FA3AC" font-family="DM Sans" font-size="10">Push to</text>
+                <text x="655" y="62" text-anchor="middle" fill="#8FA3AC" font-family="DM Sans" font-size="10">DockerHub</text>
+                <circle cx="655" cy="15" r="6" fill="#00ED64" opacity="0.8"/>
+
+                <line x1="710" y1="50" x2="740" y2="50" stroke="#2a3a42" stroke-dasharray="4 3"/>
+
+                <rect x="740" y="25" width="70" height="50" rx="8" fill="rgba(0,237,100,0.08)" stroke="#00ED64" stroke-width="1"/>
+                <text x="775" y="55" text-anchor="middle" fill="#00ED64" font-family="DM Sans" font-size="11" font-weight="600">OK</text>
+
+                <!-- Pulse -->
+                <circle r="4" fill="#0278D5" opacity="0.7">
+                    <animate attributeName="cx" values="5;775" dur="3.5s" repeatCount="indefinite"/>
+                    <animate attributeName="cy" values="50;50" dur="3.5s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0;0.8;0.8;0" dur="3.5s" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+        </div>
+
+        <div class="exercise-grid">
+            <div class="exercise-content">
+                <h3>Application: Mekari</h3>
+                <p>A Python FastAPI application from my personal GitHub repository. The CI pipeline installs dependencies, runs the test suite with pytest, and builds a Docker image.</p>
+                <h3>Test Execution</h3>
+                <p>Tests run using pytest on a Python 3.11 container inside the K8s cluster. Two test files were excluded from CI: one that requires a live MongoDB connection, and another with module-level initialization that conflicts with the test runner.</p>
+                <div class="code-block">
+                    <span class="cmd">pip install -r requirements.txt</span><br>
+                    <span class="cmd">pytest</span> <span class="kw">--ignore</span>=tests/test_data_integrity.py <span class="kw">--ignore</span>=tests/test_revenue.py <span class="kw">-v</span>
+                </div>
+                <h3>Docker Image</h3>
+                <p>After tests pass, the pipeline builds a Docker image and pushes it to DockerHub as <code>leolibertine/mekari:latest</code> (228.9 MB). This artifact is then available for the CD stage.</p>
+                <div class="my-take">
+                    <div class="my-take-label">Decisions I made here</div>
+                    I excluded two test files from CI: one that calls <code>sys.exit()</code> at module level (which kills the test runner), and another that requires a live MongoDB connection. These are real-world tradeoffs &mdash; not every test belongs in a CI pipeline. Knowing what to include and what to defer is part of building a reliable pipeline.
+                </div>
+            </div>
+            <div class="exercise-screenshots">
+                <div class="screenshots">
+                    <div class="screenshot" onclick="openLightbox(5)">
+                        <img src="screenshots/06-ci-running.png" alt="CI pipeline running" loading="lazy">
+                        <div class="screenshot-caption">CI pipeline executing Run Tests step</div>
+                    </div>
+                    <div class="screenshot" onclick="openLightbox(8)">
+                        <img src="screenshots/09-ci-complete.png" alt="CI complete with artifact" loading="lazy">
+                        <div class="screenshot-caption">CI complete &mdash; artifact leolibertine/mekari:latest</div>
+                    </div>
+                    <div class="screenshot" onclick="openLightbox(15)">
+                        <img src="screenshots/16-dockerhub-image.png" alt="DockerHub image" loading="lazy">
+                        <div class="screenshot-caption">Docker image on DockerHub</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Exercise 4: CD Pipeline -->
+    <section class="exercise reveal" id="cd">
+        <div class="section-kicker">Exercise 04</div>
+        <h2>Continuous Deployment &mdash; Canary Strategy</h2>
+        <p class="section-desc">The CD stage takes the Docker image produced by CI and deploys it to the Kubernetes cluster using a canary release strategy.</p>
+
+        <!-- Canary Phases -->
+        <div class="canary-phases">
+            <div class="canary-phase">
+                <div class="phase-num">Phase 1</div>
+                <h4>Canary Deployment</h4>
+                <p>Deploy a small subset of the new version. Only one pod is created to test viability before committing to a full rollout.</p>
+                <div class="canary-bar"><div class="canary-bar-fill" style="width:25%;background:var(--blue);"></div></div>
+            </div>
+            <div class="canary-phase">
+                <div class="phase-num">Phase 2</div>
+                <h4>Canary Delete</h4>
+                <p>Once the canary is verified, the test pod is removed. This cleans up before the full deployment begins.</p>
+                <div class="canary-bar"><div class="canary-bar-fill" style="width:0%;background:var(--gray);"></div></div>
+            </div>
+            <div class="canary-phase">
+                <div class="phase-num">Phase 3</div>
+                <h4>Rolling Deployment</h4>
+                <p>The new version is rolled out to all pods gradually. Traffic shifts incrementally, ensuring zero downtime.</p>
+                <div class="canary-bar"><div class="canary-bar-fill" style="width:100%;background:var(--green);"></div></div>
+            </div>
+        </div>
+
+        <div class="exercise-grid">
+            <div class="exercise-content">
+                <h3>Kubernetes Manifests</h3>
+                <p>Two manifest files were created and pushed to the GitHub repository. Harness fetches them automatically from the <code>k8s/</code> directory on each deployment.</p>
+                <div class="code-block">
+                    <span class="kw">apiVersion:</span> apps/v1<br>
+                    <span class="kw">kind:</span> Deployment<br>
+                    <span class="kw">metadata:</span><br>
+                    &nbsp;&nbsp;<span class="kw">name:</span> mekari<br>
+                    <span class="kw">spec:</span><br>
+                    &nbsp;&nbsp;<span class="kw">replicas:</span> <span class="cmd">1</span><br>
+                    &nbsp;&nbsp;<span class="kw">template:</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">spec:</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">containers:</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="kw">image:</span> <span class="cmd">leolibertine/mekari:latest</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">ports:</span><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="kw">containerPort:</span> <span class="cmd">8000</span>
+                </div>
+                <h3>Service Configuration</h3>
+                <p>A ClusterIP service exposes the application on port 80 internally, routing traffic to the container's port 8000. The service, environment (<code>dev</code>, Pre-Production), and infrastructure (<code>k8s-colima</code>) were all configured in Harness.</p>
+                <div class="my-take">
+                    <div class="my-take-label">Honest take on deployment strategies</div>
+                    I picked canary because the lab asked for it &mdash; but I want to be transparent: I'm still building my understanding of when to choose canary vs. blue/green vs. rolling in production scenarios. I understand the concept (test with a small subset before full rollout), but the nuances of traffic splitting, rollback triggers, and verification steps are areas I'm actively learning. That's exactly the kind of depth I want to develop in this role.
+                </div>
+            </div>
+            <div class="exercise-screenshots">
+                <div class="screenshots">
+                    <div class="screenshot" onclick="openLightbox(9)">
+                        <img src="screenshots/10-cd-canary-phase.png" alt="Canary deployment executing" loading="lazy">
+                        <div class="screenshot-caption">Canary Deployment phase executing</div>
+                    </div>
+                    <div class="screenshot" onclick="openLightbox(10)">
+                        <img src="screenshots/11-cd-rolling-phase.png" alt="Rolling deployment" loading="lazy">
+                        <div class="screenshot-caption">Rolling Deployment &mdash; full rollout</div>
+                    </div>
+                    <div class="screenshot" onclick="openLightbox(11)">
+                        <img src="screenshots/12-pipeline-success.png" alt="Pipeline success" loading="lazy">
+                        <div class="screenshot-caption">Pipeline SUCCESS &mdash; 8m 19s total</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Exercise 5: Templates -->
+    <section class="exercise reveal orange-accent" id="templates">
+        <div class="section-kicker">Bonus Exercise</div>
+        <h2>Pipeline Templates</h2>
+        <p class="section-desc">One of Harness's strongest value propositions: templatize once, reuse everywhere. Standardize engineering practices across teams.</p>
+        <div class="exercise-grid">
+            <div class="exercise-content">
+                <h3>What Are Templates?</h3>
+                <p>Templates allow you to save a pipeline step as a reusable component. Instead of configuring the same step in every pipeline, you define it once as a template and reference it. Changes to the template propagate to all pipelines that use it.</p>
+                <h3>Run Tests Template</h3>
+                <p>I templatized the "Run Tests" step from the CI stage. It's stored at the project level (scope: Project) with version <code>v1 STABLE</code>. The pipeline now references this template instead of having the step configuration inline.</p>
+                <h3>Why This Matters</h3>
+                <p>In an enterprise with hundreds of pipelines, templates ensure consistency. If a security team requires a specific testing configuration, they update the template once &mdash; every pipeline inherits the change. This is governance at scale.</p>
+            </div>
+            <div class="exercise-screenshots">
+                <div class="screenshots">
+                    <div class="screenshot" onclick="openLightbox(12)">
+                        <img src="screenshots/13-templates-list.png" alt="Templates list" loading="lazy">
+                        <div class="screenshot-caption">Run Tests Template (v1, Project scope)</div>
+                    </div>
+                    <div class="screenshot" onclick="openLightbox(13)">
+                        <img src="screenshots/14-templates-yaml.png" alt="Template YAML" loading="lazy">
+                        <div class="screenshot-caption">Template YAML definition</div>
+                    </div>
+                    <div class="screenshot" onclick="openLightbox(14)">
+                        <img src="screenshots/15-templates-referenced.png" alt="Template referenced by pipeline" loading="lazy">
+                        <div class="screenshot-caption">Referenced by mekari-ci pipeline</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Evidence Gallery -->
+    <section class="section reveal" id="evidence">
+        <div class="section-line"></div>
+        <div class="section-kicker">Evidence</div>
+        <h2>Full Screenshot Gallery</h2>
+        <p class="section-desc">Click any image to expand. All screenshots taken during live pipeline execution on May 21, 2026.</p>
+        <div class="gallery-filters">
+            <button class="gallery-filter active" data-filter="all">All</button>
+            <button class="gallery-filter" data-filter="infra">Infrastructure</button>
+            <button class="gallery-filter" data-filter="ci">CI Pipeline</button>
+            <button class="gallery-filter" data-filter="cd">CD Pipeline</button>
+            <button class="gallery-filter" data-filter="tmpl">Templates</button>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item screenshot" data-cat="infra" onclick="openLightbox(0)">
+                <img src="screenshots/01-delegate-running.png" alt="Delegate running" loading="lazy">
+                <div class="screenshot-caption">Delegate pod running</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="infra" onclick="openLightbox(1)">
+                <img src="screenshots/02-app-deployed.png" alt="App deployed" loading="lazy">
+                <div class="screenshot-caption">App pods & services</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="infra" onclick="openLightbox(2)">
+                <img src="screenshots/03-connectors.png" alt="Connectors" loading="lazy">
+                <div class="screenshot-caption">Connectors (all Success)</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="ci" onclick="openLightbox(3)">
+                <img src="screenshots/04-pipeline-studio.png" alt="Pipeline Studio" loading="lazy">
+                <div class="screenshot-caption">Pipeline Studio overview</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="ci" onclick="openLightbox(4)">
+                <img src="screenshots/05-run-pipeline-dialog.png" alt="Run Pipeline" loading="lazy">
+                <div class="screenshot-caption">Run Pipeline dialog</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="ci" onclick="openLightbox(5)">
+                <img src="screenshots/06-ci-running.png" alt="CI running" loading="lazy">
+                <div class="screenshot-caption">CI pipeline running</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="ci" onclick="openLightbox(6)">
+                <img src="screenshots/07-ci-run-tests.png" alt="Run Tests" loading="lazy">
+                <div class="screenshot-caption">Run Tests step</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="ci" onclick="openLightbox(7)">
+                <img src="screenshots/08-ci-push-dockerhub.png" alt="Push to DockerHub" loading="lazy">
+                <div class="screenshot-caption">Push to DockerHub</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="ci" onclick="openLightbox(8)">
+                <img src="screenshots/09-ci-complete.png" alt="CI complete" loading="lazy">
+                <div class="screenshot-caption">CI stage complete</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="cd" onclick="openLightbox(9)">
+                <img src="screenshots/10-cd-canary-phase.png" alt="Canary phase" loading="lazy">
+                <div class="screenshot-caption">Canary Deployment phase</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="cd" onclick="openLightbox(10)">
+                <img src="screenshots/11-cd-rolling-phase.png" alt="Rolling phase" loading="lazy">
+                <div class="screenshot-caption">Rolling Deployment phase</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="cd" onclick="openLightbox(11)">
+                <img src="screenshots/12-pipeline-success.png" alt="Pipeline success" loading="lazy">
+                <div class="screenshot-caption">Pipeline SUCCESS</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="tmpl" onclick="openLightbox(12)">
+                <img src="screenshots/13-templates-list.png" alt="Templates" loading="lazy">
+                <div class="screenshot-caption">Templates list</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="tmpl" onclick="openLightbox(13)">
+                <img src="screenshots/14-templates-yaml.png" alt="Template YAML" loading="lazy">
+                <div class="screenshot-caption">Template YAML</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="tmpl" onclick="openLightbox(14)">
+                <img src="screenshots/15-templates-referenced.png" alt="Referenced By" loading="lazy">
+                <div class="screenshot-caption">Referenced By</div>
+            </div>
+            <div class="gallery-item screenshot" data-cat="ci" onclick="openLightbox(15)">
+                <img src="screenshots/16-dockerhub-image.png" alt="DockerHub" loading="lazy">
+                <div class="screenshot-caption">DockerHub image</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Learnings -->
+    <section class="section reveal" id="learnings">
+        <div class="section-line"></div>
+        <div class="section-kicker">Reflections</div>
+        <h2>Key Takeaways</h2>
+        <div class="cards" style="margin-bottom: 2rem;">
+            <div class="learning-card">
+                <h4>Delegates as Infrastructure Bridges</h4>
+                <p>The Delegate model is elegant: a lightweight agent inside your infrastructure that receives instructions from the SaaS platform. No inbound firewall rules needed. This is how Harness achieves zero-trust connectivity across any environment.</p>
+            </div>
+            <div class="learning-card">
+                <h4>Canary vs. Rolling</h4>
+                <p>Canary deploys give you a safety net: test with a small percentage of traffic before going all-in. Combined with Harness's rollback capabilities, this minimizes blast radius. For critical services, this is non-negotiable.</p>
+            </div>
+            <div class="learning-card">
+                <h4>Templates = Governance at Scale</h4>
+                <p>A single template change propagates to every pipeline that references it. For enterprises managing hundreds of services, this is how you enforce security policies, testing standards, and deployment best practices without slowing teams down.</p>
+            </div>
+            <div class="learning-card">
+                <h4>Build Intelligence</h4>
+                <p>Harness's Build Intelligence optimizes CI by intelligently selecting which tests to run. In large codebases, this can dramatically reduce build times while maintaining confidence in code quality.</p>
+            </div>
+        </div>
+
+        <div class="callout">
+            <strong>A note on methodology:</strong> This lab was completed with AI assistance for workflow guidance and report generation.
+            All exercises were configured and executed manually through the Harness UI and local terminal.
+            The understanding reflected here comes from hands-on interaction with every component of the platform.
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        Leo Alarcon &middot; Harness Enterprise SE Candidate Lab &middot; May 2026 &middot; Confidential
+    </footer>
+
+    <!-- Back to top -->
+    <button class="back-to-top" id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+        <button class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)">&#8249;</button>
+        <button class="lightbox-nav lightbox-next" onclick="navLightbox(1)">&#8250;</button>
+        <img id="lightbox-img" src="" alt="">
+        <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+
+    <script>
+    // Image data for lightbox
+    var images = [
+        { src: 'screenshots/01-delegate-running.png', caption: 'Delegate pod running (1/1 Ready)' },
+        { src: 'screenshots/02-app-deployed.png', caption: 'Application pods and services' },
+        { src: 'screenshots/03-connectors.png', caption: 'All connectors verified' },
+        { src: 'screenshots/04-pipeline-studio.png', caption: 'Pipeline Studio overview' },
+        { src: 'screenshots/05-run-pipeline-dialog.png', caption: 'Run Pipeline dialog' },
+        { src: 'screenshots/06-ci-running.png', caption: 'CI pipeline running' },
+        { src: 'screenshots/07-ci-run-tests.png', caption: 'Run Tests step executing' },
+        { src: 'screenshots/08-ci-push-dockerhub.png', caption: 'Push to DockerHub' },
+        { src: 'screenshots/09-ci-complete.png', caption: 'CI stage complete with artifact' },
+        { src: 'screenshots/10-cd-canary-phase.png', caption: 'Canary Deployment phase' },
+        { src: 'screenshots/11-cd-rolling-phase.png', caption: 'Rolling Deployment phase' },
+        { src: 'screenshots/12-pipeline-success.png', caption: 'Pipeline SUCCESS — 8m 19s' },
+        { src: 'screenshots/13-templates-list.png', caption: 'Run Tests Template (v1 STABLE)' },
+        { src: 'screenshots/14-templates-yaml.png', caption: 'Template YAML definition' },
+        { src: 'screenshots/15-templates-referenced.png', caption: 'Referenced by mekari-ci pipeline' },
+        { src: 'screenshots/16-dockerhub-image.png', caption: 'Docker image on DockerHub' }
+    ];
+    var currentImg = 0;
+
+    function openLightbox(idx) {
+        currentImg = idx;
+        var lb = document.getElementById('lightbox');
+        document.getElementById('lightbox-img').src = images[idx].src;
+        document.getElementById('lightbox-caption').textContent = images[idx].caption;
+        lb.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    function navLightbox(dir) {
+        currentImg = (currentImg + dir + images.length) % images.length;
+        document.getElementById('lightbox-img').src = images[currentImg].src;
+        document.getElementById('lightbox-caption').textContent = images[currentImg].caption;
+    }
+    document.getElementById('lightbox').addEventListener('click', function(e) {
+        if (e.target === this) closeLightbox();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (!document.getElementById('lightbox').classList.contains('open')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') navLightbox(-1);
+        if (e.key === 'ArrowRight') navLightbox(1);
+    });
+
+    // Gallery filter
+    document.querySelectorAll('.gallery-filter').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.gallery-filter').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            var filter = btn.dataset.filter;
+            document.querySelectorAll('.gallery-item').forEach(function(item) {
+                if (filter === 'all' || item.dataset.cat === filter) {
+                    item.classList.remove('hidden');
+                    item.style.position = '';
+                } else {
+                    item.classList.add('hidden');
+                    setTimeout(function() { item.style.position = 'absolute'; }, 400);
+                }
+            });
+        });
+    });
+
+    // Scroll progress bar
+    window.addEventListener('scroll', function() {
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        var pct = (window.scrollY / h) * 100;
+        document.getElementById('scroll-progress').style.width = pct + '%';
+    });
+
+    // Reveal on scroll
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal, .timeline-item').forEach(function(el) {
+        observer.observe(el);
+    });
+
+    // Counter animation
+    function animateCounter(el) {
+        var target = parseInt(el.dataset.target);
+        var current = 0;
+        var step = Math.max(1, Math.floor(target / 30));
+        var interval = setInterval(function() {
+            current += step;
+            if (current >= target) { current = target; clearInterval(interval); }
+            el.textContent = current;
+        }, 40);
+    }
+
+    var statsObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                document.querySelectorAll('.hero-stat .num').forEach(animateCounter);
+                statsObserver.disconnect();
+            }
+        });
+    }, { threshold: 0.5 });
+    statsObserver.observe(document.querySelector('.hero-stats'));
+
+    // Animate stat bars when expandable is opened
+    document.querySelectorAll('.expandable').forEach(function(exp) {
+        exp.addEventListener('click', function() {
+            setTimeout(function() {
+                exp.querySelectorAll('.stat-bar-fill').forEach(function(bar) {
+                    bar.style.width = bar.dataset.width;
+                });
+            }, 100);
+        });
+    });
+
+    // Back to top button
+    var backBtn = document.getElementById('back-to-top');
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 600) { backBtn.classList.add('visible'); }
+        else { backBtn.classList.remove('visible'); }
+    });
+
+    // Active nav link
+    var sections = document.querySelectorAll('section[id]');
+    window.addEventListener('scroll', function() {
+        var scrollY = window.scrollY + 100;
+        sections.forEach(function(sec) {
+            var top = sec.offsetTop;
+            var height = sec.offsetHeight;
+            var id = sec.getAttribute('id');
+            var link = document.querySelector('.nav-links a[href="#' + id + '"]');
+            if (link) {
+                if (scrollY >= top && scrollY < top + height) {
+                    document.querySelectorAll('.nav-links a').forEach(function(a) { a.classList.remove('active'); });
+                    link.classList.add('active');
+                }
+            }
+        });
+    });
+    </script>
+</body>
+</html>

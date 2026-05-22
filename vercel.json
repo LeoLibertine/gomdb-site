@@ -415,6 +415,11 @@
     },
 
     {
+      "src": "/harness(?:/.*)?$",
+      "dest": "/harness/index.html"
+    },
+
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
