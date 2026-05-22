@@ -179,6 +179,14 @@
       "dest": "/clientes/bancolombia/queryflux/arquitectura.html"
     },
     {
+      "src": "/clientes/bancolombia/queryflux/queryflux-flujo(?:/.*)?$",
+      "dest": "/clientes/bancolombia/queryflux/queryflux-flujo.html"
+    },
+    {
+      "src": "/clientes/bancolombia/queryflux/queryflux-gap-analysis(?:/.*)?$",
+      "dest": "/clientes/bancolombia/queryflux/queryflux-gap-analysis.html"
+    },
+    {
       "src": "/clientes/bancolombia/matrizopciones(?:/.*)?$",
       "dest": "/clientes/bancolombia/matrizopciones.html"
     },
