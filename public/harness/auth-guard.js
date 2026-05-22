@@ -1,31 +1,35 @@
 /**
  * Auth Guard for Harness SE Lab Report
- * Adapted from gomdb access control pattern
+ * Access codes verified via SHA-256 hash comparison
  */
 (function() {
   var CLIENT = 'harness';
-  var CLIENT_CODE = 'HARNESS-Lab2025-SE';
-  var MASTER_CODE = 'MDB-MASTER-2025';
+  var CLIENT_HASH = 'ecc2f9c1d92405ea5b6ec7bbcd09739c1ebaaaee262cc37874782fbc2d2cd7ca';
+  var MASTER_HASH = '8f69820dedb462b55879a0cf3c485b37f6e2c543f0304e264de948bd20ddcca8';
   var STORAGE_KEY = 'access_' + CLIENT;
   var MASTER_KEY = 'access_mongodb_master';
 
+  async function sha256(str) {
+    var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+  }
+
   function hasAccess() {
     try {
-      var stored = localStorage.getItem(STORAGE_KEY);
-      if (stored === CLIENT_CODE) return true;
-      var master = localStorage.getItem(MASTER_KEY);
-      if (master === MASTER_CODE) return true;
+      if (localStorage.getItem(STORAGE_KEY) === 'granted') return true;
+      if (localStorage.getItem(MASTER_KEY) === 'granted') return true;
     } catch(e) {}
     return false;
   }
 
-  function grantAccess(code) {
-    if (code === MASTER_CODE) {
-      localStorage.setItem(MASTER_KEY, code);
+  async function grantAccess(code) {
+    var hash = await sha256(code);
+    if (hash === MASTER_HASH) {
+      localStorage.setItem(MASTER_KEY, 'granted');
       return true;
     }
-    if (code === CLIENT_CODE) {
-      localStorage.setItem(STORAGE_KEY, code);
+    if (hash === CLIENT_HASH) {
+      localStorage.setItem(STORAGE_KEY, 'granted');
       return true;
     }
     return false;
@@ -69,9 +73,9 @@
   var error = document.getElementById('auth-error');
   var btn = document.getElementById('auth-submit');
 
-  function tryAccess() {
+  async function tryAccess() {
     var code = input.value.trim();
-    if (grantAccess(code)) {
+    if (await grantAccess(code)) {
       overlay.style.opacity = '0';
       overlay.style.transition = 'opacity 0.3s';
       setTimeout(function() {
