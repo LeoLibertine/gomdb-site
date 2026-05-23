@@ -1,0 +1,132 @@
+.cosmica-table-wrap {
+  background: var(--cosmica-bg-elevated);
+  border: 1px solid var(--cosmica-border);
+  border-radius: var(--cosmica-radius-lg);
+  overflow: hidden;
+}
+
+.cosmica-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.cosmica-table thead {
+  background: var(--cosmica-surface);
+}
+
+.cosmica-table th {
+  text-align: left;
+  padding: var(--cosmica-spacing-md);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--cosmica-text-secondary);
+  border-bottom: 1px solid var(--cosmica-border);
+}
+
+.cosmica-table tbody tr {
+  border-bottom: 1px solid var(--cosmica-border);
+  transition: background 0.15s ease;
+}
+
+.cosmica-table tbody tr:hover {
+  background: rgba(167, 139, 250, 0.05);
+}
+
+.cosmica-table td {
+  padding: var(--cosmica-spacing-md);
+  color: var(--cosmica-text);
+}
+
+.cosmica-cell-id {
+  background: linear-gradient(135deg, var(--cosmica-primary) 0%, var(--cosmica-primary-dark) 100%);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.cosmica-cards {
+  display: none;
+  flex-direction: column;
+  gap: var(--cosmica-spacing-md);
+  padding: var(--cosmica-spacing-md);
+}
+
+.cosmica-client-card {
+  background: var(--cosmica-surface);
+  border: 1px solid var(--cosmica-border);
+  border-radius: var(--cosmica-radius-md);
+  padding: var(--cosmica-spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--cosmica-spacing-sm);
+}
+
+.cosmica-client-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cosmica-client-card-name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.cosmica-client-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--cosmica-text-secondary);
+}
+
+.cosmica-client-card ul li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cosmica-client-card footer {
+  font-size: 0.8rem;
+  color: var(--cosmica-text-muted);
+  padding-top: 4px;
+  border-top: 1px dashed var(--cosmica-border);
+}
+
+.cosmica-tipo-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(244, 114, 182, 0.2) 0%, rgba(167, 139, 250, 0.18) 100%);
+  border: 1px solid var(--cosmica-border);
+  color: var(--cosmica-primary-light);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.cosmica-empty {
+  background: var(--cosmica-bg-elevated);
+  border: 1px dashed var(--cosmica-border);
+  border-radius: var(--cosmica-radius-lg);
+  padding: var(--cosmica-spacing-2xl);
+  text-align: center;
+  color: var(--cosmica-text-secondary);
+}
+
+@media (max-width: 880px) {
+  .cosmica-table { display: none; }
+  .cosmica-cards { display: flex; }
+}

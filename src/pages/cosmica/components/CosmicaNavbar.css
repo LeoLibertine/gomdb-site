@@ -1,0 +1,111 @@
+.cosmica-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15, 7, 40, 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--cosmica-border);
+}
+
+.cosmica-navbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px var(--cosmica-spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cosmica-spacing-md);
+}
+
+.cosmica-navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  background: linear-gradient(135deg, #fff 0%, var(--cosmica-primary-light) 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cosmica-navbar-brand svg {
+  color: var(--cosmica-primary-light);
+  -webkit-text-fill-color: initial;
+}
+
+.cosmica-navbar-links {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.cosmica-navbar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: var(--cosmica-radius-md);
+  color: var(--cosmica-text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.18s ease;
+  border: 1px solid transparent;
+}
+
+.cosmica-navbar-link:hover {
+  background: rgba(167, 139, 250, 0.08);
+  color: var(--cosmica-text);
+}
+
+.cosmica-navbar-link.is-active {
+  background: linear-gradient(135deg, rgba(109, 40, 217, 0.35) 0%, rgba(244, 114, 182, 0.18) 100%);
+  color: #fff;
+  border-color: var(--cosmica-border-strong);
+  box-shadow: 0 4px 16px rgba(109, 40, 217, 0.25);
+}
+
+.cosmica-navbar-toggle {
+  display: none;
+  background: var(--cosmica-surface);
+  border: 1px solid var(--cosmica-border);
+  border-radius: var(--cosmica-radius-md);
+  color: var(--cosmica-text);
+  padding: 8px;
+  cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  .cosmica-navbar-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cosmica-navbar-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(15, 7, 40, 0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--cosmica-border);
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--cosmica-spacing-sm);
+    gap: 4px;
+    display: none;
+  }
+
+  .cosmica-navbar-links.is-open {
+    display: flex;
+  }
+
+  .cosmica-navbar-link {
+    width: 100%;
+    padding: 12px 16px;
+  }
+}

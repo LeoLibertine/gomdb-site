@@ -1,0 +1,125 @@
+.cosmica-autocomplete {
+  position: relative;
+}
+
+.cosmica-autocomplete-input-wrap {
+  position: relative;
+}
+
+.cosmica-autocomplete-input-wrap .cosmica-input {
+  padding-right: 56px;
+}
+
+.cosmica-autocomplete-clear,
+.cosmica-autocomplete-toggle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--cosmica-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.cosmica-autocomplete-clear:hover,
+.cosmica-autocomplete-toggle:hover {
+  color: var(--cosmica-text);
+  background: rgba(167, 139, 250, 0.12);
+}
+
+.cosmica-autocomplete-clear {
+  right: 32px;
+}
+
+.cosmica-autocomplete-toggle {
+  right: 6px;
+}
+
+.cosmica-autocomplete.is-open .cosmica-autocomplete-toggle svg {
+  transform: rotate(180deg);
+}
+
+.cosmica-autocomplete-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--cosmica-bg-elevated);
+  border: 1px solid var(--cosmica-border-strong);
+  border-radius: var(--cosmica-radius-md);
+  box-shadow: var(--cosmica-shadow-lg);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 50;
+  padding: 4px;
+  animation: cosmica-fade-in 0.12s ease;
+}
+
+.cosmica-autocomplete-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: var(--cosmica-radius-sm);
+  text-align: left;
+  color: var(--cosmica-text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.cosmica-autocomplete-item:hover,
+.cosmica-autocomplete-item.is-highlight {
+  background: rgba(167, 139, 250, 0.15);
+}
+
+.cosmica-autocomplete-item.is-selected {
+  color: var(--cosmica-primary-light);
+  font-weight: 600;
+}
+
+.cosmica-autocomplete-empty {
+  padding: 12px;
+  text-align: center;
+  color: var(--cosmica-text-muted);
+  font-size: 0.9rem;
+}
+
+.cosmica-autocomplete-create {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-top: 4px;
+  background: linear-gradient(135deg, rgba(109, 40, 217, 0.25) 0%, rgba(244, 114, 182, 0.15) 100%);
+  border: 1px dashed var(--cosmica-border-strong);
+  border-radius: var(--cosmica-radius-sm);
+  color: var(--cosmica-primary-light);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cosmica-autocomplete-create:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(109, 40, 217, 0.4) 0%, rgba(244, 114, 182, 0.25) 100%);
+  color: #fff;
+}
+
+.cosmica-autocomplete-create:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}

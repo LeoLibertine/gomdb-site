@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import GoMDBLanding from './components/gomdblanding';
 import ClientesDirectory from './pages/clientes/ClientesDirectory';
 import ClientContent from './pages/clientes/ClientContent';
@@ -8,7 +8,12 @@ import { OrgChartAlvaroCarmona } from './pages/clientes/bancolombia/OrgChartAlva
 import { OrgChartFidelVargas } from './pages/clientes/bancolombia/OrgChartFidelVargas';
 import { OrgChartFidelVargasNegocios } from './pages/clientes/bancolombia/OrgChartFidelVargasNegocios';
 import DocumentoDemo from './pages/clientes/demo/DocumentoDemo';
-import Cosmica from './pages/Cosmica';
+import CosmicaHome from './pages/cosmica/CosmicaHome';
+import NuevoCliente from './pages/cosmica/NuevoCliente';
+import ListaClientes from './pages/cosmica/ListaClientes';
+import EditarCliente from './pages/cosmica/EditarCliente';
+import DashboardCosmica from './pages/cosmica/DashboardCosmica';
+import ConfiguracionCosmica from './pages/cosmica/ConfiguracionCosmica';
 import ArquitecturaDRP from './pages/clientes/bpd/ArquitecturaDRP';
 import DRPHibrido from './pages/clientes/bpd/DRPHibrido';
 import DRPFailback from './pages/clientes/bpd/DRPFailback';
@@ -32,18 +37,30 @@ const homeSections = [
 ];
 
 function App() {
+  const location = useLocation();
+  // Cósmica es un proyecto independiente — sin navbar ni branding de GoMDB
+  const isCosmica = location.pathname.startsWith('/cosmica');
+
   return (
     <>
-      {/* El Navbar vive fuera de las rutas para mostrarse siempre */}
-      <GlobalNavbar sections={homeSections} />
+      {!isCosmica && <GlobalNavbar sections={homeSections} />}
 
-      <main style={{ paddingTop: '72px', minHeight: '100vh', background: 'var(--color-bg-primary)' }}>
+      <main style={{
+        paddingTop: isCosmica ? 0 : '72px',
+        minHeight: '100vh',
+        background: isCosmica ? 'transparent' : 'var(--color-bg-primary)'
+      }}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<GoMDBLanding />} />
           <Route path="/demo" element={<DocumentoDemo />} />
           <Route path="/clientes/demo/documento" element={<DocumentoDemo />} />
-          <Route path="/cosmica" element={<Cosmica />} />
+          <Route path="/cosmica" element={<CosmicaHome />} />
+          <Route path="/cosmica/nuevo" element={<NuevoCliente />} />
+          <Route path="/cosmica/clientes" element={<ListaClientes />} />
+          <Route path="/cosmica/clientes/:id" element={<EditarCliente />} />
+          <Route path="/cosmica/dashboard" element={<DashboardCosmica />} />
+          <Route path="/cosmica/configuracion" element={<ConfiguracionCosmica />} />
           <Route path="/login" element={<Login />} />
 
           {/* Clientes Directory - Protected */}

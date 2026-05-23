@@ -1,0 +1,99 @@
+.cosmica-form {
+  background: var(--cosmica-bg-elevated);
+  border: 1px solid var(--cosmica-border);
+  border-radius: var(--cosmica-radius-lg);
+  padding: var(--cosmica-spacing-xl);
+  box-shadow: var(--cosmica-shadow-sm);
+}
+
+.cosmica-form-meta {
+  display: flex;
+  gap: var(--cosmica-spacing-xl);
+  padding-bottom: var(--cosmica-spacing-md);
+  margin-bottom: var(--cosmica-spacing-lg);
+  border-bottom: 1px solid var(--cosmica-border);
+}
+
+.cosmica-form-meta > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cosmica-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--cosmica-spacing-md);
+}
+
+.cosmica-field-wide {
+  grid-column: span 2;
+}
+
+.cosmica-form-actions {
+  display: flex;
+  gap: var(--cosmica-spacing-sm);
+  justify-content: flex-end;
+  margin-top: var(--cosmica-spacing-xl);
+  padding-top: var(--cosmica-spacing-md);
+  border-top: 1px solid var(--cosmica-border);
+}
+
+.cosmica-phone-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--cosmica-text-muted);
+  margin-top: 2px;
+}
+
+.cosmica-phone-status.cosmica-phone-ok {
+  color: var(--cosmica-success);
+}
+
+.cosmica-phone-status.cosmica-phone-warning {
+  color: var(--cosmica-warning);
+  flex-wrap: wrap;
+}
+
+.cosmica-link {
+  background: none;
+  border: none;
+  color: var(--cosmica-primary-light);
+  font-family: inherit;
+  font-size: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.cosmica-link:hover {
+  color: var(--cosmica-accent);
+}
+
+.cosmica-spin {
+  animation: cosmica-spin 1s linear infinite;
+}
+
+@media (max-width: 720px) {
+  .cosmica-form {
+    padding: var(--cosmica-spacing-md);
+  }
+
+  .cosmica-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cosmica-field-wide {
+    grid-column: span 1;
+  }
+
+  .cosmica-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .cosmica-form-actions .cosmica-btn {
+    width: 100%;
+  }
+}

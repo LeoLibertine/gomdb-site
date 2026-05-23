@@ -5,9 +5,21 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": { "distDir": "dist" }
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
+    { "src": "/api/cosmica/clientes/buscar", "dest": "/api/cosmica/clientes/buscar.js" },
+    { "src": "/api/cosmica/clientes/exportar", "dest": "/api/cosmica/clientes/exportar.js" },
+    { "src": "/api/cosmica/clientes/(?<id>[^/]+)", "dest": "/api/cosmica/clientes/[id].js?id=$id" },
+    { "src": "/api/cosmica/clientes", "dest": "/api/cosmica/clientes/index.js" },
+    { "src": "/api/cosmica/vendedores", "dest": "/api/cosmica/vendedores.js" },
+    { "src": "/api/cosmica/giros", "dest": "/api/cosmica/giros.js" },
+    { "src": "/api/cosmica/tipos-cliente", "dest": "/api/cosmica/tipos-cliente.js" },
+    { "src": "/api/cosmica/dashboard", "dest": "/api/cosmica/dashboard.js" },
     { "handle": "filesystem" },
 
     {

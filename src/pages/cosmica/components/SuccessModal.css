@@ -1,0 +1,154 @@
+.cosmica-success-modal {
+  position: relative;
+  background: linear-gradient(180deg, var(--cosmica-bg-elevated) 0%, var(--cosmica-surface) 100%);
+  border: 1px solid var(--cosmica-border-strong);
+  border-radius: var(--cosmica-radius-xl);
+  padding: var(--cosmica-spacing-2xl) var(--cosmica-spacing-xl);
+  max-width: 480px;
+  width: 100%;
+  box-shadow:
+    0 24px 64px rgba(15, 7, 40, 0.6),
+    0 0 80px rgba(167, 139, 250, 0.25);
+  text-align: center;
+  animation: cosmica-success-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+}
+
+@keyframes cosmica-success-pop {
+  from {
+    transform: scale(0.85) translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.cosmica-success-stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(2px 2px at 25% 30%, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1px 1px at 70% 65%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 85% 20%, rgba(244, 114, 182, 0.5), transparent),
+    radial-gradient(1px 1px at 15% 75%, rgba(167, 139, 250, 0.5), transparent);
+  opacity: 0.7;
+}
+
+.cosmica-success-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto var(--cosmica-spacing-md);
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(167, 139, 250, 0.15) 100%);
+  color: var(--cosmica-success);
+  position: relative;
+  z-index: 1;
+  animation: cosmica-success-glow 2.5s ease-in-out infinite;
+}
+
+@keyframes cosmica-success-glow {
+  0%, 100% { box-shadow: 0 0 32px rgba(16, 185, 129, 0.4); }
+  50%      { box-shadow: 0 0 56px rgba(16, 185, 129, 0.6); }
+}
+
+.cosmica-success-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cosmica-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 var(--cosmica-spacing-md) 0;
+  position: relative;
+  z-index: 1;
+}
+
+.cosmica-success-title svg {
+  color: var(--cosmica-gold);
+}
+
+.cosmica-success-number {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: var(--cosmica-spacing-md);
+  position: relative;
+  z-index: 1;
+}
+
+.cosmica-success-label {
+  font-size: 0.75rem;
+  color: var(--cosmica-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.cosmica-success-number strong {
+  font-size: clamp(3rem, 8vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  background: linear-gradient(135deg, #fff 0%, var(--cosmica-primary-light) 50%, var(--cosmica-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cosmica-success-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--cosmica-text);
+  margin-bottom: var(--cosmica-spacing-sm);
+  position: relative;
+  z-index: 1;
+}
+
+.cosmica-success-details {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--cosmica-spacing-xl) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+  color: var(--cosmica-text-secondary);
+  position: relative;
+  z-index: 1;
+}
+
+.cosmica-success-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.cosmica-success-actions .cosmica-btn {
+  flex: 1;
+  min-width: 110px;
+}
+
+@media (max-width: 520px) {
+  .cosmica-success-modal {
+    padding: var(--cosmica-spacing-xl) var(--cosmica-spacing-md);
+  }
+
+  .cosmica-success-actions {
+    flex-direction: column;
+  }
+
+  .cosmica-success-actions .cosmica-btn {
+    width: 100%;
+  }
+}

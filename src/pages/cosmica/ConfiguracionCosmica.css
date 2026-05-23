@@ -1,0 +1,55 @@
+.cosmica-config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--cosmica-spacing-lg);
+}
+
+.cosmica-config-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 var(--cosmica-spacing-md) 0;
+}
+
+.cosmica-config-add {
+  display: flex;
+  gap: var(--cosmica-spacing-sm);
+  margin-bottom: var(--cosmica-spacing-md);
+}
+
+.cosmica-config-add .cosmica-input {
+  flex: 1;
+}
+
+.cosmica-config-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--cosmica-spacing-sm);
+}
+
+.cosmica-config-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--cosmica-spacing-sm);
+  padding: var(--cosmica-spacing-sm) var(--cosmica-spacing-md);
+  background: var(--cosmica-surface);
+  border: 1px solid var(--cosmica-border);
+  border-radius: var(--cosmica-radius-md);
+}
+
+.cosmica-config-list li .cosmica-input {
+  flex: 1;
+}
+
+.cosmica-config-name {
+  flex: 1;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+
+.cosmica-config-name:hover {
+  color: var(--cosmica-primary-light);
+}

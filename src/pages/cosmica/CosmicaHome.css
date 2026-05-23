@@ -1,0 +1,126 @@
+.cosmica-home-hero {
+  text-align: center;
+  margin-bottom: var(--cosmica-spacing-2xl);
+  padding-top: var(--cosmica-spacing-lg);
+}
+
+.cosmica-home-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cosmica-spacing-sm);
+  color: var(--cosmica-primary-light);
+}
+
+.cosmica-home-title {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin: 0;
+  background: linear-gradient(135deg, #fff 0%, var(--cosmica-primary-light) 50%, var(--cosmica-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cosmica-home-subtitle {
+  color: var(--cosmica-text-secondary);
+  font-size: 1.05rem;
+  max-width: 580px;
+  margin: var(--cosmica-spacing-sm) auto 0;
+  line-height: 1.5;
+}
+
+.cosmica-home-stats {
+  display: flex;
+  justify-content: center;
+  gap: var(--cosmica-spacing-xl);
+  margin-top: var(--cosmica-spacing-xl);
+  flex-wrap: wrap;
+}
+
+.cosmica-home-stats > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.cosmica-home-stats strong {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--cosmica-primary-light) 0%, var(--cosmica-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cosmica-home-stats span {
+  font-size: 0.85rem;
+  color: var(--cosmica-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cosmica-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--cosmica-spacing-md);
+}
+
+.cosmica-tile {
+  display: flex;
+  align-items: center;
+  gap: var(--cosmica-spacing-md);
+  padding: var(--cosmica-spacing-lg);
+  background: var(--cosmica-bg-elevated);
+  border: 1px solid var(--cosmica-border);
+  border-radius: var(--cosmica-radius-lg);
+  text-decoration: none;
+  color: var(--cosmica-text);
+  transition: all 0.25s ease;
+  box-shadow: var(--cosmica-shadow-sm);
+}
+
+.cosmica-tile:hover {
+  transform: translateY(-3px);
+  border-color: var(--cosmica-border-strong);
+  box-shadow: var(--cosmica-shadow-lg), var(--cosmica-glow);
+}
+
+.cosmica-tile-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--cosmica-radius-md);
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.18) 0%, rgba(244, 114, 182, 0.1) 100%);
+  color: var(--cosmica-primary-light);
+  flex-shrink: 0;
+}
+
+.cosmica-tile-primary {
+  background: linear-gradient(135deg, var(--cosmica-primary) 0%, var(--cosmica-primary-dark) 100%);
+  border-color: var(--cosmica-primary-light);
+}
+
+.cosmica-tile-primary .cosmica-tile-icon {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.cosmica-tile-text h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.cosmica-tile-text p {
+  font-size: 0.9rem;
+  color: var(--cosmica-text-secondary);
+  margin: 0;
+}
+
+.cosmica-tile-primary .cosmica-tile-text p {
+  color: rgba(255, 255, 255, 0.85);
+}
