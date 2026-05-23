@@ -27,7 +27,7 @@ export default async function handler(req, res) {
 
     const rows = docs.map((c) => ({
       'N° de cliente': c.numero_cliente,
-      'Fecha de registro': c.fecha_registro ? new Date(c.fecha_registro).toLocaleDateString('es-MX') : '',
+      'Fecha de registro': c.fecha_registro ? new Date(c.fecha_registro).toLocaleString('es-MX') : '',
       'Teléfono principal': c.telefono_principal || '',
       'Nombre': c.nombre || '',
       'Tipo de cliente': c.tipo_cliente || '',

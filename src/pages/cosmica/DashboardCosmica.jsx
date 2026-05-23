@@ -73,7 +73,11 @@ const DashboardCosmica = () => {
                         <span>{r.vendedor || 'sin vendedor'} · {r.estado || '—'}</span>
                       </div>
                       <time>
-                        {r.fecha_registro ? new Date(r.fecha_registro).toLocaleDateString('es-MX') : '—'}
+                        {r.fecha_registro
+                          ? new Date(r.fecha_registro).toLocaleString('es-MX', {
+                              month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+                            })
+                          : '—'}
                       </time>
                     </li>
                   ))}

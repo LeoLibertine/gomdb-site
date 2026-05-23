@@ -199,7 +199,10 @@ export const ClientForm = ({ mode, initialData, onSaved }) => {
               <span className="cosmica-label">Registrado</span>
               <strong>
                 {initialData.fecha_registro
-                  ? new Date(initialData.fecha_registro).toLocaleDateString('es-MX')
+                  ? new Date(initialData.fecha_registro).toLocaleString('es-MX', {
+                      year: 'numeric', month: '2-digit', day: '2-digit',
+                      hour: '2-digit', minute: '2-digit'
+                    })
                   : '—'}
               </strong>
             </div>

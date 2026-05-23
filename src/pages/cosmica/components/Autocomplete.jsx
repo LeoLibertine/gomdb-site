@@ -166,7 +166,11 @@ export const Autocomplete = ({
       {open && (
         <div className="cosmica-autocomplete-menu" role="listbox">
           {filtered.length === 0 && !showCreate && (
-            <div className="cosmica-autocomplete-empty">Sin coincidencias</div>
+            <div className="cosmica-autocomplete-empty">
+              {options.length === 0 && onCreate
+                ? 'Sin opciones. Escribe un nombre para agregar uno nuevo.'
+                : 'Sin coincidencias'}
+            </div>
           )}
           {filtered.map((opt, idx) => (
             <button
@@ -189,7 +193,7 @@ export const Autocomplete = ({
               onMouseDown={(e) => { e.preventDefault(); handleAddNew() }}
               disabled={creating}
             >
-              <Plus size={14} /> Agregar &quot;{query.trim()}&quot;
+              <Plus size={14} /> {creating ? 'Agregando…' : `Agregar "${query.trim()}"`}
             </button>
           )}
         </div>

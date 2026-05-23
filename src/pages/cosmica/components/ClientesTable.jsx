@@ -53,7 +53,7 @@ export const ClientesTable = ({ items, loading, emptyMessage }) => {
               <td>{c.vendedor || '—'}</td>
               <td>{c.estado || '—'}</td>
               <td>{c.giro || '—'}</td>
-              <td>{c.fecha_registro ? new Date(c.fecha_registro).toLocaleDateString('es-MX') : '—'}</td>
+              <td>{formatDateTime(c.fecha_registro)}</td>
               <td>
                 <button
                   type="button"
@@ -90,7 +90,7 @@ export const ClientesTable = ({ items, loading, emptyMessage }) => {
               {c.giro && <li><Briefcase size={14} /> {c.giro}</li>}
             </ul>
             <footer>
-              Registrado: {c.fecha_registro ? new Date(c.fecha_registro).toLocaleDateString('es-MX') : '—'}
+              Registrado: {formatDateTime(c.fecha_registro)}
             </footer>
           </article>
         ))}
@@ -116,4 +116,16 @@ function formatPhoneDisplay(phone) {
   const digits = String(phone).replace(/\D/g, '')
   if (digits.length !== 10) return phone
   return `${digits.slice(0, 2)} ${digits.slice(2, 6)} ${digits.slice(6)}`
+}
+
+function formatDateTime(value) {
+  if (!value) return '—'
+  const d = new Date(value)
+  return d.toLocaleString('es-MX', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
 }
