@@ -440,6 +440,11 @@
     },
 
     {
+      "src": "/.local/guia(?:/.*)?$",
+      "dest": "/.local/guia.html"
+    },
+
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
