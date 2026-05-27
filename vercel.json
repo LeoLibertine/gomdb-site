@@ -440,8 +440,8 @@
     },
 
     {
-      "src": "/.local/guia(?:/.*)?$",
-      "dest": "/.local/guia.html"
+      "src": "/local/guia(?:/.*)?$",
+      "dest": "/local/guia.html"
     },
 
     {
