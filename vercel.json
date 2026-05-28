@@ -376,6 +376,10 @@
       "dest": "/clientes/coppel/matriz-universal.html"
     },
     {
+      "src": "/clientes/bancolombia/ai-contexto(?:/.*)?$",
+      "dest": "/clientes/bancolombia/ai-contexto.html"
+    },
+    {
       "src": "/clientes/bancolombia/flappy(?:/.*)?$",
       "dest": "/clientes/bancolombia/flappy.html"
     },
