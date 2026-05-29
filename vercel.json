@@ -450,11 +450,8 @@
 
     {
       "src": "/ai$",
-      "dest": "/ai/index.html"
-    },
-    {
-      "src": "/ai/(?:index)?(?:/.*)?$",
-      "dest": "/ai/index.html"
+      "status": 308,
+      "headers": { "Location": "/ai/" }
     },
 
     {
