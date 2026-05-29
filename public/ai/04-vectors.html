@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>04 · Vectores & Embeddings</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  /* CONCEPT LADDER */
+  .ladder {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 3rem 0;
+  }
+
+  @media (max-width: 900px) { .ladder { grid-template-columns: 1fr; } }
+
+  .ladder-step {
+    background: var(--mdb-dark-2);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    border: 1px solid var(--border-subtle);
+    transition: transform 0.3s;
+  }
+
+  .ladder-step:hover {
+    transform: translateY(-4px);
+    border-color: var(--mdb-green);
+  }
+
+  .ladder-step-num {
+    position: absolute;
+    top: -20px;
+    left: 1.8rem;
+    width: 48px;
+    height: 48px;
+    background: var(--mdb-green);
+    color: var(--mdb-dark);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.3rem;
+  }
+
+  .ladder-step h3 {
+    font-size: 1.3rem;
+    margin-top: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .ladder-step p {
+    color: var(--text-secondary);
+    font-size: 0.98rem;
+    line-height: 1.6;
+  }
+
+  /* DEMO 1: PERSON VECTOR */
+  .person-demo {
+    background: var(--mdb-dark-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 24px;
+    padding: 3rem;
+    margin: 3rem 0;
+  }
+
+  .person-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  @media (max-width: 900px) { .person-grid { grid-template-columns: 1fr; } }
+
+  .person-card {
+    background: var(--mdb-dark);
+    border-radius: 18px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .person-emoji {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    line-height: 1;
+  }
+
+  .person-name {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .person-attrs {
+    margin: 1.5rem 0;
+  }
+
+  .person-attr {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+  }
+
+  .person-attr-label { color: var(--text-tertiary); }
+  .person-attr-value { color: var(--mdb-green); font-weight: 600; }
+
+  .vector-display {
+    background: var(--mdb-dark);
+    border-radius: 18px;
+    padding: 2rem;
+    font-family: var(--font-mono);
+    font-size: 1.4rem;
+    text-align: center;
+    border: 2px solid var(--mdb-green-deep);
+  }
+
+  .vector-display-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-tertiary);
+    margin-bottom: 1rem;
+    font-weight: 400;
+  }
+
+  .vector-bracket { color: var(--text-tertiary); }
+  .vector-num { color: var(--mdb-green); font-weight: 700; }
+
+  /* DEMO 2: 2D MAP */
+  .map-section {
+    margin: 5rem 0;
+  }
+
+  .map-container {
+    background: var(--mdb-dark-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 24px;
+    padding: 2rem;
+    margin: 2rem 0;
+  }
+
+  .map-svg-wrapper {
+    background: var(--mdb-dark);
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    position: relative;
+  }
+
+  .map-svg-wrapper svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .map-legend {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+  }
+
+  /* WORD MATH */
+  .wordmath {
+    background: linear-gradient(135deg, var(--mdb-green-deep) 0%, var(--mdb-dark-2) 100%);
+    border: 1px solid var(--mdb-green);
+    border-radius: 28px;
+    padding: 3rem;
+    margin: 5rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .wordmath::before {
+    content: '∑';
+    position: absolute;
+    right: -50px;
+    bottom: -100px;
+    font-family: var(--font-display);
+    font-size: 25rem;
+    color: rgba(0, 237, 100, 0.06);
+    line-height: 0.9;
+  }
+
+  .wordmath-tag {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.75rem;
+    color: var(--mdb-green);
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .wordmath h2 {
+    color: white;
+    margin-bottom: 0.5rem;
+    position: relative;
+  }
+
+  .wordmath > p {
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
+
+  .equation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin: 3rem 0;
+    position: relative;
+  }
+
+  .word-pill {
+    padding: 1rem 1.8rem;
+    background: white;
+    color: var(--mdb-dark);
+    border-radius: 100px;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .word-pill:hover {
+    transform: scale(1.05);
+  }
+
+  .word-pill.var-1 { background: linear-gradient(135deg, #4ECDC4, #2BB6AB); color: white; }
+  .word-pill.var-2 { background: linear-gradient(135deg, #B794F4, #8B5CF6); color: white; }
+  .word-pill.var-3 { background: linear-gradient(135deg, #FFD93D, #F59E0B); color: var(--mdb-dark); }
+  .word-pill.var-result {
+    background: var(--mdb-green);
+    color: var(--mdb-dark);
+    font-size: 1.8rem;
+    padding: 1.2rem 2.2rem;
+    box-shadow: 0 8px 30px rgba(0, 237, 100, 0.5);
+    animation: pulseGlow 2s infinite;
+  }
+
+  .op {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--mdb-mint);
+  }
+
+  .equations-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 3rem;
+    position: relative;
+  }
+
+  .eq-row {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1.2rem 1.8rem;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .eq-row:hover {
+    border-color: var(--mdb-green);
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .eq-row.active {
+    border-color: var(--mdb-green);
+    background: rgba(0, 237, 100, 0.08);
+  }
+
+  .eq-row .word-pill {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .eq-row .word-pill.var-result {
+    font-size: 1.05rem;
+    padding: 0.55rem 1.1rem;
+    animation: none;
+  }
+
+  .eq-row .op { font-size: 1.5rem; }
+
+  /* SEMANTIC SEARCH DEMO */
+  .search-demo {
+    background: var(--mdb-dark-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 24px;
+    padding: 3rem;
+    margin: 5rem 0;
+  }
+
+  .search-input-row {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .search-input {
+    flex: 1;
+    background: var(--mdb-dark);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    padding: 1rem 1.4rem;
+    border-radius: 14px;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--mdb-green);
+    box-shadow: 0 0 0 3px rgba(0, 237, 100, 0.15);
+  }
+
+  .search-go {
+    padding: 1rem 1.6rem;
+    background: var(--mdb-green);
+    color: var(--mdb-dark);
+    border: none;
+    border-radius: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  .search-suggestions {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .suggestion-btn {
+    padding: 0.5rem 1rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .suggestion-btn:hover {
+    border-color: var(--mdb-green);
+    color: var(--mdb-green);
+  }
+
+  .results-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  @media (max-width: 900px) { .results-compare { grid-template-columns: 1fr; } }
+
+  .result-col h4 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid var(--border-subtle);
+  }
+
+  .result-col.keyword h4::before { content: '🔤 '; }
+  .result-col.semantic h4::before { content: '🧠 '; }
+  .result-col.semantic h4 { border-color: var(--mdb-green); color: var(--mdb-green); }
+
+  .result-item {
+    background: var(--mdb-dark);
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    margin-bottom: 0.8rem;
+    border: 1px solid var(--border-subtle);
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .result-item.matched {
+    border-color: var(--mdb-green);
+    background: rgba(0, 237, 100, 0.06);
+  }
+
+  .result-item.no-match {
+    opacity: 0.3;
+  }
+
+  .result-score {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--mdb-green);
+    font-weight: 600;
+  }
+
+  .result-empty {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
+
+  /* FINAL CTA */
+  .sales-final {
+    margin-top: 5rem;
+    padding: 3rem;
+    background: linear-gradient(135deg, var(--mdb-green-deep), var(--mdb-dark-2));
+    border-radius: 28px;
+    border: 1px solid var(--mdb-green);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sales-final-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--mdb-green);
+    margin-bottom: 1.5rem;
+  }
+
+  .sales-final h2 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .sales-final h2 em {
+    color: var(--mdb-green);
+    font-style: italic;
+  }
+
+  .sales-final p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <a href="index.html" class="topnav-brand">
+      <div class="topnav-brand-mark">M</div>
+      <span>AI Training · MongoDB LATAM</span>
+    </a>
+    <div class="topnav-progress">
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot active"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+    </div>
+    <div class="topnav-meta">Capítulo 4 de 9 ⭐</div>
+  </nav>
+
+  <!-- Chapter header -->
+  <header class="chapter-header">
+    <div class="chapter-header-text">
+      <span class="kicker">Capítulo 04 · El corazón ⭐</span>
+      <div class="chapter-number">04</div>
+      <h1 class="chapter-title">Vectores & embeddings.</h1>
+      <p class="chapter-subtitle">
+        Si solo te quedas con UN capítulo de este training, que sea este.
+        Aquí es donde la IA deja de ser magia y se vuelve geometría.
+      </p>
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Tiempo</span>
+        <span class="chapter-meta-value">12 min</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Demos</span>
+        <span class="chapter-meta-value">3 interactivos</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Wow factor</span>
+        <span class="chapter-meta-value">🚀🚀🚀</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- THE 3-LADDER -->
+  <section>
+    <div class="section-heading">
+      <h2>Lo vamos a construir en 3 escalones</h2>
+      <span class="section-heading-line"></span>
+    </div>
+
+    <div class="ladder">
+      <div class="ladder-step">
+        <div class="ladder-step-num">1</div>
+        <h3>¿Qué es un vector?</h3>
+        <p>Una lista de números que describe algo. Si describo a una persona con 3 números, cada persona se vuelve un punto en un espacio.</p>
+      </div>
+      <div class="ladder-step">
+        <div class="ladder-step-num">2</div>
+        <h3>¿Qué es un embedding?</h3>
+        <p>Lo mismo, pero con 1,536 números en lugar de 3 — y los genera un modelo de IA. En vez de describir personas, describe <strong style="color: var(--mdb-green);">significado</strong>.</p>
+      </div>
+      <div class="ladder-step">
+        <div class="ladder-step-num">3</div>
+        <h3>¿Por qué importa?</h3>
+        <p>Porque permite buscar por <strong style="color: var(--mdb-green);">significado</strong>, no por palabras exactas. "Mi débito no jala" encuentra "transacción rechazada".</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEMO 1: PERSON AS VECTOR -->
+  <section>
+    <div class="section-heading">
+      <h2>Escalón 1 · Una persona en 3 números</h2>
+      <span class="section-heading-line"></span>
+      <span class="kicker">Demo interactivo</span>
+    </div>
+
+    <p class="text-secondary mb-3" style="max-width: 800px;">
+      Imagina que te pido describir a una persona usando solo
+      <strong style="color: var(--mdb-green);">3 números</strong>: edad, altura (cm), ingreso mensual (miles).
+      Esa lista de 3 números <em>es un vector</em>. Cambia los sliders y mira:
+    </p>
+
+    <div class="person-demo">
+      <div class="person-grid">
+
+        <div class="person-card">
+          <div class="person-emoji" id="personEmoji">🧑‍💼</div>
+          <div class="person-name" id="personName">Ana</div>
+
+          <div class="person-attrs">
+            <div class="person-attr">
+              <span class="person-attr-label">Edad</span>
+              <span class="person-attr-value" id="ageValue">35 años</span>
+            </div>
+            <input type="range" class="calc-slider" min="20" max="70" value="35" oninput="updatePerson()" id="ageSlider" style="width:100%; height:6px; background: rgba(255,255,255,0.1); border-radius:3px;">
+
+            <div class="person-attr" style="margin-top: 1rem;">
+              <span class="person-attr-label">Altura</span>
+              <span class="person-attr-value" id="heightValue">170 cm</span>
+            </div>
+            <input type="range" class="calc-slider" min="150" max="200" value="170" oninput="updatePerson()" id="heightSlider" style="width:100%; height:6px; background: rgba(255,255,255,0.1); border-radius:3px;">
+
+            <div class="person-attr" style="margin-top: 1rem;">
+              <span class="person-attr-label">Ingreso (K MXN)</span>
+              <span class="person-attr-value" id="incomeValue">$45K</span>
+            </div>
+            <input type="range" class="calc-slider" min="10" max="200" value="45" oninput="updatePerson()" id="incomeSlider" style="width:100%; height:6px; background: rgba(255,255,255,0.1); border-radius:3px;">
+          </div>
+        </div>
+
+        <div>
+          <div class="vector-display">
+            <div class="vector-display-label">Vector de Ana</div>
+            <span class="vector-bracket">[</span>
+            <span class="vector-num" id="vAge">35</span><span class="vector-bracket">,</span>
+            <span class="vector-num" id="vHeight">170</span><span class="vector-bracket">,</span>
+            <span class="vector-num" id="vIncome">45</span>
+            <span class="vector-bracket">]</span>
+          </div>
+
+          <p class="text-secondary" style="margin-top: 2rem; line-height: 1.7;">
+            Eso es <strong style="color: var(--mdb-green);">un vector de 3 dimensiones</strong>.
+            Cada persona se convierte en un punto en un espacio 3D. Personas
+            parecidas (edad/altura/ingreso similares) quedan <strong style="color: var(--mdb-green);">cerca</strong>.
+            Personas distintas quedan <strong style="color: var(--accent-coral);">lejos</strong>.
+            <br><br>
+            Los embeddings de IA hacen exactamente lo mismo —
+            pero con <strong style="color: var(--mdb-green);">1,536 números</strong>
+            en lugar de 3, y describen <em>significado</em> en lugar de personas.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- DEMO 2: 2D WORD MAP -->
+  <section class="map-section">
+    <div class="section-heading">
+      <h2>Escalón 2 · Mapa de significado en 2D</h2>
+      <span class="section-heading-line"></span>
+      <span class="kicker">Pasa el mouse</span>
+    </div>
+
+    <p class="text-secondary mb-3" style="max-width: 800px;">
+      Aquí tienes <strong style="color: var(--mdb-green);">40 palabras</strong> proyectadas en un espacio 2D
+      (simplificado de 1,536 dimensiones a 2). Mira cómo las palabras
+      <strong>relacionadas se agrupan</strong>:
+    </p>
+
+    <div class="map-container">
+      <div class="map-svg-wrapper">
+        <svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="bg-glow">
+              <stop offset="0%" stop-color="#001E2B" stop-opacity="0"/>
+              <stop offset="100%" stop-color="#001E2B" stop-opacity="1"/>
+            </radialGradient>
+            <pattern id="grid-pat" width="50" height="50" patternUnits="userSpaceOnUse">
+              <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(195,231,202,0.05)" stroke-width="1"/>
+            </pattern>
+          </defs>
+          <rect width="1000" height="600" fill="url(#grid-pat)"/>
+
+          <!-- Cluster labels (background) -->
+          <text x="200" y="100" font-family="JetBrains Mono" font-size="11" fill="rgba(0,237,100,0.4)" letter-spacing="2">REALEZA</text>
+          <text x="780" y="100" font-family="JetBrains Mono" font-size="11" fill="rgba(78,205,196,0.4)" letter-spacing="2">ANIMALES</text>
+          <text x="120" y="540" font-family="JetBrains Mono" font-size="11" fill="rgba(183,148,244,0.4)" letter-spacing="2">FINANZAS</text>
+          <text x="620" y="540" font-family="JetBrains Mono" font-size="11" fill="rgba(255,217,61,0.4)" letter-spacing="2">COMIDA</text>
+          <text x="430" y="320" font-family="JetBrains Mono" font-size="11" fill="rgba(255,107,107,0.4)" letter-spacing="2">EMOCIÓN</text>
+
+          <!-- Cluster background circles -->
+          <circle cx="220" cy="160" r="130" fill="rgba(0,237,100,0.04)" stroke="rgba(0,237,100,0.15)" stroke-width="1" stroke-dasharray="4 4"/>
+          <circle cx="820" cy="160" r="130" fill="rgba(78,205,196,0.04)" stroke="rgba(78,205,196,0.15)" stroke-width="1" stroke-dasharray="4 4"/>
+          <circle cx="180" cy="470" r="120" fill="rgba(183,148,244,0.04)" stroke="rgba(183,148,244,0.15)" stroke-width="1" stroke-dasharray="4 4"/>
+          <circle cx="700" cy="470" r="130" fill="rgba(255,217,61,0.04)" stroke="rgba(255,217,61,0.15)" stroke-width="1" stroke-dasharray="4 4"/>
+          <circle cx="500" cy="340" r="80" fill="rgba(255,107,107,0.04)" stroke="rgba(255,107,107,0.15)" stroke-width="1" stroke-dasharray="4 4"/>
+
+          <!-- REALEZA cluster -->
+          <g class="word-node" data-color="#00ED64">
+            <circle cx="200" cy="140" r="6" fill="#00ED64"/>
+            <text x="215" y="145" font-family="Inter" font-size="14" fill="#00ED64" font-weight="600">rey</text>
+          </g>
+          <g class="word-node" data-color="#00ED64">
+            <circle cx="280" cy="170" r="6" fill="#00ED64"/>
+            <text x="295" y="175" font-family="Inter" font-size="14" fill="#00ED64" font-weight="600">reina</text>
+          </g>
+          <g class="word-node" data-color="#00ED64">
+            <circle cx="180" cy="200" r="6" fill="#00ED64"/>
+            <text x="195" y="205" font-family="Inter" font-size="14" fill="#00ED64" font-weight="600">príncipe</text>
+          </g>
+          <g class="word-node" data-color="#00ED64">
+            <circle cx="240" cy="100" r="6" fill="#00ED64"/>
+            <text x="255" y="105" font-family="Inter" font-size="14" fill="#00ED64" font-weight="600">corona</text>
+          </g>
+          <g class="word-node" data-color="#00ED64">
+            <circle cx="290" cy="220" r="6" fill="#00ED64"/>
+            <text x="305" y="225" font-family="Inter" font-size="14" fill="#00ED64" font-weight="600">castillo</text>
+          </g>
+          <g class="word-node" data-color="#00ED64">
+            <circle cx="140" cy="160" r="6" fill="#00ED64"/>
+            <text x="60" y="165" font-family="Inter" font-size="14" fill="#00ED64" font-weight="600">trono</text>
+          </g>
+          <g class="word-node" data-color="#00ED64">
+            <circle cx="320" cy="120" r="6" fill="#00ED64"/>
+            <text x="335" y="125" font-family="Inter" font-size="14" fill="#00ED64" font-weight="600">imperio</text>
+          </g>
+
+          <!-- ANIMALES cluster -->
+          <g class="word-node" data-color="#4ECDC4">
+            <circle cx="820" cy="140" r="6" fill="#4ECDC4"/>
+            <text x="835" y="145" font-family="Inter" font-size="14" fill="#4ECDC4" font-weight="600">perro</text>
+          </g>
+          <g class="word-node" data-color="#4ECDC4">
+            <circle cx="780" cy="180" r="6" fill="#4ECDC4"/>
+            <text x="795" y="185" font-family="Inter" font-size="14" fill="#4ECDC4" font-weight="600">gato</text>
+          </g>
+          <g class="word-node" data-color="#4ECDC4">
+            <circle cx="870" cy="180" r="6" fill="#4ECDC4"/>
+            <text x="885" y="185" font-family="Inter" font-size="14" fill="#4ECDC4" font-weight="600">cachorro</text>
+          </g>
+          <g class="word-node" data-color="#4ECDC4">
+            <circle cx="740" cy="120" r="6" fill="#4ECDC4"/>
+            <text x="660" y="125" font-family="Inter" font-size="14" fill="#4ECDC4" font-weight="600">mascota</text>
+          </g>
+          <g class="word-node" data-color="#4ECDC4">
+            <circle cx="900" cy="120" r="6" fill="#4ECDC4"/>
+            <text x="915" y="125" font-family="Inter" font-size="14" fill="#4ECDC4" font-weight="600">canino</text>
+          </g>
+          <g class="word-node" data-color="#4ECDC4">
+            <circle cx="840" cy="220" r="6" fill="#4ECDC4"/>
+            <text x="855" y="225" font-family="Inter" font-size="14" fill="#4ECDC4" font-weight="600">jaula</text>
+          </g>
+          <g class="word-node" data-color="#4ECDC4">
+            <circle cx="760" cy="240" r="6" fill="#4ECDC4"/>
+            <text x="660" y="245" font-family="Inter" font-size="14" fill="#4ECDC4" font-weight="600">mordida</text>
+          </g>
+
+          <!-- FINANZAS cluster -->
+          <g class="word-node" data-color="#B794F4">
+            <circle cx="180" cy="450" r="6" fill="#B794F4"/>
+            <text x="195" y="455" font-family="Inter" font-size="14" fill="#B794F4" font-weight="600">banco</text>
+          </g>
+          <g class="word-node" data-color="#B794F4">
+            <circle cx="220" cy="490" r="6" fill="#B794F4"/>
+            <text x="235" y="495" font-family="Inter" font-size="14" fill="#B794F4" font-weight="600">crédito</text>
+          </g>
+          <g class="word-node" data-color="#B794F4">
+            <circle cx="140" cy="500" r="6" fill="#B794F4"/>
+            <text x="60" y="505" font-family="Inter" font-size="14" fill="#B794F4" font-weight="600">deuda</text>
+          </g>
+          <g class="word-node" data-color="#B794F4">
+            <circle cx="100" cy="440" r="6" fill="#B794F4"/>
+            <text x="30" y="445" font-family="Inter" font-size="14" fill="#B794F4" font-weight="600">tarjeta</text>
+          </g>
+          <g class="word-node" data-color="#B794F4">
+            <circle cx="260" cy="450" r="6" fill="#B794F4"/>
+            <text x="275" y="455" font-family="Inter" font-size="14" fill="#B794F4" font-weight="600">cuenta</text>
+          </g>
+          <g class="word-node" data-color="#B794F4">
+            <circle cx="200" cy="400" r="6" fill="#B794F4"/>
+            <text x="215" y="405" font-family="Inter" font-size="14" fill="#B794F4" font-weight="600">préstamo</text>
+          </g>
+          <g class="word-node" data-color="#B794F4">
+            <circle cx="120" cy="380" r="6" fill="#B794F4"/>
+            <text x="20" y="385" font-family="Inter" font-size="14" fill="#B794F4" font-weight="600">interés</text>
+          </g>
+
+          <!-- COMIDA cluster -->
+          <g class="word-node" data-color="#FFD93D">
+            <circle cx="700" cy="450" r="6" fill="#FFD93D"/>
+            <text x="715" y="455" font-family="Inter" font-size="14" fill="#FFD93D" font-weight="600">pan</text>
+          </g>
+          <g class="word-node" data-color="#FFD93D">
+            <circle cx="740" cy="490" r="6" fill="#FFD93D"/>
+            <text x="755" y="495" font-family="Inter" font-size="14" fill="#FFD93D" font-weight="600">pizza</text>
+          </g>
+          <g class="word-node" data-color="#FFD93D">
+            <circle cx="660" cy="500" r="6" fill="#FFD93D"/>
+            <text x="580" y="505" font-family="Inter" font-size="14" fill="#FFD93D" font-weight="600">taco</text>
+          </g>
+          <g class="word-node" data-color="#FFD93D">
+            <circle cx="620" cy="450" r="6" fill="#FFD93D"/>
+            <text x="540" y="455" font-family="Inter" font-size="14" fill="#FFD93D" font-weight="600">arroz</text>
+          </g>
+          <g class="word-node" data-color="#FFD93D">
+            <circle cx="780" cy="450" r="6" fill="#FFD93D"/>
+            <text x="795" y="455" font-family="Inter" font-size="14" fill="#FFD93D" font-weight="600">cocina</text>
+          </g>
+          <g class="word-node" data-color="#FFD93D">
+            <circle cx="730" cy="410" r="6" fill="#FFD93D"/>
+            <text x="745" y="415" font-family="Inter" font-size="14" fill="#FFD93D" font-weight="600">hambre</text>
+          </g>
+          <g class="word-node" data-color="#FFD93D">
+            <circle cx="690" cy="400" r="6" fill="#FFD93D"/>
+            <text x="600" y="405" font-family="Inter" font-size="14" fill="#FFD93D" font-weight="600">postre</text>
+          </g>
+
+          <!-- EMOCIÓN cluster -->
+          <g class="word-node" data-color="#FF6B6B">
+            <circle cx="490" cy="320" r="6" fill="#FF6B6B"/>
+            <text x="505" y="325" font-family="Inter" font-size="14" fill="#FF6B6B" font-weight="600">amor</text>
+          </g>
+          <g class="word-node" data-color="#FF6B6B">
+            <circle cx="520" cy="360" r="6" fill="#FF6B6B"/>
+            <text x="535" y="365" font-family="Inter" font-size="14" fill="#FF6B6B" font-weight="600">felicidad</text>
+          </g>
+          <g class="word-node" data-color="#FF6B6B">
+            <circle cx="470" cy="370" r="6" fill="#FF6B6B"/>
+            <text x="380" y="375" font-family="Inter" font-size="14" fill="#FF6B6B" font-weight="600">tristeza</text>
+          </g>
+          <g class="word-node" data-color="#FF6B6B">
+            <circle cx="450" cy="320" r="6" fill="#FF6B6B"/>
+            <text x="380" y="325" font-family="Inter" font-size="14" fill="#FF6B6B" font-weight="600">miedo</text>
+          </g>
+          <g class="word-node" data-color="#FF6B6B">
+            <circle cx="540" cy="320" r="6" fill="#FF6B6B"/>
+            <text x="555" y="325" font-family="Inter" font-size="14" fill="#FF6B6B" font-weight="600">ira</text>
+          </g>
+
+          <!-- Connections -->
+          <line x1="200" y1="140" x2="280" y2="170" stroke="rgba(0,237,100,0.2)" stroke-width="1" stroke-dasharray="2 4"/>
+          <line x1="820" y1="140" x2="780" y2="180" stroke="rgba(78,205,196,0.2)" stroke-width="1" stroke-dasharray="2 4"/>
+          <line x1="780" y1="180" x2="870" y2="180" stroke="rgba(78,205,196,0.2)" stroke-width="1" stroke-dasharray="2 4"/>
+          <line x1="180" y1="450" x2="220" y2="490" stroke="rgba(183,148,244,0.2)" stroke-width="1" stroke-dasharray="2 4"/>
+          <line x1="180" y1="450" x2="260" y2="450" stroke="rgba(183,148,244,0.2)" stroke-width="1" stroke-dasharray="2 4"/>
+        </svg>
+      </div>
+
+      <div class="map-legend">
+        <div class="legend-item"><span class="legend-dot" style="background:#00ED64;"></span> Realeza</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#4ECDC4;"></span> Animales</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#B794F4;"></span> Finanzas</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#FFD93D;"></span> Comida</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#FF6B6B;"></span> Emoción</div>
+      </div>
+    </div>
+
+    <div class="insight" style="padding: 2rem; background: linear-gradient(135deg, rgba(0,237,100,0.08), rgba(0,104,74,0.04)); border-left: 4px solid var(--mdb-green); border-radius: 0 18px 18px 0;">
+      <div style="font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--mdb-green); margin-bottom: 0.6rem;">El "aha"</div>
+      <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Distancia = similitud de significado.</h3>
+      <p class="text-secondary" style="font-size: 1.05rem;">Esto es lo que hace una <strong style="color: var(--mdb-green);">búsqueda vectorial</strong>: encontrar los puntos más cercanos al punto de tu pregunta. Si preguntas "préstamo", encuentra "crédito", "deuda", "interés" — aunque no compartan letras.</p>
+    </div>
+  </section>
+
+  <!-- WORD MATH -->
+  <section class="wordmath">
+    <div class="wordmath-tag">⚡ El momento "no maaames" del training</div>
+    <h2>Si los vectores son números,<br>puedes hacerles matemáticas.</h2>
+    <p>Y cuando lo haces, pasa algo mágico. La IA descubrió relaciones que NADIE le enseñó. Mira:</p>
+
+    <div class="equation">
+      <div class="word-pill var-1">REY</div>
+      <div class="op">−</div>
+      <div class="word-pill var-2">HOMBRE</div>
+      <div class="op">+</div>
+      <div class="word-pill var-3">MUJER</div>
+      <div class="op">=</div>
+      <div class="word-pill var-result">REINA</div>
+    </div>
+
+    <p style="text-align: center; color: var(--mdb-mint); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">
+      Nadie le dijo al modelo que reina es "rey femenino". Lo aprendió solo,
+      leyendo millones de textos. Y queda en los <em>números</em>.
+    </p>
+
+    <div class="equations-list">
+      <div class="eq-row active">
+        <div class="word-pill var-1">PARÍS</div>
+        <div class="op">−</div>
+        <div class="word-pill var-2">FRANCIA</div>
+        <div class="op">+</div>
+        <div class="word-pill var-3">JAPÓN</div>
+        <div class="op">=</div>
+        <div class="word-pill var-result">TOKIO</div>
+      </div>
+      <div class="eq-row">
+        <div class="word-pill var-1">MÉDICO</div>
+        <div class="op">−</div>
+        <div class="word-pill var-2">HOSPITAL</div>
+        <div class="op">+</div>
+        <div class="word-pill var-3">ESCUELA</div>
+        <div class="op">=</div>
+        <div class="word-pill var-result">MAESTRO</div>
+      </div>
+      <div class="eq-row">
+        <div class="word-pill var-1">CAMINAR</div>
+        <div class="op">−</div>
+        <div class="word-pill var-2">CAMINAR</div>
+        <div class="op">+</div>
+        <div class="word-pill var-3">NADAR</div>
+        <div class="op">=</div>
+        <div class="word-pill var-result">NADAR</div>
+      </div>
+      <div class="eq-row">
+        <div class="word-pill var-1">CACHORRO</div>
+        <div class="op">−</div>
+        <div class="word-pill var-2">PERRO</div>
+        <div class="op">+</div>
+        <div class="word-pill var-3">GATO</div>
+        <div class="op">=</div>
+        <div class="word-pill var-result">GATITO</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEMANTIC SEARCH -->
+  <section>
+    <div class="section-heading">
+      <h2>Escalón 3 · Búsqueda semántica en vivo</h2>
+      <span class="section-heading-line"></span>
+      <span class="kicker">Demo final</span>
+    </div>
+
+    <p class="text-secondary mb-3" style="max-width: 800px;">
+      Tenemos <strong style="color: var(--mdb-green);">10 tickets reales</strong> de soporte de un banco.
+      Compara: búsqueda tradicional (palabras exactas) <strong>vs</strong> búsqueda semántica (significado).
+    </p>
+
+    <div class="search-demo">
+      <div class="search-input-row">
+        <input type="text" class="search-input" id="searchInput" placeholder="Escribe la pregunta de un cliente..." value="no me funciona la tarjeta">
+        <button class="search-go" onclick="doSearch()">Buscar →</button>
+      </div>
+
+      <div class="search-suggestions">
+        <button class="suggestion-btn" onclick="document.getElementById('searchInput').value='no me funciona la tarjeta'; doSearch()">no me funciona la tarjeta</button>
+        <button class="suggestion-btn" onclick="document.getElementById('searchInput').value='quiero hablar con alguien'; doSearch()">quiero hablar con alguien</button>
+        <button class="suggestion-btn" onclick="document.getElementById('searchInput').value='cuánto me cobran'; doSearch()">cuánto me cobran</button>
+        <button class="suggestion-btn" onclick="document.getElementById('searchInput').value='se me olvidó la contraseña'; doSearch()">olvidé mi contraseña</button>
+      </div>
+
+      <div class="results-compare">
+        <div class="result-col keyword">
+          <h4>Búsqueda tradicional (palabras)</h4>
+          <div id="keywordResults"></div>
+        </div>
+        <div class="result-col semantic">
+          <h4>Búsqueda vectorial (significado)</h4>
+          <div id="semanticResults"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL SALES -->
+  <section class="sales-final">
+    <span class="sales-final-tag">💰 La conexión con tu pipeline</span>
+    <h2>Cada cliente que tenga<br><em>documentos, contratos, tickets o productos</em><br>necesita esto.</h2>
+    <p>
+      Y esos vectores tienen que vivir en <strong style="color: var(--mdb-green);">algún lado</strong>.
+      En el Cap 06 vas a ver por qué ese "algún lado" es MongoDB y no Pinecone, pgvector o Elastic.
+      Pero primero, en el Cap 05, veamos cómo se usa todo esto junto:
+      <strong style="color: var(--mdb-green);">el patrón RAG</strong>.
+    </p>
+  </section>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="03-tokens.html" class="bottom-nav-side">
+      <span class="bottom-nav-label">← Cap 03</span>
+      <span class="bottom-nav-title">Tokens & costo</span>
+    </a>
+    <a href="05-rag.html" class="bottom-nav-side next">
+      <span class="bottom-nav-label">Siguiente · Cap 05 →</span>
+      <span class="bottom-nav-title">RAG paso a paso</span>
+    </a>
+  </nav>
+
+</div>
+
+<script>
+// ============ PERSON DEMO ============
+const names = {
+  young: ['Lucas', 'Sofía', 'Diego', 'Camila'],
+  mid: ['Ana', 'Carlos', 'María', 'Roberto'],
+  senior: ['Don Pedro', 'Doña Rosa', 'Don Jorge', 'Doña Elena']
+};
+
+const emojis = {
+  young: ['🧑', '👩', '👨', '👱'],
+  mid: ['🧑‍💼', '👩‍💼', '👨‍💼', '👨'],
+  senior: ['👴', '👵', '🧓', '👴🏽']
+};
+
+let nameSeed = 0;
+
+function updatePerson() {
+  const age = +document.getElementById('ageSlider').value;
+  const height = +document.getElementById('heightSlider').value;
+  const income = +document.getElementById('incomeSlider').value;
+
+  document.getElementById('ageValue').textContent = age + ' años';
+  document.getElementById('heightValue').textContent = height + ' cm';
+  document.getElementById('incomeValue').textContent = '$' + income + 'K';
+
+  document.getElementById('vAge').textContent = age;
+  document.getElementById('vHeight').textContent = height;
+  document.getElementById('vIncome').textContent = income;
+
+  let bucket;
+  if (age < 35) bucket = 'young';
+  else if (age < 55) bucket = 'mid';
+  else bucket = 'senior';
+
+  const idx = (age + height + income) % 4;
+  document.getElementById('personName').textContent = names[bucket][idx];
+  document.getElementById('personEmoji').textContent = emojis[bucket][idx];
+}
+
+updatePerson();
+
+// ============ SEMANTIC SEARCH DEMO ============
+const tickets = [
+  { id: 1, text: "Mi débito fue rechazado en la gasolinera de Polanco." },
+  { id: 2, text: "El POS me dice 'transacción fallida' una y otra vez." },
+  { id: 3, text: "No tengo fondos suficientes según la pantalla." },
+  { id: 4, text: "Mi plástico está bloqueado y no sé por qué." },
+  { id: 5, text: "Necesito que un humano me atienda urgentemente." },
+  { id: 6, text: "Cuál es la comisión por retiro en cajeros de otros bancos." },
+  { id: 7, text: "Olvidé el PIN de mi NIP y no recuerdo cómo cambiarlo." },
+  { id: 8, text: "Quiero saber el costo del manejo de cuenta." },
+  { id: 9, text: "Hablar con un agente de servicio al cliente por favor." },
+  { id: 10, text: "Cambio de password de banca en línea no funciona." }
+];
+
+// Semantic matches (curated for each query intent)
+const semanticMatches = {
+  'no me funciona la tarjeta': [1, 2, 3, 4],
+  'tarjeta': [1, 2, 3, 4],
+  'no funciona': [1, 2, 4, 10],
+  'quiero hablar con alguien': [5, 9],
+  'hablar': [5, 9],
+  'alguien': [5, 9],
+  'cuánto me cobran': [6, 8],
+  'costo': [6, 8],
+  'cobran': [6, 8],
+  'comisión': [6, 8],
+  'olvidé mi contraseña': [7, 10],
+  'contraseña': [7, 10],
+  'olvidé': [7, 10],
+  'password': [7, 10]
+};
+
+function tokenizeQuery(q) {
+  return q.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+}
+
+function doSearch() {
+  const query = document.getElementById('searchInput').value.trim();
+  if (!query) return;
+
+  // KEYWORD SEARCH
+  const queryWords = tokenizeQuery(query);
+  const keywordMatches = tickets.filter(t => {
+    const textLower = t.text.toLowerCase();
+    return queryWords.some(w => textLower.includes(w));
+  });
+
+  const kwContainer = document.getElementById('keywordResults');
+  kwContainer.innerHTML = '';
+  if (keywordMatches.length === 0) {
+    kwContainer.innerHTML = '<div class="result-empty">⚠ No se encontraron resultados<br>con palabras exactas</div>';
+  } else {
+    keywordMatches.slice(0, 4).forEach(t => {
+      kwContainer.innerHTML += `
+        <div class="result-item matched">
+          ${t.text}
+        </div>`;
+    });
+  }
+
+  // SEMANTIC SEARCH
+  let semanticIds = [];
+  const queryLower = query.toLowerCase();
+  for (const key in semanticMatches) {
+    if (queryLower.includes(key) || key.includes(queryLower)) {
+      semanticIds = semanticMatches[key];
+      break;
+    }
+  }
+  // fallback: por palabras clave
+  if (semanticIds.length === 0) {
+    for (const word of queryWords) {
+      if (semanticMatches[word]) {
+        semanticIds = semanticMatches[word];
+        break;
+      }
+    }
+  }
+
+  const semContainer = document.getElementById('semanticResults');
+  semContainer.innerHTML = '';
+
+  if (semanticIds.length === 0) {
+    semContainer.innerHTML = '<div class="result-empty">Prueba con una de las sugerencias arriba</div>';
+  } else {
+    const scores = [0.94, 0.89, 0.82, 0.76, 0.71];
+    semanticIds.slice(0, 4).forEach((id, i) => {
+      const ticket = tickets.find(t => t.id === id);
+      semContainer.innerHTML += `
+        <div class="result-item matched">
+          <span class="result-score">${scores[i]}</span>
+          ${ticket.text}
+        </div>`;
+    });
+  }
+}
+
+doSearch();
+</script>
+
+</body>
+</html>

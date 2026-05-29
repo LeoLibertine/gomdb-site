@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>02 · ¿Qué es un LLM?</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  /* PREDICTOR */
+  .predictor {
+    background: var(--mdb-dark-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 24px;
+    padding: 3rem;
+    margin: 2rem 0;
+  }
+
+  .predictor-prompt {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 600;
+    margin-bottom: 2.5rem;
+    line-height: 1.3;
+  }
+
+  .predictor-prompt .cursor {
+    display: inline-block;
+    width: 4px;
+    height: 1.1em;
+    background: var(--mdb-green);
+    vertical-align: text-bottom;
+    margin-left: 4px;
+    animation: cursor-blink 1s infinite;
+  }
+
+  @keyframes cursor-blink {
+    50% { opacity: 0; }
+  }
+
+  .predictor-prompt .completed-word {
+    color: var(--mdb-green);
+    font-style: italic;
+    transition: all 0.3s;
+  }
+
+  /* Probability bars */
+  .probabilities {
+    display: grid;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .prob-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 70px;
+    gap: 1.2rem;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    transition: background 0.2s;
+  }
+
+  .prob-row:hover {
+    background: rgba(0, 237, 100, 0.05);
+  }
+
+  .prob-row.selected {
+    background: rgba(0, 237, 100, 0.12);
+  }
+
+  .prob-word {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .prob-bar-container {
+    height: 36px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .prob-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mdb-green-deep), var(--mdb-green));
+    border-radius: 8px;
+    transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 20px rgba(0, 237, 100, 0.2);
+  }
+
+  .prob-bar.low {
+    background: linear-gradient(90deg, var(--mdb-dark-3), var(--mdb-green-deep));
+  }
+
+  .prob-value {
+    font-family: var(--font-mono);
+    color: var(--mdb-green);
+    font-weight: 600;
+    text-align: right;
+    font-size: 1rem;
+  }
+
+  /* Phrase selector buttons */
+  .phrase-buttons {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .phrase-btn {
+    padding: 0.6rem 1.2rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .phrase-btn:hover {
+    border-color: var(--mdb-green);
+    color: var(--mdb-green);
+  }
+
+  .phrase-btn.active {
+    background: var(--mdb-green);
+    color: var(--mdb-dark);
+    border-color: var(--mdb-green);
+    font-weight: 600;
+  }
+
+  /* TEMPERATURE SECTION */
+  .temp-section {
+    background: var(--mdb-dark-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 24px;
+    padding: 3rem;
+    margin: 4rem 0;
+  }
+
+  .temp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .temp-value-display {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--mdb-green);
+    line-height: 1;
+  }
+
+  .temp-value-display small {
+    font-size: 1rem;
+    color: var(--text-tertiary);
+    font-family: var(--font-mono);
+    font-weight: 400;
+    margin-left: 0.5rem;
+  }
+
+  .temp-slider-container {
+    margin: 2rem 0;
+  }
+
+  .temp-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(90deg, #4ECDC4 0%, var(--mdb-green) 30%, #FFD93D 65%, var(--accent-coral) 100%);
+    border-radius: 4px;
+    outline: none;
+  }
+
+  .temp-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(0, 237, 100, 0.3), 0 0 20px rgba(0, 237, 100, 0.5);
+  }
+
+  .temp-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 0 4px rgba(0, 237, 100, 0.3);
+  }
+
+  .temp-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .temp-output {
+    background: var(--mdb-dark);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 1.8rem;
+    margin-top: 2rem;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    line-height: 1.5;
+    min-height: 120px;
+    transition: all 0.5s;
+  }
+
+  /* INSIGHT BOXES */
+  .insight {
+    margin-top: 2.5rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(0, 237, 100, 0.08), rgba(0, 104, 74, 0.04));
+    border-left: 4px solid var(--mdb-green);
+    border-radius: 0 18px 18px 0;
+  }
+
+  .insight-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--mdb-green);
+    margin-bottom: 0.6rem;
+  }
+
+  .insight h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .insight p {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+  }
+
+  /* HALLUCINATION CALLOUT */
+  .halluci {
+    margin-top: 5rem;
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.12), rgba(196, 69, 105, 0.06));
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 28px;
+    padding: 3rem;
+  }
+
+  .halluci-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.75rem;
+    color: var(--accent-coral);
+    margin-bottom: 1rem;
+  }
+
+  .halluci h2 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+
+  .halluci h2 em {
+    color: var(--accent-coral);
+    font-style: italic;
+  }
+
+  .halluci-quote {
+    background: var(--mdb-dark);
+    padding: 1.5rem 2rem;
+    border-radius: 14px;
+    margin: 2rem 0 1.5rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.3rem;
+    border-left: 4px solid var(--accent-coral);
+  }
+
+  .halluci-quote .fake {
+    background: rgba(255, 107, 107, 0.2);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    color: var(--accent-coral);
+    font-weight: 600;
+  }
+
+  /* SALES BOX */
+  .sales-box {
+    margin-top: 4rem;
+    padding: 2.5rem;
+    background: var(--mdb-green-deep);
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sales-box::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(0, 237, 100, 0.3), transparent 70%);
+  }
+
+  .sales-box-tag {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.75rem;
+    color: var(--mdb-mint);
+    margin-bottom: 0.8rem;
+  }
+
+  .sales-box h3 {
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 0.8rem;
+    position: relative;
+  }
+
+  .sales-box p {
+    color: var(--mdb-mint);
+    font-size: 1.05rem;
+    position: relative;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <a href="index.html" class="topnav-brand">
+      <div class="topnav-brand-mark">M</div>
+      <span>AI Training · MongoDB LATAM</span>
+    </a>
+    <div class="topnav-progress">
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot active"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+    </div>
+    <div class="topnav-meta">Capítulo 2 de 10</div>
+  </nav>
+
+  <!-- Chapter header -->
+  <header class="chapter-header">
+    <div class="chapter-header-text">
+      <span class="kicker">Capítulo 02 · Fundamentos</span>
+      <div class="chapter-number">02</div>
+      <h1 class="chapter-title">¿Qué es un LLM?</h1>
+      <p class="chapter-subtitle">
+        Un autocompletar con esteroides. No piensa. Predice la siguiente palabra
+        basándose en patrones que aprendió de millones de textos. Eso es todo.
+        En serio.
+      </p>
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Tiempo</span>
+        <span class="chapter-meta-value">7 min</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Demos</span>
+        <span class="chapter-meta-value">2 en vivo</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Aha moment</span>
+        <span class="chapter-meta-value">"Por eso alucina"</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- PREDICTOR -->
+  <section>
+    <div class="section-heading">
+      <h2>Demo · Predicción en vivo</h2>
+      <span class="section-heading-line"></span>
+      <span class="kicker">Toca cualquier opción</span>
+    </div>
+
+    <p class="text-secondary mb-3" style="max-width: 800px;">
+      Esto es <strong style="color: var(--mdb-green);">literalmente</strong> lo que hace
+      un LLM internamente. Le das texto, te da probabilidades para la siguiente palabra.
+      Cambia de frase abajo y mira cómo cambia el ranking:
+    </p>
+
+    <div class="phrase-buttons">
+      <button class="phrase-btn active" onclick="setPhrase(0)">El cielo es...</button>
+      <button class="phrase-btn" onclick="setPhrase(1)">El cliente quiere...</button>
+      <button class="phrase-btn" onclick="setPhrase(2)">MongoDB es...</button>
+      <button class="phrase-btn" onclick="setPhrase(3)">La capital de Francia es...</button>
+    </div>
+
+    <div class="predictor">
+      <div class="predictor-prompt" id="promptDisplay">
+        El cielo es <span class="completed-word" id="completedWord"></span><span class="cursor"></span>
+      </div>
+
+      <div class="probabilities" id="probabilities">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+    <div class="insight">
+      <div class="insight-label">El "aha"</div>
+      <h3>El LLM nunca dice "sé la respuesta". Dice "lo más probable es...".</h3>
+      <p>Cuando la respuesta correcta tiene 97% de probabilidad (París), funciona. Cuando hay 5 opciones con 20% cada una, inventa con confianza. <strong style="color: var(--accent-coral);">Eso es alucinación.</strong></p>
+    </div>
+  </section>
+
+  <!-- TEMPERATURE -->
+  <section class="temp-section">
+    <div class="section-heading" style="margin-bottom: 1.5rem;">
+      <h2>Demo · La perilla de "creatividad"</h2>
+      <span class="section-heading-line"></span>
+    </div>
+
+    <p class="text-secondary mb-3" style="max-width: 800px;">
+      Cada LLM tiene un parámetro llamado <span class="mono text-gold">temperature</span>.
+      Es la perilla que le dice qué tan "obediente" o "creativo" debe ser.
+      Mueve el slider y mira cómo cambia la respuesta a la misma pregunta:
+    </p>
+
+    <div class="temp-header">
+      <div>
+        <div class="kicker">Pregunta fija</div>
+        <div style="font-family: var(--font-display); font-size: 1.4rem;">"Describe el océano en una frase."</div>
+      </div>
+      <div class="temp-value-display">
+        <span id="tempValue">0.7</span><small>temperature</small>
+      </div>
+    </div>
+
+    <div class="temp-slider-container">
+      <input type="range" class="temp-slider" id="tempSlider" min="0" max="20" value="7" oninput="updateTemp(this.value)">
+      <div class="temp-labels">
+        <span>0.0 · Determinista</span>
+        <span>0.7 · Default</span>
+        <span>1.4 · Creativo</span>
+        <span>2.0 · Alucinado</span>
+      </div>
+    </div>
+
+    <div class="temp-output" id="tempOutput">
+      El océano es una vasta extensión de agua salada que cubre la mayor parte de la Tierra.
+    </div>
+
+    <div class="insight">
+      <div class="insight-label">Lo que debes recordar</div>
+      <h3>Temperatura alta = más creatividad pero más alucinación.</h3>
+      <p>Tu cliente que está construyendo un asistente legal NO quiere creatividad. Quiere precisión. Esa decisión es de ingeniería, pero a ti te toca preguntarla en discovery.</p>
+    </div>
+  </section>
+
+  <!-- HALLUCINATION -->
+  <section class="halluci">
+    <div class="halluci-tag">⚠ El problema #1 de tus clientes</div>
+    <h2>Alucinaciones: cuando la IA<br><em>miente con confianza ejecutiva.</em></h2>
+    <p class="text-secondary" style="margin-top: 1rem; font-size: 1.05rem;">
+      Le preguntas al LLM sobre tu cliente Bancolombia, política interna que no conoce,
+      y te responde algo así:
+    </p>
+
+    <div class="halluci-quote">
+      "La política de cancelación de Bancolombia permite reembolsos hasta
+      <span class="fake">90 días después de la compra</span>,
+      según el <span class="fake">Decreto 4172 de 2019</span>,
+      con un cargo administrativo del <span class="fake">3.5%</span>."
+    </div>
+
+    <p class="text-secondary"><strong style="color: var(--accent-coral);">Nada de eso existe.</strong>
+    El LLM lo inventó porque suena plausible. Y suena PERFECTO.
+    Esa es la razón #1 por la que los proyectos de IA empresarial fracasan.</p>
+
+    <div style="margin-top: 2rem;">
+      <span class="pill pill-warm">Spoiler del Cap 05</span>
+      <p style="margin-top: 0.8rem; color: var(--text-secondary);">
+        La solución se llama <strong style="color: var(--mdb-green);">RAG</strong>: en vez de dejar
+        que el LLM "recuerde", le pasas la información correcta antes de que responda.
+        Y esa información vive en una base de datos. Adivina cuál.
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT THIS MEANS FOR SALES -->
+  <section class="sales-box">
+    <div class="sales-box-tag">💰 Qué significa para ti, AE</div>
+    <h3>Cada cliente que usa GPT, Claude o Gemini tiene este problema.</h3>
+    <p>Cuando un cliente menciona "alucinaciones", "respuestas incorrectas", o "necesitamos que la IA conozca nuestros datos" — eso es una señal directa de oportunidad MongoDB. Anótalo. Repítelo. Búscalo en cada llamada.</p>
+  </section>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="01-hook.html" class="bottom-nav-side">
+      <span class="bottom-nav-label">← Cap 01</span>
+      <span class="bottom-nav-title">El AE perdido</span>
+    </a>
+    <a href="03-tokens.html" class="bottom-nav-side next">
+      <span class="bottom-nav-label">Siguiente · Cap 03 →</span>
+      <span class="bottom-nav-title">Tokens & costo</span>
+    </a>
+  </nav>
+
+</div>
+
+<script>
+// ============ DATOS PARA EL PREDICTOR ============
+const phrases = [
+  {
+    text: "El cielo es",
+    options: [
+      { word: "azul", prob: 78 },
+      { word: "hermoso", prob: 11 },
+      { word: "gris", prob: 6 },
+      { word: "infinito", prob: 3 },
+      { word: "el límite", prob: 2 }
+    ]
+  },
+  {
+    text: "El cliente quiere",
+    options: [
+      { word: "más", prob: 32 },
+      { word: "una", prob: 24 },
+      { word: "saber", prob: 18 },
+      { word: "comprar", prob: 14 },
+      { word: "cancelar", prob: 12 }
+    ]
+  },
+  {
+    text: "MongoDB es",
+    options: [
+      { word: "una", prob: 45 },
+      { word: "la", prob: 28 },
+      { word: "una base", prob: 14 },
+      { word: "líder", prob: 8 },
+      { word: "perfecto", prob: 5 }
+    ]
+  },
+  {
+    text: "La capital de Francia es",
+    options: [
+      { word: "París", prob: 97 },
+      { word: "una", prob: 1.2 },
+      { word: "la", prob: 0.9 },
+      { word: "París,", prob: 0.7 },
+      { word: "Marsella", prob: 0.2 }
+    ]
+  }
+];
+
+let currentPhrase = 0;
+
+function setPhrase(idx) {
+  currentPhrase = idx;
+  document.querySelectorAll('.phrase-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === idx);
+  });
+  renderPredictor();
+}
+
+function renderPredictor() {
+  const phrase = phrases[currentPhrase];
+  document.getElementById('promptDisplay').innerHTML =
+    phrase.text + ' <span class="completed-word" id="completedWord"></span><span class="cursor"></span>';
+
+  const container = document.getElementById('probabilities');
+  container.innerHTML = '';
+  phrase.options.forEach((opt, i) => {
+    const row = document.createElement('div');
+    row.className = 'prob-row';
+    row.onclick = () => selectWord(opt.word, i);
+    row.innerHTML = `
+      <div class="prob-word">"${opt.word}"</div>
+      <div class="prob-bar-container">
+        <div class="prob-bar ${opt.prob < 15 ? 'low' : ''}" style="width: 0%"></div>
+      </div>
+      <div class="prob-value">${opt.prob}%</div>
+    `;
+    container.appendChild(row);
+    // Animate bar
+    setTimeout(() => {
+      row.querySelector('.prob-bar').style.width = opt.prob + '%';
+    }, 50 + i * 100);
+  });
+}
+
+function selectWord(word, idx) {
+  document.querySelectorAll('.prob-row').forEach((r, i) => {
+    r.classList.toggle('selected', i === idx);
+  });
+  document.getElementById('completedWord').textContent = ' ' + word;
+}
+
+// ============ TEMPERATURE DEMO ============
+const tempResponses = {
+  0: "El océano es una gran masa de agua salada.",
+  1: "El océano es una gran extensión de agua salada que cubre el 71% de la Tierra.",
+  3: "El océano es una vasta extensión de agua salada que regula el clima del planeta.",
+  5: "El océano es un cuerpo de agua salada que cubre la mayor parte de la Tierra.",
+  7: "El océano es una vasta extensión de agua salada que cubre la mayor parte de la Tierra.",
+  10: "El océano es un mosaico líquido que late, respira y abraza los continentes con espuma blanca.",
+  13: "El océano: catedral azul donde la luz se vuelve sal y las ballenas susurran al silencio.",
+  16: "Un dragón de mercurio danzando entre estrellas hundidas, soñando con planetas verdes.",
+  20: "Liquid infinity sings purple secrets to forgotten constellations of mermaid laughter."
+};
+
+function updateTemp(val) {
+  const t = (val / 10).toFixed(1);
+  document.getElementById('tempValue').textContent = t;
+
+  // Find closest key
+  const keys = Object.keys(tempResponses).map(Number).sort((a, b) => a - b);
+  let closest = keys[0];
+  for (const k of keys) {
+    if (Math.abs(k - val) < Math.abs(closest - val)) closest = k;
+  }
+  document.getElementById('tempOutput').textContent = tempResponses[closest];
+
+  // Color shift based on temp
+  const output = document.getElementById('tempOutput');
+  if (val < 5) {
+    output.style.borderColor = '#4ECDC4';
+    output.style.color = 'var(--text-primary)';
+  } else if (val < 12) {
+    output.style.borderColor = 'var(--mdb-green)';
+    output.style.color = 'var(--text-primary)';
+  } else if (val < 17) {
+    output.style.borderColor = 'var(--accent-gold)';
+    output.style.color = 'var(--accent-gold)';
+  } else {
+    output.style.borderColor = 'var(--accent-coral)';
+    output.style.color = 'var(--accent-coral)';
+  }
+}
+
+// Init
+renderPredictor();
+updateTemp(7);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>07 · Agentes & MCP</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  /* EVOLUTION CHAIN */
+  .evolution {
+    margin: 3rem 0;
+    background: var(--mdb-dark-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 24px;
+    padding: 3rem;
+  }
+
+  .evolution-chain {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr 60px 1fr;
+    gap: 1rem;
+    align-items: stretch;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 1000px) {
+    .evolution-chain {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .evo-step {
+    background: var(--mdb-dark);
+    border-radius: 18px;
+    padding: 1.8rem;
+    border: 1px solid var(--border-subtle);
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .evo-step:hover {
+    transform: translateY(-3px);
+    border-color: var(--mdb-green);
+  }
+
+  .evo-step.featured {
+    background: linear-gradient(135deg, var(--mdb-green-deep), var(--mdb-dark-2));
+    border-color: var(--mdb-green);
+  }
+
+  .evo-step-icon {
+    font-size: 3rem;
+    margin-bottom: 0.8rem;
+    line-height: 1;
+  }
+
+  .evo-step-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .evo-step.featured .evo-step-tag { color: var(--mdb-green); }
+
+  .evo-step h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .evo-step p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .evo-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--mdb-green);
+  }
+
+  @media (max-width: 1000px) {
+    .evo-arrow { transform: rotate(90deg); padding: 0.5rem 0; }
+  }
+
+  /* AGENT SIMULATOR */
+  .agent-sim {
+    background: linear-gradient(135deg, var(--mdb-dark-2), var(--mdb-dark-3));
+    border-radius: 28px;
+    padding: 3rem;
+    margin: 4rem 0;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .agent-task {
+    background: var(--mdb-dark);
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    margin: 1.5rem 0 2.5rem;
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+    border: 1px solid var(--mdb-green);
+  }
+
+  .agent-task-icon {
+    width: 52px;
+    height: 52px;
+    background: var(--mdb-green);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+  }
+
+  .agent-task-text {
+    flex: 1;
+  }
+
+  .agent-task-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .agent-task-prompt {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--text-primary);
+  }
+
+  .play-btn {
+    padding: 0.8rem 1.6rem;
+    background: var(--mdb-green);
+    color: var(--mdb-dark);
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .play-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 237, 100, 0.4);
+  }
+
+  .play-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Agent thinking steps */
+  .agent-steps {
+    display: grid;
+    gap: 1rem;
+    min-height: 400px;
+  }
+
+  .agent-step {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 14px;
+    padding: 1.2rem 1.5rem;
+    border: 1px solid var(--border-subtle);
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 1.2rem;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.4s, transform 0.4s, border-color 0.3s;
+  }
+
+  .agent-step.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .agent-step.thinking {
+    border-color: var(--accent-gold);
+    background: rgba(255, 217, 61, 0.04);
+  }
+
+  .agent-step.tool {
+    border-color: var(--mdb-green);
+    background: rgba(0, 237, 100, 0.04);
+  }
+
+  .agent-step.mongo {
+    border-color: var(--mdb-green);
+    background: linear-gradient(135deg, rgba(0, 237, 100, 0.1), rgba(0, 104, 74, 0.05));
+  }
+
+  .step-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .agent-step.thinking .step-icon { background: rgba(255, 217, 61, 0.15); }
+  .agent-step.tool .step-icon { background: rgba(0, 237, 100, 0.15); }
+  .agent-step.mongo .step-icon { background: rgba(0, 237, 100, 0.2); }
+
+  .step-content {
+    line-height: 1.5;
+  }
+
+  .step-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+
+  .agent-step.thinking .step-label { color: var(--accent-gold); }
+  .agent-step.tool .step-label { color: var(--mdb-green); }
+
+  .step-text {
+    font-size: 1rem;
+    color: var(--text-primary);
+  }
+
+  .step-text .code-bit {
+    font-family: var(--font-mono);
+    background: rgba(0, 237, 100, 0.12);
+    color: var(--mdb-green);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.92em;
+  }
+
+  .step-time {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+  }
+
+  /* MCP DIAGRAM */
+  .mcp-section {
+    margin: 5rem 0;
+    background: var(--mdb-dark-2);
+    border-radius: 24px;
+    padding: 3rem;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .mcp-diagram {
+    background: var(--mdb-dark);
+    border-radius: 18px;
+    padding: 2.5rem 2rem;
+    margin: 2rem 0;
+  }
+
+  .mcp-diagram svg { width: 100%; height: auto; max-height: 380px; }
+
+  /* MEMORY SECTION */
+  .memory-section {
+    margin: 4rem 0;
+    padding: 3rem;
+    background: linear-gradient(135deg, var(--mdb-green-deep), var(--mdb-dark-2));
+    border: 1px solid var(--mdb-green);
+    border-radius: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .memory-section::before {
+    content: '🧠';
+    position: absolute;
+    right: -50px;
+    bottom: -100px;
+    font-size: 20rem;
+    opacity: 0.05;
+  }
+
+  .memory-tag {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.75rem;
+    color: var(--mdb-green);
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .memory-section h2 {
+    color: white;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .memory-section h2 em {
+    color: var(--mdb-green);
+    font-style: italic;
+  }
+
+  .memory-types {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    margin-top: 2rem;
+    position: relative;
+  }
+
+  @media (max-width: 900px) { .memory-types { grid-template-columns: 1fr; } }
+
+  .memory-type {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 237, 100, 0.2);
+  }
+
+  .memory-type-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--mdb-green);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+
+  .memory-type h4 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+
+  .memory-type p {
+    color: var(--mdb-mint);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  /* Sales callout */
+  .next-wave {
+    margin-top: 4rem;
+    padding: 3rem;
+    background: linear-gradient(135deg, var(--mdb-green) 0%, var(--mdb-green-soft) 100%);
+    border-radius: 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .next-wave::before {
+    content: '〰';
+    position: absolute;
+    inset: 0;
+    font-size: 30rem;
+    color: rgba(0, 30, 43, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .next-wave-tag {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.8rem;
+    color: var(--mdb-dark);
+    opacity: 0.7;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .next-wave h2 {
+    color: var(--mdb-dark);
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    margin-bottom: 1rem;
+    position: relative;
+    font-style: italic;
+  }
+
+  .next-wave p {
+    color: var(--mdb-dark);
+    opacity: 0.85;
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    font-size: 1.1rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <a href="index.html" class="topnav-brand">
+      <div class="topnav-brand-mark">M</div>
+      <span>AI Training · MongoDB LATAM</span>
+    </a>
+    <div class="topnav-progress">
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot active"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+    </div>
+    <div class="topnav-meta">Capítulo 7 de 10</div>
+  </nav>
+
+  <!-- Chapter header -->
+  <header class="chapter-header">
+    <div class="chapter-header-text">
+      <span class="kicker">Capítulo 07 · La siguiente ola</span>
+      <div class="chapter-number">07</div>
+      <h1 class="chapter-title">Agentes & MCP.</h1>
+      <p class="chapter-subtitle">
+        Si RAG fue 2024, los agentes son 2025-2026. Esta es la próxima ola de gasto
+        en IA y la mejor oportunidad para que MongoDB se vuelva sistema de récord
+        de algo mucho más grande que vectores: <em>memoria</em>.
+      </p>
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Tiempo</span>
+        <span class="chapter-meta-value">8 min</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Demo</span>
+        <span class="chapter-meta-value">Simulador agente</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Hook</span>
+        <span class="chapter-meta-value">"Memoria persistente"</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- EVOLUTION -->
+  <section>
+    <div class="section-heading">
+      <h2>La evolución que tu cliente está viviendo</h2>
+      <span class="section-heading-line"></span>
+    </div>
+
+    <p class="text-secondary mb-3" style="max-width: 800px;">
+      Para entender qué es un agente, hay que ver la escalera completa. Tu cliente
+      probablemente está entre 1 y 2 — de hecho, hoy solo <strong style="color: var(--mdb-green);">~16% de los despliegues
+      empresariales</strong> son agentes verdaderos (Menlo Ventures). Justo por eso el 3 es la oportunidad:
+    </p>
+
+    <div class="evolution">
+      <div class="evolution-chain">
+
+        <div class="evo-step">
+          <div class="evo-step-icon">💬</div>
+          <div class="evo-step-tag">Nivel 01</div>
+          <h3>Chatbot puro</h3>
+          <p>LLM que responde con lo que aprendió. Alucina con info específica.</p>
+        </div>
+
+        <div class="evo-arrow">→</div>
+
+        <div class="evo-step">
+          <div class="evo-step-icon">📚</div>
+          <div class="evo-step-tag">Nivel 02 · Hoy</div>
+          <h3>RAG</h3>
+          <p>LLM + carpeta de docs. Lee y responde con fuente. Cero alucinación.</p>
+        </div>
+
+        <div class="evo-arrow">→</div>
+
+        <div class="evo-step featured">
+          <div class="evo-step-icon">🤖</div>
+          <div class="evo-step-tag">Nivel 03 · La ola</div>
+          <h3>Agentes</h3>
+          <p>LLM + carpeta + <strong style="color: var(--mdb-green);">herramientas</strong> + <strong style="color: var(--mdb-green);">memoria</strong>. Decide y actúa.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="insight" style="margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, rgba(0,237,100,0.08), rgba(0,104,74,0.04)); border-left: 4px solid var(--mdb-green); border-radius: 0 18px 18px 0;">
+      <div style="font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--mdb-green); margin-bottom: 0.6rem;">La analogía estrella</div>
+      <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">RAG es un consultor con una carpeta. Un agente es un consultor con un <em>equipo y oficina propios</em>.</h3>
+      <p class="text-secondary" style="font-size: 1.05rem;">El agente tiene la carpeta (RAG) PERO también: acceso al CRM, capacidad de mandar correos, agenda propia, y memoria de conversaciones pasadas. Y <strong style="color: var(--mdb-green);">MCP</strong> es el "USB universal" que conecta al consultor con todas esas herramientas.</p>
+    </div>
+  </section>
+
+  <!-- AGENT SIMULATOR -->
+  <section class="agent-sim">
+    <div class="section-heading" style="margin-bottom: 1rem;">
+      <h2>Simulador · Un agente en acción</h2>
+      <span class="section-heading-line"></span>
+      <span class="kicker">Play para ver el razonamiento</span>
+    </div>
+
+    <p class="text-secondary mb-3" style="max-width: 800px;">
+      Aquí tienes un agente de ventas con 4 herramientas conectadas vía MCP.
+      Le mandas una tarea en lenguaje natural. Mira cómo <em>decide</em> qué herramienta usar:
+    </p>
+
+    <div class="agent-task">
+      <div class="agent-task-icon">🎯</div>
+      <div class="agent-task-text">
+        <div class="agent-task-label">Tarea del usuario</div>
+        <div class="agent-task-prompt">"Agéndame una llamada con Bancolombia para la próxima semana, contexto: cerrar el deal."</div>
+      </div>
+      <button class="play-btn" onclick="runAgent()" id="playBtn">▶ Ejecutar agente</button>
+    </div>
+
+    <div class="agent-steps" id="agentSteps">
+      <!-- Filled by JS -->
+    </div>
+  </section>
+
+  <!-- MCP CONCEPT -->
+  <section class="mcp-section">
+    <div class="section-heading">
+      <h2>¿Y qué es MCP?</h2>
+      <span class="section-heading-line"></span>
+      <span class="kicker">Model Context Protocol</span>
+    </div>
+
+    <p class="text-secondary mb-3" style="max-width: 800px;">
+      MCP (Model Context Protocol) es como el <strong style="color: var(--mdb-green);">USB-C de los agentes</strong>.
+      Un estándar abierto para conectar herramientas a cualquier LLM, sin escribir integraciones a la medida:
+    </p>
+
+    <div class="mcp-diagram">
+      <svg viewBox="0 0 1000 360" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="mcpArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+            <path d="M0,0 L0,10 L10,5 z" fill="#00ED64"/>
+          </marker>
+        </defs>
+
+        <!-- Agent in the center -->
+        <rect x="380" y="130" width="240" height="100" rx="20" fill="url(#flowGrad)" stroke="#00ED64" stroke-width="2"/>
+        <linearGradient id="flowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#00684A"/>
+          <stop offset="100%" stop-color="#00ED64"/>
+        </linearGradient>
+        <text x="500" y="170" text-anchor="middle" font-family="Bricolage Grotesque" font-size="22" font-weight="800" fill="#001E2B">🤖 Agente</text>
+        <text x="500" y="200" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#001E2B" letter-spacing="2">MCP CLIENT</text>
+
+        <!-- Tools around it -->
+        <!-- Top left -->
+        <rect x="40" y="20" width="180" height="70" rx="14" fill="#001E2B" stroke="#FFD93D" stroke-width="1.5"/>
+        <text x="130" y="48" text-anchor="middle" font-family="Bricolage Grotesque" font-size="15" font-weight="700" fill="#FFD93D">📅 Calendar</text>
+        <text x="130" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#FFD93D" opacity="0.7">MCP Server</text>
+
+        <!-- Top right -->
+        <rect x="780" y="20" width="180" height="70" rx="14" fill="#001E2B" stroke="#B794F4" stroke-width="1.5"/>
+        <text x="870" y="48" text-anchor="middle" font-family="Bricolage Grotesque" font-size="15" font-weight="700" fill="#B794F4">💼 Salesforce</text>
+        <text x="870" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#B794F4" opacity="0.7">MCP Server</text>
+
+        <!-- Bottom left -->
+        <rect x="40" y="270" width="180" height="70" rx="14" fill="#001E2B" stroke="#4ECDC4" stroke-width="1.5"/>
+        <text x="130" y="298" text-anchor="middle" font-family="Bricolage Grotesque" font-size="15" font-weight="700" fill="#4ECDC4">✉ Gmail</text>
+        <text x="130" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#4ECDC4" opacity="0.7">MCP Server</text>
+
+        <!-- Bottom right - MongoDB MEMORY -->
+        <rect x="780" y="270" width="180" height="70" rx="14" fill="#001E2B" stroke="#00ED64" stroke-width="2.5"/>
+        <text x="870" y="298" text-anchor="middle" font-family="Bricolage Grotesque" font-size="15" font-weight="700" fill="#00ED64">🍃 MongoDB</text>
+        <text x="870" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#00ED64">MEMORY · CONTEXT</text>
+
+        <!-- Connection lines with MCP labels -->
+        <line x1="220" y1="55" x2="380" y2="155" stroke="#00ED64" stroke-width="2" marker-end="url(#mcpArrow)"/>
+        <line x1="780" y1="55" x2="620" y2="155" stroke="#00ED64" stroke-width="2" marker-end="url(#mcpArrow)"/>
+        <line x1="220" y1="305" x2="380" y2="205" stroke="#00ED64" stroke-width="2" marker-end="url(#mcpArrow)"/>
+        <line x1="780" y1="305" x2="620" y2="205" stroke="#00ED64" stroke-width="3" marker-end="url(#mcpArrow)"/>
+
+        <!-- MCP protocol labels on lines -->
+        <text x="295" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#00ED64" letter-spacing="2">MCP</text>
+        <text x="700" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#00ED64" letter-spacing="2">MCP</text>
+        <text x="295" y="260" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#00ED64" letter-spacing="2">MCP</text>
+        <text x="700" y="260" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#00ED64" letter-spacing="2">MCP</text>
+      </svg>
+    </div>
+
+    <p class="text-secondary" style="max-width: 800px;">
+      <strong style="color: var(--mdb-green);">¿Por qué importa para ti?</strong>
+      Porque MongoDB tiene MCP Server oficial. Cualquier agente (de Anthropic, OpenAI, Google, etc.)
+      puede conectarse a Atlas en 5 minutos para usar tus datos como contexto y como memoria.
+    </p>
+  </section>
+
+  <!-- MEMORY SECTION -->
+  <section class="memory-section">
+    <div class="memory-tag">⚡ La oportunidad que NADIE más puede atender</div>
+    <h2>Los agentes necesitan algo<br>que tu cliente no tiene: <em>memoria persistente.</em></h2>
+    <p style="color: var(--mdb-mint); max-width: 720px; font-size: 1.1rem;">
+      Un agente sin memoria empieza de cero cada conversación. Inútil.
+      Para ser realmente productivo, necesita 3 tipos de memoria — y los 3 viven mejor en MongoDB:
+    </p>
+
+    <div class="memory-types">
+      <div class="memory-type">
+        <div class="memory-type-tag">Tipo 01</div>
+        <h4>Memoria de corto plazo</h4>
+        <p>Lo que se habló en esta sesión. Mensajes JSON anidados, varios participantes, metadata variable.</p>
+      </div>
+      <div class="memory-type">
+        <div class="memory-type-tag">Tipo 02</div>
+        <h4>Memoria semántica</h4>
+        <p>"¿Qué hemos hablado del cliente X antes?" → búsqueda vectorial sobre historial completo.</p>
+      </div>
+      <div class="memory-type">
+        <div class="memory-type-tag">Tipo 03</div>
+        <h4>Memoria estructurada</h4>
+        <p>Hechos del cliente, preferencias, productos contratados. Datos operacionales reales.</p>
+      </div>
+    </div>
+
+    <div style="margin-top: 2.5rem; padding: 1.5rem 2rem; background: rgba(0, 0, 0, 0.4); border-radius: 16px; position: relative;">
+      <p style="color: white; font-family: var(--font-display); font-size: 1.2rem; font-style: italic; line-height: 1.5;">
+        Pinecone te da el tipo 2. Postgres te da el tipo 3.
+        <span style="color: var(--mdb-green); font-weight: 700;">MongoDB te da los 3 en la misma base.</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- NEXT WAVE CTA -->
+  <section class="next-wave">
+    <div class="next-wave-tag">💰 La narrativa para el próximo año fiscal</div>
+    <h2>"Para 2028, el 90% de las compras B2B<br>serán intermediadas por agentes de IA"</h2>
+    <p>
+      No es opinión — es Gartner. Hablan de más de <strong style="color: var(--mdb-dark); background: var(--mdb-green); padding: 0.1rem 0.4rem; border-radius: 4px;">$15 billones</strong>
+      de gasto B2B pasando por agentes, y en ese mundo la <em>data operacional verificable se vuelve moneda</em>.
+      Eso es exactamente lo que MongoDB guarda. Tu trabajo: ser el AE que llegó hablando de agentes antes que la competencia.
+    </p>
+  </section>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="06-mongodb.html" class="bottom-nav-side">
+      <span class="bottom-nav-label">← Cap 06</span>
+      <span class="bottom-nav-title">¿Por qué MongoDB?</span>
+    </a>
+    <a href="08-casos.html" class="bottom-nav-side next">
+      <span class="bottom-nav-label">Siguiente · Cap 08 →</span>
+      <span class="bottom-nav-title">Casos de uso 🚀</span>
+    </a>
+  </nav>
+
+</div>
+
+<script>
+const steps = [
+  {
+    type: 'thinking',
+    icon: '💭',
+    label: 'Razonamiento',
+    text: 'Necesito agendar una llamada. Para eso debo: (1) saber quién es el contacto de Bancolombia, (2) ver mi disponibilidad, (3) recordar contexto previo, (4) mandar el invite.',
+    time: '0.2s'
+  },
+  {
+    type: 'tool',
+    icon: '💼',
+    label: 'Tool · search_contacts (Salesforce MCP)',
+    text: 'Buscando contacto de <span class="code-bit">Bancolombia</span>... → encontré <span class="code-bit">Carlos Rivera, CTO</span>. Email: <span class="code-bit">crivera@bancolombia.com</span>',
+    time: '0.4s'
+  },
+  {
+    type: 'tool',
+    icon: '📅',
+    label: 'Tool · check_availability (Calendar MCP)',
+    text: 'Revisando próxima semana... → 3 slots libres: <span class="code-bit">Mar 11AM</span>, <span class="code-bit">Mié 4PM</span>, <span class="code-bit">Jue 10AM</span>',
+    time: '0.3s'
+  },
+  {
+    type: 'mongo',
+    icon: '🍃',
+    label: 'Tool · query_memory (MongoDB MCP)',
+    text: 'Buscando contexto previo sobre Bancolombia en mi memoria... → última llamada fue hace 12 días sobre <span class="code-bit">migración de Oracle</span>. Próximo paso pendiente: <span class="code-bit">demo de Atlas Search</span>.',
+    time: '0.5s'
+  },
+  {
+    type: 'thinking',
+    icon: '💭',
+    label: 'Razonamiento',
+    text: 'Carlos prefirió últimamente horarios de tarde. Voy a proponer Mié 4PM con agenda incluyendo el demo pendiente. Subject: continuación del tema migración Oracle.',
+    time: '0.2s'
+  },
+  {
+    type: 'tool',
+    icon: '✉',
+    label: 'Tool · send_invite (Gmail MCP)',
+    text: 'Mandando invite a <span class="code-bit">Carlos Rivera</span>: <span class="code-bit">Mié 4PM</span> · "Continuación: Migración Oracle + demo Atlas Search". <strong style="color: var(--mdb-green);">✓ Enviado.</strong>',
+    time: '0.3s'
+  },
+  {
+    type: 'mongo',
+    icon: '🍃',
+    label: 'Tool · save_memory (MongoDB MCP)',
+    text: 'Guardando en memoria: <span class="code-bit">Llamada agendada Mié 4PM con Bancolombia/Carlos, objetivo demo Atlas Search</span>. Próxima vez sabré qué hacer.',
+    time: '0.2s'
+  }
+];
+
+async function runAgent() {
+  const btn = document.getElementById('playBtn');
+  btn.disabled = true;
+  btn.textContent = 'Ejecutando...';
+
+  const container = document.getElementById('agentSteps');
+  container.innerHTML = '';
+
+  for (let i = 0; i < steps.length; i++) {
+    const step = steps[i];
+    const div = document.createElement('div');
+    div.className = `agent-step ${step.type}`;
+    div.innerHTML = `
+      <div class="step-icon">${step.icon}</div>
+      <div class="step-content">
+        <div class="step-label">${step.label}</div>
+        <div class="step-text">${step.text}</div>
+      </div>
+      <div class="step-time">${step.time}</div>
+    `;
+    container.appendChild(div);
+    await new Promise(r => setTimeout(r, 80));
+    div.classList.add('show');
+    await new Promise(r => setTimeout(r, 700));
+  }
+
+  // Final summary
+  const summary = document.createElement('div');
+  summary.style.cssText = 'margin-top: 1.5rem; padding: 1.5rem 2rem; background: linear-gradient(135deg, rgba(0,237,100,0.15), rgba(0,104,74,0.08)); border: 1px solid var(--mdb-green); border-radius: 16px; opacity: 0; transition: opacity 0.5s;';
+  summary.innerHTML = `
+    <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--mdb-green); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem;">✓ Tarea completada</div>
+    <div style="font-family: var(--font-display); font-size: 1.2rem; color: white;">
+      7 pasos · 4 herramientas vía MCP · <strong style="color: var(--mdb-green);">2 de ellos contra MongoDB</strong> (memory + context)
+    </div>
+  `;
+  container.appendChild(summary);
+  await new Promise(r => setTimeout(r, 50));
+  summary.style.opacity = '1';
+
+  btn.disabled = false;
+  btn.textContent = '↻ Ejecutar otra vez';
+}
+</script>
+
+</body>
+</html>

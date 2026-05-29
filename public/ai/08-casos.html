@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>08 · Casos de uso por industria</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  /* INDUSTRY SELECTOR — big visual buttons */
+  .ind-selector {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.8rem;
+    margin: 2.5rem 0;
+  }
+  @media (max-width: 900px) { .ind-selector { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 540px) { .ind-selector { grid-template-columns: repeat(2, 1fr); } }
+
+  .ind-btn {
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 1.2rem 0.8rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .ind-btn:hover { transform: translateY(-4px); border-color: var(--mdb-green); }
+  .ind-btn.active {
+    background: var(--mdb-green-deep);
+    border-color: var(--mdb-green);
+    box-shadow: 0 8px 30px rgba(0,237,100,0.25);
+  }
+  .ind-btn-icon { font-size: 2.2rem; line-height: 1; }
+  .ind-btn-label {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.9rem;
+    line-height: 1.1;
+  }
+
+  /* STAGE — the animated diagram area */
+  .stage {
+    background: var(--mdb-dark-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 24px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stage-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .stage-title {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+  .stage-title .badge-d {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.25rem 0.7rem;
+    border-radius: 100px;
+    margin-left: 0.8rem;
+    vertical-align: middle;
+    background: rgba(183,148,244,0.15);
+    color: var(--accent-violet);
+    border: 1px solid rgba(183,148,244,0.4);
+  }
+  .play-flow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.3rem;
+    background: var(--mdb-green);
+    color: var(--mdb-dark);
+    border: none;
+    border-radius: 100px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .play-flow:hover { transform: scale(1.04); box-shadow: 0 4px 16px rgba(0,237,100,0.4); }
+
+  .stage-sub {
+    color: var(--text-tertiary);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .flow-canvas {
+    background: var(--mdb-dark);
+    border-radius: 18px;
+    padding: 1.5rem;
+  }
+  .flow-canvas svg { width: 100%; height: auto; display: block; }
+
+  /* Flow node animation */
+  .fnode rect, .fnode circle, .fnode ellipse {
+    transition: all 0.4s ease;
+  }
+  .fnode.dim { opacity: 0.25; }
+  .fnode.lit rect { filter: drop-shadow(0 0 12px rgba(0,237,100,0.5)); }
+
+  /* traveling dot */
+  .travel-dot { opacity: 0; }
+
+  /* IMPACT BAR */
+  .impact-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  @media (max-width: 700px) { .impact-bar { grid-template-columns: 1fr; } }
+
+  .impact-cell {
+    background: var(--mdb-dark);
+    border-radius: 14px;
+    padding: 1.3rem 1.5rem;
+    border-left: 3px solid var(--mdb-green);
+  }
+  .impact-cell.violet { border-left-color: var(--accent-violet); }
+  .impact-num {
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--mdb-green);
+    line-height: 1;
+  }
+  .impact-cell.violet .impact-num { color: var(--accent-violet); }
+  .impact-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.4rem;
+    line-height: 1.4;
+  }
+
+  /* MINI CASES — other use cases for the industry, as compact chips */
+  .mini-cases {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  @media (max-width: 800px) { .mini-cases { grid-template-columns: 1fr; } }
+
+  .mini-case {
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 1.2rem 1.4rem;
+    transition: all 0.25s;
+    cursor: default;
+  }
+  .mini-case:hover { border-color: var(--mdb-green); transform: translateY(-3px); }
+  .mini-case-tag {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.55rem;
+    border-radius: 100px;
+    display: inline-block;
+    margin-bottom: 0.7rem;
+  }
+  .mini-case-tag.c { background: rgba(0,237,100,0.12); color: var(--mdb-green); }
+  .mini-case-tag.d { background: rgba(183,148,244,0.15); color: var(--accent-violet); }
+  .mini-case-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+  }
+  .mini-case-icon { font-size: 1.3rem; margin-bottom: 0.5rem; }
+
+  .panel { display: none; animation: fadeUp 0.5s ease-out; }
+  .panel.active { display: block; }
+
+  /* PATTERN */
+  .pattern-section {
+    margin-top: 4rem;
+    padding: 3rem;
+    background: linear-gradient(135deg, var(--mdb-green-deep), var(--mdb-dark-2));
+    border-radius: 28px;
+    border: 1px solid var(--mdb-green);
+  }
+  .pattern-canvas { background: rgba(0,0,0,0.25); border-radius: 18px; padding: 1.5rem; margin-top: 1.5rem; }
+  .pattern-canvas svg { width: 100%; height: auto; }
+
+  /* legend */
+  .legend {
+    display: flex; gap: 1.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-secondary); }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <a href="index.html" class="topnav-brand">
+      <div class="topnav-brand-mark">M</div>
+      <span>AI Training · MongoDB LATAM</span>
+    </a>
+    <div class="topnav-progress">
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot active"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+    </div>
+    <div class="topnav-meta">Capítulo 8 de 10</div>
+  </nav>
+
+  <!-- Chapter header -->
+  <header class="chapter-header">
+    <div class="chapter-header-text">
+      <span class="kicker">Capítulo 08 · Casos de uso</span>
+      <div class="chapter-number">08</div>
+      <h1 class="chapter-title">Casos que borran cabezas.</h1>
+      <p class="chapter-subtitle">
+        Elige una industria. Mira el flujo correr. Cada caso es real — clientes
+        y arquitecturas públicas de MongoDB. Toca "ver el flujo" y observa
+        cómo el dato viaja hasta convertirse en valor.
+      </p>
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Tiempo</span>
+        <span class="chapter-meta-value">10 min</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Industrias</span>
+        <span class="chapter-meta-value">6 sectores</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- INDUSTRY SELECTOR -->
+  <div class="ind-selector">
+    <div class="ind-btn active" onclick="setInd('banca')">
+      <span class="ind-btn-icon">🏦</span>
+      <span class="ind-btn-label">Banca<br>& Pagos</span>
+    </div>
+    <div class="ind-btn" onclick="setInd('seguros')">
+      <span class="ind-btn-icon">🛡️</span>
+      <span class="ind-btn-label">Seguros</span>
+    </div>
+    <div class="ind-btn" onclick="setInd('retail')">
+      <span class="ind-btn-icon">🛒</span>
+      <span class="ind-btn-label">Retail</span>
+    </div>
+    <div class="ind-btn" onclick="setInd('salud')">
+      <span class="ind-btn-icon">🏥</span>
+      <span class="ind-btn-label">Salud<br>& Farma</span>
+    </div>
+    <div class="ind-btn" onclick="setInd('iot')">
+      <span class="ind-btn-icon">🏭</span>
+      <span class="ind-btn-label">IoT</span>
+    </div>
+    <div class="ind-btn" onclick="setInd('multimodal')">
+      <span class="ind-btn-icon">🎬</span>
+      <span class="ind-btn-label">Multi-<br>modal</span>
+    </div>
+  </div>
+
+  <!-- ============ PANEL: BANCA ============ -->
+  <div class="panel active" id="p-banca">
+    <div class="stage">
+      <div class="stage-head">
+        <div class="stage-title">Fraude que NO dispara reglas <span class="badge-d">◆ disruptivo</span></div>
+        <button class="play-flow" onclick="playFlow('banca')">▶ Ver el flujo</button>
+      </div>
+      <div class="stage-sub">Una transferencia sospechosa entra · MongoDB la compara con fraudes históricos en milisegundos</div>
+
+      <div class="flow-canvas">
+        <svg id="svg-banca" viewBox="0 0 1000 280" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M1 1L8 5L1 9" fill="none" stroke="#00ED64" stroke-width="1.5" stroke-linecap="round"/>
+            </marker>
+          </defs>
+
+          <!-- Connector lines -->
+          <line class="fl" x1="180" y1="140" x2="250" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah)"/>
+          <line class="fl" x1="430" y1="140" x2="500" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah)"/>
+          <line class="fl" x1="680" y1="140" x2="750" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah)"/>
+
+          <!-- Node 1: transaction -->
+          <g class="fnode" data-step="1">
+            <rect x="20" y="100" width="160" height="80" rx="14" fill="#00293D" stroke="#FF6B6B" stroke-width="1.5"/>
+            <text x="100" y="132" text-anchor="middle" font-family="Bricolage Grotesque" font-size="26">💸</text>
+            <text x="100" y="160" text-anchor="middle" font-family="Inter" font-size="13" font-weight="600" fill="#FF6B6B">$49,500 → shell co.</text>
+          </g>
+
+          <!-- Node 2: vectorize -->
+          <g class="fnode" data-step="2">
+            <rect x="250" y="100" width="180" height="80" rx="14" fill="#00293D" stroke="#FFD93D" stroke-width="1.5"/>
+            <text x="340" y="132" text-anchor="middle" font-family="Bricolage Grotesque" font-size="22">🔢</text>
+            <text x="340" y="158" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#FFD93D">Vectorizar conducta</text>
+          </g>
+
+          <!-- Node 3: MongoDB -->
+          <g class="fnode" data-step="3">
+            <rect x="500" y="90" width="180" height="100" rx="16" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="590" y="125" text-anchor="middle" font-family="Bricolage Grotesque" font-size="22">🍃</text>
+            <text x="590" y="150" text-anchor="middle" font-family="Inter" font-size="13" font-weight="700" fill="#00ED64">Vector + $graphLookup</text>
+            <text x="590" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#C3E7CA">3 casos similares</text>
+          </g>
+
+          <!-- Node 4: result -->
+          <g class="fnode" data-step="4">
+            <rect x="750" y="100" width="180" height="80" rx="14" fill="#00293D" stroke="#00ED64" stroke-width="1.5"/>
+            <text x="840" y="130" text-anchor="middle" font-family="Bricolage Grotesque" font-size="22">🚨</text>
+            <text x="840" y="156" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#00ED64">Bloquea + escala</text>
+          </g>
+
+          <!-- traveling dot -->
+          <circle class="travel-dot" id="dot-banca" r="7" fill="#00ED64"/>
+
+          <!-- step labels under -->
+          <text x="100" y="225" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="rgba(255,255,255,0.4)" letter-spacing="2">01 · ENTRA</text>
+          <text x="340" y="225" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="rgba(255,255,255,0.4)" letter-spacing="2">02 · EMBEDDING</text>
+          <text x="590" y="225" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#00ED64" letter-spacing="2">03 · AQUÍ MONGO</text>
+          <text x="840" y="225" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="rgba(255,255,255,0.4)" letter-spacing="2">04 · ACTÚA</text>
+        </svg>
+      </div>
+
+      <div class="impact-bar">
+        <div class="impact-cell">
+          <div class="impact-num">&lt;1 seg</div>
+          <div class="impact-label">Compara contra millones de transacciones</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">0</div>
+          <div class="impact-label">Reglas nuevas que escribir — detecta lo que NO conoce</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">1</div>
+          <div class="impact-label">Sola base: vectores + grafo + transaccional</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mini-cases">
+      <div class="mini-case">
+        <div class="mini-case-icon">💬</div>
+        <span class="mini-case-tag c">● clásico</span>
+        <div class="mini-case-title">Asistente bancario</div>
+      </div>
+      <div class="mini-case">
+        <div class="mini-case-icon">📊</div>
+        <span class="mini-case-tag d">◆ disruptivo</span>
+        <div class="mini-case-title">Scoring crediticio alternativo</div>
+      </div>
+      <div class="mini-case">
+        <div class="mini-case-icon">🕸️</div>
+        <span class="mini-case-tag d">◆ disruptivo</span>
+        <div class="mini-case-title">Agente AML rastrea redes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PANEL: SEGUROS ============ -->
+  <div class="panel" id="p-seguros">
+    <div class="stage">
+      <div class="stage-head">
+        <div class="stage-title">Underwriting multimodal <span class="badge-d">◆ disruptivo</span></div>
+        <button class="play-flow" onclick="playFlow('seguros')">▶ Ver el flujo</button>
+      </div>
+      <div class="stage-sub">Documentos + fotos entran juntos · un solo modelo evalúa el riesgo en minutos</div>
+
+      <div class="flow-canvas">
+        <svg id="svg-seguros" viewBox="0 0 1000 280" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M1 1L8 5L1 9" fill="none" stroke="#00ED64" stroke-width="1.5" stroke-linecap="round"/>
+            </marker>
+          </defs>
+
+          <line class="fl" x1="180" y1="90" x2="250" y2="120" stroke="#00684A" stroke-width="2" marker-end="url(#ah2)"/>
+          <line class="fl" x1="180" y1="190" x2="250" y2="160" stroke="#00684A" stroke-width="2" marker-end="url(#ah2)"/>
+          <line class="fl" x1="440" y1="140" x2="510" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah2)"/>
+          <line class="fl" x1="690" y1="140" x2="760" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah2)"/>
+
+          <!-- two inputs -->
+          <g class="fnode" data-step="1">
+            <rect x="20" y="55" width="160" height="65" rx="14" fill="#00293D" stroke="#4ECDC4" stroke-width="1.5"/>
+            <text x="100" y="82" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">📄</text>
+            <text x="100" y="105" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#4ECDC4">Documentos</text>
+          </g>
+          <g class="fnode" data-step="1">
+            <rect x="20" y="160" width="160" height="65" rx="14" fill="#00293D" stroke="#B794F4" stroke-width="1.5"/>
+            <text x="100" y="187" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">📷</text>
+            <text x="100" y="210" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#B794F4">Fotos de daños</text>
+          </g>
+
+          <!-- multimodal embed -->
+          <g class="fnode" data-step="2">
+            <rect x="250" y="105" width="190" height="70" rx="14" fill="#00293D" stroke="#FFD93D" stroke-width="1.5"/>
+            <text x="345" y="135" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🔢</text>
+            <text x="345" y="160" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#FFD93D">voyage-multimodal-3</text>
+          </g>
+
+          <!-- MongoDB -->
+          <g class="fnode" data-step="3">
+            <rect x="510" y="95" width="180" height="90" rx="16" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="600" y="128" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🍃</text>
+            <text x="600" y="152" text-anchor="middle" font-family="Inter" font-size="13" font-weight="700" fill="#00ED64">Texto + imagen</text>
+            <text x="600" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#C3E7CA">en un vector</text>
+          </g>
+
+          <!-- result -->
+          <g class="fnode" data-step="4">
+            <rect x="760" y="100" width="180" height="80" rx="14" fill="#00293D" stroke="#00ED64" stroke-width="1.5"/>
+            <text x="850" y="130" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">✓</text>
+            <text x="850" y="156" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#00ED64">Riesgo en minutos</text>
+          </g>
+
+          <circle class="travel-dot" id="dot-seguros" r="7" fill="#00ED64"/>
+        </svg>
+      </div>
+
+      <div class="impact-bar">
+        <div class="impact-cell violet">
+          <div class="impact-num">📄+📷</div>
+          <div class="impact-label">Texto e imagen en el mismo análisis</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">días→min</div>
+          <div class="impact-label">Underwriting que era manual</div>
+        </div>
+        <div class="impact-cell violet">
+          <div class="impact-num">1</div>
+          <div class="impact-label">Modelo multimodal, no 3 pipelines</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mini-cases">
+      <div class="mini-case">
+        <div class="mini-case-icon">⚙️</div>
+        <span class="mini-case-tag c">● clásico</span>
+        <div class="mini-case-title">Underwriting digital</div>
+      </div>
+      <div class="mini-case">
+        <div class="mini-case-icon">📞</div>
+        <span class="mini-case-tag c">● clásico</span>
+        <div class="mini-case-title">Insights de llamadas</div>
+      </div>
+      <div class="mini-case">
+        <div class="mini-case-icon">🚗</div>
+        <span class="mini-case-tag d">◆ disruptivo</span>
+        <div class="mini-case-title">Seguro por uso (UBI)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PANEL: RETAIL ============ -->
+  <div class="panel" id="p-retail">
+    <div class="stage">
+      <div class="stage-head">
+        <div class="stage-title">Búsqueda que entiende intención <span class="badge-d" style="background:rgba(0,237,100,0.12);color:var(--mdb-green);border-color:rgba(0,237,100,0.3);">● clásico</span></div>
+        <button class="play-flow" onclick="playFlow('retail')">▶ Ver el flujo</button>
+      </div>
+      <div class="stage-sub">"algo para correr en lluvia" → encuentra chamarras impermeables aunque no digan esas palabras</div>
+
+      <div class="flow-canvas">
+        <svg id="svg-retail" viewBox="0 0 1000 280" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ah3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M1 1L8 5L1 9" fill="none" stroke="#00ED64" stroke-width="1.5" stroke-linecap="round"/>
+            </marker>
+          </defs>
+
+          <line class="fl" x1="200" y1="140" x2="270" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah3)"/>
+          <line class="fl" x1="470" y1="140" x2="540" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah3)"/>
+          <line class="fl" x1="720" y1="140" x2="790" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah3)"/>
+
+          <g class="fnode" data-step="1">
+            <rect x="20" y="105" width="180" height="70" rx="14" fill="#00293D" stroke="#4ECDC4" stroke-width="1.5"/>
+            <text x="110" y="135" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🔍</text>
+            <text x="110" y="160" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#4ECDC4">"correr en lluvia"</text>
+          </g>
+
+          <g class="fnode" data-step="2">
+            <rect x="270" y="105" width="200" height="70" rx="14" fill="#00293D" stroke="#FFD93D" stroke-width="1.5"/>
+            <text x="370" y="135" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🧠</text>
+            <text x="370" y="160" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#FFD93D">Búsqueda por significado</text>
+          </g>
+
+          <g class="fnode" data-step="3">
+            <rect x="540" y="95" width="180" height="90" rx="16" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="630" y="128" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🍃</text>
+            <text x="630" y="152" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#00ED64">Hybrid Search</text>
+            <text x="630" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#C3E7CA">intención + keywords</text>
+          </g>
+
+          <g class="fnode" data-step="4">
+            <rect x="790" y="100" width="180" height="80" rx="14" fill="#00293D" stroke="#00ED64" stroke-width="1.5"/>
+            <text x="880" y="130" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🧥</text>
+            <text x="880" y="156" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#00ED64">Chamarra impermeable</text>
+          </g>
+
+          <circle class="travel-dot" id="dot-retail" r="7" fill="#00ED64"/>
+        </svg>
+      </div>
+
+      <div class="impact-bar">
+        <div class="impact-cell">
+          <div class="impact-num">+conv.</div>
+          <div class="impact-label">Menos abandono de búsqueda</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">Delivery&nbsp;Hero</div>
+          <div class="impact-label">Recomendaciones que suben revenue (caso real)</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">Alfamart</div>
+          <div class="impact-label">Escala en peak, ahorra el resto (caso real)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mini-cases">
+      <div class="mini-case">
+        <div class="mini-case-icon">🎯</div>
+        <span class="mini-case-tag c">● clásico</span>
+        <div class="mini-case-title">Motor de recomendación</div>
+      </div>
+      <div class="mini-case">
+        <div class="mini-case-icon">📦</div>
+        <span class="mini-case-tag d">◆ disruptivo</span>
+        <div class="mini-case-title">Inventario autónomo por IA</div>
+      </div>
+      <div class="mini-case">
+        <div class="mini-case-icon">📈</div>
+        <span class="mini-case-tag d">◆ disruptivo</span>
+        <div class="mini-case-title">Escala elástica en peak</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PANEL: SALUD ============ -->
+  <div class="panel" id="p-salud">
+    <div class="stage">
+      <div class="stage-head">
+        <div class="stage-title">Reportes regulatorios en minutos <span class="badge-d">◆ disruptivo</span></div>
+        <button class="play-flow" onclick="playFlow('salud')">▶ Ver el flujo</button>
+      </div>
+      <div class="stage-sub">Caso real Novo Nordisk · de 12 semanas de trabajo manual a 10 minutos con RAG sobre Atlas</div>
+
+      <div class="flow-canvas">
+        <svg id="svg-salud" viewBox="0 0 1000 280" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ah4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M1 1L8 5L1 9" fill="none" stroke="#00ED64" stroke-width="1.5" stroke-linecap="round"/>
+            </marker>
+          </defs>
+
+          <line class="fl" x1="200" y1="140" x2="270" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah4)"/>
+          <line class="fl" x1="470" y1="140" x2="540" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah4)"/>
+          <line class="fl" x1="720" y1="140" x2="790" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah4)"/>
+
+          <g class="fnode" data-step="1">
+            <rect x="20" y="105" width="180" height="70" rx="14" fill="#00293D" stroke="#4ECDC4" stroke-width="1.5"/>
+            <text x="110" y="135" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🧪</text>
+            <text x="110" y="160" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#4ECDC4">Datos de ensayo</text>
+          </g>
+
+          <g class="fnode" data-step="2">
+            <rect x="270" y="105" width="200" height="70" rx="14" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="370" y="135" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🍃</text>
+            <text x="370" y="160" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#00ED64">RAG sobre Atlas</text>
+          </g>
+
+          <g class="fnode" data-step="3">
+            <rect x="540" y="105" width="180" height="70" rx="14" fill="#00293D" stroke="#B794F4" stroke-width="1.5"/>
+            <text x="630" y="135" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🤖</text>
+            <text x="630" y="160" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#B794F4">Claude redacta</text>
+          </g>
+
+          <g class="fnode" data-step="4">
+            <rect x="790" y="100" width="180" height="80" rx="14" fill="#00293D" stroke="#00ED64" stroke-width="1.5"/>
+            <text x="880" y="128" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">📑</text>
+            <text x="880" y="152" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#00ED64">Reporte regulatorio</text>
+            <text x="880" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#C3E7CA">grado auditoría</text>
+          </g>
+
+          <circle class="travel-dot" id="dot-salud" r="7" fill="#00ED64"/>
+        </svg>
+      </div>
+
+      <div class="impact-bar">
+        <div class="impact-cell violet">
+          <div class="impact-num">12 sem → 10 min</div>
+          <div class="impact-label">Clinical Study Reports (Novo Nordisk)</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">~$15M</div>
+          <div class="impact-label">Por cada día antes en el mercado</div>
+        </div>
+        <div class="impact-cell violet">
+          <div class="impact-num">+calidad</div>
+          <div class="impact-label">Con una fracción del equipo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mini-cases">
+      <div class="mini-case">
+        <div class="mini-case-icon">👤</div>
+        <span class="mini-case-tag c">● clásico</span>
+        <div class="mini-case-title">Vista única del paciente</div>
+      </div>
+      <div class="mini-case">
+        <div class="mini-case-icon">💊</div>
+        <span class="mini-case-tag c">● clásico</span>
+        <div class="mini-case-title">Asistente para crónicos</div>
+      </div>
+      <div class="mini-case">
+        <div class="mini-case-icon">🔬</div>
+        <span class="mini-case-tag d">◆ disruptivo</span>
+        <div class="mini-case-title">Patología digital multimodal</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PANEL: IOT ============ -->
+  <div class="panel" id="p-iot">
+    <div class="stage">
+      <div class="stage-head">
+        <div class="stage-title">Diagnóstico por sonido de máquina <span class="badge-d">◆ disruptivo</span></div>
+        <button class="play-flow" onclick="playFlow('iot')">▶ Ver el flujo</button>
+      </div>
+      <div class="stage-sub">Una máquina suena raro · se vectoriza el audio · MongoDB encuentra casos iguales y guía al técnico</div>
+
+      <div class="flow-canvas">
+        <svg id="svg-iot" viewBox="0 0 1000 280" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ah5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M1 1L8 5L1 9" fill="none" stroke="#00ED64" stroke-width="1.5" stroke-linecap="round"/>
+            </marker>
+          </defs>
+
+          <line class="fl" x1="200" y1="140" x2="270" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah5)"/>
+          <line class="fl" x1="470" y1="140" x2="540" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah5)"/>
+          <line class="fl" x1="720" y1="140" x2="790" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah5)"/>
+
+          <g class="fnode" data-step="1">
+            <rect x="20" y="105" width="180" height="70" rx="14" fill="#00293D" stroke="#FF6B6B" stroke-width="1.5"/>
+            <text x="110" y="135" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🔊</text>
+            <text x="110" y="160" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#FF6B6B">Ruido anómalo</text>
+          </g>
+
+          <g class="fnode" data-step="2">
+            <rect x="270" y="105" width="200" height="70" rx="14" fill="#00293D" stroke="#FFD93D" stroke-width="1.5"/>
+            <text x="370" y="135" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🔢</text>
+            <text x="370" y="160" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#FFD93D">Audio → vector</text>
+          </g>
+
+          <g class="fnode" data-step="3">
+            <rect x="540" y="95" width="180" height="90" rx="16" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="630" y="128" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🍃</text>
+            <text x="630" y="152" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#00ED64">Vector + Time Series</text>
+            <text x="630" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#C3E7CA">casos similares</text>
+          </g>
+
+          <g class="fnode" data-step="4">
+            <rect x="790" y="100" width="180" height="80" rx="14" fill="#00293D" stroke="#00ED64" stroke-width="1.5"/>
+            <text x="880" y="128" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🛠️</text>
+            <text x="880" y="154" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#00ED64">Guía de reparación</text>
+          </g>
+
+          <circle class="travel-dot" id="dot-iot" r="7" fill="#00ED64"/>
+        </svg>
+      </div>
+
+      <div class="impact-bar">
+        <div class="impact-cell">
+          <div class="impact-num">−15-20%</div>
+          <div class="impact-label">Downtime con mantenimiento predictivo</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">−30-60%</div>
+          <div class="impact-label">Costos de mantenimiento</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">Bosch</div>
+          <div class="impact-label">IoT Insights corre sobre MongoDB (caso real)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mini-cases">
+      <div class="mini-case">
+        <div class="mini-case-icon">📉</div>
+        <span class="mini-case-tag c">● clásico</span>
+        <div class="mini-case-title">Mantenimiento predictivo</div>
+      </div>
+      <div class="mini-case">
+        <div class="mini-case-icon">📡</div>
+        <span class="mini-case-tag c">● clásico</span>
+        <div class="mini-case-title">Plataforma de telemetría</div>
+      </div>
+      <div class="mini-case">
+        <div class="mini-case-icon">🚙</div>
+        <span class="mini-case-tag d">◆ disruptivo</span>
+        <div class="mini-case-title">Carro que se auto-diagnostica</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PANEL: MULTIMODAL ============ -->
+  <div class="panel" id="p-multimodal">
+    <div class="stage">
+      <div class="stage-head">
+        <div class="stage-title">El caso raro entre millones <span class="badge-d">◆ disruptivo</span></div>
+        <button class="play-flow" onclick="playFlow('multimodal')">▶ Ver el flujo</button>
+      </div>
+      <div class="stage-sub">Autos autónomos · encontrar ese 0.001% de escenarios peligrosos entre millones de horas de video</div>
+
+      <div class="flow-canvas">
+        <svg id="svg-multimodal" viewBox="0 0 1000 280" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ah6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M1 1L8 5L1 9" fill="none" stroke="#00ED64" stroke-width="1.5" stroke-linecap="round"/>
+            </marker>
+          </defs>
+
+          <line class="fl" x1="200" y1="140" x2="270" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah6)"/>
+          <line class="fl" x1="470" y1="140" x2="540" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah6)"/>
+          <line class="fl" x1="720" y1="140" x2="790" y2="140" stroke="#00684A" stroke-width="2" marker-end="url(#ah6)"/>
+
+          <g class="fnode" data-step="1">
+            <rect x="20" y="105" width="180" height="70" rx="14" fill="#00293D" stroke="#B794F4" stroke-width="1.5"/>
+            <text x="110" y="135" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🎥</text>
+            <text x="110" y="160" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#B794F4">Millones de horas</text>
+          </g>
+
+          <g class="fnode" data-step="2">
+            <rect x="270" y="105" width="200" height="70" rx="14" fill="#00293D" stroke="#FFD93D" stroke-width="1.5"/>
+            <text x="370" y="135" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🔢</text>
+            <text x="370" y="160" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#FFD93D">Voyage AI embeddings</text>
+          </g>
+
+          <g class="fnode" data-step="3">
+            <rect x="540" y="95" width="180" height="90" rx="16" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="630" y="128" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🍃</text>
+            <text x="630" y="152" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#00ED64">Hybrid Search</text>
+            <text x="630" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#C3E7CA">+ agentes</text>
+          </g>
+
+          <g class="fnode" data-step="4">
+            <rect x="790" y="100" width="180" height="80" rx="14" fill="#00293D" stroke="#00ED64" stroke-width="1.5"/>
+            <text x="880" y="128" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">🎯</text>
+            <text x="880" y="154" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#00ED64">El caso raro, hallado</text>
+          </g>
+
+          <circle class="travel-dot" id="dot-multimodal" r="7" fill="#00ED64"/>
+        </svg>
+      </div>
+
+      <div class="impact-bar">
+        <div class="impact-cell">
+          <div class="impact-num">petabytes</div>
+          <div class="impact-label">Film Archive Australia busca en su acervo (caso real)</div>
+        </div>
+        <div class="impact-cell violet">
+          <div class="impact-num">+90%</div>
+          <div class="impact-label">Precisión en 8,000 empresas — Purple Fabric (caso real)</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">texto+img+audio+video</div>
+          <div class="impact-label">Todo buscable en una base</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mini-cases">
+      <div class="mini-case">
+        <div class="mini-case-icon">🎞️</div>
+        <span class="mini-case-tag c">● clásico</span>
+        <div class="mini-case-title">Búsqueda en archivos de medios</div>
+      </div>
+      <div class="mini-case">
+        <div class="mini-case-icon">📚</div>
+        <span class="mini-case-tag c">● clásico</span>
+        <div class="mini-case-title">RAG sobre docs técnicos</div>
+      </div>
+      <div class="mini-case">
+        <div class="mini-case-icon">🏢</div>
+        <span class="mini-case-tag d">◆ disruptivo</span>
+        <div class="mini-case-title">Due diligence 8,000 empresas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE PATTERN — animated convergence diagram -->
+  <section class="pattern-section">
+    <div class="stage-head" style="margin-bottom:0.3rem;">
+      <div class="stage-title" style="color:white;">El patrón que se repite en TODAS</div>
+    </div>
+    <div class="stage-sub" style="color:var(--mdb-mint);">Sin importar la industria, los 4 ingredientes convergen en una sola plataforma</div>
+
+    <div class="pattern-canvas">
+      <svg viewBox="0 0 1000 260" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M1 1L8 5L1 9" fill="none" stroke="#00ED64" stroke-width="1.5" stroke-linecap="round"/>
+          </marker>
+        </defs>
+
+        <!-- 4 sources converging -->
+        <g>
+          <rect x="30" y="20" width="190" height="44" rx="12" fill="#00293D" stroke="#4ECDC4" stroke-width="1.5"/>
+          <text x="125" y="47" text-anchor="middle" font-family="Inter" font-size="13" font-weight="600" fill="#4ECDC4">📄 Datos operacionales</text>
+        </g>
+        <g>
+          <rect x="30" y="78" width="190" height="44" rx="12" fill="#00293D" stroke="#FFD93D" stroke-width="1.5"/>
+          <text x="125" y="105" text-anchor="middle" font-family="Inter" font-size="13" font-weight="600" fill="#FFD93D">🧠 Vectores</text>
+        </g>
+        <g>
+          <rect x="30" y="136" width="190" height="44" rx="12" fill="#00293D" stroke="#B794F4" stroke-width="1.5"/>
+          <text x="125" y="163" text-anchor="middle" font-family="Inter" font-size="13" font-weight="600" fill="#B794F4">⏱️ Time series</text>
+        </g>
+        <g>
+          <rect x="30" y="194" width="190" height="44" rx="12" fill="#00293D" stroke="#FF6B6B" stroke-width="1.5"/>
+          <text x="125" y="221" text-anchor="middle" font-family="Inter" font-size="13" font-weight="600" fill="#FF6B6B">🔗 Relaciones</text>
+        </g>
+
+        <!-- converging lines -->
+        <path d="M220 42 Q400 42 470 120" fill="none" stroke="#00684A" stroke-width="2" marker-end="url(#ahp)"/>
+        <path d="M220 100 Q400 100 470 125" fill="none" stroke="#00684A" stroke-width="2" marker-end="url(#ahp)"/>
+        <path d="M220 158 Q400 158 470 135" fill="none" stroke="#00684A" stroke-width="2" marker-end="url(#ahp)"/>
+        <path d="M220 216 Q400 216 470 140" fill="none" stroke="#00684A" stroke-width="2" marker-end="url(#ahp)"/>
+
+        <!-- MongoDB at center -->
+        <g>
+          <rect x="510" y="80" width="220" height="100" rx="18" fill="#00684A" stroke="#00ED64" stroke-width="2.5"/>
+          <text x="620" y="120" text-anchor="middle" font-family="Bricolage Grotesque" font-size="26" font-weight="800" fill="#00ED64">🍃 MongoDB</text>
+          <text x="620" y="148" text-anchor="middle" font-family="Inter" font-size="13" fill="#C3E7CA">Una plataforma · un query</text>
+        </g>
+
+        <!-- output -->
+        <line x1="730" y1="130" x2="800" y2="130" stroke="#00684A" stroke-width="2" marker-end="url(#ahp)"/>
+        <g>
+          <rect x="800" y="100" width="170" height="60" rx="14" fill="#00293D" stroke="#00ED64" stroke-width="1.5"/>
+          <text x="885" y="126" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">✓</text>
+          <text x="885" y="148" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#00ED64">App de IA</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot" style="background:#4ECDC4;"></span> Operacional</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#FFD93D;"></span> Vectores</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#B794F4;"></span> Time series</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#FF6B6B;"></span> Relaciones</div>
+    </div>
+  </section>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="07-agents.html" class="bottom-nav-side">
+      <span class="bottom-nav-label">← Cap 07</span>
+      <span class="bottom-nav-title">Agentes & MCP</span>
+    </a>
+    <a href="09-toolkit.html" class="bottom-nav-side next">
+      <span class="bottom-nav-label">Siguiente · Cap 09 →</span>
+      <span class="bottom-nav-title">Toolkit del AE 📌</span>
+    </a>
+  </nav>
+
+</div>
+
+<script>
+function setInd(name) {
+  document.querySelectorAll('.ind-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('p-' + name).classList.add('active');
+  // auto-play the flow when switching
+  setTimeout(() => playFlow(name), 300);
+}
+
+// Flow positions for the traveling dot (x,y waypoints per industry)
+const flowPaths = {
+  banca:      [[100,140],[340,140],[590,140],[840,140]],
+  seguros:    [[100,90],[345,140],[600,140],[850,140]],
+  retail:     [[110,140],[370,140],[630,140],[880,140]],
+  salud:      [[110,140],[370,140],[630,140],[880,140]],
+  iot:        [[110,140],[370,140],[630,140],[880,140]],
+  multimodal: [[110,140],[370,140],[630,140],[880,140]]
+};
+
+function playFlow(name) {
+  const svg = document.getElementById('svg-' + name);
+  if (!svg) return;
+  const dot = document.getElementById('dot-' + name);
+  const nodes = svg.querySelectorAll('.fnode');
+  const path = flowPaths[name];
+
+  // reset
+  nodes.forEach(n => { n.classList.add('dim'); n.classList.remove('lit'); });
+  dot.style.opacity = '0';
+
+  let i = 0;
+  function lightStep() {
+    if (i >= path.length) {
+      // all lit at end
+      nodes.forEach(n => n.classList.remove('dim'));
+      dot.style.opacity = '0';
+      return;
+    }
+    // light up nodes matching this step
+    const stepNum = i + 1;
+    nodes.forEach(n => {
+      if (n.getAttribute('data-step') == stepNum) {
+        n.classList.remove('dim');
+        n.classList.add('lit');
+      }
+    });
+    // move dot
+    const [x,y] = path[i];
+    dot.setAttribute('cx', x);
+    dot.setAttribute('cy', y);
+    dot.style.transition = 'none';
+    dot.style.opacity = '1';
+    if (i > 0) {
+      const [px,py] = path[i-1];
+      dot.setAttribute('cx', px); dot.setAttribute('cy', py);
+      requestAnimationFrame(() => {
+        dot.style.transition = 'cx 0.5s ease, cy 0.5s ease';
+        dot.setAttribute('cx', x); dot.setAttribute('cy', y);
+      });
+    }
+    i++;
+    setTimeout(lightStep, 650);
+  }
+  lightStep();
+}
+
+// Auto-play banca on load
+window.addEventListener('load', () => setTimeout(() => playFlow('banca'), 600));
+</script>
+
+</body>
+</html>

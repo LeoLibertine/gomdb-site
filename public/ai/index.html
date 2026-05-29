@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA para AEs · MongoDB LATAM</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  /* Hero específico de portada */
+  .hero {
+    min-height: 75vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 4rem;
+  }
+
+  .hero-eyebrow {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-eyebrow .pill {
+    font-size: 0.7rem;
+  }
+
+  .hero-title {
+    font-size: clamp(3rem, 9vw, 7.5rem);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title .word-1 { color: var(--mdb-mint); }
+  .hero-title .word-2 {
+    color: var(--mdb-green);
+    font-style: italic;
+    font-weight: 800;
+  }
+  .hero-title .word-3 { color: var(--text-primary); }
+
+  .hero-subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: var(--text-secondary);
+    max-width: 760px;
+    line-height: 1.5;
+    margin-bottom: 3rem;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 4rem;
+    flex-wrap: wrap;
+    padding: 2rem 0;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .hero-stat-num {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--mdb-green);
+    line-height: 1;
+  }
+
+  .hero-stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-tertiary);
+    margin-top: 0.4rem;
+  }
+
+  /* Floating decoration */
+  .hero-decoration {
+    position: absolute;
+    right: -100px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 500px;
+    height: 500px;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .hero-decoration svg {
+    width: 100%;
+    height: 100%;
+    animation: spin 60s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* CHAPTERS GRID */
+  .chapters-section {
+    margin-top: 4rem;
+  }
+
+  .section-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .section-heading h2 {
+    font-size: 2.4rem;
+  }
+
+  .section-heading-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border-subtle);
+    min-width: 100px;
+  }
+
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .chapter-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 22px;
+    padding: 2rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    min-height: 240px;
+  }
+
+  .chapter-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--mdb-green);
+    background: var(--surface-card-hover);
+  }
+
+  .chapter-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 100% 0%, rgba(0, 237, 100, 0.12), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .chapter-card:hover::before { opacity: 1; }
+
+  .chapter-card-num {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .chapter-card-num strong {
+    color: var(--mdb-green);
+    font-size: 2.4rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    display: block;
+    margin-top: 0.4rem;
+    line-height: 1;
+  }
+
+  .chapter-card-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: auto;
+    margin-bottom: 0.6rem;
+    line-height: 1.15;
+  }
+
+  .chapter-card-desc {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .chapter-card-tag {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--mdb-green);
+    background: rgba(0, 237, 100, 0.1);
+    padding: 0.3rem 0.7rem;
+    border-radius: 100px;
+    border: 1px solid rgba(0, 237, 100, 0.25);
+  }
+
+  .chapter-card-arrow {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 237, 100, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+  }
+
+  .chapter-card:hover .chapter-card-arrow {
+    background: var(--mdb-green);
+    transform: rotate(-45deg);
+  }
+
+  .chapter-card-arrow svg { width: 18px; height: 18px; color: var(--mdb-green); transition: color 0.3s; }
+  .chapter-card:hover .chapter-card-arrow svg { color: var(--mdb-dark); }
+
+  .featured-card {
+    grid-column: span 2;
+    background: linear-gradient(135deg, var(--mdb-green-deep) 0%, var(--mdb-dark-2) 100%);
+    border-color: var(--mdb-green);
+  }
+
+  @media (max-width: 800px) {
+    .featured-card { grid-column: span 1; }
+  }
+
+  /* Logistics strip */
+  .logistics {
+    margin-top: 5rem;
+    padding: 2.5rem;
+    background: var(--mdb-dark-2);
+    border-radius: 24px;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .logistics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+
+  .logistics-item .pill {
+    margin-bottom: 0.8rem;
+  }
+
+  .logistics-item h4 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .logistics-item p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 900px) {
+    .logistics-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <a href="index.html" class="topnav-brand">
+      <div class="topnav-brand-mark">M</div>
+      <span>AI Training · MongoDB LATAM</span>
+    </a>
+    <div class="topnav-meta">Presentado por Leonel Alarcón · Viernes 9 AM</div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-decoration">
+      <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00ED64" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#00684A" stop-opacity="0.1"/>
+          </linearGradient>
+        </defs>
+        <circle cx="250" cy="250" r="200" fill="none" stroke="url(#g1)" stroke-width="1" stroke-dasharray="2 8"/>
+        <circle cx="250" cy="250" r="150" fill="none" stroke="#00ED64" stroke-width="1" stroke-opacity="0.3"/>
+        <circle cx="250" cy="250" r="100" fill="none" stroke="#C3E7CA" stroke-width="1" stroke-opacity="0.4"/>
+        <circle cx="250" cy="250" r="6" fill="#00ED64"/>
+        <!-- Orbiting dots -->
+        <circle cx="450" cy="250" r="8" fill="#00ED64"/>
+        <circle cx="250" cy="100" r="5" fill="#C3E7CA"/>
+        <circle cx="100" cy="320" r="6" fill="#FFD93D"/>
+        <circle cx="380" cy="380" r="4" fill="#FF6B6B"/>
+      </svg>
+    </div>
+
+    <div class="hero-eyebrow">
+      <span class="pill">◆ Sesión Fundacional</span>
+      <span class="pill pill-violet">60 minutos</span>
+      <span class="pill pill-cyan">Para AEs · Mexico, LATAM</span>
+    </div>
+
+    <h1 class="hero-title">
+      <span class="word-1">IA generativa,</span><br>
+      <span class="word-2">vectores</span> <span class="word-3">y por qué</span><br>
+      <span class="word-3">todo termina en</span> <span class="word-2">MongoDB.</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      Un recorrido visual, interactivo y sin tecnicismos por la única conversación
+      que tu cliente va a tener contigo en los próximos 90 días.
+      Sales como AE. Regresas como consultor de IA.
+    </p>
+
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">10</div>
+        <div class="hero-stat-label">Módulos · 1 hora</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">5</div>
+        <div class="hero-stat-label">Preguntas de discovery</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">3</div>
+        <div class="hero-stat-label">Objeciones cerradas</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">$0</div>
+        <div class="hero-stat-label">Excusas el lunes</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAPTERS -->
+  <section class="chapters-section">
+
+    <div class="section-heading">
+      <h2>El temario</h2>
+      <span class="section-heading-line"></span>
+      <span class="kicker">10 capítulos · navegables</span>
+    </div>
+
+    <div class="chapter-grid">
+
+      <a href="01-hook.html" class="chapter-card featured-card">
+        <span class="chapter-card-tag">⚡ Empieza aquí</span>
+        <div class="chapter-card-num">Capítulo · <strong>01</strong></div>
+        <div class="chapter-card-title">El AE perdido</div>
+        <p class="chapter-card-desc">La llamada que te va a sudar la espalda — y por qué este training existe. 3 minutos.</p>
+        <span class="chapter-card-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </a>
+
+      <a href="02-llm.html" class="chapter-card">
+        <span class="chapter-card-tag">Interactivo</span>
+        <div class="chapter-card-num">Capítulo · <strong>02</strong></div>
+        <div class="chapter-card-title">¿Qué es un LLM?</div>
+        <p class="chapter-card-desc">El autocompletar con esteroides. Predicción de palabras en vivo. Por qué alucina.</p>
+        <span class="chapter-card-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </a>
+
+      <a href="03-tokens.html" class="chapter-card">
+        <span class="chapter-card-tag">Interactivo</span>
+        <div class="chapter-card-num">Capítulo · <strong>03</strong></div>
+        <div class="chapter-card-title">Tokens & costo</div>
+        <p class="chapter-card-desc">Por qué cada conversación con IA cuesta dinero — y por qué RAG no es opcional.</p>
+        <span class="chapter-card-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </a>
+
+      <a href="04-vectors.html" class="chapter-card">
+        <span class="chapter-card-tag">⭐ Core</span>
+        <div class="chapter-card-num">Capítulo · <strong>04</strong></div>
+        <div class="chapter-card-title">Vectores & embeddings</div>
+        <p class="chapter-card-desc">El corazón del training. Rey − Hombre + Mujer = Reina. Mapa visual de significado.</p>
+        <span class="chapter-card-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </a>
+
+      <a href="05-rag.html" class="chapter-card">
+        <span class="chapter-card-tag">Simulador</span>
+        <div class="chapter-card-num">Capítulo · <strong>05</strong></div>
+        <div class="chapter-card-title">RAG paso a paso</div>
+        <p class="chapter-card-desc">El patrón que el 90% de tus clientes está construyendo. Demo en 4 pasos.</p>
+        <span class="chapter-card-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </a>
+
+      <a href="06-mongodb.html" class="chapter-card">
+        <span class="chapter-card-tag">🎯 Munición</span>
+        <div class="chapter-card-num">Capítulo · <strong>06</strong></div>
+        <div class="chapter-card-title">¿Por qué MongoDB?</div>
+        <p class="chapter-card-desc">vs Pinecone, pgvector, Elastic, OpenSearch. Diagramas comparativos lado a lado.</p>
+        <span class="chapter-card-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </a>
+
+      <a href="07-agents.html" class="chapter-card">
+        <span class="chapter-card-tag">Future</span>
+        <div class="chapter-card-num">Capítulo · <strong>07</strong></div>
+        <div class="chapter-card-title">Agentes & MCP</div>
+        <p class="chapter-card-desc">La siguiente ola. Memoria, herramientas, autonomía. Simulador de agente en vivo.</p>
+        <span class="chapter-card-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </a>
+
+      <a href="08-casos.html" class="chapter-card">
+        <span class="chapter-card-tag">🚀 Disruptivo</span>
+        <div class="chapter-card-num">Capítulo · <strong>08</strong></div>
+        <div class="chapter-card-title">Casos de uso por industria</div>
+        <p class="chapter-card-desc">Banca, seguros, retail, salud, IoT, multimodal. Casos reales que borran cabezas — clásicos y disruptivos.</p>
+        <span class="chapter-card-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </a>
+
+      <a href="09-toolkit.html" class="chapter-card">
+        <span class="chapter-card-tag">📌 Para llevar</span>
+        <div class="chapter-card-num">Capítulo · <strong>09</strong></div>
+        <div class="chapter-card-title">Toolkit del AE</div>
+        <p class="chapter-card-desc">5 preguntas, 3 señales, 3 objeciones, 1 frase de cierre. Lo que aplicas el lunes.</p>
+        <span class="chapter-card-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </a>
+
+      <a href="10-glosario.html" class="chapter-card">
+        <span class="chapter-card-tag">📖 Anexo</span>
+        <div class="chapter-card-num">Capítulo · <strong>10</strong></div>
+        <div class="chapter-card-title">Glosario MongoDB + IA</div>
+        <p class="chapter-card-desc">27 términos buscables: embedding, RAG, MCP, Voyage AI, $rankFusion. Lo que dices al cliente.</p>
+        <span class="chapter-card-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </a>
+
+    </div>
+
+  </section>
+
+  <!-- LOGISTICS -->
+  <section class="logistics">
+    <div class="logistics-grid">
+      <div class="logistics-item">
+        <span class="pill">Modalidad</span>
+        <h4>Multipágina interactiva</h4>
+        <p>Navega libremente. Cada capítulo es independiente y tiene su demo en vivo.</p>
+      </div>
+      <div class="logistics-item">
+        <span class="pill pill-violet">Audiencia</span>
+        <h4>Account Executives</h4>
+        <p>Sin conocimiento previo de IA requerido. Cero código. Cero matemáticas.</p>
+      </div>
+      <div class="logistics-item">
+        <span class="pill pill-gold">Duración</span>
+        <h4>60 minutos</h4>
+        <p>Hook · fundamentos · RAG · competencia · agentes · casos de uso · cierre de ventas</p>
+      </div>
+      <div class="logistics-item">
+        <span class="pill pill-cyan">Resultado</span>
+        <h4>Conversaciones reales</h4>
+        <p>Sales con vocabulario, modelo mental y munición para discovery + cierre.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer CTA -->
+  <div style="margin-top: 5rem; text-align: center;">
+    <a href="01-hook.html" class="btn" style="font-size: 1.1rem; padding: 1.2rem 2.5rem;">
+      Empezar el training →
+    </a>
+    <p style="margin-top: 1.5rem; color: var(--text-tertiary); font-family: var(--font-mono); font-size: 0.85rem;">
+      Diseñado por Leonel Alarcón · MongoDB LATAM Advisory SA · 2026
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>

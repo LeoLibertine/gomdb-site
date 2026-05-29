@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>09 · Toolkit del AE</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .block { margin-bottom: 4rem; }
+  .block-head {
+    display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .block-head-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: var(--mdb-green-deep); border: 1px solid var(--mdb-green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; flex-shrink: 0;
+  }
+  .block-head h2 { font-family: var(--font-display); font-size: 1.7rem; }
+  .block-head p { color: var(--text-tertiary); font-size: 0.92rem; }
+
+  /* ===== DISCOVERY LADDER ===== */
+  .ladder { display: flex; flex-direction: column; gap: 0; }
+  .rung {
+    display: flex; align-items: stretch; gap: 0;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .rung-num {
+    width: 70px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 1.8rem; font-weight: 800;
+    color: var(--mdb-dark);
+    background: var(--mdb-green);
+    border-radius: 14px 0 0 14px;
+    position: relative;
+  }
+  .rung:not(:last-child) .rung-num::after {
+    content: ''; position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%);
+    width: 2px; height: 16px; background: var(--mdb-green-deep); z-index: 1;
+  }
+  .rung-body {
+    flex: 1;
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-left: none;
+    border-radius: 0 14px 14px 0;
+    padding: 1.2rem 1.5rem;
+    transition: all 0.3s;
+  }
+  .rung:hover .rung-body { background: var(--surface-card-hover); border-color: var(--mdb-green); }
+  .rung-q { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; margin-bottom: 0.3rem; line-height: 1.25; }
+  .rung-signal {
+    display: none;
+    margin-top: 0.8rem; padding: 0.7rem 1rem;
+    background: rgba(0,237,100,0.08); border-radius: 10px;
+    border-left: 3px solid var(--mdb-green);
+    font-size: 0.88rem; color: var(--mdb-mint);
+  }
+  .rung.open .rung-signal { display: block; animation: fadeUp 0.3s ease-out; }
+  .rung-hint {
+    font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-tertiary);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .rung.final .rung-num { background: var(--accent-gold); }
+  .rung.final .rung-body { border-color: var(--accent-gold); }
+  .ladder-margin { margin-bottom: 16px; }
+
+  /* ===== THERMOMETER (hot signals) ===== */
+  .thermo-wrap {
+    display: grid; grid-template-columns: 80px 1fr; gap: 2rem; align-items: center;
+    background: var(--mdb-dark-2); border: 1px solid var(--border-subtle);
+    border-radius: 20px; padding: 2rem 2.5rem;
+  }
+  @media (max-width: 700px) { .thermo-wrap { grid-template-columns: 1fr; } }
+
+  .thermo {
+    position: relative; width: 100%; max-width: 60px; margin: 0 auto;
+  }
+  .thermo svg { width: 100%; height: auto; display: block; }
+  .thermo-fill { transition: height 0.8s cubic-bezier(0.34,1.4,0.6,1), y 0.8s cubic-bezier(0.34,1.4,0.6,1); }
+
+  .signals-list { display: flex; flex-direction: column; gap: 1rem; }
+  .signal {
+    display: flex; align-items: center; gap: 1rem;
+    background: var(--surface-card); border: 1px solid var(--border-subtle);
+    border-radius: 14px; padding: 1.1rem 1.4rem;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .signal:hover { transform: translateX(6px); border-color: var(--accent-coral); }
+  .signal-temp {
+    font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;
+    padding: 0.3rem 0.7rem; border-radius: 100px; flex-shrink: 0;
+  }
+  .signal-temp.hot { background: rgba(255,107,107,0.18); color: var(--accent-coral); }
+  .signal-emoji { font-size: 1.5rem; flex-shrink: 0; }
+  .signal-text { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; line-height: 1.2; }
+  .signal-quote { font-size: 0.82rem; color: var(--text-tertiary); font-style: italic; margin-top: 0.2rem; }
+
+  /* ===== OBJECTION SIMULATOR ===== */
+  .obj-sim {
+    background: var(--mdb-dark-2); border: 1px solid var(--border-subtle);
+    border-radius: 20px; padding: 2rem 2.5rem;
+  }
+  .obj-tabs { display: flex; gap: 0.6rem; margin-bottom: 1.8rem; flex-wrap: wrap; }
+  .obj-tab {
+    padding: 0.7rem 1.2rem; border-radius: 100px;
+    background: var(--surface-card); border: 1px solid var(--border-subtle);
+    cursor: pointer; transition: all 0.25s;
+    font-size: 0.88rem; color: var(--text-secondary);
+  }
+  .obj-tab:hover { border-color: var(--accent-coral); }
+  .obj-tab.active { background: var(--accent-coral); color: var(--mdb-dark); border-color: var(--accent-coral); font-weight: 600; }
+
+  .obj-ring { display: none; }
+  .obj-ring.active { display: block; animation: fadeUp 0.4s ease-out; }
+
+  .obj-vs {
+    display: grid; grid-template-columns: 1fr 60px 1fr; gap: 0; align-items: stretch;
+  }
+  @media (max-width: 700px) { .obj-vs { grid-template-columns: 1fr; } }
+
+  .obj-side { padding: 1.5rem; border-radius: 16px; }
+  .obj-side.client {
+    background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.3);
+  }
+  .obj-side.you {
+    background: rgba(0,237,100,0.08); border: 1px solid rgba(0,237,100,0.3);
+  }
+  .obj-side-tag {
+    font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 0.7rem; display: flex; align-items: center; gap: 0.4rem;
+  }
+  .obj-side.client .obj-side-tag { color: var(--accent-coral); }
+  .obj-side.you .obj-side-tag { color: var(--mdb-green); }
+  .obj-side-text { font-size: 1.02rem; line-height: 1.45; }
+  .obj-side.client .obj-side-text { color: var(--text-secondary); font-style: italic; }
+  .obj-side.you .obj-side-text { color: var(--text-primary); font-weight: 500; }
+
+  .obj-vs-mid {
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 800; font-size: 1.1rem;
+    color: var(--accent-gold);
+  }
+  @media (max-width: 700px) { .obj-vs-mid { padding: 0.8rem 0; } }
+
+  /* ===== CLOSER ===== */
+  .closer {
+    margin-top: 1rem; padding: 3rem;
+    background: linear-gradient(135deg, var(--mdb-green) 0%, var(--mdb-green-soft) 100%);
+    border-radius: 28px; text-align: center; position: relative; overflow: hidden;
+  }
+  .closer-tag {
+    font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.2em;
+    font-size: 0.78rem; color: var(--mdb-dark); opacity: 0.7; margin-bottom: 1.2rem;
+  }
+  .closer h2 {
+    color: var(--mdb-dark); font-size: clamp(1.7rem, 4vw, 2.6rem);
+    line-height: 1.2; font-style: italic; margin-bottom: 0.5rem;
+  }
+
+  /* ===== MONDAY CHECKLIST ===== */
+  .monday {
+    margin-top: 2rem; background: var(--mdb-dark-2);
+    border: 1px solid var(--border-subtle); border-radius: 20px; padding: 2rem 2.5rem;
+  }
+  .monday-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem; }
+  .monday-head h3 { font-family: var(--font-display); font-size: 1.3rem; }
+  .check-item {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1rem 1.2rem; border-radius: 12px;
+    background: var(--surface-card); margin-bottom: 0.7rem;
+    cursor: pointer; transition: all 0.25s;
+  }
+  .check-item:hover { background: var(--surface-card-hover); }
+  .check-box {
+    width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
+    border: 2px solid var(--mdb-green); display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .check-box svg { width: 16px; height: 16px; opacity: 0; transition: opacity 0.2s; }
+  .check-item.done .check-box { background: var(--mdb-green); }
+  .check-item.done .check-box svg { opacity: 1; }
+  .check-item.done .check-text { text-decoration: line-through; color: var(--text-tertiary); }
+  .check-text { font-size: 1rem; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <a href="index.html" class="topnav-brand">
+      <div class="topnav-brand-mark">M</div>
+      <span>AI Training · MongoDB LATAM</span>
+    </a>
+    <div class="topnav-progress">
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot active"></div>
+      <div class="topnav-progress-dot"></div>
+    </div>
+    <div class="topnav-meta">Capítulo 9 de 10</div>
+  </nav>
+
+  <!-- Chapter header -->
+  <header class="chapter-header">
+    <div class="chapter-header-text">
+      <span class="kicker">Capítulo 09 · Para llevar</span>
+      <div class="chapter-number">09</div>
+      <h1 class="chapter-title">Tu toolkit del lunes.</h1>
+      <p class="chapter-subtitle">
+        Todo lo del training, en herramientas que usas en tu próxima llamada.
+        Toca cada elemento para activarlo. Sin teoría — solo lo que dices y haces.
+      </p>
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Tiempo</span>
+        <span class="chapter-meta-value">5 min</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Para</span>
+        <span class="chapter-meta-value">El lunes 9 AM</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== BLOCK 1: DISCOVERY LADDER ===== -->
+  <section class="block">
+    <div class="block-head">
+      <div class="block-head-icon">🪜</div>
+      <div>
+        <h2>La escalera de discovery</h2>
+        <p>5 preguntas en orden. Toca cada escalón para ver la señal de oro.</p>
+      </div>
+    </div>
+
+    <div class="ladder">
+      <div class="rung ladder-margin" onclick="this.classList.toggle('open')">
+        <div class="rung-num">1</div>
+        <div class="rung-body">
+          <div class="rung-q">¿Están explorando o ya implementando IA generativa?</div>
+          <div class="rung-hint">▼ Califica · explorar vs comprometido</div>
+          <div class="rung-signal">🥇 Si dice "ya tenemos un POC con OpenAI/Claude/Bedrock" → <strong>caliente.</strong></div>
+        </div>
+      </div>
+
+      <div class="rung ladder-margin" onclick="this.classList.toggle('open')">
+        <div class="rung-num">2</div>
+        <div class="rung-body">
+          <div class="rung-q">¿Qué información quieren que la IA pueda consultar?</div>
+          <div class="rung-hint">▼ Identifica el caso de uso</div>
+          <div class="rung-signal">🥇 Si menciona "documentos, contratos, tickets, manuales" → es RAG → <strong>es tuyo.</strong></div>
+        </div>
+      </div>
+
+      <div class="rung ladder-margin" onclick="this.classList.toggle('open')">
+        <div class="rung-num">3</div>
+        <div class="rung-body">
+          <div class="rung-q">¿Dónde viven hoy esos datos?</div>
+          <div class="rung-hint">▼ Detecta oportunidad de modernización</div>
+          <div class="rung-signal">🥇 SQL Server, Oracle, archivos sueltos → migración a Atlas + IA es un <strong>2x1.</strong></div>
+        </div>
+      </div>
+
+      <div class="rung ladder-margin" onclick="this.classList.toggle('open')">
+        <div class="rung-num">4</div>
+        <div class="rung-body">
+          <div class="rung-q">¿Han escuchado de búsqueda vectorial o embeddings?</div>
+          <div class="rung-hint">▼ Calibra el nivel técnico</div>
+          <div class="rung-signal">🥇 Si dice "sí, vemos Pinecone/pgvector" → ya están educados → <strong>vendiendo tú.</strong></div>
+        </div>
+      </div>
+
+      <div class="rung final" onclick="this.classList.toggle('open')">
+        <div class="rung-num">5</div>
+        <div class="rung-body">
+          <div class="rung-q">¿Cómo mantienen la información actualizada cuando cambian los datos?</div>
+          <div class="rung-hint" style="color:var(--accent-gold);">▼ EL CIERRE · solo MongoDB tiene la respuesta</div>
+          <div class="rung-signal" style="background:rgba(255,217,61,0.1);border-left-color:var(--accent-gold);color:#FFE9A0;">🎯 Si no tienen respuesta clara → necesitan base operacional + vectorial = <strong>Atlas.</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BLOCK 2: THERMOMETER ===== -->
+  <section class="block">
+    <div class="block-head">
+      <div class="block-head-icon">🌡️</div>
+      <div>
+        <h2>¿Qué tan caliente está el cliente?</h2>
+        <p>Toca una señal y mira subir el termómetro. 3 señales = listo para cerrar.</p>
+      </div>
+    </div>
+
+    <div class="thermo-wrap">
+      <div class="thermo">
+        <svg viewBox="0 0 60 220" xmlns="http://www.w3.org/2000/svg">
+          <!-- tube -->
+          <rect x="22" y="10" width="16" height="170" rx="8" fill="#00293D" stroke="#00684A" stroke-width="1.5"/>
+          <!-- bulb -->
+          <circle cx="30" cy="195" r="20" fill="#00293D" stroke="#00684A" stroke-width="1.5"/>
+          <!-- fill (animated) -->
+          <circle cx="30" cy="195" r="14" fill="#FF6B6B"/>
+          <rect class="thermo-fill" id="thermoFill" x="26" y="175" width="8" height="20" rx="4" fill="#FF6B6B"/>
+        </svg>
+      </div>
+
+      <div class="signals-list">
+        <div class="signal" onclick="toggleSignal(this)">
+          <span class="signal-emoji">🧪</span>
+          <div>
+            <div class="signal-text">Ya tienen un POC con OpenAI</div>
+            <div class="signal-quote">"Estamos probando GPT/Claude/Bedrock para…"</div>
+          </div>
+          <span class="signal-temp hot" style="margin-left:auto;">+33°</span>
+        </div>
+
+        <div class="signal" onclick="toggleSignal(this)">
+          <span class="signal-emoji">😵‍💫</span>
+          <div>
+            <div class="signal-text">Mencionan "alucinaciones"</div>
+            <div class="signal-quote">"La IA nos responde cosas inventadas"</div>
+          </div>
+          <span class="signal-temp hot" style="margin-left:auto;">+33°</span>
+        </div>
+
+        <div class="signal" onclick="toggleSignal(this)">
+          <span class="signal-emoji">💰</span>
+          <div>
+            <div class="signal-text">Tienen presupuesto de innovación</div>
+            <div class="signal-quote">"Tenemos budget de AI asignado este año"</div>
+          </div>
+          <span class="signal-temp hot" style="margin-left:auto;">+34°</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BLOCK 3: OBJECTION SIMULATOR ===== -->
+  <section class="block">
+    <div class="block-head">
+      <div class="block-head-icon">🥊</div>
+      <div>
+        <h2>Simulador de objeciones</h2>
+        <p>Lo que dice el cliente vs lo que respondes tú. Toca cada una.</p>
+      </div>
+    </div>
+
+    <div class="obj-sim">
+      <div class="obj-tabs">
+        <div class="obj-tab active" onclick="setObj(0)">"Ya tenemos Pinecone"</div>
+        <div class="obj-tab" onclick="setObj(1)">"Sale muy caro"</div>
+        <div class="obj-tab" onclick="setObj(2)">"Mejor lo hacemos in-house"</div>
+      </div>
+
+      <div class="obj-ring active" id="obj-0">
+        <div class="obj-vs">
+          <div class="obj-side client">
+            <div class="obj-side-tag">⚠ El cliente</div>
+            <div class="obj-side-text">"Ya tenemos Pinecone funcionando, llevamos 6 meses con eso."</div>
+          </div>
+          <div class="obj-vs-mid">VS</div>
+          <div class="obj-side you">
+            <div class="obj-side-tag">✓ Tú</div>
+            <div class="obj-side-text">"Perfecto, ¿y cómo va la sincronización con el resto de su data operacional? Casi todos con esa arquitectura terminan en MongoDB el año 2."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="obj-ring" id="obj-1">
+        <div class="obj-vs">
+          <div class="obj-side client">
+            <div class="obj-side-tag">⚠ El cliente</div>
+            <div class="obj-side-text">"MongoDB nos sale más caro de lo que esperábamos."</div>
+          </div>
+          <div class="obj-vs-mid">VS</div>
+          <div class="obj-side you">
+            <div class="obj-side-tag">✓ Tú</div>
+            <div class="obj-side-text">"¿Comparado contra una base? Sí. ¿Contra mantener Pinecone + Postgres + Elastic + un equipo operándolos? ¿Ya hicimos esa cuenta de TCO?"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="obj-ring" id="obj-2">
+        <div class="obj-vs">
+          <div class="obj-side client">
+            <div class="obj-side-tag">⚠ El cliente</div>
+            <div class="obj-side-text">"Esto lo armamos nosotros con librerías open-source."</div>
+          </div>
+          <div class="obj-vs-mid">VS</div>
+          <div class="obj-side you">
+            <div class="obj-side-text">"Claro, ¿y cuánto tiempo del equipo van a invertir operando HNSW, índices, réplicas, alta disponibilidad? ¿Eso quieren construir, o quieren construir su producto?"</div>
+            <div class="obj-side-tag" style="margin-top:0.7rem;">✓ Tú</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CLOSER ===== -->
+  <section class="closer">
+    <div class="closer-tag">🎤 La frase que cierra</div>
+    <h2>"La pregunta no es SI van a hacer IA.<br>Es DÓNDE van a vivir sus vectores."</h2>
+  </section>
+
+  <!-- ===== MONDAY CHECKLIST ===== -->
+  <section class="monday">
+    <div class="monday-head">
+      <span style="font-size:1.6rem;">📅</span>
+      <h3>Tu reto del lunes 9 AM</h3>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="#001E2B" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg></div>
+      <div class="check-text">Hacer las 5 preguntas de discovery en mi próxima llamada.</div>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="#001E2B" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg></div>
+      <div class="check-text">Identificar 1 cuenta con "señal caliente" en mi pipeline.</div>
+    </div>
+    <div class="check-item" onclick="this.classList.toggle('done')">
+      <div class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="#001E2B" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg></div>
+      <div class="check-text">Practicar la frase de cierre con mi AE par.</div>
+    </div>
+  </section>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="08-casos.html" class="bottom-nav-side">
+      <span class="bottom-nav-label">← Cap 08</span>
+      <span class="bottom-nav-title">Casos de uso</span>
+    </a>
+    <a href="10-glosario.html" class="bottom-nav-side next">
+      <span class="bottom-nav-label">Siguiente · Cap 10 →</span>
+      <span class="bottom-nav-title">Glosario 📖</span>
+    </a>
+  </nav>
+
+</div>
+
+<script>
+let temp = 0;
+function toggleSignal(el) {
+  el.classList.toggle('on');
+  const active = document.querySelectorAll('.signal.on').length;
+  // map 0-3 signals to fill height
+  const fill = document.getElementById('thermoFill');
+  const maxH = 165;
+  const h = 20 + (active / 3) * maxH;
+  fill.setAttribute('height', h);
+  fill.setAttribute('y', 195 - h + 20);
+  // toggle highlight
+  el.style.borderColor = el.classList.contains('on') ? 'var(--accent-coral)' : '';
+  el.style.background = el.classList.contains('on') ? 'rgba(255,107,107,0.1)' : '';
+}
+
+function setObj(i) {
+  document.querySelectorAll('.obj-tab').forEach((t,idx) => t.classList.toggle('active', idx===i));
+  document.querySelectorAll('.obj-ring').forEach((r,idx) => r.classList.toggle('active', idx===i));
+}
+</script>
+
+</body>
+</html>

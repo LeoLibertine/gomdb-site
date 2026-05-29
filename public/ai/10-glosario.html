@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 · Glosario MongoDB + IA</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  /* SEARCH BAR */
+  .glossary-search {
+    position: sticky; top: 80px; z-index: 50;
+    background: rgba(0,30,43,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 1.2rem 1.5rem;
+    border-radius: 18px;
+    border: 1px solid var(--border-subtle);
+    margin: 1rem 0 2rem;
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .search-input-wrap { position: relative; }
+  .search-input-wrap::before {
+    content: '🔍';
+    position: absolute; left: 1.1rem; top: 50%; transform: translateY(-50%);
+    font-size: 1.1rem; opacity: 0.6;
+  }
+  .search-input {
+    width: 100%; background: var(--mdb-dark);
+    border: 1px solid var(--border-subtle); border-radius: 100px;
+    padding: 0.95rem 1rem 0.95rem 3rem; font-size: 1rem; color: var(--text-primary);
+    font-family: var(--font-body); outline: none; transition: all 0.2s;
+  }
+  .search-input:focus { border-color: var(--mdb-green); box-shadow: 0 0 0 4px rgba(0,237,100,0.1); }
+  .search-input::placeholder { color: var(--text-tertiary); }
+
+  /* CATEGORY FILTERS */
+  .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .filter-pill {
+    padding: 0.45rem 0.9rem; background: var(--mdb-dark);
+    border: 1px solid var(--border-subtle); border-radius: 100px;
+    cursor: pointer; transition: all 0.2s;
+    font-size: 0.82rem; color: var(--text-secondary);
+    display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .filter-pill:hover { border-color: var(--mdb-green); color: var(--text-primary); }
+  .filter-pill.active { background: var(--mdb-green); color: var(--mdb-dark); border-color: var(--mdb-green); font-weight: 600; }
+  .filter-pill-count {
+    font-family: var(--font-mono); font-size: 0.7rem;
+    background: rgba(0,0,0,0.2); padding: 0.1rem 0.45rem; border-radius: 100px;
+  }
+  .filter-pill.active .filter-pill-count { background: rgba(0,30,43,0.3); }
+
+  /* RESULT META */
+  .results-meta {
+    font-family: var(--font-mono); font-size: 0.78rem;
+    color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+  }
+
+  /* TERM CARDS GRID */
+  .terms-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;
+    margin-bottom: 4rem;
+  }
+  @media (max-width: 800px) { .terms-grid { grid-template-columns: 1fr; } }
+
+  .term {
+    background: var(--surface-card); border: 1px solid var(--border-subtle);
+    border-radius: 16px; overflow: hidden;
+    transition: all 0.3s;
+  }
+  .term:hover { border-color: var(--mdb-green); transform: translateY(-2px); }
+  .term.hidden { display: none; }
+
+  .term-head {
+    padding: 1.3rem 1.5rem; cursor: pointer;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 1rem;
+  }
+  .term-head-left { flex: 1; min-width: 0; }
+  .term-name {
+    font-family: var(--font-display); font-weight: 700; font-size: 1.2rem;
+    line-height: 1.2; margin-bottom: 0.4rem;
+    display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+  }
+  .term-name code {
+    font-family: var(--font-mono); font-size: 0.85em;
+    background: var(--mdb-dark); padding: 0.1rem 0.45rem;
+    border-radius: 6px; color: var(--mdb-mint);
+    border: 1px solid var(--border-subtle);
+  }
+  .term-cat {
+    font-family: var(--font-mono); font-size: 0.62rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 0.2rem 0.55rem; border-radius: 100px;
+    display: inline-block;
+  }
+  .cat-llm { background: rgba(255,107,107,0.12); color: var(--accent-coral); }
+  .cat-vec { background: rgba(78,205,196,0.12); color: var(--accent-cyan); }
+  .cat-rag { background: rgba(255,217,61,0.12); color: var(--accent-gold); }
+  .cat-search { background: rgba(0,237,100,0.12); color: var(--mdb-green); }
+  .cat-agent { background: rgba(183,148,244,0.15); color: var(--accent-violet); }
+  .cat-mdb { background: rgba(0,237,100,0.18); color: var(--mdb-green); border: 1px solid rgba(0,237,100,0.3); }
+
+  .term-tldr {
+    color: var(--text-secondary); font-size: 0.92rem; line-height: 1.45;
+  }
+  .term-toggle {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--mdb-dark); border: 1px solid var(--border-subtle);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.3s; color: var(--mdb-green);
+    font-family: var(--font-mono); font-size: 1.1rem; font-weight: 700;
+  }
+  .term.open .term-toggle { transform: rotate(45deg); background: var(--mdb-green); color: var(--mdb-dark); border-color: var(--mdb-green); }
+
+  /* EXPANDED CONTENT */
+  .term-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.5s ease-out;
+  }
+  .term.open .term-body { max-height: 2000px; }
+  .term-body-inner { padding: 0 1.5rem 1.5rem; }
+
+  .term-diagram {
+    background: var(--mdb-dark); border-radius: 12px;
+    padding: 1.2rem; margin-bottom: 1rem;
+  }
+  .term-diagram svg { width: 100%; height: auto; display: block; }
+
+  .term-section {
+    margin-bottom: 1rem;
+  }
+  .term-section-label {
+    font-family: var(--font-mono); font-size: 0.68rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-tertiary); margin-bottom: 0.4rem;
+  }
+  .term-section-text {
+    color: var(--text-secondary); font-size: 0.93rem; line-height: 1.55;
+  }
+  .term-section-text strong { color: var(--text-primary); }
+  .term-section-text code {
+    font-family: var(--font-mono); font-size: 0.85em;
+    background: var(--mdb-dark); padding: 0.1rem 0.4rem;
+    border-radius: 5px; color: var(--mdb-mint);
+  }
+
+  .you-say {
+    background: rgba(0,237,100,0.06); border-left: 3px solid var(--mdb-green);
+    padding: 0.8rem 1rem; border-radius: 10px;
+    font-style: italic; color: var(--mdb-mint); font-size: 0.92rem; line-height: 1.5;
+  }
+  .you-say::before {
+    content: '🎤 '; font-style: normal;
+  }
+
+  .related-row {
+    display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.6rem;
+  }
+  .related-chip {
+    font-family: var(--font-mono); font-size: 0.72rem;
+    padding: 0.25rem 0.6rem; background: var(--mdb-dark);
+    border: 1px solid var(--border-subtle); border-radius: 6px;
+    cursor: pointer; color: var(--text-tertiary); transition: all 0.2s;
+  }
+  .related-chip:hover { border-color: var(--mdb-green); color: var(--mdb-green); }
+
+  .empty {
+    text-align: center; padding: 4rem 1rem;
+    color: var(--text-tertiary);
+  }
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <a href="index.html" class="topnav-brand">
+      <div class="topnav-brand-mark">M</div>
+      <span>AI Training · MongoDB LATAM</span>
+    </a>
+    <div class="topnav-progress">
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot active"></div>
+    </div>
+    <div class="topnav-meta">Capítulo 10 de 10 · Anexo</div>
+  </nav>
+
+  <!-- Chapter header -->
+  <header class="chapter-header">
+    <div class="chapter-header-text">
+      <span class="kicker">Capítulo 10 · Glosario / Anexo</span>
+      <div class="chapter-number">10</div>
+      <h1 class="chapter-title">El glosario que cargas en el bolsillo.</h1>
+      <p class="chapter-subtitle">
+        Todos los términos de IA + MongoDB que vas a oír (y decir) en una llamada.
+        Cada uno con: definición corta, diagrama que lo explica, ejemplo, y
+        <em>cómo lo dices al cliente</em>. Busca, filtra, expande.
+      </p>
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Términos</span>
+        <span class="chapter-meta-value" id="totalTerms">27</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Categorías</span>
+        <span class="chapter-meta-value">6</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Para</span>
+        <span class="chapter-meta-value">Consulta rápida</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SEARCH & FILTERS -->
+  <div class="glossary-search">
+    <div class="search-input-wrap">
+      <input type="text" class="search-input" id="searchBox" placeholder="Buscar término… (ej. embedding, RAG, MCP, Voyage)" oninput="filter()"/>
+    </div>
+    <div class="filters">
+      <div class="filter-pill active" data-cat="all" onclick="setFilter('all')">Todos <span class="filter-pill-count" id="c-all">27</span></div>
+      <div class="filter-pill" data-cat="llm" onclick="setFilter('llm')">🤖 LLM & Tokens <span class="filter-pill-count" id="c-llm">5</span></div>
+      <div class="filter-pill" data-cat="vec" onclick="setFilter('vec')">🧠 Vectores <span class="filter-pill-count" id="c-vec">5</span></div>
+      <div class="filter-pill" data-cat="rag" onclick="setFilter('rag')">📚 RAG <span class="filter-pill-count" id="c-rag">3</span></div>
+      <div class="filter-pill" data-cat="search" onclick="setFilter('search')">🔎 Búsqueda <span class="filter-pill-count" id="c-search">6</span></div>
+      <div class="filter-pill" data-cat="agent" onclick="setFilter('agent')">🚀 Agentes & MCP <span class="filter-pill-count" id="c-agent">4</span></div>
+      <div class="filter-pill" data-cat="mdb" onclick="setFilter('mdb')">🍃 MongoDB AI <span class="filter-pill-count" id="c-mdb">4</span></div>
+    </div>
+  </div>
+
+  <div class="results-meta" id="resultsMeta">27 términos · ordenados alfabéticamente</div>
+
+  <!-- TERMS GRID -->
+  <div class="terms-grid" id="termsGrid">
+
+    <!-- ===== AGENT ===== -->
+    <div class="term" data-cat="agent" data-key="agente agent autonomo razonamiento">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Agente <span class="term-cat cat-agent">🚀 agentes</span></div>
+          <div class="term-tldr">Un LLM que <strong>decide y actúa</strong> usando herramientas — no solo responde.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="55" width="120" height="50" rx="12" fill="#00684A" stroke="#00ED64" stroke-width="1.5"/>
+            <text x="80" y="78" text-anchor="middle" font-family="Inter" font-size="13" font-weight="700" fill="#00ED64">🧠 Razona</text>
+            <text x="80" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C3E7CA">¿qué tool?</text>
+
+            <path d="M140 80 L 200 80" stroke="#00ED64" stroke-width="1.5" marker-end="url(#agArr)"/>
+
+            <rect x="200" y="55" width="120" height="50" rx="12" fill="#00293D" stroke="#FFD93D" stroke-width="1.5"/>
+            <text x="260" y="78" text-anchor="middle" font-family="Inter" font-size="13" font-weight="700" fill="#FFD93D">🛠️ Actúa</text>
+            <text x="260" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="rgba(255,255,255,0.5)">llama API</text>
+
+            <path d="M320 80 L 380 80" stroke="#00ED64" stroke-width="1.5" marker-end="url(#agArr)"/>
+
+            <rect x="380" y="55" width="120" height="50" rx="12" fill="#00293D" stroke="#B794F4" stroke-width="1.5"/>
+            <text x="440" y="78" text-anchor="middle" font-family="Inter" font-size="13" font-weight="700" fill="#B794F4">👀 Observa</text>
+            <text x="440" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="rgba(255,255,255,0.5)">resultado</text>
+
+            <!-- loop arrow back -->
+            <path d="M440 105 Q 440 140 260 140 Q 80 140 80 105" fill="none" stroke="#00ED64" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#agArr)"/>
+            <text x="260" y="135" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#00ED64">repite hasta lograr objetivo</text>
+            <defs>
+              <marker id="agArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#00ED64" stroke-width="1.5"/></marker>
+            </defs>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Un agente es un LLM con un <strong>loop razonar → actuar → observar</strong>. Tiene memoria, planifica, y usa herramientas (APIs, bases de datos) hasta lograr un objetivo.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Ejemplo concreto</div>
+          <div class="term-section-text">"Agéndame una llamada con Bancolombia, cierra el deal" → el agente busca el calendario, encuentra hueco, manda el correo, registra en CRM. <strong>3 herramientas en una orden.</strong></div>
+        </div>
+        <div class="you-say">"Un chatbot responde. Un agente decide y ejecuta. Esa es la diferencia y la próxima ola — y para vivir necesita memoria persistente: ahí entra MongoDB."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('MCP')">MCP</span>
+          <span class="related-chip" onclick="searchFor('ReAct')">ReAct</span>
+          <span class="related-chip" onclick="searchFor('Tool use')">Tool use</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== ALUCINACIÓN ===== -->
+    <div class="term" data-cat="llm" data-key="alucinacion hallucination invento mentira">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Alucinación <span class="term-cat cat-llm">🤖 LLM</span></div>
+          <div class="term-tldr">Cuando el LLM <strong>inventa</strong> información con tono seguro. Lo cura RAG.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 130" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="40" width="180" height="50" rx="12" fill="#00293D" stroke="#FF6B6B" stroke-width="1.5"/>
+            <text x="110" y="63" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#FF6B6B">"Política dice X"</text>
+            <text x="110" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="rgba(255,107,107,0.7)">suena profesional</text>
+
+            <text x="240" y="70" font-family="Inter" font-size="22" fill="#FF6B6B">≠</text>
+
+            <rect x="280" y="40" width="180" height="50" rx="12" fill="#00293D" stroke="#00ED64" stroke-width="1.5"/>
+            <text x="370" y="63" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#00ED64">Realidad</text>
+            <text x="370" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C3E7CA">la política no existe</text>
+
+            <text x="540" y="70" font-family="Bricolage Grotesque" font-size="24">🤥</text>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">El LLM genera texto plausible aunque no tenga datos reales. No miente — completa con su mejor predicción. <strong>Para tu cliente: es inaceptable en banca, salud, legal.</strong></div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Cómo se cura</div>
+          <div class="term-section-text">Con <code>RAG</code>: le pasas al LLM la información real del cliente antes de que responda. Cero invención, todo trazable a la fuente.</div>
+        </div>
+        <div class="you-say">"Por eso ningún cliente serio pone un LLM solo en producción. Lo conecta a sus datos vía RAG — y ese 'sus datos' es donde MongoDB cierra."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('RAG')">RAG</span>
+          <span class="related-chip" onclick="searchFor('LLM')">LLM</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== ATLAS SEARCH ===== -->
+    <div class="term" data-cat="search" data-key="atlas search full-text bm25 lucene keyword">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Atlas Search <span class="term-cat cat-search">🔎 búsqueda</span></div>
+          <div class="term-tldr">Búsqueda <strong>full-text</strong> (palabras exactas) sobre tus datos de Mongo. Basado en Lucene.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 130" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="40" width="160" height="50" rx="12" fill="#00293D" stroke="#4ECDC4" stroke-width="1.5"/>
+            <text x="100" y="63" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#4ECDC4">"chamarra roja"</text>
+            <text x="100" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="rgba(255,255,255,0.5)">keywords exactos</text>
+            <path d="M180 65 L 240 65" stroke="#4ECDC4" stroke-width="1.5" marker-end="url(#asArr)"/>
+            <rect x="240" y="30" width="180" height="70" rx="14" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="330" y="58" text-anchor="middle" font-family="Bricolage Grotesque" font-size="18">🍃</text>
+            <text x="330" y="78" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#00ED64">Atlas Search</text>
+            <text x="330" y="92" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C3E7CA">BM25 · Lucene</text>
+            <path d="M420 65 L 480 65" stroke="#4ECDC4" stroke-width="1.5" marker-end="url(#asArr)"/>
+            <text x="540" y="70" font-family="Bricolage Grotesque" font-size="22">🧥</text>
+            <defs><marker id="asArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#4ECDC4" stroke-width="1.5"/></marker></defs>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Como Elasticsearch — pero integrado a tu base operacional. <strong>Una sola plataforma, un solo cluster.</strong> Sin pipeline de sincronización.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Cuándo se usa</div>
+          <div class="term-section-text">Cuando el usuario busca palabras exactas: códigos, nombres, SKUs, frases. Encuentra coincidencias literales.</div>
+        </div>
+        <div class="you-say">"Si su cliente busca por keywords exactos, Atlas Search. Si busca por intención, Atlas Vector Search. Si quieren ambos: Hybrid Search."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Vector Search')">Vector Search</span>
+          <span class="related-chip" onclick="searchFor('Hybrid')">Hybrid Search</span>
+          <span class="related-chip" onclick="searchFor('rankFusion')">$rankFusion</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== ATLAS VECTOR SEARCH ===== -->
+    <div class="term" data-cat="mdb" data-key="atlas vector search semantic embeddings hnsw">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Atlas Vector Search <span class="term-cat cat-mdb">🍃 MongoDB AI</span></div>
+          <div class="term-tldr">El producto estrella: búsqueda <strong>por significado</strong> integrada a tus datos de Mongo.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="45" width="160" height="50" rx="12" fill="#00293D" stroke="#FFD93D" stroke-width="1.5"/>
+            <text x="100" y="68" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#FFD93D">"correr en lluvia"</text>
+            <text x="100" y="84" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="rgba(255,255,255,0.5)">intención, no palabras</text>
+            <path d="M180 70 L 230 70" stroke="#00ED64" stroke-width="1.5" marker-end="url(#avArr)"/>
+            <rect x="230" y="30" width="200" height="80" rx="14" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="330" y="58" text-anchor="middle" font-family="Bricolage Grotesque" font-size="18">🍃</text>
+            <text x="330" y="78" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#00ED64">Atlas Vector Search</text>
+            <text x="330" y="96" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C3E7CA">HNSW · cosine similarity</text>
+            <path d="M430 70 L 480 70" stroke="#00ED64" stroke-width="1.5" marker-end="url(#avArr)"/>
+            <text x="540" y="75" font-family="Bricolage Grotesque" font-size="22">🧥💧</text>
+            <defs><marker id="avArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#00ED64" stroke-width="1.5"/></marker></defs>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Compara vectores (embeddings) para encontrar contenido semánticamente similar. Sub-100ms sobre millones de vectores. <strong>Vive en el mismo cluster que tu data operacional.</strong></div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Por qué importa</div>
+          <div class="term-section-text">Es la pieza central de RAG. Sin esto, tu cliente necesita Pinecone aparte + sincronizar con Mongo. Con esto: una sola base, un solo query, sin pipeline ETL.</div>
+        </div>
+        <div class="you-say">"Esta es la columna que NADIE más tiene en su categoría. Pinecone solo guarda vectores. Postgres no es operacional a escala. Esto es 1 base = vectores + transacciones + búsqueda."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Vector')">Vector</span>
+          <span class="related-chip" onclick="searchFor('Embedding')">Embedding</span>
+          <span class="related-chip" onclick="searchFor('HNSW')">HNSW</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== AUTOMATED EMBEDDING ===== -->
+    <div class="term" data-cat="mdb" data-key="automated embedding auto-embed automatic preview">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Automated Embedding <span class="term-cat cat-mdb">🍃 MongoDB AI</span></div>
+          <div class="term-tldr">MongoDB genera los embeddings <strong>automáticamente</strong> al insertar datos. Sin pipeline externo.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg">
+            <!-- Antes -->
+            <text x="150" y="22" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#FF6B6B" letter-spacing="2">ANTES · 4 PASOS</text>
+            <rect x="30" y="35" width="80" height="34" rx="8" fill="#00293D" stroke="#FF6B6B" stroke-width="1"/>
+            <text x="70" y="56" text-anchor="middle" font-family="Inter" font-size="10" fill="#FF6B6B">Insert</text>
+            <text x="115" y="55" font-family="Inter" font-size="14" fill="#FF6B6B">→</text>
+            <rect x="125" y="35" width="80" height="34" rx="8" fill="#00293D" stroke="#FF6B6B" stroke-width="1"/>
+            <text x="165" y="56" text-anchor="middle" font-family="Inter" font-size="10" fill="#FF6B6B">Call API</text>
+            <text x="210" y="55" font-family="Inter" font-size="14" fill="#FF6B6B">→</text>
+            <rect x="220" y="35" width="80" height="34" rx="8" fill="#00293D" stroke="#FF6B6B" stroke-width="1"/>
+            <text x="260" y="56" text-anchor="middle" font-family="Inter" font-size="10" fill="#FF6B6B">Update</text>
+            <text x="305" y="55" font-family="Inter" font-size="14" fill="#FF6B6B">→</text>
+            <text x="320" y="59" font-family="Bricolage Grotesque" font-size="20">😩</text>
+
+            <!-- Después -->
+            <text x="300" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#00ED64" letter-spacing="2">AHORA · 1 PASO</text>
+            <rect x="180" y="115" width="160" height="34" rx="8" fill="#00684A" stroke="#00ED64" stroke-width="1.5"/>
+            <text x="260" y="136" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#00ED64">Insert (listo)</text>
+            <text x="350" y="136" font-family="Bricolage Grotesque" font-size="20">✨</text>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Insertas un documento, MongoDB usa Voyage AI por debajo para crear el embedding y guardarlo. <strong>Hasta en queries: pasas texto crudo, no vector.</strong></div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Status</div>
+          <div class="term-section-text">Public Preview en Atlas y Community Edition (anuncio de mayo 2026). Modelos disponibles: <code>voyage-4-large</code>, <code>voyage-4</code>, <code>voyage-4-lite</code>, <code>voyage-code-3</code>.</div>
+        </div>
+        <div class="you-say">"Es como auto-pilot para embeddings. Sin pipeline ETL, sin manejo de rate limits, sin context window headaches. Antes era una pesadilla operativa — ahora es un campo más en tu insert."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Voyage')">Voyage AI</span>
+          <span class="related-chip" onclick="searchFor('Embedding')">Embedding</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== CHUNKING ===== -->
+    <div class="term" data-cat="rag" data-key="chunking chunks fragmentar dividir documento">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Chunking <span class="term-cat cat-rag">📚 RAG</span></div>
+          <div class="term-tldr">Partir un documento en <strong>pedazos manejables</strong> antes de vectorizar.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="35" width="100" height="60" rx="8" fill="#00293D" stroke="#FFD93D" stroke-width="1.5"/>
+            <text x="70" y="60" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20">📄</text>
+            <text x="70" y="82" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#FFD93D">PDF 200 pp</text>
+
+            <text x="150" y="68" font-family="Inter" font-size="20" fill="#FFD93D">→</text>
+
+            <rect x="180" y="38" width="60" height="54" rx="6" fill="#00293D" stroke="#FFD93D" stroke-width="1"/>
+            <rect x="250" y="38" width="60" height="54" rx="6" fill="#00293D" stroke="#FFD93D" stroke-width="1"/>
+            <rect x="320" y="38" width="60" height="54" rx="6" fill="#00293D" stroke="#FFD93D" stroke-width="1"/>
+            <text x="395" y="68" font-family="Inter" font-size="16" fill="rgba(255,217,61,0.4)">···</text>
+            <rect x="410" y="38" width="60" height="54" rx="6" fill="#00293D" stroke="#FFD93D" stroke-width="1"/>
+            <text x="210" y="65" text-anchor="middle" font-family="Inter" font-size="10" fill="#FFD93D">~500</text>
+            <text x="210" y="78" text-anchor="middle" font-family="Inter" font-size="10" fill="#FFD93D">tokens</text>
+            <text x="280" y="65" text-anchor="middle" font-family="Inter" font-size="10" fill="#FFD93D">~500</text>
+            <text x="280" y="78" text-anchor="middle" font-family="Inter" font-size="10" fill="#FFD93D">tokens</text>
+            <text x="350" y="65" text-anchor="middle" font-family="Inter" font-size="10" fill="#FFD93D">~500</text>
+            <text x="350" y="78" text-anchor="middle" font-family="Inter" font-size="10" fill="#FFD93D">tokens</text>
+            <text x="440" y="65" text-anchor="middle" font-family="Inter" font-size="10" fill="#FFD93D">~500</text>
+            <text x="440" y="78" text-anchor="middle" font-family="Inter" font-size="10" fill="#FFD93D">tokens</text>
+
+            <text x="495" y="68" font-family="Inter" font-size="20" fill="#00ED64">→</text>
+            <text x="540" y="73" font-family="Bricolage Grotesque" font-size="20">🧠</text>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Cortas el documento en trozos (~500 tokens típico, con 10-20% de solape) porque <strong>el LLM no puede leer 200 páginas de un jalón</strong>, y vectorizar todo junto pierde precisión.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">El secreto</div>
+          <div class="term-section-text">Mal chunking = mal RAG. Cortar a la mitad de una oración pierde contexto. <strong>Semantic chunking</strong> (cortar por significado) sube precisión hasta 70%.</div>
+        </div>
+        <div class="you-say">"El chunking es donde el 80% de los RAG fallan en producción. Es invisible para el cliente pero define la calidad de las respuestas."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('RAG')">RAG</span>
+          <span class="related-chip" onclick="searchFor('Token')">Token</span>
+          <span class="related-chip" onclick="searchFor('Embedding')">Embedding</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== CONTEXT WINDOW ===== -->
+    <div class="term" data-cat="llm" data-key="context window contexto ventana memoria conversacion">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Context window <span class="term-cat cat-llm">🤖 LLM</span></div>
+          <div class="term-tldr">El <strong>tamaño máximo</strong> de texto que el LLM puede "ver" en una sola petición.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg">
+            <rect x="40" y="40" width="80" height="50" rx="8" fill="#00293D" stroke="#4ECDC4" stroke-width="1.5"/>
+            <text x="80" y="62" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#4ECDC4">128k</text>
+            <text x="80" y="78" text-anchor="middle" font-family="Inter" font-size="10" fill="rgba(255,255,255,0.5)">GPT-4o</text>
+
+            <rect x="140" y="40" width="80" height="50" rx="8" fill="#00293D" stroke="#FFD93D" stroke-width="1.5"/>
+            <text x="180" y="62" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#FFD93D">200k</text>
+            <text x="180" y="78" text-anchor="middle" font-family="Inter" font-size="10" fill="rgba(255,255,255,0.5)">Claude</text>
+
+            <rect x="240" y="40" width="80" height="50" rx="8" fill="#00293D" stroke="#B794F4" stroke-width="1.5"/>
+            <text x="280" y="62" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#B794F4">1M</text>
+            <text x="280" y="78" text-anchor="middle" font-family="Inter" font-size="10" fill="rgba(255,255,255,0.5)">Gemini</text>
+
+            <text x="345" y="70" font-family="Inter" font-size="18" fill="rgba(255,255,255,0.4)">vs</text>
+
+            <rect x="380" y="32" width="190" height="66" rx="10" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="475" y="58" text-anchor="middle" font-family="Bricolage Grotesque" font-size="18">∞</text>
+            <text x="475" y="80" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#00ED64">tu data en MongoDB</text>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Es la "memoria de trabajo" del LLM por turno. GPT-4o tiene ~128k tokens; Claude Sonnet ~200k; Gemini hasta 1M. <strong>Aún así nunca alcanza para una empresa entera.</strong></div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Por qué importa</div>
+          <div class="term-section-text">Llenar el context window cada vez es <strong>caro y lento</strong>. RAG solo trae los pedazos relevantes — ahí el ahorro.</div>
+        </div>
+        <div class="you-say">"¿1 millón de tokens? Bonito en demo. En producción, ¿van a pagar 1M de tokens por cada pregunta? Por eso existe RAG."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Token')">Token</span>
+          <span class="related-chip" onclick="searchFor('RAG')">RAG</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== COSINE SIMILARITY ===== -->
+    <div class="term" data-cat="vec" data-key="cosine similarity coseno similitud distancia vectores">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Cosine similarity <span class="term-cat cat-vec">🧠 vectores</span></div>
+          <div class="term-tldr">La <strong>"regla" matemática</strong> para medir qué tan parecidos son dos vectores.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+            <!-- origin -->
+            <circle cx="100" cy="100" r="3" fill="#fff"/>
+            <!-- vec A -->
+            <line x1="100" y1="100" x2="240" y2="40" stroke="#00ED64" stroke-width="2" marker-end="url(#cArr)"/>
+            <text x="245" y="40" font-family="Inter" font-size="11" fill="#00ED64">"perro"</text>
+            <!-- vec B -->
+            <line x1="100" y1="100" x2="225" y2="55" stroke="#00ED64" stroke-width="2" marker-end="url(#cArr)"/>
+            <text x="230" y="58" font-family="Inter" font-size="11" fill="#00ED64">"cachorro"</text>
+            <!-- arc -->
+            <path d="M 170 70 A 30 30 0 0 1 170 75" fill="none" stroke="#FFD93D" stroke-width="1"/>
+            <text x="180" y="88" font-family="JetBrains Mono" font-size="10" fill="#FFD93D">θ ≈ 0.95</text>
+
+            <!-- vec C -->
+            <line x1="100" y1="100" x2="200" y2="120" stroke="#FF6B6B" stroke-width="2" marker-end="url(#cArr2)"/>
+            <text x="210" y="125" font-family="Inter" font-size="11" fill="#FF6B6B">"taladro"</text>
+            <text x="170" y="120" font-family="JetBrains Mono" font-size="10" fill="#FF6B6B">θ ≈ 0.12</text>
+
+            <text x="450" y="55" font-family="JetBrains Mono" font-size="10" fill="rgba(255,255,255,0.5)" letter-spacing="1">SCORE</text>
+            <text x="450" y="78" font-family="Bricolage Grotesque" font-size="14" font-weight="700" fill="#00ED64">1.0 = idénticos</text>
+            <text x="450" y="98" font-family="Bricolage Grotesque" font-size="14" font-weight="700" fill="#FFD93D">0.7 = relacionados</text>
+            <text x="450" y="118" font-family="Bricolage Grotesque" font-size="14" font-weight="700" fill="#FF6B6B">0 = nada que ver</text>
+
+            <defs>
+              <marker id="cArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#00ED64" stroke-width="1.5"/></marker>
+              <marker id="cArr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#FF6B6B" stroke-width="1.5"/></marker>
+            </defs>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Mide el <strong>ángulo entre dos vectores</strong> (no la distancia). 1 = misma dirección, 0 = perpendicular, -1 = opuestos. Es lo que Vector Search usa por defecto.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Variantes</div>
+          <div class="term-section-text">Otras métricas: <code>dotProduct</code> (más rápido, requiere vectores normalizados), <code>euclidean</code> (distancia recta). En MongoDB lo eliges en el índice.</div>
+        </div>
+        <div class="you-say">"Cuando alguien pregunta 'cómo decide MongoDB qué documentos son similares' — es cosine similarity. Misma matemática que usa Spotify para recomendarte música."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Vector')">Vector</span>
+          <span class="related-chip" onclick="searchFor('Embedding')">Embedding</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== DIMENSIONES ===== -->
+    <div class="term" data-cat="vec" data-key="dimensiones dimensions 1536 1024 numdimensions">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Dimensiones <span class="term-cat cat-vec">🧠 vectores</span></div>
+          <div class="term-tldr">Cuántos <strong>números</strong> tiene un vector. Típico: 1024 o 1536. Más = más matiz, más caro.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 130" xmlns="http://www.w3.org/2000/svg">
+            <text x="40" y="35" font-family="JetBrains Mono" font-size="10" fill="rgba(255,255,255,0.5)" letter-spacing="1">MODELO</text>
+            <text x="220" y="35" font-family="JetBrains Mono" font-size="10" fill="rgba(255,255,255,0.5)" letter-spacing="1">DIMS</text>
+            <text x="330" y="35" font-family="JetBrains Mono" font-size="10" fill="rgba(255,255,255,0.5)" letter-spacing="1">PESO RELATIVO</text>
+
+            <text x="40" y="60" font-family="Inter" font-size="13" font-weight="600" fill="#4ECDC4">text-embedding-3-small</text>
+            <text x="240" y="60" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#fff">1536</text>
+            <rect x="330" y="48" width="170" height="14" rx="3" fill="#4ECDC4" opacity="0.7"/>
+
+            <text x="40" y="85" font-family="Inter" font-size="13" font-weight="600" fill="#00ED64">voyage-3 / voyage-3-large</text>
+            <text x="240" y="85" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#fff">1024</text>
+            <rect x="330" y="73" width="113" height="14" rx="3" fill="#00ED64" opacity="0.7"/>
+
+            <text x="40" y="110" font-family="Inter" font-size="13" font-weight="600" fill="#FFD93D">text-embedding-3-large</text>
+            <text x="240" y="110" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="#fff">3072</text>
+            <rect x="330" y="98" width="240" height="14" rx="3" fill="#FFD93D" opacity="0.7"/>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Cada dimensión es un eje que captura <strong>algún aspecto del significado</strong>. 1536 dimensiones = 1536 números que juntos describen la pieza de texto en el espacio semántico.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">El trade-off</div>
+          <div class="term-section-text">Más dimensiones = más matiz, pero también <strong>más RAM, más cómputo, más storage</strong>. Voyage usa Matryoshka — puedes truncar el vector y seguir teniendo buena precisión.</div>
+        </div>
+        <div class="you-say">"Cuando hablen de dimensiones: ese número define cuánto espacio y RAM va a comer su solución. Es la primera variable de costo. Voyage AI optimiza esto."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Vector')">Vector</span>
+          <span class="related-chip" onclick="searchFor('Embedding')">Embedding</span>
+          <span class="related-chip" onclick="searchFor('Voyage')">Voyage</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== EMBEDDING ===== -->
+    <div class="term" data-cat="vec" data-key="embedding embeddings vectorizar representar significado">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Embedding <span class="term-cat cat-vec">🧠 vectores</span></div>
+          <div class="term-tldr">El proceso de <strong>convertir texto (o imagen, audio) en un vector</strong> que captura su significado.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 110" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="35" width="140" height="40" rx="10" fill="#00293D" stroke="#4ECDC4" stroke-width="1.5"/>
+            <text x="90" y="60" text-anchor="middle" font-family="Inter" font-size="13" font-weight="600" fill="#4ECDC4">"Hola mundo"</text>
+            <path d="M160 55 L 220 55" stroke="#FFD93D" stroke-width="1.5" marker-end="url(#eArr)"/>
+            <rect x="220" y="30" width="120" height="50" rx="10" fill="#00293D" stroke="#FFD93D" stroke-width="1.5"/>
+            <text x="280" y="55" text-anchor="middle" font-family="Bricolage Grotesque" font-size="14">🧠</text>
+            <text x="280" y="72" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="#FFD93D">Modelo</text>
+            <path d="M340 55 L 400 55" stroke="#00ED64" stroke-width="1.5" marker-end="url(#eArr)"/>
+            <rect x="400" y="30" width="180" height="50" rx="10" fill="#00293D" stroke="#00ED64" stroke-width="1.5"/>
+            <text x="490" y="55" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#00ED64">[0.23, -0.81, 0.45...</text>
+            <text x="490" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C3E7CA">1024 números</text>
+            <defs><marker id="eArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Un modelo de IA "lee" un pedazo de contenido y produce una lista de números (vector) que representa <strong>su significado en un espacio matemático</strong>. Cosas similares = vectores cercanos.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">El truco</div>
+          <div class="term-section-text">"Rey" - "Hombre" + "Mujer" ≈ "Reina". La aritmética funciona porque el modelo capturó relaciones reales del lenguaje.</div>
+        </div>
+        <div class="you-say">"Embedding es como una huella digital del significado. Dos textos con la misma idea tienen huellas parecidas — aunque usen palabras distintas."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Vector')">Vector</span>
+          <span class="related-chip" onclick="searchFor('Cosine')">Cosine</span>
+          <span class="related-chip" onclick="searchFor('Voyage')">Voyage AI</span>
+          <span class="related-chip" onclick="searchFor('Dimensiones')">Dimensiones</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== EMBEDDING MODEL ===== -->
+    <div class="term" data-cat="vec" data-key="embedding model modelo de embedding voyage openai cohere">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Modelo de embedding <span class="term-cat cat-vec">🧠 vectores</span></div>
+          <div class="term-tldr">El <strong>cerebro que produce embeddings</strong>. Voyage, OpenAI, Cohere — cada uno con su sabor.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+            <text x="40" y="30" font-family="JetBrains Mono" font-size="10" fill="rgba(255,255,255,0.5)" letter-spacing="1">PROVEEDOR</text>
+            <text x="230" y="30" font-family="JetBrains Mono" font-size="10" fill="rgba(255,255,255,0.5)" letter-spacing="1">MODELO ESTRELLA</text>
+
+            <rect x="20" y="42" width="200" height="34" rx="8" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="120" y="64" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#00ED64">Voyage AI (MongoDB)</text>
+            <text x="320" y="64" font-family="Inter" font-size="12" fill="#00ED64">voyage-4-large</text>
+
+            <rect x="20" y="84" width="200" height="34" rx="8" fill="#00293D" stroke="#4ECDC4" stroke-width="1"/>
+            <text x="120" y="106" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#4ECDC4">OpenAI</text>
+            <text x="320" y="106" font-family="Inter" font-size="12" fill="#4ECDC4">text-embedding-3-large</text>
+
+            <rect x="370" y="42" width="200" height="34" rx="8" fill="#00293D" stroke="#B794F4" stroke-width="1"/>
+            <text x="470" y="64" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#B794F4">Cohere</text>
+
+            <rect x="370" y="84" width="200" height="34" rx="8" fill="#00293D" stroke="#FFD93D" stroke-width="1"/>
+            <text x="470" y="106" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#FFD93D">Otros open-source</text>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Una red neuronal entrenada específicamente para producir embeddings de calidad. <strong>NO confundir con un LLM</strong> — un embedding model no genera texto, solo vectores.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Cómo elegir</div>
+          <div class="term-section-text">Para texto general: <code>voyage-4</code>. Código: <code>voyage-code-3</code>. Legal: <code>voyage-law-2</code>. Finanzas: <code>voyage-finance-2</code>. Multimodal (texto + imagen + video): <code>voyage-multimodal-3.5</code>.</div>
+        </div>
+        <div class="you-say">"¿Su modelo de embedding actual los está limitando? Migrarse cuesta porque hay que re-vectorizar todo. Por eso elegir bien desde el día uno importa."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Voyage')">Voyage AI</span>
+          <span class="related-chip" onclick="searchFor('Embedding')">Embedding</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== HNSW ===== -->
+    <div class="term" data-cat="search" data-key="hnsw indice grafico navegacion vecinos cercanos">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name"><code>HNSW</code> <span class="term-cat cat-search">🔎 búsqueda</span></div>
+          <div class="term-tldr">El <strong>tipo de índice</strong> que usa Vector Search por debajo. "Hierarchical Navigable Small World".</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Una estructura tipo "grafo de vecinos" que permite encontrar <strong>vectores similares en milisegundos</strong> sin comparar contra todos. Sin un índice así, buscar entre 1M de vectores tardaría minutos.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Por qué te importa</div>
+          <div class="term-section-text">Es lo que hace pgvector lento a millones de vectores: <strong>el HNSW pesa en RAM y los builds tardan horas</strong>. Es resoluble con tuning, pero ¿quieren operar eso o construir su producto?</div>
+        </div>
+        <div class="you-say">"Si te preguntan tecnicismos: HNSW es el algoritmo. MongoDB lo gestiona automáticamente. En Pinecone o pgvector tienes que tunearlo a mano."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Vector Search')">Vector Search</span>
+          <span class="related-chip" onclick="searchFor('Atlas Vector Search')">Atlas Vector Search</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== HYBRID SEARCH ===== -->
+    <div class="term" data-cat="search" data-key="hybrid search hibrida combinada keyword vectorial">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Hybrid Search <span class="term-cat cat-search">🔎 búsqueda</span></div>
+          <div class="term-tldr">Combinar <strong>full-text + vector search</strong> en una sola consulta. Lo mejor de los dos mundos.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="20" width="180" height="40" rx="10" fill="#00293D" stroke="#4ECDC4" stroke-width="1.5"/>
+            <text x="110" y="44" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#4ECDC4">Atlas Search (keywords)</text>
+            <rect x="20" y="80" width="180" height="40" rx="10" fill="#00293D" stroke="#FFD93D" stroke-width="1.5"/>
+            <text x="110" y="104" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#FFD93D">Vector Search (semántico)</text>
+
+            <path d="M200 40 Q 280 40 320 65" fill="none" stroke="#4ECDC4" stroke-width="1.5" marker-end="url(#hArr)"/>
+            <path d="M200 100 Q 280 100 320 75" fill="none" stroke="#FFD93D" stroke-width="1.5" marker-end="url(#hArr)"/>
+
+            <rect x="320" y="48" width="160" height="44" rx="10" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="400" y="68" text-anchor="middle" font-family="JetBrains Mono" font-size="12" font-weight="700" fill="#00ED64">$rankFusion</text>
+            <text x="400" y="84" text-anchor="middle" font-family="Inter" font-size="9" fill="#C3E7CA">combina + reordena</text>
+
+            <path d="M480 70 L 530 70" stroke="#00ED64" stroke-width="1.5" marker-end="url(#hArr)"/>
+            <text x="555" y="75" font-family="Bricolage Grotesque" font-size="22">✨</text>
+            <defs><marker id="hArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="context-stroke" stroke-width="1.5"/></marker></defs>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Corres ambas búsquedas en paralelo (keywords + semántica), <strong>combinas los resultados con <code>$rankFusion</code></strong>. Cubre exactitud Y comprensión.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Caso real</div>
+          <div class="term-section-text">Kovai.co lo usa para su chatbot Eddy AI: <strong>+30% en precisión de retrieval</strong> al usar Hybrid Search nativo de Atlas.</div>
+        </div>
+        <div class="you-say">"En cualquier otra arquitectura tienen que orquestar Elastic + Pinecone + lógica de fusión. En MongoDB es un solo aggregation pipeline."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('rankFusion')">$rankFusion</span>
+          <span class="related-chip" onclick="searchFor('Atlas Search')">Atlas Search</span>
+          <span class="related-chip" onclick="searchFor('Vector Search')">Vector Search</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== LLM ===== -->
+    <div class="term" data-cat="llm" data-key="llm large language model gpt claude gemini">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name"><code>LLM</code> <span class="term-cat cat-llm">🤖 LLM</span></div>
+          <div class="term-tldr"><strong>Large Language Model</strong>. Predice la siguiente palabra. Eso es todo. Lo demás es cómo lo usas.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 110" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="35" width="200" height="40" rx="10" fill="#00293D" stroke="#4ECDC4" stroke-width="1.5"/>
+            <text x="120" y="60" text-anchor="middle" font-family="Inter" font-size="13" fill="#4ECDC4">"El cielo es de color..."</text>
+
+            <path d="M220 55 L 280 55" stroke="#FFD93D" stroke-width="1.5" marker-end="url(#lArr)"/>
+
+            <rect x="280" y="30" width="100" height="50" rx="12" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="330" y="55" text-anchor="middle" font-family="Bricolage Grotesque" font-size="18">🧠</text>
+            <text x="330" y="72" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="#00ED64">LLM</text>
+
+            <path d="M380 55 L 440 55" stroke="#FFD93D" stroke-width="1.5" marker-end="url(#lArr)"/>
+
+            <text x="450" y="48" font-family="Inter" font-size="13" font-weight="700" fill="#00ED64">"azul"</text>
+            <text x="450" y="65" font-family="JetBrains Mono" font-size="9" fill="rgba(255,255,255,0.4)">prob: 0.91</text>
+            <defs><marker id="lArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#FFD93D" stroke-width="1.5"/></marker></defs>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Una red neuronal gigante (cientos de billones de parámetros) que aprendió a <strong>predecir la siguiente palabra</strong> de una secuencia. Ejemplos: GPT-4o, Claude Sonnet, Gemini, Llama.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Lo crítico</div>
+          <div class="term-section-text">El LLM <strong>no sabe nada</strong> de tu cliente. Solo sabe lo que vio en su entrenamiento. Por eso necesita RAG para tener contexto del negocio.</div>
+        </div>
+        <div class="you-say">"El LLM es el cerebro. Pero un cerebro sin información de tu negocio no sirve. Ahí entran los datos — que viven en MongoDB."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Token')">Token</span>
+          <span class="related-chip" onclick="searchFor('Alucinación')">Alucinación</span>
+          <span class="related-chip" onclick="searchFor('RAG')">RAG</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== MCP ===== -->
+    <div class="term" data-cat="agent" data-key="mcp model context protocol anthropic conectar agentes">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name"><code>MCP</code> · Model Context Protocol <span class="term-cat cat-agent">🚀 agentes</span></div>
+          <div class="term-tldr">El <strong>"USB universal"</strong> para conectar agentes a herramientas. Estándar de Anthropic (nov 2024).</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="60" width="100" height="50" rx="10" fill="#00293D" stroke="#4ECDC4" stroke-width="1.5"/>
+            <text x="70" y="80" text-anchor="middle" font-family="Bricolage Grotesque" font-size="16">📅</text>
+            <text x="70" y="100" text-anchor="middle" font-family="Inter" font-size="10" fill="#4ECDC4">Calendar</text>
+
+            <rect x="20" y="10" width="100" height="40" rx="10" fill="#00293D" stroke="#4ECDC4" stroke-width="1.5"/>
+            <text x="70" y="35" text-anchor="middle" font-family="Inter" font-size="11" fill="#4ECDC4">📧 Gmail</text>
+
+            <rect x="20" y="120" width="100" height="40" rx="10" fill="#00293D" stroke="#00ED64" stroke-width="1.5"/>
+            <text x="70" y="145" text-anchor="middle" font-family="Inter" font-size="11" fill="#00ED64">🍃 MongoDB</text>
+
+            <path d="M120 30 L 230 80" stroke="#FFD93D" stroke-width="1" marker-end="url(#mArr)"/>
+            <path d="M120 85 L 230 85" stroke="#FFD93D" stroke-width="1" marker-end="url(#mArr)"/>
+            <path d="M120 140 L 230 90" stroke="#FFD93D" stroke-width="1" marker-end="url(#mArr)"/>
+
+            <rect x="230" y="60" width="120" height="50" rx="12" fill="#00684A" stroke="#FFD93D" stroke-width="2"/>
+            <text x="290" y="80" text-anchor="middle" font-family="Bricolage Grotesque" font-size="14">🔌</text>
+            <text x="290" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#FFD93D">MCP</text>
+
+            <path d="M350 85 L 410 85" stroke="#00ED64" stroke-width="1.5" marker-end="url(#mArr2)"/>
+
+            <rect x="410" y="50" width="170" height="70" rx="14" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="495" y="78" text-anchor="middle" font-family="Bricolage Grotesque" font-size="18">🤖</text>
+            <text x="495" y="96" text-anchor="middle" font-family="Inter" font-size="12" font-weight="700" fill="#00ED64">Cualquier agente</text>
+            <text x="495" y="110" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C3E7CA">Claude · OpenAI · etc.</text>
+            <defs>
+              <marker id="mArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#FFD93D" stroke-width="1.5"/></marker>
+              <marker id="mArr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#00ED64" stroke-width="1.5"/></marker>
+            </defs>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Un protocolo abierto que <strong>define cómo un agente se conecta a fuentes de datos y herramientas externas</strong>. Antes de MCP, cada integración era a mano. Con MCP es plug-and-play.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Por qué te importa</div>
+          <div class="term-section-text">MongoDB tiene su propio <strong>MongoDB MCP Server</strong> oficial (anunciado oct 2025). Cualquier agente — Claude, OpenAI, Microsoft Foundry — puede conectarse a Atlas en minutos.</div>
+        </div>
+        <div class="you-say">"MCP es como cuando estandarizaron el USB. Antes cada cable era único. Ahora cualquier agente conecta a Mongo sin escribir integración custom."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Agente')">Agente</span>
+          <span class="related-chip" onclick="searchFor('MongoDB MCP')">MongoDB MCP Server</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== MONGODB MCP SERVER ===== -->
+    <div class="term" data-cat="mdb" data-key="mongodb mcp server tool agente integracion claude">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">MongoDB MCP Server <span class="term-cat cat-mdb">🍃 MongoDB AI</span></div>
+          <div class="term-tldr">El <strong>conector oficial</strong> que permite a agentes (Claude, GPT, etc.) explorar y operar Atlas.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Un servidor MCP que expone tu base MongoDB (Atlas, Community, Enterprise) a <strong>cualquier agente que hable MCP</strong>: Claude Code, Cursor, Windsurf, Microsoft Foundry.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Qué hace</div>
+          <div class="term-section-text">El agente puede: listar colecciones, ver schemas, ejecutar queries, crear clusters, gestionar usuarios — todo desde lenguaje natural con compliance enterprise.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Caso real</div>
+          <div class="term-section-text">Anuncio en Microsoft Ignite 2025: <strong>MongoDB MCP Server en el Tool Catalog de Microsoft Foundry</strong>. Es el primer connector enterprise en esa plataforma.</div>
+        </div>
+        <div class="you-say">"Es la diferencia entre 'integramos con IA' y 'tu IA habla con nuestros datos nativamente'. Cero código glue."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('MCP')">MCP</span>
+          <span class="related-chip" onclick="searchFor('Agente')">Agente</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== RAG ===== -->
+    <div class="term" data-cat="rag" data-key="rag retrieval augmented generation aumentado generacion">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name"><code>RAG</code> · Retrieval-Augmented Generation <span class="term-cat cat-rag">📚 RAG</span></div>
+          <div class="term-tldr">"<strong>Búscalo antes de responder.</strong>" El patrón que cura las alucinaciones del LLM.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 130" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="50" width="100" height="40" rx="8" fill="#00293D" stroke="#4ECDC4" stroke-width="1.5"/>
+            <text x="70" y="74" text-anchor="middle" font-family="Inter" font-size="11" fill="#4ECDC4">Pregunta</text>
+
+            <path d="M120 70 L 170 70" stroke="#00ED64" stroke-width="1.5" marker-end="url(#rArr)"/>
+
+            <rect x="170" y="35" width="140" height="70" rx="12" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="240" y="58" text-anchor="middle" font-family="Bricolage Grotesque" font-size="14">🍃</text>
+            <text x="240" y="78" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#00ED64">Retrieval</text>
+            <text x="240" y="93" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C3E7CA">busca docs reales</text>
+
+            <path d="M310 70 L 360 70" stroke="#FFD93D" stroke-width="1.5" marker-end="url(#rArr2)"/>
+
+            <rect x="360" y="35" width="100" height="70" rx="12" fill="#00293D" stroke="#FFD93D" stroke-width="1.5"/>
+            <text x="410" y="58" text-anchor="middle" font-family="Bricolage Grotesque" font-size="14">🧠</text>
+            <text x="410" y="78" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#FFD93D">LLM</text>
+            <text x="410" y="93" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="rgba(255,217,61,0.7)">+ contexto</text>
+
+            <path d="M460 70 L 510 70" stroke="#00ED64" stroke-width="1.5" marker-end="url(#rArr)"/>
+            <text x="540" y="76" font-family="Bricolage Grotesque" font-size="22">✓</text>
+
+            <defs>
+              <marker id="rArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#00ED64" stroke-width="1.5"/></marker>
+              <marker id="rArr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#FFD93D" stroke-width="1.5"/></marker>
+            </defs>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text"><strong>R</strong>etrieval (recuperas docs reales con Vector Search) → <strong>A</strong>ugmented (los inyectas como contexto) → <strong>G</strong>eneration (el LLM responde basado en ellos).</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Por qué es enorme</div>
+          <div class="term-section-text">Cerca de <strong>7 de cada 10 empresas</strong> que usan IA generativa ya implementan RAG (Snowflake, Databricks). Es EL caso de uso dominante en producción.</div>
+        </div>
+        <div class="you-say">"La pregunta nunca es si tu cliente va a hacer RAG — es dónde va a guardar los vectores. Y ahí cerramos."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Vector Search')">Vector Search</span>
+          <span class="related-chip" onclick="searchFor('Chunking')">Chunking</span>
+          <span class="related-chip" onclick="searchFor('Embedding')">Embedding</span>
+          <span class="related-chip" onclick="searchFor('Reranker')">Reranker</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== rankFusion ===== -->
+    <div class="term" data-cat="search" data-key="rankfusion $rankfusion reciprocal rank fusion rrf">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name"><code>$rankFusion</code> <span class="term-cat cat-search">🔎 búsqueda</span></div>
+          <div class="term-tldr">El <strong>operador de aggregation</strong> que combina resultados de múltiples búsquedas. Disponible desde Atlas 8.1.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Una etapa del aggregation pipeline que toma resultados de N búsquedas (full-text, vector, geo, lo que sea) y los <strong>fusiona en un ranking unificado</strong> usando Reciprocal Rank Fusion.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">El truco matemático</div>
+          <div class="term-section-text">Cada doc obtiene un score = <code>1 / (rank + 60)</code> en cada pipeline. Los scores se suman ponderados. <strong>Sin matemáticas que tunear: funciona out-of-the-box.</strong></div>
+        </div>
+        <div class="you-say">"Es UN operador. <code>$rankFusion</code>. En Pinecone + Elastic tendrían que escribir lógica de fusión en código. Aquí: una línea del pipeline."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Hybrid')">Hybrid Search</span>
+          <span class="related-chip" onclick="searchFor('Atlas Search')">Atlas Search</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== ReAct ===== -->
+    <div class="term" data-cat="agent" data-key="react reason act razonamiento accion patron agente">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name"><code>ReAct</code> · Reason + Act <span class="term-cat cat-agent">🚀 agentes</span></div>
+          <div class="term-tldr">El <strong>patrón principal</strong> de cómo piensa un agente: razona, actúa, observa, repite.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Un loop documentado en un paper de 2023: el agente <strong>pone en palabras su razonamiento</strong> ("necesito buscar el calendario") antes de cada acción ("call calendar_api"). Eso le da transparencia y permite corregirse.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Por qué importa</div>
+          <div class="term-section-text">Es el patrón que hace que un agente sea <strong>auditable</strong>. Para regulados (banca, salud) es no-negociable: hay que poder explicar cada decisión que tomó.</div>
+        </div>
+        <div class="you-say">"Para regulados: ReAct deja un log de razonamiento explícito. Cada acción del agente está justificada. Eso es lo que pide compliance."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Agente')">Agente</span>
+          <span class="related-chip" onclick="searchFor('MCP')">MCP</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== RERANKER ===== -->
+    <div class="term" data-cat="rag" data-key="reranker reordenar relevancia voyage rerank-2">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Reranker <span class="term-cat cat-rag">📚 RAG</span></div>
+          <div class="term-tldr">Modelo que <strong>reordena los resultados</strong> de búsqueda por relevancia real, después del retrieval.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Vector Search te trae los top 100 candidatos rápido. Un reranker (más lento pero más preciso) los <strong>reordena para que el top 10 sea realmente lo mejor</strong>.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Voyage Rerankers</div>
+          <div class="term-section-text">Voyage AI ofrece <code>rerank-2</code> y <code>rerank-2-lite</code> — diseñados para optimizar relevancia manteniendo latencia bajo control. <strong>Mejoran la precisión sin re-vectorizar todo</strong>.</div>
+        </div>
+        <div class="you-say">"Si su RAG tiene precisión baja, no es problema del LLM — es del retrieval. Un reranker arregla eso sin cambiar nada más."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('RAG')">RAG</span>
+          <span class="related-chip" onclick="searchFor('Voyage')">Voyage AI</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== SEMANTIC SEARCH ===== -->
+    <div class="term" data-cat="search" data-key="semantic search semantica busqueda significado">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Búsqueda semántica <span class="term-cat cat-search">🔎 búsqueda</span></div>
+          <div class="term-tldr">Buscar <strong>por significado</strong>, no por palabras exactas. Sinónimo casi-exacto de Vector Search.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Buscas "solución de enfriamiento" y encuentra "aire acondicionado" — aunque las palabras no coincidan. Funciona porque los embeddings capturaron que ambos significan lo mismo.</div>
+        </div>
+        <div class="you-say">"Es lo opuesto a la búsqueda de Google de hace 15 años. Antes buscabas keywords. Hoy buscas ideas. Eso es búsqueda semántica."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Vector Search')">Vector Search</span>
+          <span class="related-chip" onclick="searchFor('Embedding')">Embedding</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== TEMPERATURA ===== -->
+    <div class="term" data-cat="llm" data-key="temperatura temperature creatividad determinismo">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Temperatura <span class="term-cat cat-llm">🤖 LLM</span></div>
+          <div class="term-tldr">Cuán <strong>creativo vs determinista</strong> responde el LLM. 0 = robot. 1+ = poeta.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 90" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="30" width="540" height="20" rx="10" fill="url(#tempGrad)"/>
+            <text x="40" y="70" font-family="JetBrains Mono" font-size="11" fill="#4ECDC4">0.0</text>
+            <text x="40" y="20" font-family="Inter" font-size="10" fill="#4ECDC4">determinista</text>
+            <text x="280" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#FFD93D">0.7</text>
+            <text x="280" y="20" text-anchor="middle" font-family="Inter" font-size="10" fill="#FFD93D">balance</text>
+            <text x="540" y="70" font-family="JetBrains Mono" font-size="11" fill="#FF6B6B">2.0</text>
+            <text x="540" y="20" text-anchor="end" font-family="Inter" font-size="10" fill="#FF6B6B">creativo</text>
+            <defs>
+              <linearGradient id="tempGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#4ECDC4"/>
+                <stop offset="50%" stop-color="#FFD93D"/>
+                <stop offset="100%" stop-color="#FF6B6B"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Parámetro de 0 a 2.0 que controla cuánto "se arriesga" el LLM al elegir la siguiente palabra. <strong>Para RAG en producción</strong>: 0 o 0.1 (queremos respuestas consistentes).</div>
+        </div>
+        <div class="you-say">"Si su cliente está usando temperatura alta en banca, es bandera roja. Producción seria = temperatura baja."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('LLM')">LLM</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== TOKEN ===== -->
+    <div class="term" data-cat="llm" data-key="token tokens tokenizacion pieza palabra">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Token <span class="term-cat cat-llm">🤖 LLM</span></div>
+          <div class="term-tldr">La <strong>unidad mínima</strong> que procesa un LLM. ≈ ¾ de palabra en inglés, ½ en español.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 100" xmlns="http://www.w3.org/2000/svg">
+            <text x="30" y="30" font-family="JetBrains Mono" font-size="10" fill="rgba(255,255,255,0.5)" letter-spacing="1">"INTELIGENCIA ARTIFICIAL"</text>
+            <rect x="30" y="40" width="60" height="32" rx="6" fill="#00293D" stroke="#FFD93D" stroke-width="1"/>
+            <text x="60" y="61" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#FFD93D">intel</text>
+            <rect x="95" y="40" width="50" height="32" rx="6" fill="#00293D" stroke="#FFD93D" stroke-width="1"/>
+            <text x="120" y="61" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#FFD93D">igen</text>
+            <rect x="150" y="40" width="40" height="32" rx="6" fill="#00293D" stroke="#FFD93D" stroke-width="1"/>
+            <text x="170" y="61" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#FFD93D">cia</text>
+            <rect x="195" y="40" width="40" height="32" rx="6" fill="#00293D" stroke="#FFD93D" stroke-width="1"/>
+            <text x="215" y="61" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#FFD93D">arti</text>
+            <rect x="240" y="40" width="50" height="32" rx="6" fill="#00293D" stroke="#FFD93D" stroke-width="1"/>
+            <text x="265" y="61" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#FFD93D">ficial</text>
+
+            <text x="320" y="61" font-family="Inter" font-size="13" fill="#fff">= 5 tokens</text>
+            <text x="320" y="80" font-family="JetBrains Mono" font-size="9" fill="rgba(255,255,255,0.5)">en inglés serían 2-3</text>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Por qué importa</div>
+          <div class="term-section-text">Los APIs <strong>cobran por token</strong>. El español pesa más que el inglés. Si tu cliente procesa muchos documentos en español, costo previsto se duplica.</div>
+        </div>
+        <div class="you-say">"Cada vez que pregunten cuánto cuesta — primer paso es contar tokens, no palabras. Y para LATAM, eso es 30-50% más caro que el demo en inglés."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('LLM')">LLM</span>
+          <span class="related-chip" onclick="searchFor('Context')">Context window</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== TOOL USE ===== -->
+    <div class="term" data-cat="agent" data-key="tool use herramientas function calling api">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Tool use <span class="term-cat cat-agent">🚀 agentes</span></div>
+          <div class="term-tldr">Cuando el LLM <strong>llama a una función externa</strong> (API, base, calculadora) en lugar de responder con texto.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">El LLM puede emitir un "llamado a función" estructurado en JSON. Tu código ejecuta esa función real y le devuelve el resultado al LLM. <strong>Es lo que convierte a un chatbot en agente.</strong></div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Sin tool use</div>
+          <div class="term-section-text">El LLM responde "creo que el precio es ~$50". <strong>Con tool use</strong>: el LLM llama <code>get_price(item)</code>, obtiene $47.32, responde con el dato real.</div>
+        </div>
+        <div class="you-say">"Tool use es lo que separa los demos de los productos. Sin esto, el LLM solo opina. Con esto, ejecuta."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Agente')">Agente</span>
+          <span class="related-chip" onclick="searchFor('MCP')">MCP</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== VECTOR ===== -->
+    <div class="term" data-cat="vec" data-key="vector vectores lista numeros representacion">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Vector <span class="term-cat cat-vec">🧠 vectores</span></div>
+          <div class="term-tldr">Una <strong>lista de números</strong> (típico 1024-1536). El resultado de un embedding.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text"><code>[0.23, -0.81, 0.45, 0.12, -0.67, ...]</code> — un vector es solo esa lista. Lo importante es que dos vectores que estén "cerca" en ese espacio matemático <strong>representan significados cercanos</strong>.</div>
+        </div>
+        <div class="you-say">"Para el cliente: piensen en un vector como coordenadas en un mapa. Cosas parecidas viven cerca. Cosas distintas, lejos."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Embedding')">Embedding</span>
+          <span class="related-chip" onclick="searchFor('Cosine')">Cosine similarity</span>
+          <span class="related-chip" onclick="searchFor('Dimensiones')">Dimensiones</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== VECTOR SEARCH ===== -->
+    <div class="term" data-cat="search" data-key="vector search busqueda vectorial knn ann">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Vector Search <span class="term-cat cat-search">🔎 búsqueda</span></div>
+          <div class="term-tldr">Buscar entre vectores para encontrar los <strong>más cercanos a una query</strong>. La pieza fundamental del RAG.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-section">
+          <div class="term-section-label">En una frase</div>
+          <div class="term-section-text">Vectorizas la pregunta, vectorizas los docs, encuentras los docs cuyos vectores son <strong>matemáticamente más parecidos</strong> al vector de la pregunta. Eso es Vector Search.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Implementaciones</div>
+          <div class="term-section-text">MongoDB: <code>$vectorSearch</code> en aggregation. Pinecone: API dedicada. pgvector: extensión de Postgres. Cada una con su trade-off de operación.</div>
+        </div>
+        <div class="you-say">"Vector Search es la categoría. Atlas Vector Search es nuestro producto. La diferencia: el nuestro vive en la misma base que sus datos operacionales."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Atlas Vector Search')">Atlas Vector Search</span>
+          <span class="related-chip" onclick="searchFor('HNSW')">HNSW</span>
+          <span class="related-chip" onclick="searchFor('RAG')">RAG</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ===== VOYAGE AI ===== -->
+    <div class="term" data-cat="mdb" data-key="voyage ai embedding model mongodb adquisicion tengyu ma">
+      <div class="term-head" onclick="toggleTerm(this)">
+        <div class="term-head-left">
+          <div class="term-name">Voyage AI <span class="term-cat cat-mdb">🍃 MongoDB AI</span></div>
+          <div class="term-tldr">La <strong>empresa de embeddings que MongoDB compró</strong> (feb 2025). Hoy es nuestra ventaja en modelos.</div>
+        </div>
+        <div class="term-toggle">+</div>
+      </div>
+      <div class="term-body"><div class="term-body-inner">
+        <div class="term-diagram">
+          <svg viewBox="0 0 600 130" xmlns="http://www.w3.org/2000/svg">
+            <text x="40" y="30" font-family="JetBrains Mono" font-size="10" fill="rgba(255,255,255,0.5)" letter-spacing="1">MODELO</text>
+            <text x="280" y="30" font-family="JetBrains Mono" font-size="10" fill="rgba(255,255,255,0.5)" letter-spacing="1">DOMINIO</text>
+
+            <rect x="20" y="42" width="240" height="22" rx="6" fill="#00684A" stroke="#00ED64" stroke-width="1"/>
+            <text x="30" y="58" font-family="JetBrains Mono" font-size="11" fill="#00ED64">voyage-4-large</text>
+            <text x="280" y="58" font-family="Inter" font-size="11" fill="#fff">general · top retrieval</text>
+
+            <rect x="20" y="70" width="240" height="22" rx="6" fill="#00293D" stroke="#B794F4" stroke-width="1"/>
+            <text x="30" y="86" font-family="JetBrains Mono" font-size="11" fill="#B794F4">voyage-multimodal-3.5</text>
+            <text x="280" y="86" font-family="Inter" font-size="11" fill="#fff">texto + imagen + video</text>
+
+            <rect x="20" y="98" width="120" height="22" rx="6" fill="#00293D" stroke="#FFD93D" stroke-width="1"/>
+            <text x="30" y="114" font-family="JetBrains Mono" font-size="11" fill="#FFD93D">voyage-code-3</text>
+            <rect x="148" y="98" width="120" height="22" rx="6" fill="#00293D" stroke="#FFD93D" stroke-width="1"/>
+            <text x="158" y="114" font-family="JetBrains Mono" font-size="10" fill="#FFD93D">voyage-law-2</text>
+            <rect x="276" y="98" width="140" height="22" rx="6" fill="#00293D" stroke="#FFD93D" stroke-width="1"/>
+            <text x="286" y="114" font-family="JetBrains Mono" font-size="10" fill="#FFD93D">voyage-finance-2</text>
+          </svg>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">La historia</div>
+          <div class="term-section-text">Fundada por <strong>Tengyu Ma</strong> (profesor de Stanford). MongoDB la compró en <strong>febrero 2025 por ~$220M</strong>. Ahora sus modelos vienen nativos en Atlas.</div>
+        </div>
+        <div class="term-section">
+          <div class="term-section-label">Por qué importa</div>
+          <div class="term-section-text">Voyage <strong>encabeza benchmarks de retrieval</strong> (RTEB). Para tu cliente: mejor precisión = menos alucinación = mejor RAG. Sin tener que hablar con otro proveedor.</div>
+        </div>
+        <div class="you-say">"Pinecone usa OpenAI. Nosotros tenemos nuestro propio embedding model — el mejor del mercado — integrado nativo. Es nuestra integración vertical."</div>
+        <div class="related-row">
+          <span class="related-chip" onclick="searchFor('Embedding')">Embedding</span>
+          <span class="related-chip" onclick="searchFor('Automated Embedding')">Automated Embedding</span>
+          <span class="related-chip" onclick="searchFor('Reranker')">Reranker</span>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+
+  <div class="empty" id="emptyState" style="display:none;">
+    <div class="empty-icon">🔍</div>
+    <div>No encontré ese término. ¿Quieres que lo agregue?</div>
+  </div>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="09-toolkit.html" class="bottom-nav-side">
+      <span class="bottom-nav-label">← Cap 09</span>
+      <span class="bottom-nav-title">Toolkit del AE</span>
+    </a>
+    <a href="index.html" class="bottom-nav-side next">
+      <span class="bottom-nav-label">Volver al inicio →</span>
+      <span class="bottom-nav-title">Portada 🏠</span>
+    </a>
+  </nav>
+
+</div>
+
+<script>
+let currentFilter = 'all';
+
+function toggleTerm(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+function setFilter(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p.dataset.cat === cat));
+  filter();
+}
+
+function filter() {
+  const q = document.getElementById('searchBox').value.toLowerCase().trim();
+  const terms = document.querySelectorAll('.term');
+  let visible = 0;
+  terms.forEach(t => {
+    const matchCat = currentFilter === 'all' || t.dataset.cat === currentFilter;
+    const matchSearch = !q || t.dataset.key.toLowerCase().includes(q) || t.textContent.toLowerCase().includes(q);
+    const show = matchCat && matchSearch;
+    t.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+  document.getElementById('resultsMeta').textContent = visible === 0
+    ? '0 términos · prueba con otra palabra'
+    : `${visible} ${visible===1?'término':'términos'} ${q ? `para "${q}"` : ''}`;
+  document.getElementById('emptyState').style.display = visible === 0 ? 'block' : 'none';
+}
+
+function searchFor(term) {
+  document.getElementById('searchBox').value = term;
+  setFilter('all');
+  window.scrollTo({top: 200, behavior: 'smooth'});
+}
+</script>
+
+</body>
+</html>

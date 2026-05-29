@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>01 · El AE perdido</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  .scene {
+    background: var(--mdb-dark-2);
+    border-radius: 24px;
+    padding: 3rem;
+    margin: 3rem 0;
+    border: 1px solid var(--border-subtle);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scene-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent-coral);
+    margin-bottom: 2rem;
+  }
+
+  .scene-label::before {
+    content: '●';
+    color: var(--accent-coral);
+    margin-right: 0.5rem;
+    animation: blink 1.2s infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0.3; }
+  }
+
+  /* CHAT WINDOW */
+  .chat {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .chat-msg {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: chatIn 0.6s forwards;
+  }
+
+  @keyframes chatIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .chat-msg:nth-child(1) { animation-delay: 0.3s; }
+  .chat-msg:nth-child(2) { animation-delay: 1.4s; }
+  .chat-msg:nth-child(3) { animation-delay: 2.5s; }
+  .chat-msg:nth-child(4) { animation-delay: 3.6s; }
+
+  .chat-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+    font-family: var(--font-display);
+  }
+
+  .chat-avatar.cto {
+    background: linear-gradient(135deg, #FF6B6B, #C44569);
+    color: white;
+  }
+
+  .chat-avatar.ae {
+    background: linear-gradient(135deg, var(--mdb-green), var(--mdb-green-deep));
+    color: var(--mdb-dark);
+  }
+
+  .chat-body {
+    flex: 1;
+  }
+
+  .chat-name {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .chat-bubble {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    border-radius: 18px;
+    border-top-left-radius: 4px;
+    padding: 1.2rem 1.5rem;
+    font-size: 1.1rem;
+    line-height: 1.55;
+  }
+
+  .chat-bubble.cto-bubble {
+    background: rgba(255, 107, 107, 0.08);
+    border-color: rgba(255, 107, 107, 0.2);
+  }
+
+  .chat-bubble strong {
+    color: var(--mdb-green);
+    font-weight: 600;
+  }
+
+  .chat-bubble .term {
+    color: var(--accent-gold);
+    background: rgba(255, 217, 61, 0.08);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 217, 61, 0.2);
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+  }
+
+  .chat-bubble.ae-bubble {
+    background: rgba(0, 30, 43, 0.6);
+    font-family: var(--font-mono);
+    font-style: italic;
+    color: var(--text-tertiary);
+    text-align: center;
+  }
+
+  /* TERM REVEAL */
+  .terms-section {
+    margin-top: 4rem;
+  }
+
+  .terms-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 900px) {
+    .terms-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .term-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    min-height: 130px;
+  }
+
+  .term-card:hover {
+    border-color: var(--mdb-green);
+    background: var(--surface-card-hover);
+    transform: translateY(-4px);
+  }
+
+  .term-card-name {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent-gold);
+    margin-bottom: 0.6rem;
+  }
+
+  .term-card-status {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-tertiary);
+  }
+
+  .term-card-status.locked::before {
+    content: '🔒 ';
+  }
+
+  .term-card-status.unlocked {
+    color: var(--mdb-green);
+  }
+
+  .term-card-status.unlocked::before {
+    content: '✓ ';
+  }
+
+  /* PROMISE BOX */
+  .promise {
+    margin-top: 5rem;
+    padding: 3rem;
+    background: linear-gradient(135deg, var(--mdb-green-deep) 0%, var(--mdb-dark-2) 100%);
+    border-radius: 28px;
+    border: 1px solid var(--mdb-green);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .promise::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(0, 237, 100, 0.15), transparent 60%);
+  }
+
+  .promise-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .promise-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--mdb-green);
+    margin-bottom: 1.5rem;
+  }
+
+  .promise h2 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    margin-bottom: 1rem;
+    line-height: 1.15;
+  }
+
+  .promise h2 em {
+    color: var(--mdb-green);
+    font-style: italic;
+  }
+
+  .promise p {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* Reveal button */
+  .reveal-btn {
+    margin-top: 2rem;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <a href="index.html" class="topnav-brand">
+      <div class="topnav-brand-mark">M</div>
+      <span>AI Training · MongoDB LATAM</span>
+    </a>
+    <div class="topnav-progress" title="Progreso del training">
+      <div class="topnav-progress-dot active"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+    </div>
+    <div class="topnav-meta">Capítulo 1 de 10</div>
+  </nav>
+
+  <!-- Chapter header -->
+  <header class="chapter-header">
+    <div class="chapter-header-text">
+      <span class="kicker">Capítulo 01 · Hook</span>
+      <div class="chapter-number">01</div>
+      <h1 class="chapter-title">El AE perdido.</h1>
+      <p class="chapter-subtitle">
+        Te metiste a la llamada. El CTO arranca con dos frases que sonaban a otro idioma.
+        Esto le pasa a alguien hoy. Probablemente a ti.
+      </p>
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Tiempo</span>
+        <span class="chapter-meta-value">3 min</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Tipo</span>
+        <span class="chapter-meta-value">Disparador emocional</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Objetivo</span>
+        <span class="chapter-meta-value">Crear hambre</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- THE SCENE -->
+  <section class="scene">
+    <div class="scene-label">EN VIVO · Llamada con CTO de un banco · Hace 2 minutos</div>
+
+    <div class="chat">
+
+      <div class="chat-msg">
+        <div class="chat-avatar cto">CT</div>
+        <div class="chat-body">
+          <div class="chat-name">Carlos · CTO · Banco Top 5</div>
+          <div class="chat-bubble cto-bubble">
+            Hola, gracias por la llamada. Mira, te voy directo:
+            ya estamos en POC con OpenAI. Estamos implementando
+            <span class="term">RAG</span> sobre nuestros documentos legales,
+            usando <span class="term">embeddings</span> de 1,536 dimensiones
+            con un <span class="term">re-ranker</span> en el medio.
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-msg">
+        <div class="chat-avatar cto">CT</div>
+        <div class="chat-body">
+          <div class="chat-name">Carlos · CTO · Banco Top 5</div>
+          <div class="chat-bubble cto-bubble">
+            El problema es que <span class="term">pgvector</span> se nos cayó
+            a 12M de vectores, y la <span class="term">latencia P95</span>
+            está en 800ms. Estamos viendo si nos vamos a
+            <span class="term">Pinecone</span>, <span class="term">Weaviate</span>,
+            o algo serverless. <strong>¿Qué nos recomiendas?</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-msg">
+        <div class="chat-avatar ae">AE</div>
+        <div class="chat-body">
+          <div class="chat-name">Tú · AE · MongoDB LATAM</div>
+          <div class="chat-bubble ae-bubble">
+            ( silencio incómodo )
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-msg">
+        <div class="chat-avatar cto">CT</div>
+        <div class="chat-body">
+          <div class="chat-name">Carlos · CTO · Banco Top 5</div>
+          <div class="chat-bubble cto-bubble">
+            ¿Hola? ¿Sigues ahí?
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TERMS DICTIONARY -->
+  <section class="terms-section">
+    <div class="section-heading" style="margin-bottom: 1rem;">
+      <h2 style="font-size: 2rem;">7 términos. 0 idea.</h2>
+      <span class="section-heading-line"></span>
+    </div>
+    <p class="text-secondary" style="max-width: 700px; margin-bottom: 2rem;">
+      Estos son los términos que Carlos usó en 14 segundos. Al final de esta hora,
+      vas a poder explicar cada uno con una analogía de la vida real — y vas a
+      saber cuál de ellos te abre la puerta de la venta.
+    </p>
+
+    <div class="terms-grid">
+      <div class="term-card">
+        <div class="term-card-name">RAG</div>
+        <p class="text-secondary mt-1" style="font-size: 0.88rem;">Retrieval Augmented Generation</p>
+        <div class="term-card-status locked">Lo verás en Cap 05</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-card-name">embeddings</div>
+        <p class="text-secondary mt-1" style="font-size: 0.88rem;">Representación numérica de significado</p>
+        <div class="term-card-status locked">Lo verás en Cap 04</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-card-name">1,536 dim</div>
+        <p class="text-secondary mt-1" style="font-size: 0.88rem;">Tamaño del vector de OpenAI</p>
+        <div class="term-card-status locked">Lo verás en Cap 04</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-card-name">re-ranker</div>
+        <p class="text-secondary mt-1" style="font-size: 0.88rem;">Filtro fino sobre resultados vectoriales</p>
+        <div class="term-card-status locked">Lo verás en Cap 05</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-card-name">pgvector</div>
+        <p class="text-secondary mt-1" style="font-size: 0.88rem;">Extensión de Postgres para vectores</p>
+        <div class="term-card-status locked">Lo verás en Cap 06</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-card-name">P95 latency</div>
+        <p class="text-secondary mt-1" style="font-size: 0.88rem;">Percentil 95 de tiempo de respuesta</p>
+        <div class="term-card-status locked">Lo verás en Cap 06</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-card-name">Pinecone</div>
+        <p class="text-secondary mt-1" style="font-size: 0.88rem;">Base de datos vectorial pure-play</p>
+        <div class="term-card-status locked">Lo verás en Cap 06</div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-card-name">serverless</div>
+        <p class="text-secondary mt-1" style="font-size: 0.88rem;">Modelo de cómputo sin servidor fijo</p>
+        <div class="term-card-status locked">Lo verás en Cap 06</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE PROMISE -->
+  <section class="promise">
+    <div class="promise-content">
+      <div class="promise-tag">La promesa del training</div>
+      <h2>En 57 minutos vas a poder<br><em>cerrarle esta llamada a Carlos.</em></h2>
+      <p>
+        Sin estudiar matemáticas. Sin volverte ingeniero. Sin sonar como SE.
+        Solo con tres cosas: vocabulario, modelo mental y munición concreta.
+      </p>
+
+      <div class="reveal-btn">
+        <a href="02-llm.html" class="btn">
+          Empezar por entender qué es un LLM →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="bottom-nav-side">
+      <span class="bottom-nav-label">← Portada</span>
+      <span class="bottom-nav-title">Volver al índice</span>
+    </a>
+    <a href="02-llm.html" class="bottom-nav-side next">
+      <span class="bottom-nav-label">Siguiente · Cap 02 →</span>
+      <span class="bottom-nav-title">¿Qué es un LLM?</span>
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>

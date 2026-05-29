@@ -449,6 +449,15 @@
     },
 
     {
+      "src": "/ai$",
+      "dest": "/ai/index.html"
+    },
+    {
+      "src": "/ai/(?:index)?(?:/.*)?$",
+      "dest": "/ai/index.html"
+    },
+
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }

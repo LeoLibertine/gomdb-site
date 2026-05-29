@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>03 · Tokens & costo</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  /* TOKENIZER */
+  .tokenizer-box {
+    background: var(--mdb-dark-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 24px;
+    padding: 2.5rem;
+    margin: 2rem 0;
+  }
+
+  .tokenizer-input {
+    width: 100%;
+    background: var(--mdb-dark);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    padding: 1.2rem 1.5rem;
+    border-radius: 14px;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.2s;
+  }
+
+  .tokenizer-input:focus {
+    outline: none;
+    border-color: var(--mdb-green);
+  }
+
+  .tokenizer-presets {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .preset-btn {
+    padding: 0.5rem 1rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .preset-btn:hover {
+    border-color: var(--mdb-green);
+    color: var(--mdb-green);
+  }
+
+  .tokenizer-output {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--mdb-dark);
+    border-radius: 14px;
+    min-height: 100px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: flex-start;
+    align-content: flex-start;
+  }
+
+  .token {
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--mdb-dark);
+    font-weight: 600;
+    position: relative;
+    animation: tokenIn 0.3s ease-out;
+    cursor: default;
+  }
+
+  @keyframes tokenIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Token color rotation */
+  .token-c1 { background: #00ED64; }
+  .token-c2 { background: #4ECDC4; }
+  .token-c3 { background: #FFD93D; }
+  .token-c4 { background: #B794F4; }
+  .token-c5 { background: #FF6B6B; }
+  .token-c6 { background: #C3E7CA; }
+
+  .token-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .token-stat {
+    background: var(--mdb-dark);
+    padding: 1.2rem 1.5rem;
+    border-radius: 14px;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .token-stat-num {
+    font-family: var(--font-display);
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--mdb-green);
+    line-height: 1;
+  }
+
+  .token-stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.5rem;
+  }
+
+  /* COST CALCULATOR */
+  .calc {
+    margin-top: 4rem;
+    background: linear-gradient(135deg, var(--mdb-dark-2) 0%, var(--mdb-dark-3) 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: 28px;
+    padding: 3rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  @media (max-width: 900px) {
+    .calc-grid { grid-template-columns: 1fr; }
+  }
+
+  .calc-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .calc-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .calc-row-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .calc-row-name {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .calc-row-value {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--mdb-green);
+  }
+
+  .calc-slider {
+    -webkit-appearance: none;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    outline: none;
+  }
+
+  .calc-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--mdb-green);
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(0, 237, 100, 0.5);
+  }
+
+  .calc-result {
+    text-align: center;
+    padding: 2rem;
+    background: var(--mdb-dark);
+    border-radius: 20px;
+    border: 1px solid var(--mdb-green-deep);
+    position: relative;
+  }
+
+  .calc-result::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 237, 100, 0.08), transparent 70%);
+  }
+
+  .calc-result-label {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.8rem;
+    position: relative;
+  }
+
+  .calc-result-num {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 4.5rem);
+    font-weight: 800;
+    color: var(--mdb-green);
+    line-height: 1;
+    text-shadow: 0 0 40px rgba(0, 237, 100, 0.3);
+    position: relative;
+  }
+
+  .calc-result-currency {
+    font-size: 1.5rem;
+    color: var(--text-tertiary);
+    font-weight: 400;
+    margin-right: 0.3rem;
+  }
+
+  .calc-result-period {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    margin-top: 0.5rem;
+    position: relative;
+  }
+
+  /* CONNECTION TO SALES */
+  .sales-callout {
+    margin-top: 4rem;
+    background: var(--mdb-green-deep);
+    border-radius: 24px;
+    padding: 2.5rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sales-callout::before {
+    content: '$';
+    position: absolute;
+    right: -50px;
+    top: -50px;
+    font-family: var(--font-display);
+    font-size: 20rem;
+    color: rgba(0, 237, 100, 0.08);
+    line-height: 0.9;
+  }
+
+  .sales-callout-tag {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.75rem;
+    color: var(--mdb-mint);
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .sales-callout h2 {
+    color: white;
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    position: relative;
+  }
+
+  .sales-callout h2 em {
+    color: var(--mdb-green);
+    font-style: italic;
+  }
+
+  .sales-callout p {
+    color: var(--mdb-mint);
+    font-size: 1.05rem;
+    position: relative;
+    max-width: 720px;
+  }
+
+  /* Connecting bridge to next chapter */
+  .bridge {
+    margin-top: 4rem;
+    padding: 2rem;
+    text-align: center;
+    background: var(--surface-card);
+    border-radius: 18px;
+    border: 1px dashed var(--border-strong);
+  }
+
+  .bridge-arrow {
+    font-size: 2rem;
+    color: var(--mdb-green);
+    margin: 0.5rem 0;
+  }
+
+  .bridge p {
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .bridge strong {
+    color: var(--mdb-green);
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <a href="index.html" class="topnav-brand">
+      <div class="topnav-brand-mark">M</div>
+      <span>AI Training · MongoDB LATAM</span>
+    </a>
+    <div class="topnav-progress">
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot active"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+    </div>
+    <div class="topnav-meta">Capítulo 3 de 10</div>
+  </nav>
+
+  <!-- Chapter header -->
+  <header class="chapter-header">
+    <div class="chapter-header-text">
+      <span class="kicker">Capítulo 03 · Economía</span>
+      <div class="chapter-number">03</div>
+      <h1 class="chapter-title">Tokens & costo.</h1>
+      <p class="chapter-subtitle">
+        Los LLMs no leen palabras. Leen tokens. Cada token cuesta dinero.
+        Si entiendes esto, vas a entender por qué RAG no es opcional — es
+        económicamente obligatorio.
+      </p>
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Tiempo</span>
+        <span class="chapter-meta-value">3 min</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Aha</span>
+        <span class="chapter-meta-value">"Esto cuesta plata"</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Useful</span>
+        <span class="chapter-meta-value">Hablar de TCO</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- TOKENIZER -->
+  <section>
+    <div class="section-heading">
+      <h2>Demo · Tokenizador en vivo</h2>
+      <span class="section-heading-line"></span>
+      <span class="kicker">Escribe lo que quieras</span>
+    </div>
+
+    <p class="text-secondary mb-3" style="max-width: 800px;">
+      Cada modelo divide el texto en pedacitos llamados <strong style="color: var(--mdb-green);">tokens</strong>.
+      No siempre coinciden con palabras. Escribe abajo y mira la magia:
+    </p>
+
+    <div class="tokenizer-box">
+      <textarea class="tokenizer-input" id="tokenInput" placeholder="Escribe aquí..." oninput="tokenize(this.value)">Hola, ¿cómo puedo cancelar mi tarjeta de crédito?</textarea>
+
+      <div class="tokenizer-presets">
+        <button class="preset-btn" onclick="setText('Hola mundo')">Hola mundo</button>
+        <button class="preset-btn" onclick="setText('antidisestablishmentarianism')">antidis...arianism</button>
+        <button class="preset-btn" onclick="setText('La política de cancelación es de 90 días con un cargo del 3.5%.')">Texto comercial</button>
+        <button class="preset-btn" onclick="setText('SELECT * FROM customers WHERE country = \\'MX\\' LIMIT 10;')">Código SQL</button>
+        <button class="preset-btn" onclick="setText('🚀✨🎉')">Emojis</button>
+      </div>
+
+      <div class="tokenizer-output" id="tokenOutput"></div>
+
+      <div class="token-stats">
+        <div class="token-stat">
+          <div class="token-stat-num" id="statTokens">0</div>
+          <div class="token-stat-label">Tokens</div>
+        </div>
+        <div class="token-stat">
+          <div class="token-stat-num" id="statChars">0</div>
+          <div class="token-stat-label">Caracteres</div>
+        </div>
+        <div class="token-stat">
+          <div class="token-stat-num" id="statRatio">0</div>
+          <div class="token-stat-label">Chars / token</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight" style="margin-top: 2.5rem; padding: 2rem; background: linear-gradient(135deg, rgba(0,237,100,0.08), rgba(0,104,74,0.04)); border-left: 4px solid var(--mdb-green); border-radius: 0 18px 18px 0;">
+      <div style="font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--mdb-green); margin-bottom: 0.6rem;">Insight clave</div>
+      <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">El español pesa más que el inglés.</h3>
+      <p class="text-secondary" style="font-size: 1.05rem;">"Hola mundo" en español = 3 tokens. "Hello world" en inglés = 2 tokens.
+      Por eso tus clientes en LATAM pagan ~30% más a OpenAI que un equivalente en US para la misma información. Argumento de venta directo.</p>
+    </div>
+  </section>
+
+  <!-- COST CALCULATOR -->
+  <section class="calc">
+    <div class="section-heading" style="margin-bottom: 2rem;">
+      <h2>Calculadora · El presupuesto que NO sabe que tiene</h2>
+      <span class="section-heading-line"></span>
+    </div>
+
+    <p class="text-secondary mb-3" style="max-width: 800px;">
+      Si tu cliente procesa documentos con un LLM, esto es lo que está pagando.
+      Mueve los sliders para ver la factura mensual:
+    </p>
+
+    <div class="calc-grid">
+      <div class="calc-controls">
+
+        <div class="calc-row">
+          <div class="calc-row-label">
+            <span class="calc-row-name">Documentos al mes</span>
+            <span class="calc-row-value" id="docsValue">100,000</span>
+          </div>
+          <input type="range" class="calc-slider" id="docsSlider" min="1" max="100" value="10" oninput="updateCalc()">
+        </div>
+
+        <div class="calc-row">
+          <div class="calc-row-label">
+            <span class="calc-row-name">Tokens promedio por doc</span>
+            <span class="calc-row-value" id="tokensValue">2,000</span>
+          </div>
+          <input type="range" class="calc-slider" id="tokensSlider" min="1" max="100" value="20" oninput="updateCalc()">
+        </div>
+
+        <div class="calc-row">
+          <div class="calc-row-label">
+            <span class="calc-row-name">Modelo</span>
+            <span class="calc-row-value" id="modelValue">GPT-4o</span>
+          </div>
+          <input type="range" class="calc-slider" id="modelSlider" min="0" max="3" value="1" oninput="updateCalc()">
+          <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-tertiary); margin-top: 0.3rem;">
+            <span>GPT-4o&nbsp;mini</span>
+            <span>GPT-4o</span>
+            <span>Claude&nbsp;Sonnet</span>
+            <span>GPT-5.5</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="calc-result">
+        <div class="calc-result-label">Costo mensual estimado</div>
+        <div class="calc-result-num">
+          <span class="calc-result-currency">USD</span><span id="costValue">$0</span>
+        </div>
+        <div class="calc-result-period" id="costPeriod">por mes · solo en LLM API</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SALES IMPLICATION -->
+  <section class="sales-callout">
+    <div class="sales-callout-tag">💰 La conversación que abre cuentas</div>
+    <h2>"¿Sabes cuánto estás pagando<br><em>por procesar contexto innecesario?</em>"</h2>
+    <p>
+      Tu cliente está mandando documentos enteros al LLM cuando solo necesita 3 párrafos relevantes.
+      RAG corta ese costo de 80% a 95%. Esa es la primera "victoria económica" que puedes prometer.
+      Y eso requiere una base de datos vectorial. Adivina cuál.
+    </p>
+  </section>
+
+  <!-- BRIDGE -->
+  <div class="bridge">
+    <div class="bridge-arrow">↓</div>
+    <p>
+      Para hacer RAG, necesitas que el LLM <strong>encuentre</strong> los párrafos relevantes
+      sin leer todo. ¿Cómo? Con la pieza más importante del training:
+      <strong>vectores y embeddings</strong>.
+    </p>
+  </div>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="02-llm.html" class="bottom-nav-side">
+      <span class="bottom-nav-label">← Cap 02</span>
+      <span class="bottom-nav-title">¿Qué es un LLM?</span>
+    </a>
+    <a href="04-vectors.html" class="bottom-nav-side next">
+      <span class="bottom-nav-label">Siguiente · Cap 04 →</span>
+      <span class="bottom-nav-title">Vectores & embeddings ⭐</span>
+    </a>
+  </nav>
+
+</div>
+
+<script>
+// ============ TOKENIZER (simulado) ============
+// Aproximación: ~4 chars/token en inglés, ~3 chars/token en español, palabras raras se rompen más
+
+function tokenize(text) {
+  // Heurística simple que emula el tokenizer de OpenAI
+  const tokens = [];
+
+  // Split por espacios y puntuación, manteniendo separadores
+  const parts = text.split(/(\s+|[.,!?¿¡;:()\[\]{}"'\-])/g).filter(p => p.length > 0);
+
+  for (const part of parts) {
+    if (/^\s+$/.test(part)) {
+      // espacio - se une al siguiente token o cuenta separado si es largo
+      if (part.length === 1) continue; // espacio simple no es token visible
+      tokens.push(part);
+    } else if (/^[.,!?¿¡;:()\[\]{}"'\-]$/.test(part)) {
+      tokens.push(part);
+    } else if (part.length <= 5) {
+      tokens.push(part);
+    } else if (part.length <= 9) {
+      // palabras medianas se parten en 2
+      const mid = Math.ceil(part.length / 2);
+      tokens.push(part.slice(0, mid));
+      tokens.push(part.slice(mid));
+    } else {
+      // palabras largas se parten en 3+
+      const chunks = Math.ceil(part.length / 4);
+      for (let i = 0; i < chunks; i++) {
+        tokens.push(part.slice(i * 4, (i + 1) * 4));
+      }
+    }
+  }
+
+  // Render
+  const output = document.getElementById('tokenOutput');
+  output.innerHTML = '';
+  tokens.forEach((tok, i) => {
+    const span = document.createElement('span');
+    span.className = 'token token-c' + ((i % 6) + 1);
+    span.textContent = tok.replace(/ /g, '·');
+    output.appendChild(span);
+  });
+
+  // Stats
+  document.getElementById('statTokens').textContent = tokens.length;
+  document.getElementById('statChars').textContent = text.length;
+  document.getElementById('statRatio').textContent = tokens.length > 0 ? (text.length / tokens.length).toFixed(1) : '0';
+}
+
+function setText(t) {
+  document.getElementById('tokenInput').value = t;
+  tokenize(t);
+}
+
+// Init
+tokenize(document.getElementById('tokenInput').value);
+
+// ============ COST CALCULATOR ============
+const models = [
+  { name: 'GPT-4o mini', costPerMillionInput: 0.15, costPerMillionOutput: 0.60 },
+  { name: 'GPT-4o', costPerMillionInput: 2.5, costPerMillionOutput: 10 },
+  { name: 'Claude Sonnet 4.6', costPerMillionInput: 3, costPerMillionOutput: 15 },
+  { name: 'GPT-5.5', costPerMillionInput: 5, costPerMillionOutput: 30 }
+];
+
+function updateCalc() {
+  // Docs: 1-100 maps to 1k-1M (logarithmic feel)
+  const docsRaw = +document.getElementById('docsSlider').value;
+  const docs = Math.round(Math.pow(10, 3 + (docsRaw / 100) * 3)); // 1k to 1M
+
+  // Tokens: 1-100 maps to 100-20000
+  const tokensRaw = +document.getElementById('tokensSlider').value;
+  const tokens = Math.round(100 + (tokensRaw / 100) * 19900);
+
+  // Model
+  const modelIdx = +document.getElementById('modelSlider').value;
+  const model = models[modelIdx];
+
+  // Total tokens per month (assume 80% input, 20% output)
+  const totalInputTokens = docs * tokens * 0.8;
+  const totalOutputTokens = docs * tokens * 0.2;
+  const cost = (totalInputTokens * model.costPerMillionInput + totalOutputTokens * model.costPerMillionOutput) / 1_000_000;
+
+  // Format
+  document.getElementById('docsValue').textContent = docs.toLocaleString('en-US');
+  document.getElementById('tokensValue').textContent = tokens.toLocaleString('en-US');
+  document.getElementById('modelValue').textContent = model.name;
+
+  const costFormatted = cost > 1000
+    ? '$' + (cost / 1000).toFixed(1) + 'K'
+    : '$' + cost.toFixed(0);
+  document.getElementById('costValue').textContent = costFormatted;
+
+  // Update period note based on cost
+  let period = 'por mes · solo en LLM API';
+  if (cost > 50000) period = 'por mes · ' + (cost * 12 / 1000).toFixed(0) + 'K al año 😱';
+  else if (cost > 5000) period = 'por mes · sin contar infraestructura';
+  document.getElementById('costPeriod').textContent = period;
+}
+
+updateCalc();
+</script>
+
+</body>
+</html>

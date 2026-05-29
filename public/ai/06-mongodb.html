@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>06 · ¿Por qué MongoDB?</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  /* PROBLEM SETUP */
+  .question-hero {
+    background: linear-gradient(135deg, var(--mdb-dark-2), var(--mdb-dark-3));
+    border-radius: 28px;
+    padding: 3.5rem;
+    margin: 3rem 0;
+    text-align: center;
+    border: 1px solid var(--border-subtle);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .question-hero::before {
+    content: '?';
+    position: absolute;
+    right: -50px;
+    bottom: -150px;
+    font-family: var(--font-display);
+    font-size: 35rem;
+    color: rgba(0, 237, 100, 0.05);
+    font-weight: 800;
+    line-height: 0.9;
+  }
+
+  .question-hero-quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    line-height: 1.35;
+    max-width: 800px;
+    margin: 0 auto;
+    color: var(--text-primary);
+    position: relative;
+  }
+
+  .question-hero-quote::before, .question-hero-quote::after {
+    content: '"';
+    color: var(--mdb-green);
+    font-size: 4rem;
+    line-height: 0;
+    vertical-align: -0.4em;
+    opacity: 0.5;
+  }
+
+  .question-hero-attr {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    margin-top: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    position: relative;
+  }
+
+  /* TWO ARCHITECTURES */
+  .arch-section {
+    margin: 5rem 0;
+  }
+
+  .arch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  @media (max-width: 1100px) { .arch-grid { grid-template-columns: 1fr; } }
+
+  .arch-card {
+    border-radius: 24px;
+    padding: 2.5rem;
+    min-height: 580px;
+    position: relative;
+  }
+
+  .arch-card.bad {
+    background: rgba(255, 107, 107, 0.06);
+    border: 1px solid rgba(255, 107, 107, 0.25);
+  }
+
+  .arch-card.good {
+    background: linear-gradient(135deg, var(--mdb-green-deep), var(--mdb-dark-2));
+    border: 1px solid var(--mdb-green);
+  }
+
+  .arch-card-tag {
+    display: inline-block;
+    padding: 0.4rem 0.9rem;
+    border-radius: 100px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 1.5rem;
+  }
+
+  .arch-card.bad .arch-card-tag {
+    background: rgba(255, 107, 107, 0.15);
+    color: var(--accent-coral);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+  }
+
+  .arch-card.good .arch-card-tag {
+    background: rgba(0, 237, 100, 0.15);
+    color: var(--mdb-green);
+    border: 1px solid rgba(0, 237, 100, 0.3);
+  }
+
+  .arch-card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .arch-card .arch-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    margin-bottom: 2rem;
+  }
+
+  .arch-card.good .arch-subtitle { color: var(--mdb-mint); }
+
+  /* Architecture diagram inside card */
+  .arch-diagram {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+    min-height: 280px;
+    position: relative;
+  }
+
+  .arch-diagram svg { width: 100%; height: 260px; }
+
+  .arch-pains {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.5rem;
+  }
+
+  .arch-pains li {
+    padding: 0.7rem 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    gap: 0.7rem;
+  }
+
+  .arch-pains li:last-child { border-bottom: none; }
+  .arch-pains li::before {
+    content: '';
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin-top: 0.15rem;
+  }
+
+  .arch-card.bad .arch-pains li::before {
+    content: '✗';
+    color: var(--accent-coral);
+    font-weight: 800;
+  }
+
+  .arch-card.good .arch-pains li::before {
+    content: '✓';
+    color: var(--mdb-green);
+    font-weight: 800;
+  }
+
+  .arch-card.good .arch-pains li { color: var(--mdb-mint); }
+
+  /* COMPETITIVE TABLE */
+  .competitor-table {
+    margin: 5rem 0;
+    background: var(--mdb-dark-2);
+    border-radius: 24px;
+    padding: 3rem;
+    border: 1px solid var(--border-subtle);
+    overflow-x: auto;
+  }
+
+  .versus-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+    align-items: center;
+  }
+
+  .versus-row:last-child { border-bottom: none; }
+
+  .versus-row.header {
+    border-bottom: 2px solid var(--mdb-green);
+    padding-top: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-tertiary);
+  }
+
+  .versus-row.header .header-mongo {
+    color: var(--mdb-green);
+    font-weight: 600;
+  }
+
+  .competitor-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+  }
+
+  .competitor-name .pill {
+    display: block;
+    margin-top: 0.3rem;
+    width: fit-content;
+  }
+
+  .versus-cell {
+    color: var(--text-secondary);
+    font-size: 0.98rem;
+    line-height: 1.5;
+  }
+
+  .versus-cell.mongo-cell {
+    color: var(--mdb-mint);
+    font-weight: 500;
+  }
+
+  .versus-cell strong {
+    color: var(--mdb-green);
+  }
+
+  @media (max-width: 900px) {
+    .versus-row { grid-template-columns: 1fr; gap: 0.6rem; padding: 1.5rem 0; }
+    .versus-row.header { display: none; }
+    .versus-cell::before {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.3rem;
+    }
+    .versus-cell:nth-of-type(1)::before { content: 'EL COMPETIDOR'; }
+    .versus-cell.mongo-cell::before { content: 'MONGODB'; color: var(--mdb-green); }
+  }
+
+  /* OBJECTION CARDS */
+  .objections {
+    margin: 5rem 0;
+  }
+
+  .obj-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 900px) { .obj-grid { grid-template-columns: 1fr; } }
+
+  .obj-card {
+    background: var(--mdb-dark-2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: all 0.3s;
+  }
+
+  .obj-card:hover {
+    border-color: var(--mdb-green);
+    transform: translateY(-2px);
+  }
+
+  .obj-card-quote {
+    background: rgba(255, 107, 107, 0.05);
+    border-left: 3px solid var(--accent-coral);
+    padding: 1rem 1.4rem;
+    border-radius: 0 12px 12px 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+  }
+
+  .obj-card-quote::before {
+    content: 'CLIENTE: ';
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent-coral);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+    font-style: normal;
+  }
+
+  .obj-card-response {
+    background: rgba(0, 237, 100, 0.05);
+    border-left: 3px solid var(--mdb-green);
+    padding: 1rem 1.4rem;
+    border-radius: 0 12px 12px 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--text-primary);
+  }
+
+  .obj-card-response::before {
+    content: 'TÚ: ';
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--mdb-green);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+    font-style: normal;
+  }
+
+  /* THE ONE-LINER */
+  .one-liner {
+    margin: 5rem 0;
+    padding: 4rem 3rem;
+    background: linear-gradient(135deg, var(--mdb-green) 0%, var(--mdb-green-soft) 100%);
+    border-radius: 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .one-liner::before, .one-liner::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15), transparent);
+  }
+
+  .one-liner::before { top: -100px; left: -100px; }
+  .one-liner::after { bottom: -100px; right: -100px; }
+
+  .one-liner-tag {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.8rem;
+    color: var(--mdb-dark);
+    opacity: 0.7;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .one-liner-text {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    color: var(--mdb-dark);
+    font-weight: 700;
+    line-height: 1.25;
+    max-width: 950px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .one-liner-text strong {
+    background: var(--mdb-dark);
+    color: var(--mdb-green);
+    padding: 0 0.4rem;
+    border-radius: 6px;
+    font-style: normal;
+  }
+
+  .one-liner-footer {
+    margin-top: 2rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--mdb-dark);
+    opacity: 0.7;
+    position: relative;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <a href="index.html" class="topnav-brand">
+      <div class="topnav-brand-mark">M</div>
+      <span>AI Training · MongoDB LATAM</span>
+    </a>
+    <div class="topnav-progress">
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot done"></div>
+      <div class="topnav-progress-dot active"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+      <div class="topnav-progress-dot"></div>
+    </div>
+    <div class="topnav-meta">Capítulo 6 de 9 🎯</div>
+  </nav>
+
+  <!-- Chapter header -->
+  <header class="chapter-header">
+    <div class="chapter-header-text">
+      <span class="kicker">Capítulo 06 · Munición</span>
+      <div class="chapter-number">06</div>
+      <h1 class="chapter-title">¿Por qué MongoDB?</h1>
+      <p class="chapter-subtitle">
+        Este es el capítulo que vas a usar más. Cuando el cliente diga
+        "ya tenemos Pinecone" o "estamos viendo pgvector" — aquí está tu respuesta.
+        Memorízalo. Repítelo. Es tu munición.
+      </p>
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Tiempo</span>
+        <span class="chapter-meta-value">8 min</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Output</span>
+        <span class="chapter-meta-value">3 frases listas</span>
+      </div>
+      <div class="chapter-meta-row">
+        <span class="chapter-meta-label">Use case</span>
+        <span class="chapter-meta-value">Todas las llamadas</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- THE SETUP QUESTION -->
+  <section class="question-hero">
+    <span class="kicker">La pregunta inevitable</span>
+    <div class="question-hero-quote">
+      Si todos los clientes están haciendo RAG y todos necesitan
+      una base vectorial<br>... ¿por qué la mía y no la de los otros?
+    </div>
+    <div class="question-hero-attr">– El cliente, en minuto 15 de la llamada</div>
+  </section>
+
+  <!-- TWO ARCHITECTURES -->
+  <section class="arch-section">
+    <div class="section-heading">
+      <h2>La comparación visual</h2>
+      <span class="section-heading-line"></span>
+      <span class="kicker">Vale más que mil tablas</span>
+    </div>
+
+    <p class="text-secondary mb-3" style="max-width: 800px;">
+      Misma aplicación. Mismo cliente. Misma feature de IA. Dos arquitecturas distintas.
+      Tu trabajo es que el cliente vea cuál cuesta menos operar:
+    </p>
+
+    <div class="arch-grid">
+
+      <!-- BAD: Pinecone stack -->
+      <div class="arch-card bad">
+        <span class="arch-card-tag">⚠ Stack típico con vector DB pure-play</span>
+        <h3>Cliente con Pinecone + Postgres + Elastic</h3>
+        <div class="arch-subtitle">5 sistemas · 4 sincronizaciones · 3 equipos</div>
+
+        <div class="arch-diagram">
+          <svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+            <!-- App -->
+            <rect x="160" y="10" width="80" height="40" rx="8" fill="#001E2B" stroke="#FF6B6B" stroke-width="1.5"/>
+            <text x="200" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#FF6B6B">App</text>
+
+            <!-- Fan-out lines -->
+            <line x1="200" y1="50" x2="50" y2="100" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+            <line x1="200" y1="50" x2="135" y2="100" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+            <line x1="200" y1="50" x2="220" y2="100" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+            <line x1="200" y1="50" x2="305" y2="100" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+            <line x1="200" y1="50" x2="390" y2="100" stroke="#FF6B6B" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
+
+            <!-- 5 databases row -->
+            <rect x="10" y="100" width="80" height="50" rx="8" fill="#001E2B" stroke="#FFD93D" stroke-width="1.5"/>
+            <text x="50" y="122" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#FFD93D">Pinecone</text>
+            <text x="50" y="138" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#FFD93D" opacity="0.7">vectors</text>
+
+            <rect x="95" y="100" width="80" height="50" rx="8" fill="#001E2B" stroke="#4ECDC4" stroke-width="1.5"/>
+            <text x="135" y="122" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#4ECDC4">Postgres</text>
+            <text x="135" y="138" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#4ECDC4" opacity="0.7">data</text>
+
+            <rect x="180" y="100" width="80" height="50" rx="8" fill="#001E2B" stroke="#B794F4" stroke-width="1.5"/>
+            <text x="220" y="122" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#B794F4">Elastic</text>
+            <text x="220" y="138" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#B794F4" opacity="0.7">text</text>
+
+            <rect x="265" y="100" width="80" height="50" rx="8" fill="#001E2B" stroke="#C3E7CA" stroke-width="1.5"/>
+            <text x="305" y="122" text-anchor="middle" font-family="Inter" font-size="11" font-weight="600" fill="#C3E7CA">Redis</text>
+            <text x="305" y="138" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C3E7CA" opacity="0.7">cache</text>
+
+            <rect x="350" y="100" width="48" height="50" rx="8" fill="#001E2B" stroke="#FF8C42" stroke-width="1.5"/>
+            <text x="374" y="122" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="#FF8C42">S3</text>
+            <text x="374" y="138" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#FF8C42" opacity="0.7">files</text>
+
+            <!-- Sync arrows BETWEEN databases (the mess) -->
+            <path d="M 90 175 Q 110 195 95 215" fill="none" stroke="#FF6B6B" stroke-width="2"/>
+            <path d="M 175 175 Q 195 200 220 175" fill="none" stroke="#FF6B6B" stroke-width="2"/>
+            <path d="M 260 175 Q 285 200 305 175" fill="none" stroke="#FF6B6B" stroke-width="2"/>
+            <path d="M 50 165 Q 80 220 220 165" fill="none" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.7"/>
+
+            <text x="200" y="245" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#FF6B6B" letter-spacing="2">SYNC · SYNC · SYNC</text>
+            <text x="200" y="265" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#FF6B6B" opacity="0.7">¿Quién mantiene esto consistente?</text>
+          </svg>
+        </div>
+
+        <ul class="arch-pains">
+          <li>Sincronización constante entre 5 sistemas</li>
+          <li>Datos eventualmente inconsistentes</li>
+          <li>5 contratos, 5 facturas, 5 SLAs distintos</li>
+          <li>3 equipos diferentes operando esto</li>
+          <li>Joins entre vectores + metadata = a mano</li>
+        </ul>
+      </div>
+
+      <!-- GOOD: MongoDB -->
+      <div class="arch-card good">
+        <span class="arch-card-tag">✓ Stack con MongoDB Atlas</span>
+        <h3>Cliente con MongoDB Atlas</h3>
+        <div class="arch-subtitle">1 sistema · 0 sincronizaciones · 1 equipo</div>
+
+        <div class="arch-diagram">
+          <svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+            <!-- App -->
+            <rect x="160" y="10" width="80" height="40" rx="8" fill="#001E2B" stroke="#00ED64" stroke-width="2"/>
+            <text x="200" y="35" text-anchor="middle" font-family="Inter" font-size="12" font-weight="600" fill="#00ED64">App</text>
+
+            <!-- Single arrow -->
+            <line x1="200" y1="50" x2="200" y2="115" stroke="#00ED64" stroke-width="3"/>
+            <polygon points="195,110 205,110 200,120" fill="#00ED64"/>
+
+            <!-- MongoDB Atlas - one big block -->
+            <rect x="60" y="120" width="280" height="135" rx="16" fill="#00684A" stroke="#00ED64" stroke-width="2"/>
+            <text x="200" y="150" text-anchor="middle" font-family="Bricolage Grotesque" font-size="20" font-weight="800" fill="#00ED64">🍃 MongoDB Atlas</text>
+
+            <!-- Capabilities inside -->
+            <rect x="80" y="165" width="110" height="32" rx="8" fill="#001E2B"/>
+            <text x="135" y="186" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="#00ED64">⚡ Vector Search</text>
+
+            <rect x="210" y="165" width="110" height="32" rx="8" fill="#001E2B"/>
+            <text x="265" y="186" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="#00ED64">📄 Documents</text>
+
+            <rect x="80" y="208" width="110" height="32" rx="8" fill="#001E2B"/>
+            <text x="135" y="228" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="#00ED64">🔍 Full Text</text>
+
+            <rect x="210" y="208" width="110" height="32" rx="8" fill="#001E2B"/>
+            <text x="265" y="228" text-anchor="middle" font-family="Inter" font-size="10" font-weight="600" fill="#00ED64">⏱ Time Series</text>
+
+            <text x="200" y="275" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#00ED64" letter-spacing="2">UN SOLO QUERY · UN SOLO LUGAR</text>
+          </svg>
+        </div>
+
+        <ul class="arch-pains">
+          <li>Vectores + operacional + metadata + texto: juntos</li>
+          <li>Cero sincronización (no aplica)</li>
+          <li>1 contrato, 1 factura, 1 SLA</li>
+          <li>1 equipo, mismas habilidades existentes</li>
+          <li>Joins nativos: vector + filtro + agregación</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- COMPETITIVE TABLE -->
+  <section>
+    <div class="section-heading">
+      <h2>El mapa competitivo</h2>
+      <span class="section-heading-line"></span>
+      <span class="kicker">Qué decir cuando mencionan...</span>
+    </div>
+
+    <p class="text-secondary mb-3" style="max-width: 800px;">
+      Estos son los <strong style="color: var(--mdb-green);">4 competidores</strong> que vas a oír una y otra vez. Memoriza la respuesta de la derecha. Es lo que sale de tu boca en la llamada:
+    </p>
+
+    <div class="competitor-table">
+
+      <div class="versus-row header">
+        <div>El competidor</div>
+        <div>Lo que ofrece</div>
+        <div class="header-mongo">Tu contra-argumento</div>
+      </div>
+
+      <div class="versus-row">
+        <div class="competitor-name">
+          Pinecone
+          <span class="pill pill-violet">Pure-play vector DB</span>
+        </div>
+        <div class="versus-cell">
+          Base vectorial dedicada. Buena performance en vectores puros.
+          Pero <em>solo</em> guarda vectores.
+        </div>
+        <div class="versus-cell mongo-cell">
+          <strong>"Perfecto, ¿y dónde vive el resto de tu data del producto, del usuario, de la transacción?
+          ¿Cuántas sincronizaciones tienes que mantener?"</strong>
+        </div>
+      </div>
+
+      <div class="versus-row">
+        <div class="competitor-name">
+          pgvector
+          <span class="pill pill-cyan">Postgres extension</span>
+        </div>
+        <div class="versus-cell">
+          Extensión de Postgres. Barato al inicio.
+          Funciona bien a escala pequeña.
+        </div>
+        <div class="versus-cell mongo-cell">
+          <strong>"A partir de unos millones de vectores, el índice HNSW empieza a pesar en RAM y los builds tardan horas. Es resoluble con tuning — pero ¿quieren operar eso, o construir su producto? Y su esquema relacional no quiere documentos JSON anidados con metadata variable."</strong>
+        </div>
+      </div>
+
+      <div class="versus-row">
+        <div class="competitor-name">
+          Elastic / OpenSearch
+          <span class="pill pill-gold">Search engine</span>
+        </div>
+        <div class="versus-cell">
+          Excelente para búsqueda híbrida (texto + vectores).
+          Pero no es base operacional.
+        </div>
+        <div class="versus-cell mongo-cell">
+          <strong>"Search engine sí, ¿pero corres tu transaccional ahí? ¿Quién opera el cluster? ¿Cuántos nodos siempre prendidos?"</strong>
+        </div>
+      </div>
+
+      <div class="versus-row">
+        <div class="competitor-name">
+          DIY (Faiss + S3)
+          <span class="pill pill-warm">"Lo hacemos in-house"</span>
+        </div>
+        <div class="versus-cell">
+          Construir desde cero con librerías open-source.
+          Aparenta ser "gratis" hasta que tienes producción.
+        </div>
+        <div class="versus-cell mongo-cell">
+          <strong>"¿Cuánto tiempo del equipo van a invertir en operar HNSW, índices, replicación, alta disponibilidad? ¿Es eso lo que quieren construir, o quieren construir su producto?"</strong>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- OBJECTIONS -->
+  <section class="objections">
+    <div class="section-heading">
+      <h2>Las 3 objeciones que te van a poner</h2>
+      <span class="section-heading-line"></span>
+      <span class="kicker">Memorízate la respuesta</span>
+    </div>
+
+    <div class="obj-grid">
+      <div class="obj-card">
+        <div class="obj-card-quote">"Es que ya estamos usando Pinecone, llevamos 6 meses con ellos."</div>
+        <div class="obj-card-response">"Genial, ¿cómo va la sincronización con el resto de su data operacional? Casi todos los clientes que vemos con esa arquitectura terminan moviendo a MongoDB en el año 2."</div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-card-quote">"MongoDB nos sale más caro que pgvector."</div>
+        <div class="obj-card-response">"Comparado con pgvector solo, sí. Comparado con pgvector + Elastic + Redis + un equipo operándolos... ¿ya hicimos esa cuenta?"</div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-card-quote">"Estamos esperando a ver qué pasa con el mercado de IA antes de comprometernos."</div>
+        <div class="obj-card-response">"Su competencia ya está construyendo. Esperar 6 meses son 6 meses de desventaja. ¿Empezamos con un piloto pequeño?"</div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-card-quote">"AWS nos recomendó OpenSearch."</div>
+        <div class="obj-card-response">"OpenSearch funciona, pero ¿quién opera el cluster? ¿Tunea HNSW? ¿Paga nodos siempre prendidos? Atlas es serverless y multi-cloud."</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE ONE-LINER -->
+  <section class="one-liner">
+    <span class="one-liner-tag">🎯 La frase que te tienes que aprender de memoria</span>
+    <div class="one-liner-text">
+      MongoDB es la única base que te da
+      <strong>vectores</strong> + <strong>operacional</strong> + <strong>metadata</strong> + <strong>full-text</strong>
+      en un solo lugar, con un solo query, sin sincronización.
+    </div>
+    <div class="one-liner-footer">
+      ↑ Repite esto 5 veces en voz alta antes de tu próxima llamada
+    </div>
+  </section>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <a href="05-rag.html" class="bottom-nav-side">
+      <span class="bottom-nav-label">← Cap 05</span>
+      <span class="bottom-nav-title">RAG paso a paso</span>
+    </a>
+    <a href="07-agents.html" class="bottom-nav-side next">
+      <span class="bottom-nav-label">Siguiente · Cap 07 →</span>
+      <span class="bottom-nav-title">Agentes & MCP</span>
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>
