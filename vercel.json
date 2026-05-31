@@ -449,6 +449,12 @@
     },
 
     {
+      "src": "/bc$",
+      "status": 308,
+      "headers": { "Location": "/bc/" }
+    },
+
+    {
       "src": "/ai$",
       "status": 308,
       "headers": { "Location": "/ai/" }

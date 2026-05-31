@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>02 · The day it stopped — Banco Continental</title>
+<link rel="stylesheet" href="shared.css">
+<script defer src="shared.js"></script>
+<style>.bc-pending{opacity:0!important}</style>
+<script src="auth-guard.js"></script>
+</head>
+<body class="bc-pending">
+<div class="bg-fx"></div>
+<svg class="icon-sprite" aria-hidden="true">
+  <symbol id="i-app" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2.5"/><line x1="11" y1="18" x2="13" y2="18"/></symbol>
+  <symbol id="i-web" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="16" x2="12" y2="20"/></symbol>
+  <symbol id="i-branch" viewBox="0 0 24 24"><line x1="3" y1="21" x2="21" y2="21"/><path d="M5 10h14"/><path d="M5.5 10 12 4l6.5 6"/><line x1="7" y1="10" x2="7" y2="21"/><line x1="12" y1="10" x2="12" y2="21"/><line x1="17" y1="10" x2="17" y2="21"/></symbol>
+  <symbol id="i-atm" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><rect x="8" y="6" width="8" height="5" rx="1"/><line x1="8.5" y1="15" x2="15.5" y2="15"/><line x1="10" y1="18" x2="14" y2="18"/></symbol>
+  <symbol id="i-core" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="6" rx="1.5"/><rect x="4" y="14" width="16" height="6" rx="1.5"/><line x1="7.5" y1="7" x2="7.51" y2="7"/><line x1="7.5" y1="17" x2="7.51" y2="17"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 21.5 20H2.5L12 3.5Z"/><line x1="12" y1="10" x2="12" y2="14.5"/><line x1="12" y1="17.5" x2="12.01" y2="17.5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.3 12.3l2.6 2.6 4.8-5.4"/></symbol>
+</svg>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="index.html" class="brand"><span class="brand-mark">BC</span><span>Banco Continental<small>Discovery Pre-Read</small></span></a>
+    <div class="progress">
+      <a href="01-heart.html" class="done"></a><a href="02-outage.html" class="active"></a><a href="03-ambition.html"></a><a href="04-stakes.html"></a><a href="05-roles.html"></a>
+    </div>
+    <div class="topnav-meta">02 / 05</div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <header class="chapter-header">
+    <div>
+      <div class="kicker">Chapter 02 · The Incident</div>
+      <h1 class="chapter-title">The day the heart stopped.</h1>
+      <p class="chapter-subtitle">Not a hypothetical. A multi-day core outage that pulled the whole bank down with it — and showed everyone how much hangs on a single point of failure.</p>
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-row"><span class="chapter-meta-label">Duration</span><span class="chapter-meta-value">~4 days</span></div>
+      <div class="chapter-meta-row"><span class="chapter-meta-label">Customers hit</span><span class="chapter-meta-value">Millions</span></div>
+      <div class="chapter-meta-row"><span class="chapter-meta-label">Root cause</span><span class="chapter-meta-value">Core failure</span></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-label reveal">What happened</div>
+    <h2 class="reveal">When the core went down, the bank went dark.</h2>
+    <p class="lead reveal">
+      During a scheduled maintenance window, an error on a critical machine in the legacy core
+      cascaded. Because nearly every customer-facing service reads and writes straight through that
+      core, the failure didn't stay contained — it became a <span class="hl-coral">domino</span>.
+      App, web, branches, ATMs: degraded or down for days.
+    </p>
+    <div class="stat-tiles reveal">
+      <div class="tile"><div class="n">~4 days</div><div class="c">Service disruption</div></div>
+      <div class="tile"><div class="n">Millions</div><div class="c">Customers affected</div></div>
+      <div class="tile"><div class="n">$1M+</div><div class="c">One business locked out of funds</div></div>
+      <div class="tile"><div class="n">Regulator</div><div class="c">Scrutiny &amp; penalties</div></div>
+    </div>
+    <p class="lead reveal">
+      Balances couldn't be checked. Transfers froze. A business couldn't make payroll. As one executive
+      put it, it felt <span class="hl-coral">"like the oxygen was cut off."</span> The reputational and
+      regulatory weight of an outage like this is enormous — and it lands on the people in your room.
+    </p>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="section-label reveal">Feel it</div>
+    <h2 class="reveal">Everything hangs on one core. Flip the switch.</h2>
+    <p class="lead reveal" style="margin-bottom:6px">
+      This is the bank's reality today: every channel depends on the legacy core being healthy.
+      Turn it off and watch what the customer sees.
+    </p>
+
+    <!-- CORE TOGGLE -->
+    <div class="coresim reveal" id="sim">
+      <div class="coresim-head">
+        <span class="title">Core → channels → customer</span>
+        <div class="switch" id="sw" role="button" tabindex="0" aria-label="Toggle the core on or off">
+          <span class="lbl" id="swLbl">Core: online</span>
+          <span class="track"><span class="knob"></span></span>
+        </div>
+      </div>
+      <div class="flow">
+        <div class="flow-core">
+          <div class="ic"><svg class="ico ico-lg"><use href="#i-core"/></svg></div>
+          <div class="big">CORE · AS/400</div>
+          <div class="st" id="coreSt">Running · serving every channel</div>
+        </div>
+        <div class="flow-link"><span class="pulse"></span><span class="pulse d2"></span></div>
+        <div class="channels">
+          <div class="ch-node"><div class="ic"><svg class="ico ico-lg"><use href="#i-app"/></svg></div><div class="nm">App</div><div class="badge">live</div></div>
+          <div class="ch-node"><div class="ic"><svg class="ico ico-lg"><use href="#i-web"/></svg></div><div class="nm">Web</div><div class="badge">live</div></div>
+          <div class="ch-node"><div class="ic"><svg class="ico ico-lg"><use href="#i-branch"/></svg></div><div class="nm">Branch</div><div class="badge">live</div></div>
+          <div class="ch-node"><div class="ic"><svg class="ico ico-lg"><use href="#i-atm"/></svg></div><div class="nm">ATM</div><div class="badge">live</div></div>
+        </div>
+        <div class="flow-link"><span class="pulse"></span><span class="pulse d2"></span></div>
+        <div class="custview">
+          <div class="cv-screen">
+            <div class="cv-row"><span>Check balance</span><b id="cvBalance">available</b></div>
+            <div class="cv-row"><span>Move money</span><b id="cvTransfer">ready</b></div>
+          </div>
+          <div class="cv-cap">↑ what the customer sees</div>
+        </div>
+      </div>
+      <div class="coresim-verdict" id="verdict"><svg class="ico"><use href="#i-check"/></svg>Online — data flows from the core to every channel, all the way to the customer.</div>
+    </div>
+    <p class="reveal" style="font-size:.9rem;color:var(--text-3);font-family:var(--font-mono);text-align:center;margin-top:-10px">
+      ↑ Now flip the core off — and watch the whole chain go dark. One dependency, total blast radius.
+    </p>
+  </section>
+
+  <section>
+    <div class="section-label reveal">How it unfolded</div>
+    <div class="timeline">
+      <div class="tl-step reveal active" data-t="A routine maintenance window on the legacy core. Standard procedure — until it wasn't."><div class="d">Step 1 · Trigger</div><h5>Maintenance window</h5><p>A change on a critical core machine begins.</p></div>
+      <div class="tl-step reveal" data-t="The change fails and the fault cascades through tightly-coupled systems. The core can't serve."><div class="d">Step 2 · Cascade</div><h5>The fault spreads</h5><p>Tightly-coupled systems fall like dominoes.</p></div>
+      <div class="tl-step reveal" data-t="Because channels read straight from the core, they go down with it. Customers lose access to their own money."><div class="d">Step 3 · Blackout</div><h5>Channels go dark</h5><p>App, web, branches, ATMs — degraded for days.</p></div>
+      <div class="tl-step reveal" data-t="Days of disruption, public scrutiny, regulatory attention, and a large remediation commitment. Leadership demands resilience."><div class="d">Step 4 · Fallout</div><h5>The reckoning</h5><p>Reputation, regulator, and a costly cleanup.</p></div>
+    </div>
+    <div class="dom-out panel reveal" id="tlOut" style="font-size:.96rem;color:var(--text)"></div>
+  </section>
+
+  <section style="padding-top:24px">
+    <div class="section-label reveal">The realization</div>
+    <h2 class="reveal">The customer should never lose the ability to <span class="hl">ask</span>.</h2>
+    <p class="lead reveal">
+      Here's the lesson the bank took away — and the heart of Monday's conversation. Most of what a
+      customer does isn't <em>moving</em> money; it's <em>asking</em> about it: "what's my balance?",
+      "did my transfer land?", "show my last movements." Those questions are the lifeline of trust.
+    </p>
+
+    <div class="discovery-stat reveal">
+      <div class="ds-head"><span class="ds-tag">From discovery</span><span class="ds-attr">— confirmed by the bank's technical lead</span></div>
+      <div class="ds-bar">
+        <div class="ds-seg asking"><span class="ds-label">~70% asking</span><span class="ds-sub">non-monetary: balances, statements, movement queries</span></div>
+        <div class="ds-seg moving"><span class="ds-label">~30% moving</span><span class="ds-sub">monetary: transfers, payments</span></div>
+      </div>
+      <div class="ds-foot">Roughly <b>7 of every 10</b> hits on the deposits core are pure asking — and every one of them lands on the same expensive heart that has to hold the moving-money safe.</div>
+    </div>
+
+    <p class="lead reveal">
+      So the bank is looking for a way to keep that <strong>asking</strong> alive and fast —
+      <span class="hl">independent of whether the heart is healthy.</span> Separate the asking from the
+      moving-money, so a hiccup in the core never again means a customer staring at a blank screen.
+      <em>That's</em> the door you'll walk through Monday.
+    </p>
+  </section>
+
+  <nav class="bottom-nav">
+    <a class="bnav" href="01-heart.html"><span class="l">← Back</span><span class="t">The heart that won't move</span></a>
+    <a class="bnav next" href="03-ambition.html"><span class="l">Next →</span><span class="t">What customers expect now</span></a>
+  </nav>
+</main>
+
+<script>
+(function(){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+  // core toggle
+  var sim=document.getElementById('sim'),sw=document.getElementById('sw'),lbl=document.getElementById('swLbl'),v=document.getElementById('verdict'),
+      coreSt=document.getElementById('coreSt'),cvB=document.getElementById('cvBalance'),cvT=document.getElementById('cvTransfer'),
+      badges=sim.querySelectorAll('.ch-node .badge');
+  function setState(down){
+    if(down){
+      sim.classList.add('down');sw.classList.add('off');lbl.textContent='Core: offline';
+      coreSt.textContent='Down · maintenance error';
+      badges.forEach(function(b){b.textContent='down';});
+      cvB.textContent='unavailable';cvT.textContent='failed';
+      v.innerHTML='<svg class="ico"><use href="#i-alert"/></svg>Core down — the chain breaks. Channels go dark and the customer is cut off.';
+    } else {
+      sim.classList.remove('down');sw.classList.remove('off');lbl.textContent='Core: online';
+      coreSt.textContent='Running · serving every channel';
+      badges.forEach(function(b){b.textContent='live';});
+      cvB.textContent='available';cvT.textContent='ready';
+      v.innerHTML='<svg class="ico"><use href="#i-check"/></svg>Online — data flows from the core to every channel, all the way to the customer.';
+    }
+  }
+  function toggle(){setState(!sim.classList.contains('down'));}
+  sw.addEventListener('click',toggle);
+  sw.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+  setState(false); // start ONLINE — let them flip it off themselves
+
+  // timeline
+  var out=document.getElementById('tlOut'),steps=document.querySelectorAll('.tl-step');
+  function show(el){steps.forEach(function(s){s.classList.remove('active');});el.classList.add('active');out.textContent=el.getAttribute('data-t');}
+  steps.forEach(function(s){s.addEventListener('click',function(){show(s);});});
+  show(steps[0]);
+})();
+</script>
+</body>
+</html>

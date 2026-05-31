@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Banco Continental — Discovery Pre-Read</title>
+<link rel="stylesheet" href="shared.css">
+<script defer src="shared.js"></script>
+<style>.bc-pending{opacity:0!important}</style>
+<script src="auth-guard.js"></script>
+</head>
+<body class="bc-pending">
+<div class="bg-fx"></div>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">BC</span>
+      <span>Banco Continental<small>Discovery Pre-Read</small></span>
+    </a>
+    <div class="progress">
+      <a href="01-heart.html" title="01"></a>
+      <a href="02-outage.html" title="02"></a>
+      <a href="03-ambition.html" title="03"></a>
+      <a href="04-stakes.html" title="04"></a>
+      <a href="05-roles.html" title="05"></a>
+    </div>
+    <div class="topnav-meta">Cover</div>
+  </div>
+</nav>
+
+<main class="wrap cover">
+  <section style="padding-top:70px">
+    <div class="cover-stamp reveal in"><span class="dot"></span> Based on a real engagement</div>
+    <h1 class="reveal in">Banco<br>Continental</h1>
+    <div class="sub reveal in">Modernizing the deposits core — without stopping the heart.</div>
+    <div class="truestory reveal">
+      What follows is anchored in a real, anonymized engagement with a Tier-1 Latin American bank.
+      The client's name and figures are generalized — but <b>the challenge, the architecture, and the
+      validated results are real</b>. Treat it with the discretion you'd expect from a live banking account.
+    </div>
+  </section>
+
+  <section style="padding-top:10px">
+    <div class="section-label reveal">The session ahead</div>
+    <p class="lead reveal">
+      On Monday you'll step into the room as the Solutions Engineer. This brief gets everyone into the
+      <span class="hl">customer's skin</span> before we start: where the bank is, what it lived through,
+      and what it's chasing. Five short chapters — read them in order.
+    </p>
+
+    <div class="chapter-index">
+      <a class="ci-card reveal" href="01-heart.html"><span class="ci-num">01</span><div><h4>The heart that won't move</h4><p>A bank 70% in the cloud — and the 30% it can't migrate.</p></div></a>
+      <a class="ci-card reveal" href="02-outage.html"><span class="ci-num">02</span><div><h4>The day it stopped</h4><p>When the core went dark, so did the customers. Feel it.</p></div></a>
+      <a class="ci-card reveal" href="03-ambition.html"><span class="ci-num">03</span><div><h4>What customers expect now</h4><p>The neobanks already raised the bar. The bank wants to leap.</p></div></a>
+      <a class="ci-card reveal" href="04-stakes.html"><span class="ci-num">04</span><div><h4>What's really at stake</h4><p>The pain points and the business objectives — explicit.</p></div></a>
+      <a class="ci-card reveal" href="05-roles.html"><span class="ci-num">05</span><div><h4>Your seat at the table</h4><p>Who's in the room, and the part each of you plays.</p></div></a>
+    </div>
+
+    <div style="margin-top:30px" class="reveal"><a class="btn" href="01-heart.html">Begin →</a></div>
+  </section>
+
+  <footer>
+    <div class="conf">
+      CONFIDENTIAL · Prepared for a private discovery session · Do not forward or reproduce.<br>
+      "Banco Continental" is a fictional name standing in for a real engagement. All figures are illustrative.
+    </div>
+  </footer>
+</main>
+
+<script>
+// ---- scroll reveal ----
+(function(){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.15});
+  document.querySelectorAll('.reveal:not(.in)').forEach(function(el){io.observe(el);});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>01 · The heart that won't move — Banco Continental</title>
+<link rel="stylesheet" href="shared.css">
+<script defer src="shared.js"></script>
+<style>
+  .meter{background:var(--surface-1);border:1px solid var(--border);border-radius:20px;padding:30px;margin:30px 0}
+  .meter-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+  .meter-head .t{font-family:var(--font-display);font-weight:700;font-size:1.1rem}
+  .meter-head .h{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3)}
+  .bar{height:54px;border-radius:12px;overflow:hidden;display:flex;border:1px solid var(--border-strong)}
+  .bar .cloud{width:0;background:linear-gradient(90deg,var(--primary),var(--teal));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;color:#fff;font-size:.95rem;transition:width 1.3s cubic-bezier(.2,.8,.2,1);white-space:nowrap;overflow:hidden}
+  .bar .heart{width:0;background:repeating-linear-gradient(45deg,rgba(255,84,104,.22),rgba(255,84,104,.22) 8px,rgba(255,84,104,.34) 8px,rgba(255,84,104,.34) 16px);border-left:2px solid var(--danger);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;color:#fff;font-size:.95rem;transition:width 1.3s cubic-bezier(.2,.8,.2,1) .2s;white-space:nowrap;overflow:hidden;position:relative}
+  .bar .heart svg{position:absolute;right:13px;width:15px;height:15px;opacity:.7;stroke:#fff}
+  .meter.go .bar .cloud{width:70%}
+  .meter.go .bar .heart{width:30%}
+  .domains{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:20px}
+  @media(max-width:760px){.domains{grid-template-columns:1fr 1fr}}
+  .dom{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all .25s;text-align:center}
+  .dom:hover,.dom.active{border-color:var(--danger);background:rgba(255,84,104,.07);transform:translateY(-2px)}
+  .dom.prio{border-color:rgba(255,199,104,.5)}
+  .dom .nm{font-family:var(--font-display);font-weight:700;font-size:.92rem}
+  .dom .st{font-family:var(--font-mono);font-size:.56rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);margin-top:5px}
+  .dom.prio .st{color:var(--gold)}
+  .dom-out{margin-top:16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:18px;font-size:.94rem;color:var(--text);min-height:20px;transition:border-color .2s}
+  .dom-out b{color:var(--gold)}
+</style>
+<style>.bc-pending{opacity:0!important}</style>
+<script src="auth-guard.js"></script>
+</head>
+<body class="bc-pending">
+<div class="bg-fx"></div>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="index.html" class="brand"><span class="brand-mark">BC</span><span>Banco Continental<small>Discovery Pre-Read</small></span></a>
+    <div class="progress">
+      <a href="01-heart.html" class="active"></a><a href="02-outage.html"></a><a href="03-ambition.html"></a><a href="04-stakes.html"></a><a href="05-roles.html"></a>
+    </div>
+    <div class="topnav-meta">01 / 05</div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <header class="chapter-header">
+    <div>
+      <div class="kicker">Chapter 01 · Context</div>
+      <h1 class="chapter-title">A digital bank, beating on a 30-year-old heart.</h1>
+      <p class="chapter-subtitle">Banco Continental already made it to the cloud. Most of it. The part that's left is the part that can't afford to break.</p>
+    </div>
+    <div class="chapter-meta">
+      <div class="chapter-meta-row"><span class="chapter-meta-label">Clients</span><span class="chapter-meta-value">~26M</span></div>
+      <div class="chapter-meta-row"><span class="chapter-meta-label">Deposit accounts</span><span class="chapter-meta-value">40M+</span></div>
+      <div class="chapter-meta-row"><span class="chapter-meta-label">Core age</span><span class="chapter-meta-value">30+ yrs</span></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-label reveal">The cloud journey</div>
+    <h2 class="reveal">They moved ~70% to the cloud. Then they hit the heart.</h2>
+    <p class="lead reveal">
+      Over the last few years the bank ran an aggressive modernization program and migrated roughly
+      <span class="hl-teal">70% of its estate to AWS</span>. By most measures, a huge win.
+      But the remaining 30% isn't the leftover — it's the <span class="hl-coral">critical core</span>:
+      deposits, payments, lending, treasury. The monetary heart of the bank.
+    </p>
+    <p class="lead reveal">
+      Deposits alone hold <strong>40M+ accounts, and ~95% of them still live on a legacy AS/400 core</strong>
+      built over three decades. You can't rip that out in a weekend. Touch it wrong and people can't
+      see their money.
+    </p>
+
+    <!-- INTERACTIVE METER -->
+    <div class="meter reveal" id="meter">
+      <div class="meter-head">
+        <span class="t">Modernization progress</span>
+        <span class="h">tap a domain in the core →</span>
+      </div>
+      <div class="bar">
+        <div class="cloud">70% · Migrated to cloud</div>
+        <div class="heart">30% · The heart<svg class="ico" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></div>
+      </div>
+      <div class="domains">
+        <div class="dom prio active" data-t="<b>Deposits — the starting point.</b> 40M+ accounts, ~95% on the AS/400. The highest volume of customer queries in the bank. This is where the digital experience is won or lost — and the first domain on the table.">
+          <div class="nm">Deposits</div><div class="st">★ Priority · 95% AS/400</div>
+        </div>
+        <div class="dom" data-t="<b>Payments.</b> Still on the legacy core. Fast-moving customer expectations; time-to-market is the pain here.">
+          <div class="nm">Payments</div><div class="st">Legacy core</div>
+        </div>
+        <div class="dom" data-t="<b>Lending / financing.</b> Bound to the legacy core. New products are slow to launch because everything routes through the mainframe.">
+          <div class="nm">Lending</div><div class="st">Legacy core</div>
+        </div>
+        <div class="dom" data-t="<b>Treasury & settlement.</b> Legacy core. Regulatory pressure is the main driver — faster, auditable reporting matters most.">
+          <div class="nm">Treasury</div><div class="st">Legacy core</div>
+        </div>
+        <div class="dom" data-t="<b>Funding / captaciones.</b> Legacy core. Tied directly to deposit growth — the bank's bread and butter.">
+          <div class="nm">Funding</div><div class="st">Legacy core</div>
+        </div>
+      </div>
+      <div class="dom-out" id="domOut"></div>
+    </div>
+
+    <div class="quote reveal">
+      "We can't move the heart in a big bang — it's the core. We have to do it surgically."
+      <span>— Technical modernization lead, anonymized</span>
+    </div>
+
+    <p class="lead reveal">
+      That word — <span class="hl">surgical</span> — is the whole brief. The bank isn't asking
+      "should we modernize?" It's asking: <strong>how do we modernize the heart without ever
+      stopping it?</strong> Hold that question. Everything Monday hangs on it.
+    </p>
+  </section>
+
+  <nav class="bottom-nav">
+    <a class="bnav" href="index.html"><span class="l">← Back</span><span class="t">Cover</span></a>
+    <a class="bnav next" href="02-outage.html"><span class="l">Next →</span><span class="t">The day it stopped</span></a>
+  </nav>
+</main>
+
+<script>
+(function(){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+  var m=document.getElementById('meter');
+  new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){m.classList.add('go');}});},{threshold:.4}).observe(m);
+  var out=document.getElementById('domOut'),doms=document.querySelectorAll('.dom');
+  function show(el){doms.forEach(function(d){d.classList.remove('active');});el.classList.add('active');out.innerHTML=el.getAttribute('data-t');}
+  doms.forEach(function(d){d.addEventListener('click',function(){show(d);});});
+  show(document.querySelector('.dom.prio'));
+})();
+</script>
+</body>
+</html>
