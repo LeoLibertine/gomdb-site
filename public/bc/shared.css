@@ -413,3 +413,11 @@ body.nav-open{overflow:hidden}
 .ds-foot{margin-top:14px;font-size:.95rem;color:var(--text-2);line-height:1.55}
 .ds-foot b{color:var(--text);font-weight:700}
 @media(max-width:600px){.ds-bar{flex-direction:column;height:auto}.ds-seg{padding:15px 16px;flex:1 1 auto}.ds-seg.asking{border-right:none;border-bottom:1px solid var(--border-strong)}}
+
+/* ============ capstone wide objective card (ch.04) ============ */
+.biz.wide{grid-column:1 / -1;display:flex;gap:22px;align-items:center;border-left:3px solid var(--teal);padding-left:24px}
+.biz.wide .ic{margin-bottom:0;flex-shrink:0}
+.biz.wide .biz-text{flex:1}
+.biz.wide h4{margin-bottom:5px}
+.biz.wide p{max-width:780px}
+@media(max-width:520px){.biz.wide{flex-direction:column;align-items:flex-start;padding-left:20px}}
