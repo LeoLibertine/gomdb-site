@@ -5,6 +5,8 @@
  */
 
 const API = 'https://quarterly-excuse-novels-justify.trycloudflare.com/api/sura-demo';
+const BASE = 'https://quarterly-excuse-novels-justify.trycloudflare.com';
+function resolveUrl(url) { return url && url.startsWith('/') ? BASE + url : url; }
 
 // ── State ─────────────────────────────────────────────────────────────────────
 const state = {
@@ -186,7 +188,7 @@ async function showCustomer360(policyNumber) {
           title: isVoiceClaim ? 'Ver detalle completo del reporte' : 'Ver detalle del siniestro',
         },
           thumbUrl
-            ? el('img', { class: 'timeline-thumb', src: thumbUrl, alt: '', loading: 'lazy' })
+            ? el('img', { class: 'timeline-thumb', src: resolveUrl(thumbUrl), alt: '', loading: 'lazy' })
             : el('div', { class: 'timeline-thumb' }),
           el('div', { class: 'timeline-body' },
             el('div', { class: 'timeline-folio' }, c.claim_number),
@@ -273,7 +275,7 @@ async function runSearch(query) {
       const snap = p._snapshot || {};
       const row = el('div', { class: 'result-row' },
         p.image_url
-          ? el('img', { class: 'result-thumb', src: p.image_url, alt: '', loading: 'lazy' })
+          ? el('img', { class: 'result-thumb', src: resolveUrl(p.image_url), alt: '', loading: 'lazy' })
           : el('div', { class: 'result-thumb' }),
         el('div', { class: 'result-body' },
           el('div', { class: 'result-folio' }, `${p.claim_number} · ${p.policy_number || '—'}`),
@@ -395,7 +397,7 @@ async function runFraud() {
       for (const m of r.top_matches) {
         const snap = m.snapshot || {};
         const row = el('div', { class: 'fraud-match-row' },
-          m.image_url ? el('img', { src: m.image_url, alt: '', loading: 'lazy' }) : el('div'),
+          m.image_url ? el('img', { src: resolveUrl(m.image_url), alt: '', loading: 'lazy' }) : el('div'),
           el('div', { class: 'result-body' },
             el('div', { class: 'result-folio' }, `${m.claim_number} · ${m.policy_number}`),
             el('div', { class: 'result-meta' },
@@ -636,7 +638,7 @@ function renderClaimDetail(claim, conv, eventsR) {
     for (const p of allPhotos) {
       const card = el('div', { class: 'photo-card' },
         p.image_url
-          ? el('img', { src: p.image_url, alt: '', onclick: () => window.open(p.image_url, '_blank') })
+          ? el('img', { src: resolveUrl(p.image_url), alt: '', onclick: () => window.open(resolveUrl(p.image_url), '_blank') })
           : el('div', { style: 'aspect-ratio:4/3;background:var(--bg);' }),
         el('div', { class: 'photo-meta' },
           el('div', {}, p.description || p.type || 'Foto'),
@@ -709,8 +711,8 @@ function waBubble(m) {
   if (m.type === 'image' && m.image_url) {
     if (m.content) bubble.appendChild(el('div', {}, m.content));
     bubble.appendChild(el('img', {
-      class: 'conv-msg-image', src: m.image_url, alt: '',
-      onclick: () => window.open(m.image_url, '_blank'),
+      class: 'conv-msg-image', src: resolveUrl(m.image_url), alt: '',
+      onclick: () => window.open(resolveUrl(m.image_url), '_blank'),
     }));
   } else {
     bubble.innerHTML = String(m.content || '').replace(/\n/g, '<br>');
