@@ -502,6 +502,30 @@ export const CLIENTS_DATA = [
         category: 'Arquitectura'
       }
     ]
+  },
+  {
+    id: 'porvenir',
+    name: 'Porvenir',
+    industry: 'Seguros',
+    country: 'Colombia',
+    description: 'Fondo de pensiones y cesantías líder en Colombia. Exploración de modernización con MongoDB.',
+    icon: 'insurance',
+    content: [
+      {
+        title: 'Retos Técnicos',
+        description: 'Análisis de retos técnicos y oportunidades de modernización',
+        path: '/clientes/porvenir/retos.html',
+        type: 'html',
+        category: 'Estrategia'
+      },
+      {
+        title: 'ODL Discovery Dossier',
+        description: 'Dossier de descubrimiento ODL para Porvenir',
+        path: '/clientes/porvenir/odl-discovery.html',
+        type: 'html',
+        category: 'Estrategia'
+      }
+    ]
   }
 ]
 

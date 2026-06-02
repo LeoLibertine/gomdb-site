@@ -35,6 +35,7 @@ export const ACCESS_CODES = {
   'falape': 'FAL-3Qv9Kx2Np7Tm-2025',
   'bintec': 'BIN-6Lw4Zt8Mx3Vp-2025',
   'sura': 'SURA-9Rx4Vm2Ln7Qp-2025',
+  'porvenir': 'POR-5Kw8Tn3Jx6Rm-2025',
 
   // MongoDB Internal (Master Code - Universal Access)
   'mongodb': 'MDB-MASTER-2025',

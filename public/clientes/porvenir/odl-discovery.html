@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Porvenir · ODL Discovery Dossier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=JetBrains+Mono:wght@300;400;500;700&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e0c;
+    --bg-elevated: #111613;
+    --bg-card: #161c19;
+    --bg-card-hover: #1c2420;
+    --border: #1f2823;
+    --border-strong: #2a3530;
+    --green: #00ed64;
+    --green-dim: #00684a;
+    --green-glow: rgba(0, 237, 100, 0.15);
+    --text: #e8efe9;
+    --text-muted: #8a958f;
+    --text-dim: #5a655f;
+    --accent-amber: #ffb547;
+    --accent-coral: #ff6f5e;
+    --accent-blue: #5ec3ff;
+    --grid-line: rgba(255, 255, 255, 0.03);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter Tight', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-weight: 400;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(0, 237, 100, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(94, 195, 255, 0.03) 0%, transparent 40%),
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 60px 60px, 60px 60px;
+  }
+
+  ::selection { background: var(--green); color: var(--bg); }
+
+  /* ───── NAV ───── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: rgba(10, 14, 12, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  nav .brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+  }
+  nav .brand span { color: var(--green); }
+  nav .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  nav ul {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+    font-size: 0.85rem;
+  }
+  nav ul a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: 500;
+  }
+  nav ul a:hover { color: var(--green); }
+
+  /* ───── HERO ───── */
+  .hero {
+    min-height: 100vh;
+    padding: 8rem 3rem 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 70% 30%, var(--green-glow) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: end;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .hero-label::before {
+    content: '';
+    width: 32px; height: 1px;
+    background: var(--green);
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 2rem;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--green);
+  }
+  .hero-subtitle {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    max-width: 28rem;
+    font-weight: 300;
+  }
+  .hero-meta {
+    border-left: 1px solid var(--border-strong);
+    padding-left: 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.9;
+  }
+  .hero-meta .row {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-dim);
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .hero-meta .row:last-child { border-bottom: none; }
+  .hero-meta .row strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ───── SECTIONS ───── */
+  section {
+    padding: 6rem 3rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 2rem;
+    margin-bottom: 4rem;
+    flex-wrap: wrap;
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--green);
+    letter-spacing: 0.2em;
+  }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .section-title em { font-style: italic; color: var(--green); font-weight: 500; }
+  .section-lede {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 38rem;
+    margin-left: auto;
+  }
+
+  /* ───── UNDERSTANDING ───── */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .pillar {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: default;
+  }
+  .pillar:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-strong);
+    transform: translateY(-4px);
+  }
+  .pillar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--green);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .pillar:hover::before { transform: scaleX(1); }
+  .pillar-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+  .pillar h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .pillar p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+  .pillar .quote {
+    border-left: 2px solid var(--green-dim);
+    padding-left: 1rem;
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    margin-top: 1.5rem;
+  }
+
+  /* ───── PAIN POINTS ───── */
+  .pain-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .pain-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    position: relative;
+  }
+  .pain-card.critical { border-color: rgba(255, 111, 94, 0.3); }
+  .pain-card.warning { border-color: rgba(255, 181, 71, 0.25); }
+  .pain-card-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 2px;
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.1em;
+  }
+  .pain-card.critical .pain-card-tag {
+    background: rgba(255, 111, 94, 0.15);
+    color: var(--accent-coral);
+  }
+  .pain-card.warning .pain-card-tag {
+    background: rgba(255, 181, 71, 0.15);
+    color: var(--accent-amber);
+  }
+  .pain-card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.65rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .pain-card .subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+  .pain-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+    padding: 1.2rem;
+    background: var(--bg-elevated);
+    border-radius: 4px;
+  }
+  .pain-stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: var(--accent-coral);
+  }
+  .pain-card.warning .pain-stat-num { color: var(--accent-amber); }
+  .pain-stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.2rem;
+  }
+  .pain-card ul {
+    list-style: none;
+    margin-top: 1.5rem;
+  }
+  .pain-card li {
+    padding: 0.6rem 0;
+    border-bottom: 1px dashed var(--border);
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    display: flex;
+    gap: 0.8rem;
+  }
+  .pain-card li:last-child { border-bottom: none; }
+  .pain-card li::before {
+    content: '→';
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ───── USE CASES / ARCHITECTURES ───── */
+  .usecase {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 3rem;
+    margin-bottom: 4rem;
+    padding: 2.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .usecase::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 4px;
+    background: var(--green);
+  }
+  .usecase-info .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 1rem;
+  }
+  .usecase-info h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.9rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.2rem;
+  }
+  .usecase-info p {
+    color: var(--text-muted);
+    margin-bottom: 1.2rem;
+    font-size: 0.95rem;
+  }
+  .usecase-info .meta-list {
+    list-style: none;
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+  }
+  .usecase-info .meta-list li {
+    padding: 0.5rem 0;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+  }
+  .usecase-info .meta-list li strong {
+    color: var(--text);
+    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+  }
+
+  /* ───── DIAGRAM ───── */
+  .diagram {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2rem;
+    position: relative;
+  }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram-caption {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* SVG label styles */
+  .svg-box-bg { fill: var(--bg-card); stroke: var(--border-strong); stroke-width: 1.2; }
+  .svg-box-bg.highlight { stroke: var(--green); stroke-width: 1.5; }
+  .svg-box-bg.warn { stroke: var(--accent-amber); stroke-width: 1.2; stroke-dasharray: 4 3; }
+  .svg-box-bg.critical { stroke: var(--accent-coral); stroke-width: 1.2; stroke-dasharray: 4 3; }
+  .svg-text { font-family: 'Inter Tight', sans-serif; font-size: 11px; fill: var(--text); font-weight: 500; }
+  .svg-text-sub { font-family: 'JetBrains Mono', monospace; font-size: 8px; fill: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; }
+  .svg-text-tag { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; fill: var(--green); letter-spacing: 0.08em; }
+  .svg-line { stroke: var(--border-strong); stroke-width: 1.5; fill: none; }
+  .svg-line.flow { stroke: var(--green); stroke-width: 1.8; fill: none; }
+  .svg-line.flow-dashed { stroke: var(--green); stroke-width: 1.5; fill: none; stroke-dasharray: 4 3; }
+  .svg-line.warn-line { stroke: var(--accent-coral); stroke-width: 1.5; fill: none; stroke-dasharray: 4 3; }
+
+  /* ───── QUESTIONS ───── */
+  .questions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+  }
+  .qbucket {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    border-radius: 4px;
+  }
+  .qbucket-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .qbucket-header h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.3rem;
+    letter-spacing: -0.01em;
+  }
+  .qbucket-header .count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    letter-spacing: 0.15em;
+  }
+  .qlist {
+    list-style: none;
+    counter-reset: q;
+  }
+  .qlist li {
+    counter-increment: q;
+    padding: 0.9rem 0 0.9rem 2.3rem;
+    border-bottom: 1px dashed var(--border);
+    position: relative;
+    font-size: 0.92rem;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .qlist li:last-child { border-bottom: none; }
+  .qlist li::before {
+    content: counter(q, decimal-leading-zero);
+    position: absolute;
+    left: 0; top: 0.9rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    letter-spacing: 0.1em;
+  }
+  .qlist li .why {
+    display: block;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    margin-top: 0.4rem;
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+  }
+
+  /* ───── NEXT STEPS ───── */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 1px;
+    background: var(--border-strong);
+  }
+  .step {
+    position: relative;
+    margin-bottom: 2rem;
+    padding: 1.5rem 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+  .step::before {
+    content: '';
+    position: absolute;
+    left: -2.4rem; top: 1.8rem;
+    width: 12px; height: 12px;
+    background: var(--green);
+    border: 3px solid var(--bg);
+    border-radius: 50%;
+  }
+  .step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.6rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .step-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.25rem;
+    letter-spacing: -0.01em;
+  }
+  .step-when {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .step p {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+  }
+
+  /* ───── FOOTER ───── */
+  footer {
+    padding: 3rem;
+    border-top: 1px solid var(--border);
+    background: var(--bg-elevated);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  footer .author { color: var(--green); }
+
+  /* ───── REVEAL ANIMATION ───── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ───── RESPONSIVE ───── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; flex-wrap: wrap; gap: 0.8rem; }
+    nav ul { display: none; }
+    .hero { padding: 7rem 1.5rem 4rem; }
+    .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .hero-meta { border-left: none; border-top: 1px solid var(--border-strong); padding-left: 0; padding-top: 1.5rem; }
+    section { padding: 4rem 1.5rem; }
+    .pillars { grid-template-columns: 1fr; }
+    .pain-grid { grid-template-columns: 1fr; }
+    .usecase { grid-template-columns: 1fr; padding: 1.5rem; gap: 1.5rem; }
+    .questions { grid-template-columns: 1fr; }
+    .section-header { flex-direction: column; gap: 1rem; }
+    .section-lede { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">go<span>mdb</span> · porvenir</div>
+  <ul>
+    <li><a href="#entendimiento">Entendimiento</a></li>
+    <li><a href="#dolores">Dolores</a></li>
+    <li><a href="#arquitecturas">Arquitecturas</a></li>
+    <li><a href="#preguntas">Preguntas</a></li>
+    <li><a href="#siguientes">Plan</a></li>
+  </ul>
+  <div class="meta">ODL · DRAFT · 20.05.26</div>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<header class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-label">Discovery Dossier · Sesión Porvenir ODL</div>
+      <h1>Cómo Mongo <em>convive</em> con el ecosistema de datos de Porvenir</h1>
+      <p class="hero-subtitle">Entendimiento preliminar a partir de la conversación con Edwin. Tres frentes activos, dos puntos de fricción técnica y una pregunta de fondo: cómo Mongo convive con el medallón sin duplicar la operación.</p>
+    </div>
+    <div class="hero-meta">
+      <div class="row"><span>Cliente</span><strong>Porvenir</strong></div>
+      <div class="row"><span>Cuenta AE</span><strong>MongoDB LATAM</strong></div>
+      <div class="row"><span>Sesión</span><strong>Porvenir · ODL · 30 min</strong></div>
+      <div class="row"><span>Stakeholders</span><strong>Edwin · Omar · Ricardo</strong></div>
+      <div class="row"><span>Objetivo</span><strong>Escuchar &amp; mapear</strong></div>
+      <div class="row"><span>Status</span><strong>Definición temprana</strong></div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════ ENTENDIMIENTO ═══════════ -->
+<section id="entendimiento">
+  <div class="section-header">
+    <div>
+      <div class="section-num">01 — ENTENDIMIENTO</div>
+      <h2 class="section-title">El ecosistema que ya <em>existe</em></h2>
+    </div>
+    <p class="section-lede">Porvenir tiene tres ecosistemas operando hoy. Mongo aparece como pieza transversal, pero su rol todavía está en definición. Lo que dijo Edwin es claro: <em>"estamos en esas definiciones fuertes"</em>.</p>
+  </div>
+
+  <div class="pillars">
+    <article class="pillar reveal">
+      <div class="pillar-tag">ECOSISTEMA 01</div>
+      <h3>APIs federadas</h3>
+      <p>Estrategia de federación de APIs con presencia en múltiples nubes y on-prem. Modelo orientado a unificar la exposición sin importar dónde se hostan los servicios.</p>
+    </article>
+    <article class="pillar reveal">
+      <div class="pillar-tag">ECOSISTEMA 02</div>
+      <h3>Integración / APIm</h3>
+      <p>Capa de gestión de APIs federada con puntos en distintas nubes y on-prem, expuesta detrás de un management único para que el consumidor final no perciba la distribución.</p>
+    </article>
+    <article class="pillar reveal">
+      <div class="pillar-tag">ECOSISTEMA 03</div>
+      <h3>Datos · Medallón híbrido</h3>
+      <p>Modelo medallón orquestado con Azure Fabric, procesamiento en Databricks (bronce / plata / oro) y exposición a través de Power BI para la zona fría. Por encima, una plataforma agéntica (Foundry) y un Mongo vectorial para RAG. La integración de Mongo con el medallón aún está en definición.</p>
+    </article>
+  </div>
+
+  <div style="margin-top: 3rem; padding: 2rem; background: var(--bg-card); border-left: 3px solid var(--green); border-radius: 4px;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--green); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 0.8rem;">Pregunta de fondo que tiene Edwin</div>
+    <p style="font-family: 'Fraunces', serif; font-size: 1.4rem; line-height: 1.3; font-weight: 400; letter-spacing: -0.01em;">Si parte de la data ya está lista en Mongo, ¿es necesario que pase por el medallón para alimentar la plataforma agéntica? ¿Cómo se integra Mongo con Fabric y Databricks sin generar duplicidad?</p>
+  </div>
+</section>
+
+<!-- ═══════════ DOLORES ═══════════ -->
+<section id="dolores">
+  <div class="section-header">
+    <div>
+      <div class="section-num">02 — DOLORES</div>
+      <h2 class="section-title">Dos puntos que <em>atascan</em> todo lo demás</h2>
+    </div>
+    <p class="section-lede">Mientras estos dos no se resuelvan, los casos de uso de IA, Open Finance y el 360 del cliente no avanzan. Hay un orden lógico: primero el streaming, luego la arquitectura, después los casos.</p>
+  </div>
+
+  <div class="pain-grid">
+    <article class="pain-card critical reveal">
+      <span class="pain-card-tag">DOLOR · CRÍTICO</span>
+      <h3>Striim no estabiliza la sincronización del core grande</h3>
+      <p class="subtitle">La base de pensiones obligatorias es la fuente más rica del negocio y es justo la que no logra sincronizarse de forma confiable. Llevan tiempo trabajando en ello sin resolverlo.</p>
+      <div class="pain-stats">
+        <div>
+          <div class="pain-stat-num">~15M</div>
+          <div class="pain-stat-label">Afiliados</div>
+        </div>
+        <div>
+          <div class="pain-stat-num">40 años</div>
+          <div class="pain-stat-label">Historia conservada</div>
+        </div>
+        <div>
+          <div class="pain-stat-num">40+ GB</div>
+          <div class="pain-stat-label">Archive log puntual</div>
+        </div>
+        <div>
+          <div class="pain-stat-num">8h – 2d</div>
+          <div class="pain-stat-label">Delta observado</div>
+        </div>
+      </div>
+      <ul>
+        <li>Base productiva sobre Oracle en plataforma Power 9 con AIX</li>
+        <li>Striim no logra procesar el archive log sin afectar el core</li>
+        <li>Costo anual relevante de la herramienta (cifra y moneda a confirmar)</li>
+        <li>Bloquea casos de uso de IA que dependen de esa fuente</li>
+      </ul>
+    </article>
+
+    <article class="pain-card warning reveal">
+      <span class="pain-card-tag">DOLOR · DEFINICIÓN</span>
+      <h3>Databricks: costo y rol del medallón en revisión</h3>
+      <p class="subtitle">El medallón se volvió el camino estándar para toda la data, incluso para data que el equipo siente que ya está lista. Edwin cuestiona si ese paso es necesario en todos los casos y abre la conversación sobre costos.</p>
+      <div class="pain-stats">
+        <div>
+          <div class="pain-stat-num">↑ costo</div>
+          <div class="pain-stat-label">Procesamiento percibido alto</div>
+        </div>
+        <div>
+          <div class="pain-stat-num">~30%</div>
+          <div class="pain-stat-label">Ahorro referenciado (caso México)</div>
+        </div>
+        <div>
+          <div class="pain-stat-num">RAG</div>
+          <div class="pain-stat-label">Ruta de alimentación en definición</div>
+        </div>
+        <div>
+          <div class="pain-stat-num">ODS</div>
+          <div class="pain-stat-label">Rol de Mongo por aclarar</div>
+        </div>
+      </div>
+      <ul>
+        <li>Storage en Parquet percibido como barato; procesamiento percibido como costoso</li>
+        <li>Foundry necesita alimentarse de data y la ruta aún no está definida</li>
+        <li>Existe una expectativa de que toda la data pase por el medallón</li>
+        <li>Data que ya está disponible en Mongo podría no necesitar ese paso</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<!-- ═══════════ ARQUITECTURAS ═══════════ -->
+<section id="arquitecturas">
+  <div class="section-header">
+    <div>
+      <div class="section-num">03 — ARQUITECTURAS PROPUESTAS</div>
+      <h2 class="section-title">Tres frentes, tres <em>diagramas vivos</em></h2>
+    </div>
+    <p class="section-lede">Estas no son arquitecturas finales — son hipótesis de trabajo construidas con lo que Edwin nos compartió. Cada una tiene supuestos que validar mañana.</p>
+  </div>
+
+  <!-- USE CASE 1 -->
+  <article class="usecase reveal">
+    <div class="usecase-info">
+      <div class="label">Caso 01 · Streaming Core → Mongo</div>
+      <h3>Alternativa a Striim con Kafka + Atlas Stream Processing</h3>
+      <p>Hipótesis de trabajo: validar si un pipeline con CDC desde Oracle hacia Kafka y de ahí a Atlas (vía Atlas Stream Processing o Kafka Connector) puede sostener la sincronización con menor delta e impacto controlado sobre el core. La idea es probarlo con una tabla representativa, no con la base más grande.</p>
+      <ul class="meta-list">
+        <li><span>Patrón propuesto</span><strong>CDC → KAFKA → ASP → ATLAS</strong></li>
+        <li><span>Tooling a explorar</span><strong>DEBEZIUM / CONFLUENT CDC</strong></li>
+        <li><span>Alcance PoC</span><strong>1 TABLA REPRESENTATIVA</strong></li>
+        <li><span>Criterio éxito</span><strong>A DEFINIR CON CLIENTE</strong></li>
+        <li><span>Pendiente confirmar</span><strong>COSTO ACTUAL DE STRIIM</strong></li>
+        <li><span>Caso referencia</span><strong>BCI CHILE · TARIFICACIÓN</strong></li>
+      </ul>
+    </div>
+    <div class="diagram">
+      <div class="diagram-caption"><span>FIG. 01 · Pipeline propuesto</span><span>HIPÓTESIS</span></div>
+      <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg">
+        <!-- Oracle on Power 9 -->
+        <rect class="svg-box-bg critical" x="20" y="140" width="110" height="80" rx="3"/>
+        <text class="svg-text" x="75" y="170" text-anchor="middle">Oracle</text>
+        <text class="svg-text" x="75" y="186" text-anchor="middle">Power 9 / AIX</text>
+        <text class="svg-text-sub" x="75" y="204" text-anchor="middle">CORE · ~15M</text>
+
+        <!-- CDC layer -->
+        <rect class="svg-box-bg" x="170" y="140" width="100" height="80" rx="3"/>
+        <text class="svg-text" x="220" y="170" text-anchor="middle">CDC Agent</text>
+        <text class="svg-text" x="220" y="186" text-anchor="middle">Debezium</text>
+        <text class="svg-text-sub" x="220" y="204" text-anchor="middle">LogMiner / XStream</text>
+
+        <!-- Kafka -->
+        <rect class="svg-box-bg highlight" x="310" y="140" width="100" height="80" rx="3"/>
+        <text class="svg-text" x="360" y="170" text-anchor="middle">Kafka</text>
+        <text class="svg-text" x="360" y="186" text-anchor="middle">Topics</text>
+        <text class="svg-text-tag" x="360" y="204" text-anchor="middle">CONFLUENT</text>
+
+        <!-- ASP / Connector -->
+        <rect class="svg-box-bg highlight" x="450" y="80" width="130" height="70" rx="3"/>
+        <text class="svg-text" x="515" y="108" text-anchor="middle">Atlas Stream</text>
+        <text class="svg-text" x="515" y="124" text-anchor="middle">Processing</text>
+        <text class="svg-text-tag" x="515" y="140" text-anchor="middle">TRANSFORM IN FLIGHT</text>
+
+        <rect class="svg-box-bg highlight" x="450" y="170" width="130" height="50" rx="3"/>
+        <text class="svg-text" x="515" y="194" text-anchor="middle">Kafka Connector</text>
+        <text class="svg-text-tag" x="515" y="208" text-anchor="middle">DIRECT SINK</text>
+
+        <!-- Atlas -->
+        <rect class="svg-box-bg highlight" x="430" y="240" width="170" height="70" rx="3"/>
+        <text class="svg-text" x="515" y="270" text-anchor="middle" style="font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600;">MongoDB Atlas</text>
+        <text class="svg-text-sub" x="515" y="288" text-anchor="middle">ODL · OPERATIONAL DATA LAYER</text>
+
+        <!-- Flow arrows -->
+        <line class="svg-line flow" x1="130" y1="180" x2="170" y2="180" marker-end="url(#arrow-green)"/>
+        <line class="svg-line flow" x1="270" y1="180" x2="310" y2="180" marker-end="url(#arrow-green)"/>
+        <line class="svg-line flow" x1="410" y1="170" x2="450" y2="115" marker-end="url(#arrow-green)"/>
+        <line class="svg-line flow" x1="410" y1="190" x2="450" y2="195" marker-end="url(#arrow-green)"/>
+        <line class="svg-line flow" x1="515" y1="150" x2="515" y2="170" marker-end="url(#arrow-green)"/>
+        <line class="svg-line flow" x1="515" y1="220" x2="515" y2="240" marker-end="url(#arrow-green)"/>
+
+        <!-- Label striim eliminado -->
+        <rect x="20" y="20" width="320" height="40" fill="rgba(255,111,94,0.08)" stroke="var(--accent-coral)" stroke-width="1" stroke-dasharray="3 2" rx="3"/>
+        <text class="svg-text" x="180" y="38" text-anchor="middle" fill="var(--accent-coral)">Hipótesis: reducir dependencia de Striim</text>
+        <text class="svg-text-sub" x="180" y="50" text-anchor="middle">A VALIDAR EN POC</text>
+
+        <defs>
+          <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <polygon points="0 0, 8 4, 0 8" fill="var(--green)"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </article>
+
+  <!-- USE CASE 2 -->
+  <article class="usecase reveal">
+    <div class="usecase-info">
+      <div class="label">Caso 02 · Medallón extendido con Mongo</div>
+      <h3>Mongo como capa operativa, complementaria al lakehouse</h3>
+      <p>Planteamiento propuesto: Mongo no compite con el medallón, lo complementa. Lo operativo (baja latencia, alto QPS, 360° del cliente, alimentación del RAG) puede vivir en Mongo. Lo analítico e histórico continúa en Databricks. Esto requiere validar con Omar cómo está montado el medallón hoy y dónde tiene sentido evitar el rebote.</p>
+      <ul class="meta-list">
+        <li><span>Patrón propuesto</span><strong>ODL OPERATIVO + LAKEHOUSE ANALÍTICO</strong></li>
+        <li><span>Conectividad</span><strong>SPARK CONNECTOR · ATLAS SQL</strong></li>
+        <li><span>Compromiso pendiente</span><strong>SESIÓN CON OMAR</strong></li>
+        <li><span>Pieza Foundry</span><strong>RAG DESDE MONGO (A VALIDAR)</strong></li>
+        <li><span>Riesgo</span><strong>GOBIERNO DE DATOS · DUPLICIDAD</strong></li>
+      </ul>
+    </div>
+    <div class="diagram">
+      <div class="diagram-caption"><span>FIG. 02 · Coexistencia · no reemplazo</span><span>HIPÓTESIS</span></div>
+      <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg">
+        <!-- Sources -->
+        <rect class="svg-box-bg" x="20" y="30" width="100" height="40" rx="3"/>
+        <text class="svg-text" x="70" y="55" text-anchor="middle">Cores</text>
+        <rect class="svg-box-bg" x="20" y="85" width="100" height="40" rx="3"/>
+        <text class="svg-text" x="70" y="110" text-anchor="middle">Streaming · Kafka</text>
+        <rect class="svg-box-bg" x="20" y="140" width="100" height="40" rx="3"/>
+        <text class="svg-text" x="70" y="165" text-anchor="middle">ETL / Batch</text>
+        <text class="svg-text-sub" x="70" y="190" text-anchor="middle">FUENTES</text>
+
+        <!-- Mongo ODL -->
+        <rect class="svg-box-bg highlight" x="180" y="40" width="180" height="130" rx="3"/>
+        <text class="svg-text" x="270" y="68" text-anchor="middle" style="font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600;">MongoDB Atlas</text>
+        <text class="svg-text-sub" x="270" y="84" text-anchor="middle">ODL · OPERACIONAL</text>
+        <line x1="200" y1="95" x2="340" y2="95" stroke="var(--border-strong)" stroke-width="0.8"/>
+        <text class="svg-text" x="270" y="115" text-anchor="middle">360° Cliente</text>
+        <text class="svg-text" x="270" y="132" text-anchor="middle">Vector Search</text>
+        <text class="svg-text" x="270" y="149" text-anchor="middle">Auto Embedding</text>
+        <text class="svg-text-tag" x="270" y="163" text-anchor="middle">BAJA LATENCIA · ALTO QPS</text>
+
+        <!-- Lakehouse Databricks -->
+        <rect class="svg-box-bg warn" x="180" y="200" width="180" height="130" rx="3"/>
+        <text class="svg-text" x="270" y="226" text-anchor="middle" style="font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600;">Databricks · Medallón</text>
+        <text class="svg-text-sub" x="270" y="242" text-anchor="middle">ANALÍTICO · FRÍO</text>
+        <line x1="200" y1="253" x2="340" y2="253" stroke="var(--border-strong)" stroke-width="0.8"/>
+        <text class="svg-text" x="270" y="273" text-anchor="middle">Bronce → Plata → Oro</text>
+        <text class="svg-text" x="270" y="290" text-anchor="middle">Power BI · Reportería</text>
+        <text class="svg-text" x="270" y="307" text-anchor="middle">Compliance / Histórico</text>
+        <text class="svg-text-tag" x="270" y="321" text-anchor="middle" fill="var(--accent-amber)">PROCESAMIENTO COSTOSO</text>
+
+        <!-- Bidirectional integration -->
+        <line class="svg-line flow-dashed" x1="270" y1="170" x2="270" y2="200" marker-end="url(#arrow-green2)" marker-start="url(#arrow-green2)"/>
+        <text class="svg-text-tag" x="370" y="187" fill="var(--green)">SPARK CONNECTOR</text>
+        <text class="svg-text-tag" x="370" y="197" fill="var(--green)">FEDERATED QUERY</text>
+
+        <!-- Consumers -->
+        <rect class="svg-box-bg" x="430" y="40" width="150" height="40" rx="3"/>
+        <text class="svg-text" x="505" y="65" text-anchor="middle">Apps / APIs</text>
+
+        <rect class="svg-box-bg highlight" x="430" y="95" width="150" height="50" rx="3"/>
+        <text class="svg-text" x="505" y="115" text-anchor="middle">Foundry · RAG</text>
+        <text class="svg-text-tag" x="505" y="132" text-anchor="middle">PLATAFORMA AGÉNTICA</text>
+
+        <rect class="svg-box-bg warn" x="430" y="240" width="150" height="40" rx="3"/>
+        <text class="svg-text" x="505" y="265" text-anchor="middle">Power BI · BI</text>
+
+        <!-- Flow arrows -->
+        <line class="svg-line flow" x1="120" y1="50" x2="180" y2="80" marker-end="url(#arrow-green2)"/>
+        <line class="svg-line flow" x1="120" y1="105" x2="180" y2="105" marker-end="url(#arrow-green2)"/>
+        <line class="svg-line flow" x1="120" y1="160" x2="180" y2="250" marker-end="url(#arrow-green2)"/>
+
+        <line class="svg-line flow" x1="360" y1="80" x2="430" y2="60" marker-end="url(#arrow-green2)"/>
+        <line class="svg-line flow" x1="360" y1="120" x2="430" y2="120" marker-end="url(#arrow-green2)"/>
+        <line class="svg-line flow" x1="360" y1="260" x2="430" y2="260" marker-end="url(#arrow-amber2)"/>
+
+        <defs>
+          <marker id="arrow-green2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <polygon points="0 0, 8 4, 0 8" fill="var(--green)"/>
+          </marker>
+          <marker id="arrow-amber2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <polygon points="0 0, 8 4, 0 8" fill="var(--accent-amber)"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </article>
+
+  <!-- USE CASE 3 -->
+  <article class="usecase reveal">
+    <div class="usecase-info">
+      <div class="label">Caso 03 · Historia Laboral · RAG</div>
+      <h3>Caso de uso priorizado, dependiente del Caso 01</h3>
+      <p>Aprovechar la historia laboral acumulada para inferir comportamiento de empleabilidad y construir productos de información tipo Open Finance. Edwin lo mencionó como el caso más jugoso para arrancar, justo después de pensiones obligatorias. Depende de resolver primero la sincronización del core.</p>
+      <ul class="meta-list">
+        <li><span>Producto potencial</span><strong>SCORE LABORAL · OPEN FINANCE</strong></li>
+        <li><span>Pipeline RAG</span><strong>CHUNKING · EMBEDDINGS · SEARCH</strong></li>
+        <li><span>Embeddings</span><strong>VOYAGE AI (NATIVO ATLAS)</strong></li>
+        <li><span>Búsqueda</span><strong>ATLAS VECTOR SEARCH</strong></li>
+        <li><span>Dependencia</span><strong>CASO 01 RESUELTO</strong></li>
+        <li><span>Referencias</span><strong>RENAULT (SONIDO) · BBVA (FICHA)</strong></li>
+      </ul>
+    </div>
+    <div class="diagram">
+      <div class="diagram-caption"><span>FIG. 03 · Pipeline RAG sobre Mongo</span><span>HIPÓTESIS</span></div>
+      <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg">
+        <!-- Source -->
+        <rect class="svg-box-bg critical" x="20" y="20" width="140" height="60" rx="3"/>
+        <text class="svg-text" x="90" y="44" text-anchor="middle">Historia Laboral</text>
+        <text class="svg-text-sub" x="90" y="60" text-anchor="middle">CORE ORACLE / AIX</text>
+        <text class="svg-text-tag" x="90" y="74" text-anchor="middle" fill="var(--accent-coral)">DEPENDE CASO 01</text>
+
+        <!-- Streaming -->
+        <line class="svg-line flow-dashed" x1="160" y1="50" x2="220" y2="50" marker-end="url(#arrow-green3)"/>
+        <text class="svg-text-sub" x="190" y="42" text-anchor="middle">KAFKA</text>
+
+        <!-- Mongo storage -->
+        <rect class="svg-box-bg highlight" x="220" y="20" width="160" height="60" rx="3"/>
+        <text class="svg-text" x="300" y="44" text-anchor="middle">Atlas · Raw Data</text>
+        <text class="svg-text-sub" x="300" y="60" text-anchor="middle">JSON · DOCS · METADATA</text>
+
+        <!-- Chunking -->
+        <line class="svg-line flow" x1="300" y1="80" x2="300" y2="115" marker-end="url(#arrow-green3)"/>
+        <rect class="svg-box-bg" x="220" y="115" width="160" height="50" rx="3"/>
+        <text class="svg-text" x="300" y="135" text-anchor="middle">Chunking · Preprocesado</text>
+        <text class="svg-text-tag" x="300" y="152" text-anchor="middle">PYTHON / PIPELINE</text>
+
+        <!-- Voyage Auto Embedding -->
+        <line class="svg-line flow" x1="300" y1="165" x2="300" y2="200" marker-end="url(#arrow-green3)"/>
+        <rect class="svg-box-bg highlight" x="200" y="200" width="200" height="60" rx="3"/>
+        <text class="svg-text" x="300" y="224" text-anchor="middle">Voyage AI · Auto Embedding</text>
+        <text class="svg-text-sub" x="300" y="240" text-anchor="middle">VECTORES NATIVOS EN MONGO</text>
+        <text class="svg-text-tag" x="300" y="254" text-anchor="middle">VALIDAR · GA?</text>
+
+        <!-- Vector index -->
+        <line class="svg-line flow" x1="300" y1="260" x2="300" y2="290" marker-end="url(#arrow-green3)"/>
+        <rect class="svg-box-bg highlight" x="180" y="290" width="240" height="50" rx="3"/>
+        <text class="svg-text" x="300" y="310" text-anchor="middle">Atlas Vector Search · Índice</text>
+        <text class="svg-text-tag" x="300" y="327" text-anchor="middle">HNSW · COSINE / DOT</text>
+
+        <!-- Consumers -->
+        <rect class="svg-box-bg" x="440" y="50" width="140" height="60" rx="3"/>
+        <text class="svg-text" x="510" y="74" text-anchor="middle">Foundry · Agente</text>
+        <text class="svg-text-sub" x="510" y="92" text-anchor="middle">RAG · GOBIERNO</text>
+
+        <rect class="svg-box-bg" x="440" y="135" width="140" height="60" rx="3"/>
+        <text class="svg-text" x="510" y="159" text-anchor="middle">Score Laboral</text>
+        <text class="svg-text-sub" x="510" y="177" text-anchor="middle">PRODUCTO B2B / B2C</text>
+
+        <rect class="svg-box-bg" x="440" y="220" width="140" height="60" rx="3"/>
+        <text class="svg-text" x="510" y="244" text-anchor="middle">Open Finance</text>
+        <text class="svg-text-sub" x="510" y="262" text-anchor="middle">MONETIZACIÓN</text>
+
+        <line class="svg-line flow" x1="420" y1="315" x2="510" y2="195" marker-end="url(#arrow-green3)"/>
+        <line class="svg-line flow" x1="420" y1="315" x2="510" y2="110" marker-end="url(#arrow-green3)"/>
+        <line class="svg-line flow" x1="420" y1="315" x2="510" y2="280" marker-end="url(#arrow-green3)"/>
+
+        <defs>
+          <marker id="arrow-green3" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <polygon points="0 0, 8 4, 0 8" fill="var(--green)"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </article>
+</section>
+
+<!-- ═══════════ PREGUNTAS ═══════════ -->
+<section id="preguntas">
+  <div class="section-header">
+    <div>
+      <div class="section-num">04 — PREGUNTAS PARA MAÑANA</div>
+      <h2 class="section-title">Vamos a <em>escuchar</em>, no a presentar</h2>
+    </div>
+    <p class="section-lede">30 minutos · sesión de descubrimiento. El objetivo es salir con suficiente claridad para armar las 3 arquitecturas finales después. Estas son las preguntas organizadas por bloque temático.</p>
+  </div>
+
+  <div class="questions">
+    <article class="qbucket reveal">
+      <div class="qbucket-header">
+        <h3>Estado actual del flujo de datos</h3>
+        <span class="count">06 PREGUNTAS</span>
+      </div>
+      <ol class="qlist">
+        <li>¿Cómo está fluyendo la data hoy del core a destinos finales? ¿Striim aterriza directo en Mongo o pasa antes por Fabric? <span class="why">Entender si hay duplicidad de pipelines</span></li>
+        <li>¿Qué bases ya están sincronizando bien y cuáles están con deltas inaceptables?<span class="why">Mapear el universo completo de tablas que pasan por Striim hoy</span></li>
+        <li>¿Qué bases sienten Edwin y Omar que ya están listas y no requieren pasar por el medallón?<span class="why">Es el punto donde podría haber valor inmediato sin tocar el resto</span></li>
+        <li>¿Cuál es el SLA de delta que necesita el negocio por tabla? ¿Segundos, minutos, horas?<span class="why">Define si necesitamos ASP o solo Kafka Connector</span></li>
+        <li>¿La PoC de Striim que hicieron, qué reveló exactamente sobre el cuello de archive logs?<span class="why">Aprender de su experiencia · no repetir el mismo error</span></li>
+        <li>¿Hay otras herramientas internas para CDC además de Striim? (IDR, IDN, etc. mencionados)<span class="why">Saber qué alternativas ya descartaron y por qué</span></li>
+      </ol>
+    </article>
+
+    <article class="qbucket reveal">
+      <div class="qbucket-header">
+        <h3>Medallón &amp; Databricks · convivencia</h3>
+        <span class="count">05 PREGUNTAS</span>
+      </div>
+      <ol class="qlist">
+        <li>¿Cuál es el costo mensual real de Databricks hoy y cómo se descompone (storage vs compute)?<span class="why">Cuantificar el ahorro potencial · caso México fue 30%</span></li>
+        <li>¿De dónde viene la práctica de pasar toda la data por el medallón: regulación, gobierno interno o pragmatismo?<span class="why">Saber cuánto se puede flexibilizar y con quién hay que validar</span></li>
+        <li>¿Quién consume el oro hoy? ¿Solo Power BI o también apps operativas?<span class="why">Si hay apps operativas en el oro, Mongo puede liberarlas</span></li>
+        <li>¿Cómo se imaginan a Mongo conviviendo con Fabric — fuente, destino o ambos?<span class="why">Aterrizar la arquitectura del Caso 02 correctamente</span></li>
+        <li>¿Hay caso de uso donde un consumer hoy va al oro por algo que es realmente operativo?<span class="why">Quick win identificable · candidato para PoC</span></li>
+      </ol>
+    </article>
+
+    <article class="qbucket reveal">
+      <div class="qbucket-header">
+        <h3>Foundry, RAG &amp; casos de IA</h3>
+        <span class="count">05 PREGUNTAS</span>
+      </div>
+      <ol class="qlist">
+        <li>¿Foundry es Palantir Foundry o Azure AI Foundry? ¿Y dónde se hosta?<span class="why">Define conectividad y modelo de despliegue · clave para arq</span></li>
+        <li>¿Qué casos de uso ya están corriendo en Foundry y cuáles están bloqueados?<span class="why">Priorizar dónde Mongo entra primero</span></li>
+        <li>¿Cómo está manejando hoy Foundry el RAG — embeddings dónde, vector store dónde?<span class="why">Saber si hay vendor lock o si hay espacio para Atlas Vector Search</span></li>
+        <li>¿La definición de data lista para alimentar el RAG la tiene Omar mapeada por dominio?<span class="why">Para diseñar el chunking y el modelo de embeddings</span></li>
+        <li>Después de Historia Laboral, ¿cuál es el siguiente caso priorizado? (mencionó pensiones voluntarias)<span class="why">Roadmap de casos · entender la cola de valor</span></li>
+      </ol>
+    </article>
+
+    <article class="qbucket reveal">
+      <div class="qbucket-header">
+        <h3>Decisión &amp; siguientes pasos</h3>
+        <span class="count">04 PREGUNTAS</span>
+      </div>
+      <ol class="qlist">
+        <li>Para la PoC de streaming, ¿qué tabla representativa proponen ustedes como hipótesis?<span class="why">Que no sea la de 15M · que sea reproducible</span></li>
+        <li>¿Cuál es el criterio de éxito que el negocio aceptaría para matar Striim?<span class="why">Sin criterio claro, la PoC se vuelve eterna</span></li>
+        <li>¿Quién decide el presupuesto si la PoC es exitosa — Edwin solo o requiere comité?<span class="why">El timing de junio que mencionó depende de esto</span></li>
+        <li>¿Pueden agendar la sesión profunda con Omar y William Ospina esta semana?<span class="why">William maneja Striim · sin él no hay PoC viable</span></li>
+      </ol>
+    </article>
+  </div>
+</section>
+
+<!-- ═══════════ NEXT STEPS ═══════════ -->
+<section id="siguientes">
+  <div class="section-header">
+    <div>
+      <div class="section-num">05 — PLAN PROPUESTO</div>
+      <h2 class="section-title">Lo que <em>sigue</em> después de mañana</h2>
+    </div>
+    <p class="section-lede">Asumiendo que la sesión de mañana valida las hipótesis principales, esto es lo que proponemos construir en las semanas siguientes. Los tiempos son orientativos y se ajustan al ritmo del cliente.</p>
+  </div>
+
+  <div class="timeline">
+    <article class="step reveal">
+      <div class="step-header">
+        <span class="step-title">Sesión de descubrimiento ODL</span>
+        <span class="step-when">MAÑANA · 30 MIN</span>
+      </div>
+      <p>Escuchar a Omar sobre el estado del medallón. Mapear flujos actuales. Validar las 3 hipótesis de arquitectura. Salir con tabla candidata para la PoC.</p>
+    </article>
+
+    <article class="step reveal">
+      <div class="step-header">
+        <span class="step-title">Sesión técnica con Omar &amp; William Ospina</span>
+        <span class="step-when">SEMANA 1</span>
+      </div>
+      <p>Profundizar en el dolor real de Striim. Diseñar la PoC en detalle: CDC tool (Debezium vs Confluent), topology de Kafka, criterios de medición. Definir tabla candidata y alcance.</p>
+    </article>
+
+    <article class="step reveal">
+      <div class="step-header">
+        <span class="step-title">Propuesta formal de PoC + arquitecturas alternas</span>
+        <span class="step-when">SEMANA 2</span>
+      </div>
+      <p>Entregar a Edwin las 3 arquitecturas refinadas con pros, contras, costos estimados, criterios de éxito por escenario. Modelo de coinversión MongoDB + Porvenir.</p>
+    </article>
+
+    <article class="step reveal">
+      <div class="step-header">
+        <span class="step-title">Ejecución PoC · 1 tabla representativa</span>
+        <span class="step-when">SEMANAS 3-4</span>
+      </div>
+      <p>Implementar pipeline Core → Kafka → Atlas. Medir delta, impacto en core, throughput. Comparar contra Striim. Documentar resultados.</p>
+    </article>
+
+    <article class="step reveal">
+      <div class="step-header">
+        <span class="step-title">Decisión &amp; escalamiento</span>
+        <span class="step-when">ANTES DE JUNIO</span>
+      </div>
+      <p>Si la PoC es exitosa: definir con Porvenir el modelo de inversión para extender el pipeline a más tablas. Si no: documentar lecciones aprendidas y explorar ruta alterna. Edwin mencionó que necesita avanzar antes de junio.</p>
+    </article>
+
+    <article class="step reveal">
+      <div class="step-header">
+        <span class="step-title">Roadmap de casos de uso</span>
+        <span class="step-when">POST-PoC</span>
+      </div>
+      <p>Una vez desatorado el streaming: Historia Laboral como primer caso productivo. Vector Search + Auto Embedding. Score laboral como producto monetizable. Pensiones voluntarias como segundo caso.</p>
+    </article>
+  </div>
+</section>
+
+<footer>
+  <span>gomdb · porvenir · odl discovery dossier</span>
+  <span class="author">Leonel · MongoDB Advisory SA · LATAM</span>
+  <span>Documento interno · borrador de trabajo</span>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Smooth scroll for nav
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+
+</body>
+</html>
