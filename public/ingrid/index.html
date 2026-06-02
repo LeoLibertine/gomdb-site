@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SURA × MongoDB Atlas — Vista 360 · Vector Search · Fraud</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="ingrid/sura-demo.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="sura-header">
+    <div class="brand">
+      <span class="sura-logo">SURA</span>
+      <span class="brand-sep">×</span>
+      <span class="mongo-logo">
+        <svg class="mongo-leaf" viewBox="0 0 32 32" width="22" height="22">
+          <path fill="#00ED64" d="M16.5 2c-.4 4.1.4 8.1 1.2 12 .9 4 1.8 8.4-.3 12.4 0 0-.3.5-.3.5 0 .2.1 0 .2 0 1.4-1.1 2.4-2.6 3.1-4.3.8-1.7 1.2-3.4 1.4-5.2.2-2.4-.1-4.8-.7-7.1-.7-2.4-1.7-4.7-2.9-6.9-.4-.7-.9-1.4-1.7-1.4z"/>
+        </svg>
+        MongoDB Atlas
+      </span>
+    </div>
+    <div class="tagline">El asegurado, en un solo documento</div>
+    <div class="status" id="atlas-status">
+      <span class="dot live"></span>
+      <span>Atlas conectado</span>
+    </div>
+  </header>
+
+  <!-- Hero stats -->
+  <section class="hero-stats" id="hero-stats">
+    <div class="stat">
+      <div class="stat-value" id="stat-claims">—</div>
+      <div class="stat-label">Reportes históricos</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="stat-policies">—</div>
+      <div class="stat-label">Pólizas activas</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="stat-photos">—</div>
+      <div class="stat-label">Fotos indexadas con embeddings</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">1024</div>
+      <div class="stat-label">Dimensiones · Voyage Multimodal-3</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">cos</div>
+      <div class="stat-label">Similitud · Atlas Vector Search</div>
+    </div>
+  </section>
+
+  <!-- Main grid: 2 columns -->
+  <main class="grid">
+
+    <!-- ── PANEL IZQ: Vista 360 ─────────────────────────────────────── -->
+    <section class="card panel-360">
+      <header class="card-h">
+        <h2>Vista Cliente 360</h2>
+        <div class="card-h-right">
+          <button id="view-mongo-doc" class="btn-ghost" title="Ver el documento MongoDB completo">
+            📄 Ver documento Mongo
+          </button>
+          <span class="badge badge-mongo">$lookup + $addFields · 1 agregación</span>
+        </div>
+      </header>
+      <p class="card-sub">
+        Una sola consulta combina póliza, historial de siniestros, fotos y métricas.
+        En SQL serían 4-5 JOINs.
+      </p>
+
+      <div class="picker">
+        <label for="policy-picker">Póliza</label>
+        <select id="policy-picker"></select>
+      </div>
+
+      <div id="customer-panel" class="customer-panel skeleton"></div>
+
+      <h3 class="sub-h">Historial de siniestros</h3>
+      <div id="claims-timeline" class="timeline"></div>
+    </section>
+
+    <!-- ── PANEL DER: Explorer (search + fraud) ─────────────────────── -->
+    <section class="card panel-explorer">
+      <header class="card-h">
+        <h2>Explorador Inteligente</h2>
+        <span class="badge badge-voyage">Voyage Multimodal-3</span>
+      </header>
+      <p class="card-sub">
+        Texto e imagen viven en el mismo espacio vectorial — buscas con palabras,
+        recuperas fotos.
+      </p>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="search">🔍 Búsqueda híbrida</button>
+        <button class="tab" data-tab="fraud">⚠️ Detección de fraude</button>
+      </div>
+
+      <!-- TAB: Hybrid search -->
+      <div class="tab-panel" id="tab-search">
+        <div class="search-bar">
+          <input type="text" id="search-input"
+                 placeholder="Describe un siniestro... ej. 'auto azul daño trasero Bogotá'"
+                 autocomplete="off">
+          <button id="search-btn" class="btn-primary">Buscar</button>
+        </div>
+        <div class="hints">
+          <button class="hint" data-q="auto azul con choque frontal en Bogotá">Auto azul · frontal · Bogotá</button>
+          <button class="hint" data-q="alcance trasero en hora pico">Alcance trasero · hora pico</button>
+          <button class="hint" data-q="colisión lateral en Medellín">Lateral · Medellín</button>
+          <button class="hint" data-q="vehículo gris con daño contra poste">Gris · objeto fijo</button>
+        </div>
+        <div class="search-meta hidden" id="search-meta"></div>
+        <div id="search-results" class="search-results"></div>
+      </div>
+
+      <!-- TAB: Fraud detection -->
+      <div class="tab-panel hidden" id="tab-fraud">
+        <p class="muted">Carga una foto del siniestro actual. El sistema buscará coincidencias visuales en todos los reportes históricos. Si la foto matchea con otra póliza, dispara una alerta.</p>
+
+        <div class="fraud-form">
+          <div class="form-row">
+            <label>Foto del siniestro</label>
+            <label for="fraud-file" class="file-btn">📷 Elegir foto</label>
+            <input type="file" id="fraud-file" accept="image/*" hidden>
+            <span id="fraud-filename" class="muted">Ningún archivo seleccionado</span>
+          </div>
+          <div class="form-row">
+            <label for="fraud-policy">Póliza actual</label>
+            <select id="fraud-policy"></select>
+          </div>
+          <button id="fraud-run-btn" class="btn-primary" disabled>Analizar similitudes</button>
+        </div>
+
+        <div id="fraud-preview" class="fraud-preview hidden"></div>
+        <div id="fraud-result" class="fraud-result"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Live FNOL footer (reporte de voz en vivo) -->
+  <section class="live-fnol card">
+    <header class="card-h">
+      <h2>Reporte de voz en vivo</h2>
+      <div class="live-meta">
+        <a href="tel:+12762509984" class="phone-link">📞 Llamar +1 276 250 9984</a>
+        <span class="dot pulse"></span>
+      </div>
+    </header>
+    <div id="live-claim" class="live-claim">
+      <p class="muted">Esperando llamadas... Marca el número para iniciar un reporte de voz.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span>SURA Colombia × MongoDB Atlas Vector Search</span>
+    <span>·</span>
+    <span>Voyage Multimodal-3</span>
+    <span>·</span>
+    <span>Vapi.ai voice agent</span>
+  </footer>
+
+  <!-- ───────────── Drill-down modal ───────────── -->
+  <div id="detail-overlay" class="overlay hidden">
+    <div class="modal">
+      <header class="modal-header">
+        <div class="modal-hero">
+          <span id="detail-folio" class="detail-folio">SR-2026-0000</span>
+          <span id="detail-status-pill" class="status-pill">—</span>
+        </div>
+        <button id="detail-close" class="modal-close" aria-label="Cerrar">✕</button>
+      </header>
+
+      <div class="modal-hero-grid" id="modal-hero-grid">
+        <!-- folio + customer + vehicle + location + adjuster populated by JS -->
+      </div>
+
+      <div class="modal-tabs" role="tablist">
+        <button class="modal-tab active" data-mtab="data">📋 Datos</button>
+        <button class="modal-tab" data-mtab="voice">📞 Llamada <span class="tab-count" id="mcount-voice">0</span></button>
+        <button class="modal-tab" data-mtab="whatsapp">💬 WhatsApp <span class="tab-count" id="mcount-whatsapp">0</span></button>
+        <button class="modal-tab" data-mtab="photos">📸 Fotos <span class="tab-count" id="mcount-photos">0</span></button>
+        <button class="modal-tab" data-mtab="events">⚡ Eventos <span class="tab-count" id="mcount-events">0</span></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Tab: Datos -->
+        <div class="mtab-panel" id="mtab-data">
+          <div class="kv-grid">
+            <section class="kv-card">
+              <h4>Accidente</h4>
+              <dl class="kv-list" id="kv-accident"></dl>
+            </section>
+            <section class="kv-card">
+              <h4>Asegurado y póliza</h4>
+              <dl class="kv-list" id="kv-policyholder"></dl>
+            </section>
+            <section class="kv-card">
+              <h4>Vehículo</h4>
+              <dl class="kv-list" id="kv-vehicle"></dl>
+            </section>
+            <section class="kv-card">
+              <h4>Perito asignado</h4>
+              <dl class="kv-list" id="kv-adjuster"></dl>
+            </section>
+          </div>
+        </div>
+
+        <!-- Tab: Voice -->
+        <div class="mtab-panel hidden" id="mtab-voice">
+          <div id="conv-voice-empty" class="conv-empty">Sin transcripción de llamada disponible.</div>
+          <div id="conv-voice-list" class="conv-list"></div>
+        </div>
+
+        <!-- Tab: WhatsApp -->
+        <div class="mtab-panel hidden" id="mtab-whatsapp">
+          <div id="conv-wa-empty" class="conv-empty">Sin mensajes de WhatsApp todavía.</div>
+          <div id="conv-wa-list" class="conv-list"></div>
+        </div>
+
+        <!-- Tab: Photos -->
+        <div class="mtab-panel hidden" id="mtab-photos">
+          <div id="photos-empty" class="conv-empty">Aún no se han recibido fotos. El asegurado las enviará por WhatsApp.</div>
+          <div id="photos-grid" class="photos-grid"></div>
+        </div>
+
+        <!-- Tab: Events -->
+        <div class="mtab-panel hidden" id="mtab-events">
+          <div id="events-empty" class="conv-empty">Sin eventos registrados.</div>
+          <ol id="events-list" class="events-list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────── Modal MongoDB document viewer ───────────── -->
+  <div id="mongo-overlay" class="overlay hidden">
+    <div class="modal mongo-modal">
+      <header class="modal-header mongo-header">
+        <div class="modal-hero">
+          <span class="mongo-leaf-wrap">
+            <svg viewBox="0 0 32 32" width="24" height="24">
+              <path fill="#00ED64" d="M16.5 2c-.4 4.1.4 8.1 1.2 12 .9 4 1.8 8.4-.3 12.4 0 0-.3.5-.3.5 0 .2.1 0 .2 0 1.4-1.1 2.4-2.6 3.1-4.3.8-1.7 1.2-3.4 1.4-5.2.2-2.4-.1-4.8-.7-7.1-.7-2.4-1.7-4.7-2.9-6.9-.4-.7-.9-1.4-1.7-1.4z"/>
+            </svg>
+          </span>
+          <div>
+            <div class="mongo-title">Documento MongoDB</div>
+            <div id="mongo-subtitle" class="mongo-subtitle">policyholder.sura · —</div>
+          </div>
+        </div>
+        <button id="mongo-close" class="modal-close" aria-label="Cerrar">✕</button>
+      </header>
+
+      <div class="mongo-stats" id="mongo-stats"></div>
+
+      <div class="modal-tabs">
+        <button class="modal-tab active" data-mongotab="json">📄 Documento JSON</button>
+        <button class="modal-tab" data-mongotab="pipeline">⚙️ Aggregation Pipeline</button>
+      </div>
+
+      <div class="modal-body mongo-body">
+        <div class="mongotab-panel" id="mongotab-json">
+          <div class="mongo-actions">
+            <button id="copy-json-btn" class="btn-ghost-sm">📋 Copiar JSON</button>
+            <button id="toggle-collapse-btn" class="btn-ghost-sm">↕ Expandir todo</button>
+          </div>
+          <pre id="mongo-json" class="mongo-code"></pre>
+        </div>
+        <div class="mongotab-panel hidden" id="mongotab-pipeline">
+          <p class="mongo-tagline">Una sola query. Un solo documento. <strong>En SQL: 5 JOINs y 6 queries.</strong></p>
+          <pre id="mongo-pipeline" class="mongo-code"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="ingrid/sura-demo.js"></script>
+</body>
+</html>

@@ -439,6 +439,11 @@
     },
 
     {
+      "src": "/ingrid(?:/.*)?$",
+      "dest": "/ingrid/index.html"
+    },
+
+    {
       "src": "/harness(?:/.*)?$",
       "dest": "/harness/index.html"
     },
